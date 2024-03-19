@@ -1,0 +1,18 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Company Location" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="640px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center" />
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
+		<DialogEvents OnOpen="DialogOpen" />
+		<SfDataForm ID="companyEditForm" Model="@Model" OnValidSubmit="SaveCompanyLocation" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator />
+			</FormValidator>
+			<FormItems></FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

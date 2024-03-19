@@ -1,0 +1,81 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Company" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="640px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center" />
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
+		<DialogEvents OnOpen="DialogOpen" />
+		<SfDataForm ID="companyEditForm" Model="@Model" OnValidSubmit="SaveCompany" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator />
+			</FormValidator>
+			<FormItems>
+				<FormGroup CssClass="formGroup" ID="groupInfo" LabelText="Company Information">
+					<FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.Name)" LabelText="Company Name:" Placeholder="Company Name" />
+                    <FormItem Field="@nameof(Model.EIN)" ID="maskedEIN">
+                        <Template>
+                            <label class="e-form-label" for="maskedEIN">EIN Number:</label>	
+                            <SfMaskedTextBox @bind-Value="Model.EIN" ID="maskedEIN" Mask="00-0000000" Placeholder="EIN Number" />
+                        </Template>
+                    </FormItem>
+                    <FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.EmailAddress)" LabelText="Email Address:" Placeholder="Email Address" />
+					<FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.Website)" LabelText="Website Address:" Placeholder="Website Address" />
+                    <FormItem Field="@nameof(Model.DUNS)" ID="maskedDUNS">
+						<Template>
+							<label class="e-form-label" for="maskedDUNS">D-U-N-S Number:</label>
+							<SfMaskedTextBox @bind-Value="Model.DUNS" ID="maskedDUNS" Mask="00-000-0000" Placeholder="D-U-N-S Number" />
+						</Template>
+					</FormItem>
+					<FormItem Field="@nameof(Model.NAICSCode)">
+						<Template>
+                            <label class="e-form-label" for="dropNAICS">NAICS Code:</label>
+							<SfDropDownList AllowFiltering="true" @bind-Value="Model.NAICSCode" ID="dropNAICS" DataSource="NAICS" TItem="IntValues" TValue="int">
+								<DropDownListFieldSettings Text="Key" Value="Value"></DropDownListFieldSettings>
+							</SfDropDownList>
+						</Template>
+					</FormItem>
+					<FormItem EditorType="FormEditorType.Switch" Field="@nameof(Model.Status)" LabelText="Enabled" />
+				</FormGroup>
+				<FormGroup CssClass="formGroup formGroupSecond" ID="groupLocation" LabelText="Primary Location" ColumnCount="3" ColumnSpacing="10px">
+					<FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.StreetName)" LabelText="Address:" ColumnSpan="3" />
+                    <FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.City)" LabelText="City:" ColumnSpan="3" />
+                    <FormItem Field="@nameof(Model.StateID)" ColumnSpan="3">
+						<Template>
+							<label class="e-form-label">State:</label>
+							<SfDropDownList @bind-Value="Model.StateID" DataSource="State" TItem="IntValues" TValue="int">
+								<DropDownListFieldSettings Text="Key" Value="Value"></DropDownListFieldSettings>
+							</SfDropDownList>
+						</Template>
+					</FormItem>
+                    <FormItem Field="@nameof(Model.ZipCode)" ColumnSpan="3">
+						<Template>
+                            <label class="e-form-label" for="maskedZip">Zip Code:</label>
+                            <SfMaskedTextBox @bind-Value="Model.ZipCode" ID="maskedZip" Mask="00000" Placeholder="Zip Code" />
+						</Template>
+					</FormItem>
+					<FormItem Field="@nameof(Model.Phone)" ColumnSpan="2">
+						<Template>
+                            <label class="e-form-label" for="maskedPhone">Primary Phone Number:</label>
+                            <SfMaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number" />
+						</Template>
+					</FormItem>
+                    <FormItem Field="@nameof(Model.Extension)" ColumnSpan="1">
+                        <Template>
+                            <label class="e-form-label" for="maskedExt">Extension:</label>
+                            <SfMaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension" />
+                        </Template>
+                    </FormItem>
+                    <FormItem Field="@nameof(Model.Fax)" ColumnSpan="3">
+                        <Template>
+                            <label class="e-form-label" for="maskedFax">Fax:</label>
+                            <SfMaskedTextBox @bind-Value="Model.Fax" ID="maskedFax" Mask="(000) 000-0000" Placeholder="Fax" />
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

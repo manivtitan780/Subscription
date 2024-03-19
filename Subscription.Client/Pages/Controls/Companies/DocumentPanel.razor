@@ -1,0 +1,53 @@
+﻿<div class="companyPanel">
+    <div>
+        <SfGrid AllowPaging="false" DataSource="@Model" EnableHeaderFocus="true" EnableHover="true" ID="gridCompanyTab" @ref="Grid" RowHeight="70" SelectedRowIndex="0" TValue="CompanyDocuments" Width="100%">
+            <GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
+            <GridEvents RowSelected="RowSelected" TValue="CompanyDocuments" />
+            <GridColumns>
+                <GridColumn Field="@nameof(CompanyDocuments.DocumentName)" HeaderText="Name" Width="20%">
+                </GridColumn>
+                <GridColumn Field="@nameof(CompanyDocuments.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" />
+                <GridColumn Field="@nameof(CompanyDocuments.FileName)" HeaderText="File Name" Width="20%" />
+                <GridColumn Field="@nameof(CompanyDocuments.UpdatedBy)" HeaderText="Updated By" Width="20%">
+                    <Template Context="bCon">
+                        @{
+                            if (bCon is CompanyDocuments _con)
+                            {
+                                <span>@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy}]")</span>
+                            }
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Width="10%">
+                    <Template Context="bCon">
+                        @{
+                            if (bCon is CompanyDocuments _con)
+                            {
+                                <div class="buttonContain">
+                                    @*<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditCompanyDocumentDialog(_con.ID)" />*@
+                                    <SfButton Content="" title="Delete" IconCss="e-icons e-delete" @onclick="() => DeleteCompanyDocumentMethod(_con.ID)" />
+                                </div>
+                            }
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+            <GridTemplates Context="context">
+                <DetailTemplate>
+                    @if (context is CompanyDocuments _con)
+                    {
+                        if (_con.Notes.NullOrWhiteSpace())
+                        {
+                            <div class="gridNotes blankGridNotes">There are no Notes for this Location.</div>
+                        }
+                        else
+                        {
+                            <div class="gridNotes textGridNotes">@_con.Notes.Replace("\n", "<br/>").ToMarkupString()</div>
+                        }
+                    }
+                </DetailTemplate>
+            </GridTemplates>
+        </SfGrid>
+    </div>
+</div>
+@*<ConfirmDialog Delete="() => DeleteCompanyLocation.InvokeAsync(_selectedID)" Entity="Company Location" Height="160px" @ref="DialogConfirm" Width="378px" />*@
