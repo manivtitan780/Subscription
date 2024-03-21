@@ -17,17 +17,17 @@
                     </GridSortColumns> *@
 				</GridSortSettings>
 				<GridColumn AllowSorting="true" Field="@nameof(Company.CompanyName)" HeaderText="Name" Width="17%">
-                    <Template Context="aCon">
-                        @{
-                            if (aCon is Company _con)
-                            {
-                                <span>
-                                    @(_con.CompanyName)
-                                </span>
-                            }
-                        }
-                    </Template>
-                </GridColumn>
+					<Template Context="aCon">
+						@{
+							if (aCon is Company _con)
+							{
+								<span>
+									@(_con.CompanyName)
+								</span>
+							}
+						}
+					</Template>
+				</GridColumn>
 				<GridColumn AllowSorting="false" HeaderText="Email" Width="17%">
 					<Template Context="aCon">
 						@{
@@ -94,7 +94,7 @@
 				<DetailTemplate>
 					@{
 						@* Add Buttons Start *@
-						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu" 
+						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
 									 Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
 							<SpeedDialItems>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCompany" Text="Edit Company" Title="Edit Company" />
@@ -105,7 +105,7 @@
 							</SpeedDialItems>
 						</SfSpeedDial>
 						@* Add Buttons End *@
-						if (context is Company _con)
+						if (context is Company)
 						{
 							<SfTab CssClass="e-fill" Height="335" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
 								<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent" ZIndex="12000" />@**@
@@ -124,8 +124,8 @@
 											<div class="layout-2">
 												<div class="leftLayout">
 													<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"></PanelDisplayText>
-                                                    <PanelDisplayText Label="EIN#" Text="@(_companyDetails.EIN)"></PanelDisplayText>
-                                                    <PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"></PanelDisplayText>
+													<PanelDisplayText Label="EIN#" Text="@(_companyDetails.EIN)"></PanelDisplayText>
+													<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"></PanelDisplayText>
 													<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.FormatPhoneNumber())"></PanelDisplayText>
 													<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
 													<PanelDisplayText Label="D-U-N-S Number" Text="@(_companyDetails.DUNS)"></PanelDisplayText>
@@ -187,4 +187,4 @@
 		</SfGrid>
 	</GridContent>
 </GridHeader>
-<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State"></EditCompany>
+<EditCompany EditContext="EditCon" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State" />

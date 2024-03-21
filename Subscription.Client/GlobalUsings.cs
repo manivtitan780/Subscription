@@ -56,4 +56,8 @@ global using Syncfusion.Blazor.Navigations;
 
 global using GridAction = Syncfusion.Blazor.Grids.Action;
 
+global using Microsoft.AspNetCore.Components.Forms;
+
+global using Syncfusion.Blazor.DataForm;
+
 #endregion

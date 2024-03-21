@@ -394,21 +394,18 @@ body, form, html {
     border-color: var(--c-red);
 }
 
-.e-input-group:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-input-group.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]) {
-    box-shadow: none;
-}
-
 .e-input-group.e-input-focus:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper.e-input-focus:not(.e-success):not(.e-warning):not(.e-error) {
-    border-color: var(--c-red);
     border-color: var(--c-red);
     border-radius: 2px;
     box-shadow: 0 0 0 0px var(--c-red);
 }
 
-.e-input-group.e-input-focus:not(.e-error):not(.e-warning).e-success, .e-input-group.e-control-wrapper.e-input-focus:not(.e-error):not(.e-warning).e-success {
-    box-shadow: 0 0 0 0px #107c10 !important;
+.e-input-group:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-input-group.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]),
+.e-input-group.e-input-focus:not(.e-error):not(.e-warning).e-success, .e-input-group.e-control-wrapper.e-input-focus:not(.e-error):not(.e-warning).e-success,
+.e-input-group:not(.e-disabled):active:not(.e-success):not(.e-warning).e-error, .e-input-group.e-control-wrapper:not(.e-disabled):active:not(.e-success):not(.e-warning).e-error, 
+.e-input-group.e-input-focus:not(.e-success):not(.e-warning).e-error, .e-input-group.e-control-wrapper.e-input-focus:not(.e-success):not(.e-warning).e-error {
+    box-shadow: 0 0 0 0 #a4262c;
 }
-
 /* #endregion Input*/
 
 /* #region Pager */

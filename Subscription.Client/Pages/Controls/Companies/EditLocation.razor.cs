@@ -8,20 +8,53 @@
 // File Name:           EditLocation.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          3-19-2024 16:15
-// Last Updated On:     3-19-2024 16:15
+// Last Updated On:     3-21-2024 15:50
 // *****************************************/
 
 #endregion
 
-using Microsoft.AspNetCore.Components.Forms;
+#region Using
 
-using Syncfusion.Blazor.DataForm;
+#endregion
 
 namespace Subscription.Client.Pages.Controls.Companies;
 
 public partial class EditLocation
 {
+    [Parameter]
+    public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private SfDataForm CompanyLocationEditForm
+    {
+        get;
+        set;
+    }
+
     private SfDialog Dialog
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EditContext EditContext
+    {
+        get;
+        set;
+    }
+
+    public CompanyLocations Model
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<EditContext> Save
     {
         get;
         set;
@@ -34,30 +67,33 @@ public partial class EditLocation
     }
 
     [Parameter]
-    public CompanyLocations Model
+    public List<IntValues> State
     {
         get;
         set;
+    } = [];
+
+    private async Task CancelForm(MouseEventArgs args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
     }
 
-    private SfDataForm CompanyEditForm
+    private void DialogOpen(BeforeOpenEventArgs args)
     {
-        get;
-        set;
+        Model = EditContext.Model as CompanyLocations;
+        EditContext?.Validate();
     }
 
-    private Task DialogOpen(BeforeOpenEventArgs arg)
+    private async Task SaveCompanyLocation(EditContext args)
     {
-        return null;
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
     }
 
-    private Task SaveCompanyLocation(EditContext arg)
-    {
-        return null;
-    }
-
-    private Task CancelForm(MouseEventArgs arg)
-    {
-        return null;
-    }
+    internal async Task ShowDialog() => await Dialog.ShowAsync();
 }

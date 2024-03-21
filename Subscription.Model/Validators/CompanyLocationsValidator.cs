@@ -21,5 +21,26 @@ public class CompanyLocationsValidator : AbstractValidator<CompanyLocations>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
+        RuleFor(x => x.CompanyID).NotEmpty().WithMessage("Select a Company");
+
+        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage("Email Address should not be empty.")
+                                    .Length(1, 255).WithMessage("Email Address should be less than {MaxLength} characters.")
+                                    .Must(s => s.IsValidEmail()).WithMessage("Please enter a valid e-mail address.");
+
+        RuleFor(x => x.StreetName).NotEmpty().WithMessage("Address should not be empty.")
+                                  .Length(5, 500).WithMessage("Address should be between {MinLength} and {MaxLength} characters.");
+
+        RuleFor(x => x.City).NotEmpty().WithMessage("City Name should not be empty.")
+                            .Length(2, 100).WithMessage("City Name should be between {MinLength} and {MaxLength} characters.");
+
+        RuleFor(x => x.StateID).NotEmpty().WithMessage("Select a State");
+
+        RuleFor(x => x.ZipCode).NotEmpty().WithMessage("Zip Code should not be empty.")
+                               .Length(5).WithMessage("Zip Code should be exactly {MaxLength} digits.");
+
+        RuleFor(x => x.Phone).NotEmpty().WithMessage("Company Phone Number should not be empty.")
+                             .Length(10).WithMessage("Phone Number should be exactly {MaxLength} digits and in the format (000) 000-0000.");
+
+        RuleFor(x => x.Notes).Length(0, 2000).WithMessage("Company Location Notes should be less than 2000 characters.");
     }
 }

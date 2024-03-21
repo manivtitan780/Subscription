@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-9-2024 20:35
-// Last Updated On:     2-13-2024 15:51
+// Last Updated On:     3-21-2024 15:50
 // *****************************************/
 
 #endregion
@@ -32,6 +32,28 @@ public class General
                    ChildContent = content => { content.AddContent(0, contentText.ToMarkupString()); },
                    CloseOnEscape = true
                };
+    }
+
+    internal static async Task DisplaySpinner(SfSpinner spinner, bool show = true)
+    {
+        try
+        {
+            if (spinner != null)
+            {
+                if (show)
+                {
+                    await spinner.ShowAsync();
+                }
+                else
+                {
+                    await spinner.HideAsync();
+                }
+            }
+        }
+        catch
+        {
+            //
+        }
     }
 
     /// <summary>

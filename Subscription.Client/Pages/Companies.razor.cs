@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-7-2024 19:53
-// Last Updated On:     3-19-2024 15:30
+// Last Updated On:     3-19-2024 20:27
 // *****************************************/
 
 #endregion
@@ -57,6 +57,12 @@ public partial class Companies
     ///     `General.GetCompanyReadAdaptor()` method.
     /// </remarks>
     private static int Count
+    {
+        get;
+        set;
+    }
+
+    public EditContext EditCon
     {
         get;
         set;
@@ -211,6 +217,7 @@ public partial class Companies
                                                                                                 {
                                                                                                     _companyDetails =
                                                                                                         General.DeserializeObject<CompanyDetails>(_restResponse["Company"]?.ToString() ?? string.Empty);
+                                                                                                    EditCon = new(_companyDetails);
                                                                                                     _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"]);
                                                                                                     _companyDocuments =
                                                                                                         General.DeserializeObject<List<CompanyDocuments>>(_restResponse["Documents"]);
@@ -370,6 +377,7 @@ public partial class Companies
 
                                                                                        if (_target != null)
                                                                                        {
+                                                                                           /* This will work only if the columns are template else this will fail without warning. */
                                                                                            _target.CompanyName = _companyDetails.Name;
                                                                                            _target.Email = _companyDetails.EmailAddress;
                                                                                            _target.Phone = _companyDetails.Phone;

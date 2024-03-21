@@ -8,16 +8,8 @@
 // File Name:           EditCompany.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          3-7-2024 19:59
-// Last Updated On:     3-18-2024 20:37
+// Last Updated On:     3-20-2024 20:1
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using Microsoft.AspNetCore.Components.Forms;
-
-using Syncfusion.Blazor.DataForm;
 
 #endregion
 
@@ -32,7 +24,7 @@ public partial class EditCompany
         set;
     }
 
-    private SfDataForm CompanyEditForm
+    private SfDataForm CompanyLocationEditForm
     {
         get;
         set;
@@ -44,14 +36,14 @@ public partial class EditCompany
         set;
     }
 
-    private EditContext EditContext
+    [Parameter]
+    public EditContext EditContext
     {
         get;
         set;
     }
 
-    [Parameter]
-    public CompanyDetails Model
+    private CompanyDetails Model
     {
         get;
         set;
@@ -86,22 +78,26 @@ public partial class EditCompany
 
     private async Task CancelForm(MouseEventArgs args)
     {
+        await General.DisplaySpinner(Spinner);
+
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
     }
 
-    private void DialogOpen(BeforeOpenEventArgs args) => CompanyEditForm.EditContext?.Validate();
-
-    protected override void OnParametersSet()
+    private void DialogOpen(BeforeOpenEventArgs args)
     {
-        EditContext = new(Model);
-        base.OnParametersSet();
+        Model = EditContext.Model as CompanyDetails;
+        EditContext?.Validate();
     }
 
-    private async Task SaveCompany(EditContext args)
+    private async Task SaveCompanyLocation(EditContext args)
     {
+        await General.DisplaySpinner(Spinner);
+
         await Save.InvokeAsync(args);
         await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
     }
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
