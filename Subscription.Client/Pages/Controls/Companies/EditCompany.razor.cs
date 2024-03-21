@@ -13,6 +13,8 @@
 
 #endregion
 
+using Syncfusion.Blazor.PivotView;
+
 namespace Subscription.Client.Pages.Controls.Companies;
 
 public partial class EditCompany
@@ -24,7 +26,7 @@ public partial class EditCompany
         set;
     }
 
-    private SfDataForm CompanyLocationEditForm
+    private SfDataForm CompanyEditForm
     {
         get;
         set;
@@ -37,13 +39,7 @@ public partial class EditCompany
     }
 
     [Parameter]
-    public EditContext EditContext
-    {
-        get;
-        set;
-    }
-
-    private CompanyDetails Model
+    public CompanyDetails Model
     {
         get;
         set;
@@ -79,22 +75,31 @@ public partial class EditCompany
     private async Task CancelForm(MouseEventArgs args)
     {
         await General.DisplaySpinner(Spinner);
-
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
         await General.DisplaySpinner(Spinner, false);
     }
 
-    private void DialogOpen(BeforeOpenEventArgs args)
+    private EditContext Context
     {
-        Model = EditContext.Model as CompanyDetails;
-        EditContext?.Validate();
+        get;
+        set;
     }
 
-    private async Task SaveCompanyLocation(EditContext args)
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        base.OnParametersSet();
+    }
+
+    private void DialogOpen(BeforeOpenEventArgs args)
+    {
+        CompanyEditForm.EditContext?.Validate();
+    }
+
+    private async Task SaveCompany(EditContext args)
     {
         await General.DisplaySpinner(Spinner);
-
         await Save.InvokeAsync(args);
         await Dialog.HideAsync();
         await General.DisplaySpinner(Spinner, false);

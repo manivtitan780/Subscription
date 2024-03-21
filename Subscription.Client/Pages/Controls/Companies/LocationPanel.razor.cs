@@ -88,7 +88,7 @@ public partial class LocationPanel
     ///     This property is set internally when a row is selected in the grid. It is used to hold the education details of the
     ///     selected candidate.
     /// </remarks>
-    private CompanyLocations SelectedRow
+    public CompanyLocations SelectedRow
     {
         get;
         set;

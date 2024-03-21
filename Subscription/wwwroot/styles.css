@@ -397,7 +397,7 @@ body, form, html {
 .e-input-group.e-input-focus:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper.e-input-focus:not(.e-success):not(.e-warning):not(.e-error) {
     border-color: var(--c-red);
     border-radius: 2px;
-    box-shadow: 0 0 0 0px var(--c-red);
+    box-shadow: 0 0 0 0 var(--c-red);
 }
 
 .e-input-group:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-input-group.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]),
@@ -406,6 +406,33 @@ body, form, html {
 .e-input-group.e-input-focus:not(.e-success):not(.e-warning).e-error, .e-input-group.e-control-wrapper.e-input-focus:not(.e-success):not(.e-warning).e-error {
     box-shadow: 0 0 0 0 #a4262c;
 }
+
+.e-input-group:not(.e-disabled):active:not(.e-error):not(.e-warning).e-success, .e-input-group.e-control-wrapper:not(.e-disabled):active:not(.e-error):not(.e-warning).e-success {
+    box-shadow: 0 0 0 0 #107c10;
+}
+
+.e-input-group.e-error, .e-input-group.e-control-wrapper.e-error, .e-input-group.e-error:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-error:not(.e-float-icon-left) {
+    border-color: var(--c-red);
+}
+
+.e-error.invalid, span.invalid, .e-multiselect.e-error {
+    border-color: var(--c-red) !important;
+}
+
+    .e-error.invalid::after, span.invalid::after, .e-multiselect.e-error::after {
+        border-color: var(--c-red) !important;
+        color: var(--c-red) !important;
+        content: "\ef1b" !important; /* Exclamation inside triangle */
+        font-family: var(--font-icon);
+        font-size: 18px;
+        margin-right: 5px;
+        margin-top: 3px;
+    }
+
+    .e-error.invalid .e-float-text {
+        color: var(--c-red) !important;
+    }
+
 /* #endregion Input*/
 
 /* #region Pager */
@@ -455,7 +482,7 @@ body, form, html {
 [class^="speeddial-icon-"], [class*=" speeddial-icon-"] {
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
-    font-family: 'icofont' !important;
+    font-family: var(--font-icon) !important;
     font-size: 16px !important;
     font-style: normal;
     font-variant: normal;

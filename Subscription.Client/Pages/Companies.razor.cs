@@ -8,14 +8,12 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-7-2024 19:53
-// Last Updated On:     3-19-2024 20:27
+// Last Updated On:     3-21-2024 16:12
 // *****************************************/
 
 #endregion
 
 #region Using
-
-using Microsoft.AspNetCore.Components.Forms;
 
 using Syncfusion.Blazor.Buttons;
 
@@ -49,6 +47,12 @@ public partial class Companies
         set;
     }
 
+    private EditLocation CompanyLocationDialog
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the total count of Companies.
     /// </summary>
@@ -62,7 +66,13 @@ public partial class Companies
         set;
     }
 
-    public EditContext EditCon
+    public EditContext EditConCompany
+    {
+        get;
+        set;
+    }
+
+    public EditContext EditConLocation
     {
         get;
         set;
@@ -108,6 +118,12 @@ public partial class Companies
         set;
     }
 
+    private LocationPanel PanelLocations
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the SearchModel property of the Companies class. This property is of type CompaniesSearch and is used
     ///     to manage
@@ -125,6 +141,12 @@ public partial class Companies
     ///     the grid view.
     /// </summary>
     private CompanySearch SearchModelClone
+    {
+        get;
+        set;
+    } = new();
+
+    private CompanyLocations SelectedLocation
     {
         get;
         set;
@@ -217,7 +239,7 @@ public partial class Companies
                                                                                                 {
                                                                                                     _companyDetails =
                                                                                                         General.DeserializeObject<CompanyDetails>(_restResponse["Company"]?.ToString() ?? string.Empty);
-                                                                                                    EditCon = new(_companyDetails);
+                                                                                                    EditConCompany = new(_companyDetails);
                                                                                                     _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"]);
                                                                                                     _companyDocuments =
                                                                                                         General.DeserializeObject<List<CompanyDocuments>>(_restResponse["Documents"]);
@@ -249,17 +271,7 @@ public partial class Companies
 
     private Task EditCompany() => ExecuteMethod(async () =>
                                                 {
-                                                    try
-                                                    {
-                                                        if (Spinner != null)
-                                                        {
-                                                            await Spinner.ShowAsync();
-                                                        }
-                                                    }
-                                                    catch
-                                                    {
-                                                        //
-                                                    }
+                                                    await General.DisplaySpinner(Spinner);
 
                                                     if (_target == null || _target.ID == 0)
                                                     {
@@ -280,21 +292,36 @@ public partial class Companies
                                                         _companyDetailsClone.IsAdd = false;
                                                     }
 
-                                                    try
-                                                    {
-                                                        if (Spinner != null)
-                                                        {
-                                                            await Spinner.HideAsync();
-                                                        }
-                                                    }
-                                                    catch
-                                                    {
-                                                        //
-                                                    }
+                                                    await General.DisplaySpinner(Spinner, false);
 
                                                     await CompanyEditDialog.ShowDialog();
                                                     //StateHasChanged();
                                                 });
+
+    private Task EditLocation(int location)
+    {
+        return ExecuteMethod(async () =>
+                             {
+                                 if (location == 0)
+                                 {
+                                     if (SelectedLocation == null)
+                                     {
+                                         SelectedLocation = new();
+                                     }
+                                     else
+                                     {
+                                         SelectedLocation.Clear();
+                                     }
+                                 }
+                                 else
+                                 {
+                                     SelectedLocation = PanelLocations.SelectedRow != null ? PanelLocations.SelectedRow.Copy() : new();
+                                 }
+
+                                 EditConLocation = new(SelectedLocation);
+                                 await CompanyLocationDialog.ShowDialog();
+                             });
+    }
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -395,6 +422,12 @@ public partial class Companies
 
                                                                                        StateHasChanged();
                                                                                    });
+
+    private async Task SaveLocation(EditContext arg) => await ExecuteMethod(async () =>
+                                                                            {
+                                                                                await Grid.Refresh();
+                                                                                StateHasChanged();
+                                                                            });
 
     private void SetupAddress()
     {

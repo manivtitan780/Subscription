@@ -13,10 +13,6 @@
 
 #endregion
 
-#region Using
-
-#endregion
-
 namespace Subscription.Client.Pages.Controls.Companies;
 
 public partial class EditLocation
@@ -41,12 +37,6 @@ public partial class EditLocation
     }
 
     [Parameter]
-    public EditContext EditContext
-    {
-        get;
-        set;
-    }
-
     public CompanyLocations Model
     {
         get;
@@ -81,10 +71,22 @@ public partial class EditLocation
         await General.DisplaySpinner(Spinner, false);
     }
 
+    private EditContext Context
+    {
+        get;
+        set;
+    }
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        base.OnParametersSet();
+    }
+
     private void DialogOpen(BeforeOpenEventArgs args)
     {
-        Model = EditContext.Model as CompanyLocations;
-        EditContext?.Validate();
+        CompanyLocationEditForm.EditContext.Validate();
+        StateHasChanged();
     }
 
     private async Task SaveCompanyLocation(EditContext args)
