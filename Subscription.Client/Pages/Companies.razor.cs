@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-7-2024 19:53
-// Last Updated On:     3-21-2024 16:12
+// Last Updated On:     3-23-2024 16:7
 // *****************************************/
 
 #endregion
@@ -389,17 +389,12 @@ public partial class Companies
 
     private async Task SaveCompany(EditContext editContext) => await ExecuteMethod(async () =>
                                                                                    {
-                                                                                       using RestClient _client = new("http://localhost/subscriptionapi/api/");
-                                                                                       RestRequest _request = new("Company/SaveCompany")
-                                                                                                              {
-                                                                                                                  RequestFormat = DataFormat.Json
-                                                                                                              };
+                                                                                       Dictionary<string, string> _parameters = new()
+                                                                                                                                {
+                                                                                                                                    {"userID", "ADMIN"}
+                                                                                                                                };
 
-                                                                                       _request.AddJsonBody(_companyDetailsClone);
-                                                                                       _request.AddQueryParameter("userID", "ADMIN");
-
-                                                                                       await _client.PostAsync<int>(_request);
-
+                                                                                       await General.PostRest<int>("Company/SaveCompany", _parameters, _companyDetailsClone);
                                                                                        _companyDetails = _companyDetailsClone.Copy();
 
                                                                                        if (_target != null)
@@ -425,7 +420,23 @@ public partial class Companies
 
     private async Task SaveLocation(EditContext arg) => await ExecuteMethod(async () =>
                                                                             {
-                                                                                await Grid.Refresh();
+                                                                                Dictionary<string, string> _parameters = new()
+                                                                                                                         {
+                                                                                                                             {"userID", "ADMIN"}
+                                                                                                                         };
+                                                                                List<CompanyLocations> _response = [];
+                                                                                try
+                                                                                {
+                                                                                    _response =
+                                                                                        await General.PostRest<List<CompanyLocations>>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
+                                                                                }
+                                                                                catch (Exception ex)
+                                                                                {
+                                                                                    _response = null;
+                                                                                }
+
+                                                                                _companyLocations = _response;
+                                                                                //await Grid.Refresh();
                                                                                 StateHasChanged();
                                                                             });
 

@@ -33,6 +33,52 @@ public class General
                    CloseOnEscape = true
                };
     }
+    /// <summary>
+    ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.
+    /// </summary>
+    /// <param name="endpoint">The API endpoint to which the request is sent.</param>
+    /// <param name="parameters">The parameters to be included in the request.</param>
+    /// <param name="jsonBody">The JSON body to be included in the request. Default is null.</param>
+    /// <param name="fileArray">Array of bytes containing the file contents. Default is null.</param>
+    /// <param name="fileName">Name of the file to be uploaded. Default is blank and will be used in fileArray is not null.</param>
+    /// <param name="parameterName">Name of the parameter to pass to the RESTful API. Default is `file`.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a dictionary with the response data.
+    /// </returns>
+    /// <remarks>
+    ///     This method uses the RestClient to send a POST request to the API.
+    ///     If a JSON body is provided, it is added to the request.
+    ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
+    /// </remarks>
+    internal static async Task<T> PostRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, byte[] fileArray = null, string fileName = "",
+                                              string parameterName = "file")
+    {
+        using RestClient _client = new("http://localhost/subscriptionapi/api/");
+        RestRequest _request = new(endpoint, Method.Post)
+                               {
+                                   RequestFormat = DataFormat.Json
+                               };
+
+        if (jsonBody != null)
+        {
+            _request.AddJsonBody(jsonBody);
+        }
+
+        if (parameters != null)
+        {
+            foreach (KeyValuePair<string, string> _parameter in parameters)
+            {
+                _request.AddQueryParameter(_parameter.Key, _parameter.Value);
+            }
+        }
+
+        if (fileArray != null)
+        {
+            _request.AddFile(parameterName, fileArray, fileName);
+        }
+
+        return await _client.PostAsync<T>(_request);
+    }
 
     internal static async Task DisplaySpinner(SfSpinner spinner, bool show = true)
     {
