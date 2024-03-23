@@ -15,7 +15,6 @@ errorlog*.txt
 *.user
 *.userosscache
 *.sln.docstates
-*.bak
 *.zip
 ShowMe.txt
 
