@@ -49,7 +49,8 @@
 							<SfMaskedTextBox @bind-Value="Model.Fax" ID="maskedFax" Mask="(000) 000-0000" Placeholder="Fax" />
 						</Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Location Notes:" Placeholder="Location Notes" />
+					<FormItem EditorType="FormEditorType.Switch" Field="@nameof(Model.PrimaryLocation)" LabelText="Primary Location" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Location Notes:" Placeholder="Location Notes" />
 				</FormGroup>
 			</FormItems>
 		</SfDataForm>

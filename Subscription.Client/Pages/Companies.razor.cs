@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-7-2024 19:53
-// Last Updated On:     3-23-2024 16:7
+// Last Updated On:     3-23-2024 19:33
 // *****************************************/
 
 #endregion
@@ -424,69 +424,138 @@ public partial class Companies
                                                                                                                          {
                                                                                                                              {"userID", "ADMIN"}
                                                                                                                          };
-                                                                                List<CompanyLocations> _response = [];
-                                                                                try
-                                                                                {
-                                                                                    _response =
-                                                                                        await General.PostRest<List<CompanyLocations>>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
-                                                                                }
-                                                                                catch (Exception ex)
-                                                                                {
-                                                                                    _response = null;
-                                                                                }
+                                                                                List<CompanyLocations> _response =
+                                                                                    await General.PostRest<List<CompanyLocations>>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
 
                                                                                 _companyLocations = _response;
+
+                                                                                if (_target != null)
+                                                                                {
+                                                                                    /* This will work only if the columns are template else this will fail without warning. */
+                                                                                    _target.CompanyName = _companyDetails.Name;
+                                                                                    _target.Email = _companyDetails.EmailAddress;
+                                                                                    _target.Phone = _companyDetails.Phone;
+                                                                                    _target.Address = SetupTargetAddress(true);
+                                                                                    SetupAddress(true);
+                                                                                    _target.Website = _companyDetails.Website;
+                                                                                    _target.Status = _companyDetails.Status;
+                                                                                    _target.UpdatedBy = _companyDetails.UpdatedBy;
+                                                                                    _target.UpdatedDate = _companyDetails.UpdatedDate;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    await Grid.Refresh();
+                                                                                }
+
                                                                                 //await Grid.Refresh();
                                                                                 StateHasChanged();
                                                                             });
 
-    private void SetupAddress()
+    private void SetupAddress(bool useLocation = false)
     {
         //NumberOfLines = 1;
-        string _generateAddress = _companyDetails.StreetName;
+        string _generateAddress = "";
 
-        if (_generateAddress == "")
+        if (!useLocation)
         {
-            _generateAddress = _companyDetails.City;
-        }
-        else
-        {
-            _generateAddress += _companyDetails.City == "" ? "" : $"<br/>{_companyDetails.City}";
-        }
+            _generateAddress = _companyDetails.StreetName;
 
-        if (_companyDetails.StateID > 0)
-        {
-            IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
-
-            if (_state != null)
-            {
-                if (_generateAddress == "")
-                {
-                    _generateAddress = $"<strong>{_state.Key.Trim()[7..]}</strong>";
-                }
-                else
-                {
-                    try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
-                    {
-                        _generateAddress += $", <strong>{_state.Key.Trim()[7..]}</strong>";
-                    }
-                    catch
-                    {
-                        //
-                    }
-                }
-            }
-        }
-
-        if (_companyDetails.ZipCode != "")
-        {
             if (_generateAddress == "")
             {
-                _generateAddress = _companyDetails.ZipCode;
+                _generateAddress = _companyDetails.City;
             }
             else
             {
-                _generateAddress += ", " + _companyDetails.ZipCode;
+                _generateAddress += _companyDetails.City == "" ? "" : $"<br/>{_companyDetails.City}";
+            }
+
+            if (_companyDetails.StateID > 0)
+            {
+                IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+
+                if (_state != null)
+                {
+                    if (_generateAddress == "")
+                    {
+                        _generateAddress = $"<strong>{_state.Key.Trim()[7..]}</strong>";
+                    }
+                    else
+                    {
+                        try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                        {
+                            _generateAddress += $", <strong>{_state.Key.Trim()[7..]}</strong>";
+                        }
+                        catch
+                        {
+                            //
+                        }
+                    }
+                }
+            }
+
+            if (_companyDetails.ZipCode != "")
+            {
+                if (_generateAddress == "")
+                {
+                    _generateAddress = _companyDetails.ZipCode;
+                }
+                else
+                {
+                    _generateAddress += ", " + _companyDetails.ZipCode;
+                }
+            }
+        }
+        else
+        {
+            CompanyLocations _loc = _companyLocations.FirstOrDefault(location => location.PrimaryLocation);
+            if (_loc != null)
+            {
+                _generateAddress = _loc.StreetName;
+
+                if (_generateAddress == "")
+                {
+                    _generateAddress = _loc.City;
+                }
+                else
+                {
+                    _generateAddress += _loc.City == "" ? "" : $"<br/>{_loc.City}";
+                }
+
+                if (_companyDetails.StateID > 0)
+                {
+                    IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
+
+                    if (_state != null)
+                    {
+                        if (_generateAddress == "")
+                        {
+                            _generateAddress = $"<strong>{_state.Key.Trim()[7..]}</strong>";
+                        }
+                        else
+                        {
+                            try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                            {
+                                _generateAddress += $", <strong>{_state.Key.Trim()[7..]}</strong>";
+                            }
+                            catch
+                            {
+                                //
+                            }
+                        }
+                    }
+                }
+
+                if (_loc.ZipCode != "")
+                {
+                    if (_generateAddress == "")
+                    {
+                        _generateAddress = _loc.ZipCode;
+                    }
+                    else
+                    {
+                        _generateAddress += ", " + _loc.ZipCode;
+                    }
+                }
             }
         }
 
@@ -498,43 +567,95 @@ public partial class Companies
         Address = _generateAddress.ToMarkupString();
     }
 
-    private string SetupTargetAddress()
+    private string SetupTargetAddress(bool useLocation = false)
     {
-        string _address = _companyDetails.City;
-
-        if (_companyDetails.StateID > 0)
+        string _address = "";
+        if (!useLocation)
         {
-            IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+            _address = _companyDetails.City;
 
-            if (_state != null)
+            if (_companyDetails.StateID > 0)
+            {
+                IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+
+                if (_state != null)
+                {
+                    if (_address == "")
+                    {
+                        _address = $"{_state.Key.Trim().Substring(1, 2)}";
+                    }
+                    else
+                    {
+                        try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                        {
+                            _address += $", {_state.Key.Trim().Substring(1, 2)}";
+                        }
+                        catch
+                        {
+                            //
+                        }
+                    }
+                }
+            }
+
+            if (_companyDetails.ZipCode != "")
             {
                 if (_address == "")
                 {
-                    _address = $"{_state.Key.Trim().Substring(1, 2)}";
+                    _address = _companyDetails.ZipCode;
                 }
                 else
                 {
-                    try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
-                    {
-                        _address += $", {_state.Key.Trim().Substring(1, 2)}";
-                    }
-                    catch
-                    {
-                        //
-                    }
+                    _address += ", " + _companyDetails.ZipCode;
                 }
             }
         }
-
-        if (_companyDetails.ZipCode != "")
+        else
         {
-            if (_address == "")
+            CompanyLocations _loc = _companyLocations.FirstOrDefault(location => location.PrimaryLocation);
+            if (_loc != null)
             {
-                _address = _companyDetails.ZipCode;
+                _address = _loc.City;
+
+                if (_loc.StateID > 0)
+                {
+                    IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
+
+                    if (_state != null)
+                    {
+                        if (_address == "")
+                        {
+                            _address = $"{_state.Key.Trim().Substring(1, 2)}";
+                        }
+                        else
+                        {
+                            try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                            {
+                                _address += $", {_state.Key.Trim().Substring(1, 2)}";
+                            }
+                            catch
+                            {
+                                //
+                            }
+                        }
+                    }
+                }
+
+                if (_loc.ZipCode != "")
+                {
+                    if (_address == "")
+                    {
+                        _address = _loc.ZipCode;
+                    }
+                    else
+                    {
+                        _address += ", " + _loc.ZipCode;
+                    }
+                }
             }
             else
             {
-                _address += ", " + _companyDetails.ZipCode;
+                _address = "";
             }
         }
 
