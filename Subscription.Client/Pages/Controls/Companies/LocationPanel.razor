@@ -49,7 +49,7 @@
                 <GridColumn Width="10%">
                     <Template Context="bCon">
                         @{
-                            if (bCon is CompanyLocations _con)
+                            if (bCon is CompanyLocations {PrimaryLocation: false} _con)
                             {
                                 <div class="buttonContain">
                                     <SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditCompanyLocationDialog(_con.ID)" />
