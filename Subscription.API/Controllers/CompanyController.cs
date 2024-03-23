@@ -94,6 +94,66 @@ public class CompanyController : ControllerBase
         return _returnCode;
     }
 
+    [HttpPost]
+    public async Task<List<CompanyLocations>> SaveCompanyLocation(CompanyLocations location, string user)
+    {
+        if (location == null)
+        {
+            return null;
+        }
+
+        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await _connection.OpenAsync();
+
+        await using SqlCommand _command = new("SaveCompanyLocation", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", location.ID);
+        _command.Varchar("CompanyID", 100, location.CompanyID);
+        _command.Varchar("StreetName", 500, location.StreetName);
+        _command.Varchar("City", 100, location.City);
+        _command.TinyInt("StateID", location.StateID);
+        _command.Varchar("ZipCode", 10, location.ZipCode);
+        _command.Varchar("CompanyEmail", 255, location.EmailAddress);
+        _command.Varchar("Phone", 20, location.Phone);
+        _command.Varchar("Extension", 10, location.Extension);
+        _command.Varchar("Fax", 20, location.Fax);
+        _command.Varchar("LocationNotes", 2000, location.Notes);
+        _command.Bit("isPrimaryLocation", location.PrimaryLocation);
+        _command.Varchar("User", 10, user);
+
+        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+        List<CompanyLocations> _locations = [];
+
+        while (_reader.Read())
+        {
+            _locations.Add(new()
+                           {
+                               ID = _reader.GetInt32(0),
+                               CompanyID = _reader.GetInt32(1),
+                               CompanyName = _reader.GetString(2),
+                               StreetName = _reader.GetString(3),
+                               City = _reader.GetString(4),
+                               StateID = _reader.GetByte(5),
+                               State = _reader.GetString(6),
+                               ZipCode = _reader.GetString(7),
+                               EmailAddress = _reader.GetString(8),
+                               Phone = _reader.GetString(9),
+                               Extension = _reader.GetString(10),
+                               Fax = _reader.GetString(11),
+                               PrimaryLocation = _reader.GetBoolean(12),
+                               Notes = _reader.GetString(13),
+                               CreatedBy = _reader.GetString(14),
+                               CreatedDate = _reader.GetDateTime(15),
+                               UpdatedBy = _reader.GetString(16),
+                               UpdatedDate = _reader.GetDateTime(17)
+                           });
+        }
+
+        await _connection.CloseAsync();
+        return _locations;
+    }
+
     /// <summary>
     ///     Retrieves the details of a company based on the provided company ID and user.
     /// </summary>
