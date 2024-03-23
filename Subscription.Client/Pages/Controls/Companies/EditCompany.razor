@@ -4,7 +4,7 @@
 		<DialogPositionData X="right" Y="center" />
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
 		<DialogEvents OnOpen="DialogOpen" />
-		<SfDataForm EditContext="@Context" ID="companyEditForm" OnValidSubmit="SaveCompany" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+		<SfDataForm EditContext="@Context" ID="companyEditForm" OnValidSubmit="SaveCompany" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
