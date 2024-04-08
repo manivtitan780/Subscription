@@ -53,6 +53,13 @@ public partial class Companies
         set;
     }
 
+    [Inject]
+    private IConfiguration Configuration
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the total count of Companies.
     /// </summary>
@@ -353,6 +360,10 @@ public partial class Companies
 
     protected override async Task OnInitializedAsync()
     {
+        if (Start.APIHost.NullOrWhiteSpace())
+        {
+            Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
+        }
         _initializationTaskSource = new();
         await ExecuteMethod(() =>
                             {

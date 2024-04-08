@@ -30,11 +30,11 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Stop-WebAppPool -Name 'subscription AppPool'&quot;&#xD;&#xA;EXIT 0" />
+    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Stop-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscription AppPool'&quot;&#xD;&#xA;EXIT 0" />
+    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
   </Target>
 
 </Project>

@@ -14,6 +14,8 @@
 #endregion
 
 
+using Subscription.Client.Code;
+
 WebApplicationBuilder _builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -67,5 +69,9 @@ _app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode()
    .AddInteractiveWebAssemblyRenderMode()
    .AddAdditionalAssemblies(typeof(Subscription.Client._Imports).Assembly);
+
+//string _baseURL = _builder.Environment.WebRootPath;
+
+//Start.APIHost = _builder.Configuration.GetValue(typeof(string), _baseURL.Contains("localhost") ? "APIHost" : "APIHostServer")?.ToString();
 
 _app.Run();

@@ -33,6 +33,7 @@ public class General
                    CloseOnEscape = true
                };
     }
+
     /// <summary>
     ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.
     /// </summary>
@@ -53,7 +54,8 @@ public class General
     internal static async Task<T> PostRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, byte[] fileArray = null, string fileName = "",
                                               string parameterName = "file")
     {
-        using RestClient _client = new("http://localhost/subscriptionapi/api/");
+        //string host = ConfigManager.Get
+        using RestClient _client = new(Start.APIHost);
         RestRequest _request = new(endpoint, Method.Post)
                                {
                                    RequestFormat = DataFormat.Json
@@ -148,7 +150,7 @@ public class General
     /// </remarks>
     internal static async Task<T> GetRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null)
     {
-        using RestClient _client = new("http://localhost/subscriptionapi/api/");
+        using RestClient _client = new(Start.APIHost);
         RestRequest _request = new(endpoint)
                                {
                                    RequestFormat = DataFormat.Json
