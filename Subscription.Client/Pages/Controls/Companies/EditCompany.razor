@@ -10,7 +10,7 @@
 				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
 			</FormButtons>
 			<FormValidator>
-				<FluentValidationValidator />
+				<FluentValidationValidator Validator="_companyValidator" />
 			</FormValidator>
 			<FormItems>
 				<FormGroup CssClass="formGroup" ID="groupInfo" LabelText="Company Information">

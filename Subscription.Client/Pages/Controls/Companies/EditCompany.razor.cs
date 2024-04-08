@@ -8,102 +8,114 @@
 // File Name:           EditCompany.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          3-7-2024 19:59
-// Last Updated On:     3-20-2024 20:1
+// Last Updated On:     4-8-2024 21:14
 // *****************************************/
 
 #endregion
 
-using Syncfusion.Blazor.PivotView;
+#region Using
+
+using Subscription.Model.Validators;
+
+#endregion
 
 namespace Subscription.Client.Pages.Controls.Companies;
 
 public partial class EditCompany
 {
-    [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+	private CompanyDetailsValidator _companyValidator = new();
 
-    private SfDataForm CompanyEditForm
-    {
-        get;
-        set;
-    }
+	[Parameter]
+	public EventCallback<MouseEventArgs> Cancel
+	{
+		get;
+		set;
+	}
 
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+	private SfDataForm CompanyEditForm
+	{
+		get;
+		set;
+	}
 
-    [Parameter]
-    public CompanyDetails Model
-    {
-        get;
-        set;
-    } = new();
+	private EditContext Context
+	{
+		get;
+		set;
+	}
 
-    [Parameter]
-    public List<IntValues> NAICS
-    {
-        get;
-        set;
-    } = [];
+	private SfDialog Dialog
+	{
+		get;
+		set;
+	}
 
-    [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+	[Parameter]
+	public CompanyDetails Model
+	{
+		get;
+		set;
+	} = new();
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+	[Parameter]
+	public List<IntValues> NAICS
+	{
+		get;
+		set;
+	} = [];
 
-    [Parameter]
-    public List<IntValues> State
-    {
-        get;
-        set;
-    } = [];
+	[Parameter]
+	public EventCallback<EditContext> Save
+	{
+		get;
+		set;
+	}
 
-    private async Task CancelForm(MouseEventArgs args)
-    {
-        await General.DisplaySpinner(Spinner);
-        await Cancel.InvokeAsync(args);
-        await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
-    }
+	private SfSpinner Spinner
+	{
+		get;
+		set;
+	}
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+	[Parameter]
+	public List<IntValues> State
+	{
+		get;
+		set;
+	} = [];
 
-    protected override void OnParametersSet()
-    {
-        Context = new(Model);
-        base.OnParametersSet();
-    }
+	private async Task CancelForm(MouseEventArgs args)
+	{
+		await General.DisplaySpinner(Spinner);
+		await Cancel.InvokeAsync(args);
+		await Dialog.HideAsync();
+		await General.DisplaySpinner(Spinner, false);
+	}
 
-    private void DialogOpen(BeforeOpenEventArgs args)
-    {
-        CompanyEditForm.EditContext?.Validate();
-    }
+	private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e)
+	{
+		Context.Validate();
+	}
 
-    private async Task SaveCompany(EditContext args)
-    {
-        await General.DisplaySpinner(Spinner);
-        await Save.InvokeAsync(args);
-        await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
-    }
+	private void DialogOpen(BeforeOpenEventArgs args)
+	{
+		CompanyEditForm.EditContext?.Validate();
+	}
 
-    internal async Task ShowDialog() => await Dialog.ShowAsync();
+	protected override void OnParametersSet()
+	{
+		Context = new(Model);
+		Context.OnFieldChanged += Context_OnFieldChanged;
+		base.OnParametersSet();
+	}
+
+	private async Task SaveCompany(EditContext args)
+	{
+		await General.DisplaySpinner(Spinner);
+		await Save.InvokeAsync(args);
+		await Dialog.HideAsync();
+		await General.DisplaySpinner(Spinner, false);
+	}
+
+	internal async Task ShowDialog() => await Dialog.ShowAsync();
 }
