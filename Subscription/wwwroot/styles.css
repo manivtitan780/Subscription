@@ -52,8 +52,8 @@
     --c-yellowlight: #58dbff;
     --c-yellowlight: rgba(88, 219, 255, 0.5);*/
 
-    --c-wh: #fff;
-    /*--c-wh: #fff;*/
+    --c-wh: white;
+    /*--c-wh: var(--c-wh);*/
     --font-family: 'Segoe UI', 'Segoe', 'Arial', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, Geneva, Verdana, sans-serif;
     --font-size: 10pt;
     --font-size-med: 9pt;
@@ -141,7 +141,7 @@ body, form, html {
     }
 
     #divMainGrid > #divGrid {
-        height: calc(100% - 107px);
+        height: calc(100% - 50px);
         /*border: 1px solid red;*/
     }
 
@@ -246,7 +246,7 @@ body, form, html {
 .e-btn.e-primary, .e-css.e-btn.e-primary {
     background: var(--c-red) !important;
     border-color: var(--c-red) !important;
-    color: #fff;
+    color: var(--c-wh);
 }
 
 .buttonContain .e-icon-btn {
@@ -437,14 +437,20 @@ body, form, html {
 
 /* #region Pager */
 
-#divFooter div, .e-pager .e-numericitem, #divHeader, #divHeader div {
+#divFooter div, #divHeader, #divHeader div {
     background: #f6f6f6;
 }
 
+.e-pager .e-numericitem{
+    background: var(--c-wh);
+}
+
+.e-pager .e-spacing.e-numericitem:not(.e-active):not(.e-np):not(.e-pp):hover {
+    background: var(--c-red);
+    color: var(--c-wh);
+}
 /* #endregion */
-
 /* #region Pre-defined Dialogs */
-
 .e-confirm-dialog {
     border-radius: 6px;
 }
@@ -577,7 +583,7 @@ body, form, html {
 .e-speeddial-popup.e-speeddial-vert-right .e-speeddial-li span {
     background-color: var(--c-red);
     border-color: var(--c-red);
-    color: white !important;
+    color: var(--c-wh) !important;
 }
 
     .e-speeddial-popup.e-speeddial-vert-right .e-speeddial-li span:last-child {
@@ -633,12 +639,12 @@ body, form, html {
 
 .e-switch-wrapper .e-switch-on, .e-css.e-switch-wrapper .e-switch-on {
     background-color: var(--c-red);
-    color: #fff;
+    color: var(--c-wh);
 }
 
 .e-switch-wrapper:hover .e-switch-inner.e-switch-active .e-switch-on, .e-css.e-switch-wrapper:hover .e-switch-inner.e-switch-active .e-switch-on {
     background-color: var(--c-red);
-    color: #fff;
+    color: var(--c-wh);
 }
 
 /* #endregion Switch */
