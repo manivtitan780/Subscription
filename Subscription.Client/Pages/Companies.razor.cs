@@ -704,7 +704,7 @@ public partial class Companies
 				return EditCompany();
 			case "itemAddLocation":
 				_selectedTab = 1;
-				break;
+				return EditLocation(0);
 			case "itemAddContact":
 				_selectedTab = 2;
 				break;
