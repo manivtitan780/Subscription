@@ -4,7 +4,7 @@
 		<DialogPositionData X="right" Y="center" />
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
 		<DialogEvents OnOpen="DialogOpen" />
-		<SfDataForm EditContext="@Context" ID="companyEditForm" OnValidSubmit="SaveCompany" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+		<SfDataForm EditContext="@Context" ID="companyEditForm" OnValidSubmit="SaveCompany" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
@@ -15,18 +15,18 @@
 			<FormItems>
 				<FormGroup CssClass="formGroup" ID="groupInfo" LabelText="Company Information">
 					<FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.Name)" LabelText="Company Name:" Placeholder="Company Name" />
-					<FormItem Field="@nameof(Model.EIN)" ID="maskedEIN">
+					<FormItem Field="@nameof(Model.EIN)" ID="EIN">
 						<Template>
-							<label class="e-form-label" for="maskedEIN">EIN Number:</label>
-							<SfMaskedTextBox @bind-Value="Model.EIN" ID="maskedEIN" Mask="00-0000000" Placeholder="EIN Number" />
+							<label class="e-form-label" for="EIN">EIN Number:</label>
+							<SfMaskedTextBox @bind-Value="Model.EIN" ID="EIN" Mask="00-0000000" Placeholder="EIN Number" />
 						</Template>
 					</FormItem>
 					<FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.EmailAddress)" LabelText="Email Address:" Placeholder="Email Address" />
 					<FormItem EditorType="FormEditorType.TextBox" Field="@nameof(Model.Website)" LabelText="Website Address:" Placeholder="Website Address" />
-					<FormItem Field="@nameof(Model.DUNS)" ID="maskedDUNS">
+					<FormItem Field="@nameof(Model.DUNS)" ID="DUNS">
 						<Template>
-							<label class="e-form-label" for="maskedDUNS">D-U-N-S Number:</label>
-							<SfMaskedTextBox @bind-Value="Model.DUNS" ID="maskedDUNS" Mask="00-000-0000" Placeholder="D-U-N-S Number" />
+							<label class="e-form-label" for="DUNS">D-U-N-S Number:</label>
+							<SfMaskedTextBox @bind-Value="Model.DUNS" ID="DUNS" Mask="00-000-0000" Placeholder="D-U-N-S Number" />
 						</Template>
 					</FormItem>
 					<FormItem Field="@nameof(Model.NAICSCode)">
