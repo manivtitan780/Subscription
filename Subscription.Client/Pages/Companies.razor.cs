@@ -319,6 +319,7 @@ public partial class Companies
 									 {
 										 SelectedLocation.Clear();
 									 }
+									 SelectedLocation.CompanyID = _target.ID;
 								 }
 								 else
 								 {
@@ -450,7 +451,7 @@ public partial class Companies
 																			{
 																				Dictionary<string, string> _parameters = new()
 																														 {
-																															 {"userID", "ADMIN"}
+																															 {"user", "ADMIN"}
 																														 };
 																				List<CompanyLocations> _response =
 																					await General.PostRest<List<CompanyLocations>>("Company/SaveCompanyLocation", _parameters, SelectedLocation);

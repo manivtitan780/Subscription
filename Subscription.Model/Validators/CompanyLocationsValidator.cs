@@ -21,7 +21,10 @@ public class CompanyLocationsValidator : AbstractValidator<CompanyLocations>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.CompanyID).NotEmpty().WithMessage("Select a Company");
+		//When(x => x.CompanyID != 0, () =>
+		//							{
+		//								RuleFor(x => x.CompanyID).NotEmpty().WithMessage("Select a Company");
+		//							});
 
         RuleFor(x => x.EmailAddress).NotEmpty().WithMessage("Email Address should not be empty.")
                                     .Length(1, 255).WithMessage("Email Address should be less than {MaxLength} characters.")
