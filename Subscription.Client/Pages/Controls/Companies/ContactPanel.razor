@@ -4,7 +4,7 @@
             <GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
             <GridEvents RowSelected="RowSelected" TValue="CompanyContacts" />
             <GridColumns>
-                <GridColumn Field="@nameof(CompanyContacts.FirstName)" HeaderText="Name" Width="20%">
+                <GridColumn Field="@nameof(CompanyContacts.FirstName)" HeaderText="Name" Width="15%">
                     <Template Context="bCon">
                         @{
                             if (bCon is CompanyContacts _con)
@@ -15,7 +15,7 @@
                     </Template>
                 </GridColumn>
                 <GridColumn Field="@nameof(CompanyContacts.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" />
-                <GridColumn Field="@nameof(CompanyContacts.StreetName)" HeaderText="Address" Width="20%">
+                <GridColumn Field="@nameof(CompanyContacts.StreetName)" HeaderText="Address" Width="18%">
                     <Template Context="bCon">
                         @{
                             if (bCon is CompanyContacts _con)
@@ -25,8 +25,8 @@
                         }
                     </Template>
                 </GridColumn>
-                <GridColumn Field="@nameof(CompanyContacts.EmailAddress)" HeaderText="Email" Width="20%" />
-                <GridColumn Field="@nameof(CompanyContacts.Phone)" HeaderText="Phone" Width="20%/">
+                <GridColumn Field="@nameof(CompanyContacts.EmailAddress)" HeaderText="Email" Width="15%" />
+                <GridColumn Field="@nameof(CompanyContacts.Phone)" HeaderText="Phone" Width="12%/">
                     <Template Context="bCon">
                         @{
                             if (bCon is CompanyContacts _con)
@@ -46,7 +46,7 @@
                         }
                     </Template>
                 </GridColumn>
-                <GridColumn Field="@nameof(CompanyContacts.UpdatedBy)" HeaderText="Updated By" Width="20%">
+                <GridColumn Field="@nameof(CompanyContacts.UpdatedBy)" HeaderText="Updated By" Width="10%">
                     <Template Context="bCon">
                         @{
                             if (bCon is CompanyContacts _con)

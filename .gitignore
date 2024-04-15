@@ -17,6 +17,7 @@ errorlog*.txt
 *.sln.docstates
 *.zip
 ShowMe.txt
+# appsettings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

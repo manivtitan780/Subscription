@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-7-2024 19:53
-// Last Updated On:     4-9-2024 14:55
+// Last Updated On:     4-13-2024 15:17
 // *****************************************/
 
 #endregion
@@ -319,6 +319,7 @@ public partial class Companies
 									 {
 										 SelectedLocation.Clear();
 									 }
+
 									 SelectedLocation.CompanyID = _target.ID;
 								 }
 								 else

@@ -249,21 +249,26 @@ public class CompanyController : ControllerBase
                                   MiddleInitial = _reader.GetString(4),
                                   LastName = _reader.GetString(5),
                                   Suffix = _reader.GetString(6),
-                                  StreetName = _reader.GetString(7),
-                                  City = _reader.GetString(8),
-                                  StateID = _reader.GetByte(9),
-                                  State = _reader.GetString(10),
-                                  ZipCode = _reader.GetString(11),
-                                  EmailAddress = _reader.GetString(12),
-                                  Phone = _reader.GetString(13),
-                                  Extension = _reader.GetString(14),
-                                  Fax = _reader.GetString(15),
-                                  Title = _reader.GetString(16),
-                                  Department = _reader.GetString(17),
-                                  CreatedBy = _reader.GetString(18),
-                                  CreatedDate = _reader.GetDateTime(19),
-                                  UpdatedBy = _reader.GetString(20),
-                                  UpdatedDate = _reader.GetDateTime(21)
+                                  LocationID = _reader.GetInt32(7),
+                                  StreetName = _reader.GetString(8),
+                                  City = _reader.GetString(9),
+                                  StateID = _reader.GetByte(10),
+                                  State = _reader.GetString(11),
+                                  ZipCode = _reader.GetString(12),
+                                  EmailAddress = _reader.GetString(13),
+                                  Phone = _reader.GetString(14),
+                                  Extension = _reader.GetString(15),
+                                  Fax = _reader.GetString(16),
+                                  Title = _reader.GetString(17),
+                                  Department = _reader.GetString(18),
+                                  RoleID = _reader.GetInt32(19),
+                                  Role = _reader.GetString(20),
+                                  RoleName = _reader.GetString(21),
+                                  CreatedBy = _reader.GetString(22),
+                                  CreatedDate = _reader.GetDateTime(23),
+                                  UpdatedBy = _reader.GetString(24),
+                                  UpdatedDate = _reader.GetDateTime(25),
+                                  Notes = _reader.GetString(26)
                               });
             }
 
@@ -337,7 +342,7 @@ public class CompanyController : ControllerBase
 
         int _count = 0;
 
-        List<IntValues> _naics = [], _states = [];
+        List<IntValues> _naics = [], _states = [], _roles = [];
 
         _naics.Add(new()
                    {
@@ -359,6 +364,16 @@ public class CompanyController : ControllerBase
             _states.Add(new()
                         {
                             Value = _reader.GetInt32(0),
+                            Key = _reader.GetString(1)
+                        });
+        }
+
+        await _reader.NextResultAsync();
+        while (await _reader.ReadAsync())
+        {
+            _roles.Add(new()
+                        {
+                            Value = _reader.GetByte(0),
                             Key = _reader.GetString(1)
                         });
         }
@@ -403,6 +418,9 @@ public class CompanyController : ControllerBase
                    },
                    {
                        "States", _states
+                   },
+                   {
+                       "Roles", _roles
                    }
                };
     }
