@@ -41,13 +41,14 @@ public class RedisService
     /// <param name="hostName">The hostname of the Redis server.</param>
     /// <param name="sslPort">The SSL port to connect to the Redis server.</param>
     /// <param name="access">The access password for the Redis server.</param>
+    /// <param name="ssl"></param>
     /// <remarks>
     ///     This constructor establishes a secure connection to the Redis server using the provided hostname, SSL port, and
     ///     access password.
     /// </remarks>
-    public RedisService(string hostName, int sslPort, string access)
+    public RedisService(string hostName, int sslPort, string access, bool ssl)
     {
-        ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect($"{hostName}:{sslPort},password={access},ssl=false,abortConnect=False");
+        ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect($"{hostName}:{sslPort},password={access},ssl={ssl},abortConnect=False");
         _db = _redis.GetDatabase();
     }
 
@@ -112,7 +113,6 @@ public class RedisService
     ///     the default value of the type parameter.
     /// </summary>
     /// <param name="key">The key of the value to retrieve.</param>
-    /// <typeparam name="T">The type of the value to retrieve.</typeparam>
     /// <returns>The value associated with the specified key, if it exists; otherwise, the default value of the type parameter.</returns>
     public async Task<RedisValue> GetAsync(string key)
     {

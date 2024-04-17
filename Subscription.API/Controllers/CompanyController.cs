@@ -29,7 +29,7 @@ public class CompanyController : ControllerBase
     [HttpGet]
     public async Task<bool> CheckEIN(int companyID, string ein)
     {
-        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("CheckEIN", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("ID", companyID);
@@ -58,7 +58,7 @@ public class CompanyController : ControllerBase
             return -1;
         }
 
-        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await using SqlConnection _connection = new(Start.ConnectionString);
         await _connection.OpenAsync();
         int _returnCode = 0;
         await using SqlCommand _command = new("SaveCompany", _connection);
@@ -102,7 +102,7 @@ public class CompanyController : ControllerBase
             return null;
         }
 
-        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await using SqlConnection _connection = new(Start.ConnectionString);
         await _connection.OpenAsync();
 
         await using SqlCommand _command = new("SaveCompanyLocation", _connection);
@@ -163,7 +163,7 @@ public class CompanyController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<Dictionary<string, object>>> GetCompanyDetails(int companyID, string user)
     {
-        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await using SqlConnection _connection = new(Start.ConnectionString);
         CompanyDetails _company = null;
         string _companyName = "";
 
@@ -320,7 +320,7 @@ public class CompanyController : ControllerBase
     [HttpGet]
     public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
-        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await using SqlConnection _connection = new(Start.ConnectionString);
         List<Company> _companies = [];
         await using SqlCommand _command = new("GetCompanies", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -346,15 +346,15 @@ public class CompanyController : ControllerBase
 
         _naics.Add(new()
                    {
-                       Key = "--Select",
-                       Value = 0
+                       Key = 0,
+                       Value = "--Select"
                    });
         while (await _reader.ReadAsync())
         {
             _naics.Add(new()
                        {
-                           Value = _reader.GetInt32(0),
-                           Key = _reader.GetString(1)
+                           Key = _reader.GetInt32(0),
+                           Value = _reader.GetString(1)
                        });
         }
 
@@ -363,8 +363,8 @@ public class CompanyController : ControllerBase
         {
             _states.Add(new()
                         {
-                            Value = _reader.GetInt32(0),
-                            Key = _reader.GetString(1)
+                            Key = _reader.GetInt32(0),
+                            Value = _reader.GetString(1)
                         });
         }
 
@@ -373,8 +373,8 @@ public class CompanyController : ControllerBase
         {
             _roles.Add(new()
                         {
-                            Value = _reader.GetByte(0),
-                            Key = _reader.GetString(1)
+                            Key = _reader.GetByte(0),
+                            Value = _reader.GetString(1)
                         });
         }
 

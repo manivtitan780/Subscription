@@ -501,19 +501,19 @@ public partial class Companies
 
 			if (_companyDetails.StateID > 0)
 			{
-				IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+				IntValues _state = State.FirstOrDefault(state => state.Key == _companyDetails.StateID);
 
 				if (_state != null)
 				{
 					if (_generateAddress == "")
 					{
-						_generateAddress = $"<strong>{_state.Key.Trim()[7..]}</strong>";
+						_generateAddress = $"<strong>{_state.Value.Trim()[7..]}</strong>";
 					}
 					else
 					{
 						try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 						{
-							_generateAddress += $", <strong>{_state.Key.Trim()[7..]}</strong>";
+							_generateAddress += $", <strong>{_state.Value.Trim()[7..]}</strong>";
 						}
 						catch
 						{
@@ -553,19 +553,19 @@ public partial class Companies
 
 				if (_companyDetails.StateID > 0)
 				{
-					IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
+					IntValues _state = State.FirstOrDefault(state => state.Key == _loc.StateID);
 
 					if (_state != null)
 					{
 						if (_generateAddress == "")
 						{
-							_generateAddress = $"<strong>{_state.Key.Trim()[7..]}</strong>";
+							_generateAddress = $"<strong>{_state.Value.Trim()[7..]}</strong>";
 						}
 						else
 						{
 							try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 							{
-								_generateAddress += $", <strong>{_state.Key.Trim()[7..]}</strong>";
+								_generateAddress += $", <strong>{_state.Value.Trim()[7..]}</strong>";
 							}
 							catch
 							{
@@ -606,19 +606,19 @@ public partial class Companies
 
 			if (_companyDetails.StateID > 0)
 			{
-				IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+				IntValues _state = State.FirstOrDefault(state => state.Key == _companyDetails.StateID);
 
 				if (_state != null)
 				{
 					if (_address == "")
 					{
-						_address = $"{_state.Key.Trim().Substring(1, 2)}";
+						_address = $"{_state.Value.Trim().Substring(1, 2)}";
 					}
 					else
 					{
 						try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 						{
-							_address += $", {_state.Key.Trim().Substring(1, 2)}";
+							_address += $", {_state.Value.Trim().Substring(1, 2)}";
 						}
 						catch
 						{
@@ -649,19 +649,19 @@ public partial class Companies
 
 				if (_loc.StateID > 0)
 				{
-					IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
+					IntValues _state = State.FirstOrDefault(state => state.Key == _loc.StateID);
 
 					if (_state != null)
 					{
 						if (_address == "")
 						{
-							_address = $"{_state.Key.Trim().Substring(1, 2)}";
+							_address = $"{_state.Value.Trim().Substring(1, 2)}";
 						}
 						else
 						{
 							try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 							{
-								_address += $", {_state.Key.Trim().Substring(1, 2)}";
+								_address += $", {_state.Value.Trim().Substring(1, 2)}";
 							}
 							catch
 							{
