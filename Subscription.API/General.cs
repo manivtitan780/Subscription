@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          4-17-2024 14:39
-// Last Updated On:     4-17-2024 20:54
+// Last Updated On:     4-18-2024 15:25
 // *****************************************/
 
 #endregion
@@ -124,8 +124,8 @@ public static class General
 							   ID = _reader.GetString(0), RoleName = _reader.GetString(1), ViewCandidate = _reader.GetBoolean(2), ViewRequisition = _reader.GetBoolean(3),
 							   EditCandidate = _reader.GetBoolean(4), EditRequisition = _reader.GetBoolean(5), ChangeCandidateStatus = _reader.GetBoolean(6),
 							   ChangeRequisitionStatus = _reader.GetBoolean(7), SendEmailCandidate = _reader.GetBoolean(8), ForwardResume = _reader.GetBoolean(9),
-							   DownloadResume = _reader.GetBoolean(10),
-							   SubmitCandidate = _reader.GetBoolean(11), ViewClients = _reader.GetBoolean(12), EditClients = _reader.GetBoolean(13), Description = _reader.GetString(14)
+							   DownloadResume = _reader.GetBoolean(10), SubmitCandidate = _reader.GetBoolean(11), ViewClients = _reader.GetBoolean(12), EditClients = _reader.GetBoolean(13),
+							   Description = _reader.GetString(14)
 						   });
 			}
 
@@ -210,12 +210,12 @@ public static class General
 			intValues.Add(new()
 						  {
 							  Value = keyType switch
-									{
-										0 => reader.GetInt32(0),
-										1 => reader.GetInt16(0),
-										2 => reader.GetByte(0),
-										_ => 0
-									},
+									  {
+										  0 => reader.GetInt32(0),
+										  1 => reader.GetInt16(0),
+										  2 => reader.GetByte(0),
+										  _ => 0
+									  },
 							  Text = reader.GetString(1)
 						  });
 		}

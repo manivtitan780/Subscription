@@ -8,16 +8,8 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          2-7-2024 19:53
-// Last Updated On:     4-13-2024 15:17
+// Last Updated On:     4-18-2024 15:29
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using StackExchange.Redis;
-
-using Syncfusion.Blazor.Buttons;
 
 #endregion
 
@@ -366,12 +358,12 @@ public partial class Companies
 																					  if (company.RequestType == GridAction.Sorting)
 																					  {
 																						  SearchModel.SortField = company.ColumnName switch
-																						  {
-																							  "CompanyName" => 1,
-																							  "Address" => 2,
-																							  "UpdatedDate" => 3,
-																							  _ => 3
-																						  };
+																												  {
+																													  "CompanyName" => 1,
+																													  "Address" => 2,
+																													  "UpdatedDate" => 3,
+																													  _ => 3
+																												  };
 																						  SearchModel.SortDirection = company.Direction == SortDirection.Ascending ? (byte)1 : (byte)0;
 																						  //await SessionStorage.SetItemAsync(StorageName, SearchModel);
 																						  await Grid.Refresh();
@@ -389,14 +381,14 @@ public partial class Companies
 		await ExecuteMethod(() =>
 							{
 								SearchModel = new()
-								{
-									CompanyName = "",
-									ItemCount = 25,
-									Page = 5,
-									SortDirection = 1,
-									SortField = 1,
-									User = "ADMIN"
-								};
+											  {
+												  CompanyName = "",
+												  ItemCount = 25,
+												  Page = 5,
+												  SortDirection = 1,
+												  SortField = 1,
+												  User = "ADMIN"
+											  };
 								return Task.CompletedTask;
 							});
 		_initializationTaskSource.SetResult(true);
@@ -769,10 +761,10 @@ public partial class Companies
 					if (_restResponse == null)
 					{
 						_companyReturn = dm.RequiresCounts ? new DataResult
-						{
-							Result = _dataSource,
-							Count = 0 /*_count*/
-						} : _dataSource;
+															 {
+																 Result = _dataSource,
+																 Count = 0 /*_count*/
+															 } : _dataSource;
 					}
 					else
 					{
@@ -785,24 +777,25 @@ public partial class Companies
 							NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
 							State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
 						}
+
 						_dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
 						int _count = _restResponse["Count"].ToInt32();
 						Count = _count;
 						if (_dataSource == null)
 						{
 							_companyReturn = dm.RequiresCounts ? new DataResult
-							{
-								Result = null,
-								Count = 1
-							} : null;
+																 {
+																	 Result = null,
+																	 Count = 1
+																 } : null;
 						}
 						else
 						{
 							_companyReturn = dm.RequiresCounts ? new DataResult
-							{
-								Result = _dataSource,
-								Count = _count /*_count*/
-							} : _dataSource;
+																 {
+																	 Result = _dataSource,
+																	 Count = _count /*_count*/
+																 } : _dataSource;
 						}
 					}
 				}
@@ -811,20 +804,20 @@ public partial class Companies
 					if (_dataSource == null)
 					{
 						_companyReturn = dm.RequiresCounts ? new DataResult
-						{
-							Result = null,
-							Count = 1
-						} : null;
+															 {
+																 Result = null,
+																 Count = 1
+															 } : null;
 					}
 					else
 					{
 						_dataSource.Add(new());
 
 						_companyReturn = dm.RequiresCounts ? new DataResult
-						{
-							Result = _dataSource,
-							Count = 1
-						} : _dataSource;
+															 {
+																 Result = _dataSource,
+																 Count = 1
+															 } : _dataSource;
 					}
 				}
 

@@ -27,6 +27,8 @@ global using Blazor.SubtleCrypto;
 
 global using System.IO.Compression;
 
+global using Syncfusion.Blazor.Buttons;
+
 global using Syncfusion.Licensing;
 
 global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

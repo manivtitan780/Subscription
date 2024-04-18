@@ -261,7 +261,7 @@ public class CompanyController : ControllerBase
                                   Fax = _reader.GetString(16),
                                   Title = _reader.GetString(17),
                                   Department = _reader.GetString(18),
-                                  RoleID = _reader.GetInt32(19),
+                                  RoleID = _reader.GetByte(19),
                                   Role = _reader.GetString(20),
                                   RoleName = _reader.GetString(21),
                                   CreatedBy = _reader.GetString(22),
