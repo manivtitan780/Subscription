@@ -17,9 +17,28 @@ namespace Subscription.Client.Code;
 
 public class Start
 {
+    public static string Access
+    {
+        get;
+        set;
+    }
+
     public static string APIHost
     {
         get;
         set;
     }
+
+    public static string CachePort
+    {
+        get;
+        set;
+    }
+
+    public static string CacheServer
+    {
+        get;
+        set;
+    }
+
 }

@@ -33,8 +33,6 @@ _builder.Services.AddEndpointsApiExplorer();
 _builder.Services.AddSwaggerGen();
 ConfigurationManager _config = _builder.Configuration;
 
-_builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect($"{_config["Garnet:HostName"]}:{_config["Garnet:SslPort"]},password={_config["Garnet:Access"]}"));
-
 WebApplication _app = _builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,32 +48,36 @@ _app.UseAuthorization();
 
 _app.MapControllers();
 
-bool _isLocal = false;
+bool _isLocal = false, _isSet = false;
 _app.Use(async (context, next) =>
 		 {
-			 if (context.Request.Host.Host.Contains("localhost") || context.Request.Host.Host.Contains("127.0.0.1"))
+			 if (!_isSet)
 			 {
-				 _isLocal = true;
-			 }
+				 if (context.Request.Host.Host.Contains("localhost") || context.Request.Host.Host.Contains("127.0.0.1"))
+				 {
+					 _isLocal = true;
+				 }
 
-			 if (_isLocal)
-			 {
-				 Start.APIHost = _config["APIHost"];
-				 Start.ConnectionString = _config.GetConnectionString("DBConnect");
-				 Start.CacheServer = _config["Garnet:HostName"];
-				 Start.CachePort = _config["Garnet:SslPort"];
-				 Start.Access = _config["Garnet:Access"];
-			 }
-			 else
-			 {
-				 Start.APIHost = _config["APIHostServer"];
-				 Start.ConnectionString = _config.GetConnectionString("DBConnectServer");
-				 Start.CacheServer = _config["GarnetServer:HostName"];
-				 Start.CachePort = _config["GarnetServer:SslPort"];
-				 Start.Access = _config["GarnetServer:Access"];
-			 }
+				 if (_isLocal)
+				 {
+					 Start.APIHost = _config["APIHost"];
+					 Start.ConnectionString = _config.GetConnectionString("DBConnect");
+					 Start.CacheServer = _config["Garnet:HostName"];
+					 Start.CachePort = _config["Garnet:SslPort"];
+					 Start.Access = _config["Garnet:Access"];
+				 }
+				 else
+				 {
+					 Start.APIHost = _config["APIHostServer"];
+					 Start.ConnectionString = _config.GetConnectionString("DBConnectServer");
+					 Start.CacheServer = _config["GarnetServer:HostName"];
+					 Start.CachePort = _config["GarnetServer:SslPort"];
+					 Start.Access = _config["GarnetServer:Access"];
+				 }
 
-			 await General.SetCache();
+				 await General.SetCache();
+				 _isSet = true;
+			 }
 
 			 await next.Invoke();
 		 });

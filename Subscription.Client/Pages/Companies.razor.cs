@@ -15,6 +15,8 @@
 
 #region Using
 
+using StackExchange.Redis;
+
 using Syncfusion.Blazor.Buttons;
 
 #endregion
@@ -110,7 +112,7 @@ public partial class Companies
 	{
 		get;
 		set;
-	}
+	} = [];
 
 	/// <summary>
 	///     Gets or sets the instance of the NavigationManager service used in the Companies page.
@@ -192,7 +194,7 @@ public partial class Companies
 	{
 		get;
 		set;
-	}
+	} = [];
 
 	private Task DataHandler() => ExecuteMethod(async () =>
 												{
@@ -364,12 +366,12 @@ public partial class Companies
 																					  if (company.RequestType == GridAction.Sorting)
 																					  {
 																						  SearchModel.SortField = company.ColumnName switch
-																												  {
-																													  "CompanyName" => 1,
-																													  "Address" => 2,
-																													  "UpdatedDate" => 3,
-																													  _ => 3
-																												  };
+																						  {
+																							  "CompanyName" => 1,
+																							  "Address" => 2,
+																							  "UpdatedDate" => 3,
+																							  _ => 3
+																						  };
 																						  SearchModel.SortDirection = company.Direction == SortDirection.Ascending ? (byte)1 : (byte)0;
 																						  //await SessionStorage.SetItemAsync(StorageName, SearchModel);
 																						  await Grid.Refresh();
@@ -387,14 +389,14 @@ public partial class Companies
 		await ExecuteMethod(() =>
 							{
 								SearchModel = new()
-											  {
-												  CompanyName = "",
-												  ItemCount = 25,
-												  Page = 5,
-												  SortDirection = 1,
-												  SortField = 1,
-												  User = "ADMIN"
-											  };
+								{
+									CompanyName = "",
+									ItemCount = 25,
+									Page = 5,
+									SortDirection = 1,
+									SortField = 1,
+									User = "ADMIN"
+								};
 								return Task.CompletedTask;
 							});
 		_initializationTaskSource.SetResult(true);
@@ -501,19 +503,19 @@ public partial class Companies
 
 			if (_companyDetails.StateID > 0)
 			{
-				IntValues _state = State.FirstOrDefault(state => state.Key == _companyDetails.StateID);
+				IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
 
 				if (_state != null)
 				{
 					if (_generateAddress == "")
 					{
-						_generateAddress = $"<strong>{_state.Value.Trim()[7..]}</strong>";
+						_generateAddress = $"<strong>{_state.Text.Trim()[7..]}</strong>";
 					}
 					else
 					{
 						try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 						{
-							_generateAddress += $", <strong>{_state.Value.Trim()[7..]}</strong>";
+							_generateAddress += $", <strong>{_state.Text.Trim()[7..]}</strong>";
 						}
 						catch
 						{
@@ -553,19 +555,19 @@ public partial class Companies
 
 				if (_companyDetails.StateID > 0)
 				{
-					IntValues _state = State.FirstOrDefault(state => state.Key == _loc.StateID);
+					IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
 
 					if (_state != null)
 					{
 						if (_generateAddress == "")
 						{
-							_generateAddress = $"<strong>{_state.Value.Trim()[7..]}</strong>";
+							_generateAddress = $"<strong>{_state.Text.Trim()[7..]}</strong>";
 						}
 						else
 						{
 							try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 							{
-								_generateAddress += $", <strong>{_state.Value.Trim()[7..]}</strong>";
+								_generateAddress += $", <strong>{_state.Text.Trim()[7..]}</strong>";
 							}
 							catch
 							{
@@ -606,19 +608,19 @@ public partial class Companies
 
 			if (_companyDetails.StateID > 0)
 			{
-				IntValues _state = State.FirstOrDefault(state => state.Key == _companyDetails.StateID);
+				IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
 
 				if (_state != null)
 				{
 					if (_address == "")
 					{
-						_address = $"{_state.Value.Trim().Substring(1, 2)}";
+						_address = $"{_state.Text.Trim().Substring(1, 2)}";
 					}
 					else
 					{
 						try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 						{
-							_address += $", {_state.Value.Trim().Substring(1, 2)}";
+							_address += $", {_state.Text.Trim().Substring(1, 2)}";
 						}
 						catch
 						{
@@ -649,19 +651,19 @@ public partial class Companies
 
 				if (_loc.StateID > 0)
 				{
-					IntValues _state = State.FirstOrDefault(state => state.Key == _loc.StateID);
+					IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
 
 					if (_state != null)
 					{
 						if (_address == "")
 						{
-							_address = $"{_state.Value.Trim().Substring(1, 2)}";
+							_address = $"{_state.Text.Trim().Substring(1, 2)}";
 						}
 						else
 						{
 							try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
 							{
-								_address += $", {_state.Value.Trim().Substring(1, 2)}";
+								_address += $", {_state.Text.Trim().Substring(1, 2)}";
 							}
 							catch
 							{
@@ -767,33 +769,40 @@ public partial class Companies
 					if (_restResponse == null)
 					{
 						_companyReturn = dm.RequiresCounts ? new DataResult
-															 {
-																 Result = _dataSource,
-																 Count = 0 /*_count*/
-															 } : _dataSource;
+						{
+							Result = _dataSource,
+							Count = 0 /*_count*/
+						} : _dataSource;
 					}
 					else
 					{
-						NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["NAICS"].ToString() ?? string.Empty);
-						State = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["States"].ToString() ?? string.Empty);
+						if (NAICS is not {Count: not 0} || State is not {Count: not 0})
+						{
+							RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+							List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
+
+							Dictionary<string, string> _values = await _service.BatchGet(_keys);
+							NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
+							State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
+						}
 						_dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
 						int _count = _restResponse["Count"].ToInt32();
 						Count = _count;
 						if (_dataSource == null)
 						{
 							_companyReturn = dm.RequiresCounts ? new DataResult
-																 {
-																	 Result = null,
-																	 Count = 1
-																 } : null;
+							{
+								Result = null,
+								Count = 1
+							} : null;
 						}
 						else
 						{
 							_companyReturn = dm.RequiresCounts ? new DataResult
-																 {
-																	 Result = _dataSource,
-																	 Count = _count /*_count*/
-																 } : _dataSource;
+							{
+								Result = _dataSource,
+								Count = _count /*_count*/
+							} : _dataSource;
 						}
 					}
 				}
@@ -802,20 +811,20 @@ public partial class Companies
 					if (_dataSource == null)
 					{
 						_companyReturn = dm.RequiresCounts ? new DataResult
-															 {
-																 Result = null,
-																 Count = 1
-															 } : null;
+						{
+							Result = null,
+							Count = 1
+						} : null;
 					}
 					else
 					{
 						_dataSource.Add(new());
 
 						_companyReturn = dm.RequiresCounts ? new DataResult
-															 {
-																 Result = _dataSource,
-																 Count = 1
-															 } : _dataSource;
+						{
+							Result = _dataSource,
+							Count = 1
+						} : _dataSource;
 					}
 				}
 

@@ -8,13 +8,13 @@ namespace Subscription.Model
 {
     public class IntValues
     {
-        public int Key
+        public int Value
         {
             get;
             set;
         }
 
-        public string Value
+        public string Text
         {
             get; 
             set;

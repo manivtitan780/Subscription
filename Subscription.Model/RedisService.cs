@@ -16,6 +16,7 @@
 #region Using
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using StackExchange.Redis;
 
@@ -66,13 +67,21 @@ public class RedisService
     ///     This method retrieves the values associated with the keys provided in the keyArray from the Redis database. If a
     ///     key does not exist in the database, its associated value in the returned dictionary will be null.
     /// </remarks>
-    public async Task<List<RedisValue>> BatchGet(IEnumerable<string> keyArray)
-    {
-        RedisKey[] _keys = keyArray.Select(k => (RedisKey)k).ToArray();
+    public async Task<Dictionary<string, string>> BatchGet(IEnumerable<string> keyArray)
+	{
+        IEnumerable<string> _keyArray = keyArray.ToList();
+        RedisKey[] _keys = _keyArray.Select(k => (RedisKey)k).ToArray();
 
         RedisValue[] _values = await _db.StringGetAsync(_keys);
+        Dictionary<string, string> _return = new();
+        int i = 0;
+        foreach (string _key in _keyArray)
+        {
+            _return.Add(_key, _values[i].ToString());
+            i++;
+        }
 
-        return _values.ToList();
+        return _return;
     }
 
     /// <summary>

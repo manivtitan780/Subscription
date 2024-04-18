@@ -346,15 +346,15 @@ public class CompanyController : ControllerBase
 
         _naics.Add(new()
                    {
-                       Key = 0,
-                       Value = "--Select"
+                       Value = 0,
+                       Text = "--Select"
                    });
         while (await _reader.ReadAsync())
         {
             _naics.Add(new()
                        {
-                           Key = _reader.GetInt32(0),
-                           Value = _reader.GetString(1)
+                           Value = _reader.GetInt32(0),
+                           Text = _reader.GetString(1)
                        });
         }
 
@@ -363,8 +363,8 @@ public class CompanyController : ControllerBase
         {
             _states.Add(new()
                         {
-                            Key = _reader.GetInt32(0),
-                            Value = _reader.GetString(1)
+                            Value = _reader.GetInt32(0),
+                            Text = _reader.GetString(1)
                         });
         }
 
@@ -373,8 +373,8 @@ public class CompanyController : ControllerBase
         {
             _roles.Add(new()
                         {
-                            Key = _reader.GetByte(0),
-                            Value = _reader.GetString(1)
+                            Value = _reader.GetByte(0),
+                            Text = _reader.GetString(1)
                         });
         }
 
