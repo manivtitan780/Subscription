@@ -22,6 +22,7 @@ global using Subscription.Client.Pages;
 global using Syncfusion.Blazor;
 global using Syncfusion.Blazor.Data;
 global using Syncfusion.Blazor.Popups;
+global using Subscription.Model.Validators;
 
 global using Blazor.SubtleCrypto;
 

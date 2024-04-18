@@ -112,25 +112,4 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6948088-D300-440B-A379-3CB09F3D1880}
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://maniv.visualstudio.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Extensions\\Extensions.csproj
-		SccProjectName1 = Extensions
-		SccLocalPath1 = Extensions
-		SccProjectUniqueName2 = Subscription.API\\Subscription.API.csproj
-		SccProjectName2 = Subscription.API
-		SccLocalPath2 = Subscription.API
-		SccProjectUniqueName3 = Subscription.Client\\Subscription.Client.csproj
-		SccProjectName3 = Subscription.Client
-		SccLocalPath3 = Subscription.Client
-		SccProjectUniqueName4 = Subscription.Model\\Subscription.Model.csproj
-		SccProjectName4 = Subscription.Model
-		SccLocalPath4 = Subscription.Model
-		SccProjectUniqueName5 = Subscription\\Subscription.csproj
-		SccProjectName5 = Subscription
-		SccLocalPath5 = Subscription
-	EndGlobalSection
 EndGlobal

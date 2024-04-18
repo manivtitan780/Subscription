@@ -5,17 +5,19 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Client
-// File Name:           EditCompany.razor.cs
+// File Name:           EditContact.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          3-7-2024 19:59
-// Last Updated On:     4-8-2024 21:14
+// Created On:          4-18-2024 16:16
+// Last Updated On:     4-18-2024 16:16
 // *****************************************/
 
 #endregion
 
+using Subscription.Model.Validators;
+
 namespace Subscription.Client.Pages.Controls.Companies;
 
-public partial class EditCompany
+public partial class EditContact
 {
 	private CompanyDetailsValidator _companyValidator = new();
 
