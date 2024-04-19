@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Subscription.csproj.vspscc" />
   </ItemGroup>
 
@@ -36,5 +40,13 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
   </Target>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Login.razor" />
+  </ItemGroup>
 
 </Project>

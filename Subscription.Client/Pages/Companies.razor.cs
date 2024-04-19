@@ -285,9 +285,9 @@ public partial class Companies
 	public void DetailRowCollapse() => _target = null;
 
 	/// <summary>
-	/// Executes the EditCompany method to open the CompanyEditDialog component for editing company details.
+	/// Opens the company edit dialog for adding a new company or editing an existing one.
 	/// </summary>
-	/// <returns>Task</returns>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
 	private Task EditCompany() => ExecuteMethod(async () =>
 												{
 													await General.DisplaySpinner(Spinner);

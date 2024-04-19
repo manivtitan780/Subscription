@@ -666,3 +666,42 @@ div#tabCompany div#e-content-tabCompany_0 div.divPanelContainerVertical {
 }
 
 /* #endregion Tabs*/
+
+/* #region Login Page */
+
+.container {
+    border:1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px 0 #ddd;
+    margin: auto;
+    margin-top: 50px;
+    padding: 10px;
+    width: 50%;
+    margin-bottom: 10px;
+}
+
+.row {
+    align-items: center;
+    display: flex;
+    height: 35px;
+    justify-content: center;
+}
+
+.column {
+    flex: 1;
+}
+
+.column30 {
+    flex: 0 0 30%;
+    max-width: 160px;
+}
+
+.column70 {
+    flex: 1;
+}
+
+.center {
+    text-align: center;
+}
+
+/* #endregion Login Page*/
