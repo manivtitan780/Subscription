@@ -29,12 +29,17 @@ public partial class Companies
 
 	private Company _target;
 
+	/// <summary>
+	///    Gets or sets the instance of the Address component. This component is used to display the address of the selected.
+	/// </summary>
 	private MarkupString Address
 	{
 		get;
 		set;
 	}
-
+	/// <summary>
+	/// Sets or gets the instance of the EditCompany component. This component is used to edit company details.
+	/// </summary>
 	private EditCompany CompanyEditDialog
 	{
 		get;
@@ -188,6 +193,10 @@ public partial class Companies
 		set;
 	} = [];
 
+	/// <summary>
+	/// Handles the OnInitializedAsync lifecycle event of the Companies page.
+	/// </summary>
+	/// <returns></returns>
 	private Task DataHandler() => ExecuteMethod(async () =>
 												{
 													DotNetObjectReference<Companies> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
@@ -199,6 +208,11 @@ public partial class Companies
 													}
 												});
 
+	/// <summary>
+	/// Fires when the detail row is expanded in the Companies page grid view. This method is invoked from JavaScript.
+	/// </summary>
+	/// <param name="company"></param>
+	/// <returns></returns>
 	private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
 																							{
 																								if (_target != null && _target != company.Data)
@@ -270,6 +284,10 @@ public partial class Companies
 	[JSInvokable("DetailCollapse")]
 	public void DetailRowCollapse() => _target = null;
 
+	/// <summary>
+	/// Executes the EditCompany method to open the CompanyEditDialog component for editing company details.
+	/// </summary>
+	/// <returns>Task</returns>
 	private Task EditCompany() => ExecuteMethod(async () =>
 												{
 													await General.DisplaySpinner(Spinner);
