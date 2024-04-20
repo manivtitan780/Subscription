@@ -1,43 +1,37 @@
 ﻿@page "/login"
+@using LabelPosition = Syncfusion.Blazor.Buttons.LabelPosition
 @layout SubscriptionLayout
 
 <PageHeader />
 
-<div class="container">
-	<div class="row">
-		<div class="column center">
-			<h2>Login</h2>
+<EditForm Model="@LoginModel" OnValidSubmit="ValidateLogin" @ref="LoginForm">
+	<div class="grid-container">
+		<div class="header">Login</div>
+		<div class="left">
+			&nbsp;
+		</div>
+		<div class="right">
+			&nbsp;
+		</div>
+        <div class="left">
+            <label for="textUserName">User Name:</label>
+        </div>
+        <div class="right">
+            <SfTextBox Autocomplete="AutoComplete.On" @bind-Value="LoginModel.UserName" ID="textUserName" Placeholder="Enter User Name" Type="InputType.Text" Width="90%"></SfTextBox>
+        </div>
+        <div class="left">
+			<label for="textPassword">Password:</label>
+		</div>
+		<div class="right">
+			<SfTextBox Autocomplete="AutoComplete.Off" @bind-Value="LoginModel.Password" ID="textPassword" Placeholder="Enter Password" Type="InputType.Password" Width="90%"></SfTextBox>
+		</div>
+		<div class="left">&nbsp;</div>
+		<div class="right">
+			<SfCheckBox @bind-Checked="LoginModel.RememberMe" Indeterminate="false" Label="Remember Me for 14 days?" LabelPosition="LabelPosition.After"></SfCheckBox>
+		</div>
+		<div class="footer">
+			<button class="button">Button 1</button>
+			<button class="button">Button 2</button>
 		</div>
 	</div>
-	<div class="row">
-		<div class="column column30">
-			<label for="username">User Name</label>
-		</div>
-		<div class="column column70">
-			<input type="text" id="username" name="username">
-		</div>
-	</div>
-	<div class="row">
-		<div class="column column30">
-			<label for="password">Password</label>
-		</div>
-		<div class="column column70">
-			<input type="password" id="password" name="password">
-		</div>
-	</div>
-	<div class="row">
-		<div class="column column30">
-			<!-- Empty Column -->
-		</div>
-		<div class="column column70">
-			<input type="checkbox" id="remember" name="remember">
-			<label for="remember">Remember me</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="column center">
-			<button type="submit">Login</button>
-			<button type="reset">Reset</button>
-		</div>
-	</div>
-</div>
+</EditForm>

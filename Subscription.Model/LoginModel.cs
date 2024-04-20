@@ -4,31 +4,32 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Subscription.Client
-// File Name:           Login.razor.cs
+// Project:             Subscription.Model
+// File Name:           LoginModel.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          4-19-2024 14:59
-// Last Updated On:     4-19-2024 14:59
+// Created On:          4-19-2024 19:16
+// Last Updated On:     4-19-2024 19:16
 // *****************************************/
 
 #endregion
 
-namespace Subscription.Client.Pages;
+namespace Subscription.Model;
 
-public partial class Login
+public class LoginModel
 {
-    private Task ValidateLogin(EditContext arg)
-    {
-        return null;
-    }
-
-    private LoginModel LoginModel
+    public string Password
     {
         get;
         set;
-    } = new();
+    }
 
-    private EditForm LoginForm
+    public bool RememberMe
+    {
+        get;
+        set;
+    }
+
+    public string UserName
     {
         get;
         set;

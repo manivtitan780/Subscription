@@ -402,7 +402,7 @@ body, form, html {
 
 .e-input-group:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-input-group.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input.e-control-wrapper:active:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) input:not([disabled]), .e-float-input:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]), .e-float-input.e-control-wrapper:active:hover:not(.e-input-group):not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled) textarea:not([disabled]),
 .e-input-group.e-input-focus:not(.e-error):not(.e-warning).e-success, .e-input-group.e-control-wrapper.e-input-focus:not(.e-error):not(.e-warning).e-success,
-.e-input-group:not(.e-disabled):active:not(.e-success):not(.e-warning).e-error, .e-input-group.e-control-wrapper:not(.e-disabled):active:not(.e-success):not(.e-warning).e-error, 
+.e-input-group:not(.e-disabled):active:not(.e-success):not(.e-warning).e-error, .e-input-group.e-control-wrapper:not(.e-disabled):active:not(.e-success):not(.e-warning).e-error,
 .e-input-group.e-input-focus:not(.e-success):not(.e-warning).e-error, .e-input-group.e-control-wrapper.e-input-focus:not(.e-success):not(.e-warning).e-error {
     box-shadow: 0 0 0 0 #a4262c;
 }
@@ -441,7 +441,7 @@ body, form, html {
     background: #f6f6f6;
 }
 
-.e-pager .e-numericitem{
+.e-pager .e-numericitem {
     background: var(--c-wh);
 }
 
@@ -669,39 +669,71 @@ div#tabCompany div#e-content-tabCompany_0 div.divPanelContainerVertical {
 
 /* #region Login Page */
 
-.container {
-    border:1px solid #ddd;
+.grid-container {
+    border: 1px solid #ddd;
+    display: grid;
+    grid-template-rows: 50px 20px 50px 50px 50px 50px;
+    grid-template-columns: 30% auto;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px 0 #ddd;
-    margin: auto;
-    margin-top: 50px;
-    padding: 10px;
-    width: 50%;
-    margin-bottom: 10px;
+    box-shadow: 3px 3px 7px #999;
+    font-family: var(--font-family);
+    margin: 75px auto;
+    width: 400px;
 }
 
-.row {
-    align-items: center;
+.header, .footer {
+    grid-column: 1 / span 2;
+    background-color: var(--c-red);
+    color: white;
+    font-size: 20pt;
+    font-weight: bold;
     display: flex;
-    height: 35px;
     justify-content: center;
+    align-items: center;
 }
 
-.column {
-    flex: 1;
+.header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 10px;
 }
 
-.column30 {
-    flex: 0 0 30%;
-    max-width: 160px;
+.footer {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-.column70 {
-    flex: 1;
+.left {
+    grid-column: 1;
+    max-width: 110px;
+    padding-left: 10px;
 }
 
-.center {
-    text-align: center;
+.left label {
+    font-size: 11pt;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+.right {
+    grid-column: 2;
+    width: 100%;
 }
 
 /* #endregion Login Page*/
+
+/* #region CheckBox*/
+
+.e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
+    background-color: var(--c-red) !important;
+    border-color: var(--c-red) !important;
+    color: #fff;
+}
+
+.e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check, .e-css.e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check {
+    background-color: var(--c-red);
+    border-color: var(--c-red);
+    box-shadow: none;
+    color: #fff;
+}
+/* #endregion*/
