@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
 using Subscription.API;
+using Subscription.API.Code;
 
 #endregion
 

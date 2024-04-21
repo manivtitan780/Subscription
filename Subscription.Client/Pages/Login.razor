@@ -4,7 +4,7 @@
 
 <PageHeader />
 
-<EditForm Model="@LoginModel" OnValidSubmit="ValidateLogin" @ref="LoginForm">
+<EditForm Model="@LoginModel" OnValidSubmit="LoginToApplication" @ref="LoginForm">
 	<div class="grid-container">
 		<div class="header">Login</div>
 		<div class="left">
@@ -27,11 +27,10 @@
 		</div>
 		<div class="left">&nbsp;</div>
 		<div class="right">
-			<SfCheckBox @bind-Checked="LoginModel.RememberMe" Indeterminate="false" Label="Remember Me for 14 days?" LabelPosition="LabelPosition.After"></SfCheckBox>
+			<SfCheckBox @bind-Checked="LoginModel.RememberMe" Indeterminate="false" Label="Remember me for 14 days?" LabelPosition="LabelPosition.After"></SfCheckBox>
 		</div>
 		<div class="footer">
-			<button class="button">Button 1</button>
-			<button class="button">Button 2</button>
+			<SfButton CssClass="e-primary" type="submit">Login</SfButton>
 		</div>
 	</div>
 </EditForm>

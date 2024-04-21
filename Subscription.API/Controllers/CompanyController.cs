@@ -16,15 +16,15 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class CompanyController : ControllerBase
+public class CompanyController(IConfiguration configuration) : ControllerBase
 {
-    /// <summary>
+    /*/// <summary>
     ///     Initializes a new instance of the <see cref="CompanyController" /> class.
     /// </summary>
     /// <param name="configuration">The application configuration, injected by the ASP.NET Core DI container.</param>
-    public CompanyController(IConfiguration configuration) => _configuration = configuration;
+    //public CompanyController(IConfiguration configuration) => _configuration = configuration;
 
-    private readonly IConfiguration _configuration;
+    //private readonly IConfiguration _configuration;*/
 
     [HttpGet]
     public async Task<bool> CheckEIN(int companyID, string ein)

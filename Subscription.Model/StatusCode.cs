@@ -13,7 +13,7 @@
 
 #endregion
 
-namespace ProfSvc_Classes;
+namespace Subscription.Model;
 
 /// <summary>
 ///     Represents a status code in the Professional Services application.

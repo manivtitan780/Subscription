@@ -17,7 +17,7 @@ namespace Subscription.Client.Pages;
 
 public partial class Login
 {
-    private Task ValidateLogin(EditContext arg)
+    private Task LoginToApplication(EditContext arg)
     {
         return null;
     }

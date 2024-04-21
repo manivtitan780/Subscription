@@ -13,7 +13,7 @@
 
 #endregion
 
-namespace ProfSvc_Classes;
+namespace Subscription.Model;
 
 /// <summary>
 ///     Represents a role in the Professional Services application.

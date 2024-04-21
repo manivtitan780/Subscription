@@ -13,7 +13,7 @@
 
 #endregion
 
-namespace ProfSvc_Classes;
+namespace Subscription.Model;
 
 /// <summary>
 ///     Represents a Zip code and associated information such as city, state, and state ID.
