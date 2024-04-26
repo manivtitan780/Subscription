@@ -1,0 +1,27 @@
+﻿@switch (Display)
+{
+	case PanelDisplay.Horizontal when MarkupText.NullOrWhiteSpace():
+		<div class="divPanelContainer">
+			<span class="spanLeftLabel">@Label </span>
+			<span class="spanRightText">@Text </span>
+		</div>
+		break;
+	case PanelDisplay.Horizontal:
+		<div class="divPanelContainer">
+			<span class="spanLeftLabel">@Label </span>
+			<span class="spanRightText">@MarkupText </span>
+		</div>
+		break;
+	case PanelDisplay.Vertical when MarkupText.NullOrWhiteSpace():
+		<div class="divPanelContainerVertical">
+			<span class="spanTop">@Label </span>
+			<span class="spanBottom">@Text </span>
+		</div>
+		break;
+	default:
+		<div class="divPanelContainerVertical">
+			<span class="spanTop">@Label </span>
+			<span class="spanBottom">@MarkupText </span>
+		</div>
+		break;
+}

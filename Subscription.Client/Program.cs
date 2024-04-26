@@ -18,7 +18,7 @@ _builder.Services.AddBlazoredSessionStorage(); // Session storage
 _builder.Services.AddMemoryCache();
 _builder.Services.AddScoped<SfDialogService>();
 _builder.Services.AddSyncfusionBlazor();
-_builder.Services.AddSubtleCrypto(opt => opt.Key = "~1@3$5^7*9)-+QwErTyUiOpAsDfGhJkL");
+//_builder.Services.AddSubtleCrypto(opt => opt.Key = "~1@3$5^7*9)-+QwErTyUiOpAsDfGhJkL");
 SyncfusionLicenseProvider.RegisterLicense("MzE2MTcyNUAzMjM1MmUzMDJlMzBLM3NDRWpvWjNoczZxREUwRFBBbW42YWNmanh3bm4yU2FqTEZFU2NoTVlRPQ==");
 
 bool _isLocal = false;

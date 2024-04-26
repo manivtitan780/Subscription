@@ -22,7 +22,6 @@ global using Subscription.Components;
 global using Syncfusion.Blazor;
 global using Syncfusion.Blazor.Data;
 global using Syncfusion.Blazor.Popups;
-global using Blazor.SubtleCrypto;
 
 global using System.IO.Compression;
 

@@ -720,6 +720,11 @@ div#tabCompany div#e-content-tabCompany_0 div.divPanelContainerVertical {
     width: 100%;
 }
 
+.grid-container .e-btn.e-primary, .grid-container .e-css.e-btn.e-primary {
+    background: var(--c-yellow) !important;
+    border-color: var(--c-yellowlight) !important;
+    color: var(--c-bk) !important;
+}
 /* #endregion Login Page*/
 
 /* #region CheckBox*/

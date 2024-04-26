@@ -24,8 +24,6 @@ global using Syncfusion.Blazor.Data;
 global using Syncfusion.Blazor.Popups;
 global using Subscription.Model.Validators;
 
-global using Blazor.SubtleCrypto;
-
 global using System.IO.Compression;
 
 global using Syncfusion.Blazor.Buttons;

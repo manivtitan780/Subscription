@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          4-17-2024 14:39
-// Last Updated On:     4-20-2024 20:38
+// Created On:          4-20-2024 20:39
+// Last Updated On:     4-22-2024 19:42
 // *****************************************/
 
 #endregion
@@ -25,10 +25,43 @@ namespace Subscription.API.Code;
 
 public static class General
 {
+    public static byte[] ComputeHashWithSalt(string input, byte[] salt)
+    {
+        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+        byte[] inputWithSalt = new byte[inputBytes.Length + salt.Length];
+        Buffer.BlockCopy(inputBytes, 0, inputWithSalt, 0, inputBytes.Length);
+        Buffer.BlockCopy(salt, 0, inputWithSalt, inputBytes.Length, salt.Length);
+
+        return SHA512PasswordHash(inputWithSalt);
+    }
+
     public static async Task SetCache()
     {
         RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
         bool _keyExists = await _service.CheckKeyExists(CacheObjects.Companies.ToString());
+        /*using (SqlConnection connection = new(Start.ConnectionString))
+        {
+            connection.Open();
+
+            // Create a command to insert the hash into the database.
+            using (SqlCommand command = new("UPDATE Users SET Salt = @hash", connection))
+            {
+                // Add the hash as a parameter.
+                command.Parameters.Add("@hash", SqlDbType.Binary, 64).Value = SHA512PasswordHash("#@@^$^$@(((res$");
+
+                // Execute the command.
+                command.ExecuteNonQuery();
+            }
+
+            using (SqlCommand command = new("UPDATE Users SET Password = @Password", connection))
+            {
+                // Add the hash as a parameter.
+                command.Parameters.Add("@Password", SqlDbType.Binary, 64).Value = ComputeHashWithSalt("Password$100", SHA512PasswordHash("#@@^$^$@(((res$"));
+
+                // Execute the command.
+                command.ExecuteNonQuery();
+            }
+        }*/
 
         if (!_keyExists)
         {
@@ -68,11 +101,11 @@ public static class General
             while (await _reader.ReadAsync())
             {
                 _companyContacts.Add(new()
-                {
-                    ID = _reader.GetInt32(0),
-                    ContactName = _reader.GetString(2),
-                    CompanyID = _reader.GetInt32(1)
-                });
+                                     {
+                                         ID = _reader.GetInt32(0),
+                                         ContactName = _reader.GetString(2),
+                                         CompanyID = _reader.GetInt32(1)
+                                     });
             }
 
             await _reader.NextResultAsync();
@@ -120,23 +153,19 @@ public static class General
             while (await _reader.ReadAsync()) //Roles
             {
                 _roles.Add(new()
-                {
-                    ID = _reader.GetString(0),
-                    RoleName = _reader.GetString(1),
-                    ViewCandidate = _reader.GetBoolean(2),
-                    ViewRequisition = _reader.GetBoolean(3),
-                    EditCandidate = _reader.GetBoolean(4),
-                    EditRequisition = _reader.GetBoolean(5),
-                    ChangeCandidateStatus = _reader.GetBoolean(6),
-                    ChangeRequisitionStatus = _reader.GetBoolean(7),
-                    SendEmailCandidate = _reader.GetBoolean(8),
-                    ForwardResume = _reader.GetBoolean(9),
-                    DownloadResume = _reader.GetBoolean(10),
-                    SubmitCandidate = _reader.GetBoolean(11),
-                    ViewClients = _reader.GetBoolean(12),
-                    EditClients = _reader.GetBoolean(13),
-                    Description = _reader.GetString(14)
-                });
+                           {
+                               ID = _reader.GetByte(0),
+                               RoleName = _reader.GetString(1),
+                               Description = _reader.GetString(2),
+                               CreateOrEditCompany= _reader.GetBoolean(3),
+                               CreateOrEditCandidate = _reader.GetBoolean(4),
+                               ViewAllCompanies = _reader.GetBoolean(5),
+                               ViewMyCompanyProfile = _reader.GetBoolean(6),
+                               EditMyCompanyProfile = _reader.GetBoolean(7),
+                               CreateOrEditEditRequisition = _reader.GetBoolean(8),
+                               ViewOnlyMyCandidates = _reader.GetBoolean(9),
+                               ManageSubmittedCandidates = _reader.GetBoolean(10)
+                           });
             }
 
             await _reader.NextResultAsync();
@@ -152,15 +181,15 @@ public static class General
             while (await _reader.ReadAsync())
             {
                 _statusCodes.Add(new()
-                {
-                    ID = _reader.GetInt32(6),
-                    Code = _reader.GetString(0),
-                    Status = _reader.GetString(1),
-                    Icon = _reader.NString(2),
-                    AppliesToCode = _reader.GetString(3),
-                    SubmitCandidate = _reader.GetBoolean(4),
-                    ShowCommission = _reader.GetBoolean(5)
-                });
+                                 {
+                                     ID = _reader.GetInt32(6),
+                                     Code = _reader.GetString(0),
+                                     Status = _reader.GetString(1),
+                                     Icon = _reader.NString(2),
+                                     AppliesToCode = _reader.GetString(3),
+                                     SubmitCandidate = _reader.GetBoolean(4),
+                                     ShowCommission = _reader.GetBoolean(5)
+                                 });
             }
 
             await _reader.NextResultAsync();
@@ -172,11 +201,10 @@ public static class General
             while (await _reader.ReadAsync())
             {
                 _users.Add(new()
-                {
-                    ID = _reader.GetInt32(0),
-                    UserName = _reader.GetString(1),
-                    Role = _reader.GetByte(2)
-                });
+                           {
+                               UserName = _reader.GetString(0),
+                               Role = _reader.GetByte(1)
+                           });
             }
 
             await _reader.NextResultAsync();
@@ -184,17 +212,17 @@ public static class General
             while (await _reader.ReadAsync())
             {
                 _workflows.Add(new()
-                {
-                    ID = _reader.GetInt32(0),
-                    Step = _reader.GetString(1),
-                    Next = _reader.NString(2),
-                    IsLast = _reader.GetBoolean(3),
-                    RoleIDs = _reader.GetString(4),
-                    Schedule = _reader.GetBoolean(5),
-                    AnyStage = _reader.GetBoolean(6),
-                    NextFull = "",
-                    RoleFull = ""
-                });
+                               {
+                                   ID = _reader.GetInt32(0),
+                                   Step = _reader.GetString(1),
+                                   Next = _reader.NString(2),
+                                   IsLast = _reader.GetBoolean(3),
+                                   RoleIDs = _reader.GetString(4),
+                                   Schedule = _reader.GetBoolean(5),
+                                   AnyStage = _reader.GetBoolean(6),
+                                   NextFull = "",
+                                   RoleFull = ""
+                               });
             }
 
             await _reader.NextResultAsync();
@@ -232,16 +260,16 @@ public static class General
         while (await reader.ReadAsync())
         {
             intValues.Add(new()
-            {
-                Value = keyType switch
-                {
-                    0 => reader.GetInt32(0),
-                    1 => reader.GetInt16(0),
-                    2 => reader.GetByte(0),
-                    _ => 0
-                },
-                Text = reader.GetString(1)
-            });
+                          {
+                              Value = keyType switch
+                                      {
+                                          0 => reader.GetInt32(0),
+                                          1 => reader.GetInt16(0),
+                                          2 => reader.GetByte(0),
+                                          _ => 0
+                                      },
+                              Text = reader.GetString(1)
+                          });
         }
     }
 
@@ -250,10 +278,10 @@ public static class General
         while (await reader.ReadAsync()) //Job Options
         {
             keyValues.Add(new()
-            {
-                Key = reader.GetString(0),
-                Value = reader.GetString(1)
-            });
+                          {
+                              Key = reader.GetString(0),
+                              Value = reader.GetString(1)
+                          });
         }
     }
 
@@ -263,4 +291,11 @@ public static class General
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
     public static byte[] SHA512PasswordHash(string inputText) => SHA512.Create().ComputeHash(new UTF8Encoding().GetBytes(inputText));
+
+    /// <summary>
+    ///     Computes the SHA-512 hash of the input text.
+    /// </summary>
+    /// <param name="inputText">The text to be hashed.</param>
+    /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
+    public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.Create().ComputeHash(inputText);
 }

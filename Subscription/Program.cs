@@ -43,7 +43,7 @@ _builder.Services.AddResponseCompression(options =>
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-_builder.Services.AddSubtleCrypto(opt => opt.Key = "~1@3$5^7*9)-+QwErTyUiOpAsDfGhJkL");
+//_builder.Services.AddSubtleCrypto(opt => opt.Key = "~1@3$5^7*9)-+QwErTyUiOpAsDfGhJkL");
 
 WebApplication _app = _builder.Build();
 

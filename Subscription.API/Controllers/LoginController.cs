@@ -8,18 +8,49 @@
 // File Name:           LoginController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          4-20-2024 20:30
-// Last Updated On:     4-20-2024 20:34
+// Last Updated On:     4-22-2024 20:40
 // *****************************************/
 
 #endregion
 
+#region Using
+
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+using Microsoft.IdentityModel.Tokens;
+
+using Newtonsoft.Json;
+
+using StackExchange.Redis;
+
 using Subscription.API.Code;
+
+using Role = Subscription.Model.Role;
+
+#endregion
 
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
 public class LoginController(IConfiguration configuration) : ControllerBase
 {
+    public string GenerateToken(string username, List<string> permissions)
+    {
+        List<Claim> _claims = [new(ClaimTypes.Name, username)];
+        _claims.AddRange(permissions.Select(permission => new Claim("Permission", permission)));
+
+        SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(configuration["JWTSecretKey"] ?? "SomeKey"));
+        SigningCredentials _credentials = new(_key, SecurityAlgorithms.HmacSha256);
+
+        JwtSecurityToken token = new(configuration["JWTIssuer"],
+                                     configuration["JWTAudience"],
+                                     _claims,
+                                     expires: DateTime.Now.AddDays(14),
+                                     signingCredentials: _credentials);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
     //private readonly IConfiguration _configuration = configuration;
 
     /// <summary>
@@ -31,26 +62,78 @@ public class LoginController(IConfiguration configuration) : ControllerBase
     ///     A task that represents the asynchronous operation. The task result contains the LoginCooky object with user
     ///     details if login is successful, null otherwise.
     /// </returns>
-    [HttpPost("Login")]
-    public async Task<LoginCooky> Login(string userName, string password)
+    [HttpPost]
+    public async Task<string> LoginPage(string userName, string password)
     {
         //await Task.Yield();
-        byte[] _password = General.SHA512PasswordHash(password);
         //byte[] _password = Convert.FromBase64String(password);
         await using SqlConnection _connection = new(configuration.GetConnectionString("DBConnect"));
         await using SqlCommand _command = new("ValidateLogin", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("@User", 10, userName);
-        _command.Binary("@Password", 16, _password);
-        _connection.Open();
+        await _connection.OpenAsync();
         await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-        if (!_reader.HasRows)
+        while (await _reader.ReadAsync())
         {
-            return null;
+            byte[] _salt = (byte[])_reader["Salt"];
+            byte[] _sqlPassword = (byte[])_reader["Password"];
+            byte[] _password = General.ComputeHashWithSalt(password, _salt);
+            int _roleID = (byte)_reader["Role"];
+            if (!_sqlPassword.SequenceEqual(_password))
+            {
+                continue;
+            }
+
+            RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+            RedisValue _roles = await _service.GetAsync("Roles");
+            string _roleString = _roles.ToString();
+            List<Role> _rolesList = JsonConvert.DeserializeObject<List<Role>>(_roleString);
+            Role _userRole = _rolesList.FirstOrDefault(role => role.ID == _roleID);
+            List<string> _permissions = [];
+
+            if (_userRole is {CreateOrEditCompany: true})
+            {
+                _permissions.Add("CreateOrEditCompany");
+            }
+
+            if (_userRole is {CreateOrEditCandidate: true})
+            {
+                _permissions.Add("CreateOrEditCandidate");
+            }
+
+            if (_userRole is {ViewAllCompanies: true})
+            {
+                _permissions.Add("ViewAllCompanies");
+            }
+
+            if (_userRole is {ViewMyCompanyProfile: true})
+            {
+                _permissions.Add("ViewMyCompanyProfile");
+            }
+
+            if (_userRole is {EditMyCompanyProfile: true})
+            {
+                _permissions.Add("EditMyCompanyProfile");
+            }
+
+            if (_userRole is {CreateOrEditEditRequisition: true})
+            {
+                _permissions.Add("CreateOrEditEditRequisition");
+            }
+
+            if (_userRole is {ViewOnlyMyCandidates: true})
+            {
+                _permissions.Add("ViewOnlyMyCandidates");
+            }
+
+            if (_userRole is {ManageSubmittedCandidates: true})
+            {
+                _permissions.Add("ManageSubmittedCandidates");
+            }
+
+            return GenerateToken(userName, _permissions);
         }
 
-        _reader.Read();
-        return new(userName, _reader.GetString(0), _reader.GetString(1), _reader.GetString(2), _reader.GetString(5), _reader.GetString(3),
-                   _reader.IsDBNull(4) ? DateTime.MinValue : _reader.GetDateTime(4), _reader.NString(6));
+        return "";
     }
 }

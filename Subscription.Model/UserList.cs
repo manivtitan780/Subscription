@@ -17,12 +17,6 @@ namespace Subscription.Model;
 
 public class UserList
 {
-	public int ID
-	{
-		get;
-		set;
-	}
-
 	public byte Role
 	{
 		get;
