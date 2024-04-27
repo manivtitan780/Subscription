@@ -116,6 +116,7 @@
 body, form, html {
     margin: 0;
     overflow: hidden;
+    font-family: var(--font-family);
 }
 
 ::-webkit-input-placeholder, ::placeholder {
@@ -270,6 +271,48 @@ body, form, html {
     width: 35px;
 }
 
+.buttonAlphabet, .buttonAlphabetClear {
+    background: transparent;
+    border: none;
+    color: black;
+    font-weight: normal;
+    height: 30px;
+    /*margin-top: -3px;*/
+    outline: 0;
+    padding: 0;
+    width: 30px;
+}
+
+.linkDisplay {
+    color: var(--c-red);
+    margin-right: 40px;
+    width: auto;
+}
+
+.buttonAlphabetClear {
+    width: 45px;
+}
+
+    .buttonAlphabet:not(.selectedAlphabet):focus, .buttonAlphabet:not(.selectedAlphabet):active, .buttonAlphabet:not(.selectedAlphabet):hover, .buttonAlphabetClear:not(.selectedAlphabet):focus, 
+    .buttonAlphabetClear:not(.selectedAlphabet):active, .buttonAlphabetClear:not(.selectedAlphabet):hover {
+        background: var(--c-red);
+        border: none;
+        outline: 0;
+        padding: 0;
+        color: var(--c-wh);
+    }
+
+.selectedAlphabet {
+    background-color: var(--c-red);
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: -7px;
+    color: var(--c-wh);
+}
+
+.rightMargin {
+    margin-right: 15px;
+}
 /* #endregion Buttons */
 
 /* #region Data Form*/
