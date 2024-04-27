@@ -254,7 +254,7 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
         _command.Int("PageNumber", searchModel.Page);
         _command.Int("SortColumn", searchModel.SortField);
         _command.TinyInt("SortDirection", searchModel.SortDirection);
-        //_command.Varchar("Name", 255, searchModel.CompanyName);
+        _command.Varchar("Name", 255, searchModel.CompanyName);
         //_command.Varchar("Phone", 20, searchModel.Phone);
         //_command.Varchar("Email", 255, searchModel.EmailAddress);
         //_command.Varchar("State", 255, searchModel.State);

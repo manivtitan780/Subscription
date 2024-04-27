@@ -975,4 +975,18 @@ public partial class Companies
             }
         }
     }
+
+    private async Task GetAlphabets(char alphabet)
+    {
+        SearchModel.CompanyName = alphabet.ToString();
+        SearchModel.Page = 1;
+        await Grid.Refresh();
+    }
+
+    private async Task AllAlphabets()
+    {
+        SearchModel.CompanyName = "";
+        SearchModel.Page = 1;
+        await Grid.Refresh();
+    }
 }
