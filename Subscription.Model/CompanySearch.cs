@@ -54,4 +54,14 @@ public class CompanySearch
         get;
         set;
     }
+
+    public void Clear()
+    {
+        CompanyName = "";
+        ItemCount = 25;
+        Page = 1;
+        SortField = 1;
+        SortDirection = 1;
+        User = "ADMIN";
+    }
 }

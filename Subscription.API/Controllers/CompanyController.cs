@@ -8,7 +8,7 @@
 // File Name:           CompanyController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-08-2024 15:02
-// Last Updated On:     04-26-2024 19:04
+// Last Updated On:     04-27-2024 20:04
 // *****************************************/
 
 #endregion
@@ -18,23 +18,21 @@ namespace Subscription.API.Controllers;
 /// <summary>
 ///     Represents a controller for handling company related requests.
 /// </summary>
-/// <param name="configuration">The application configuration, injected by the ASP.NET Core DI container.</param>
+/// <param name="configuration">
+///     The application configuration, injected by the ASP.NET Core DI container.
+/// </param>
 [ApiController, Route("api/[controller]/[action]")]
 public class CompanyController(IConfiguration configuration) : ControllerBase
 {
-    /*/// <summary>
-    ///     Initializes a new instance of the <see cref="CompanyController" /> class.
-    /// </summary>
-    /// <param name="configuration">The application configuration, injected by the ASP.NET Core DI container.</param>
-    //public CompanyController(IConfiguration configuration) => _configuration = configuration;
-
-    //private readonly IConfiguration _configuration;*/
-
     /// <summary>
     ///     Asynchronously checks if a company's Employer Identification Number (EIN) exists in the database.
     /// </summary>
-    /// <param name="companyID">The ID of the company to check.</param>
-    /// <param name="ein">The Employer Identification Number (EIN) to check.</param>
+    /// <param name="companyID">
+    ///     The ID of the company to check.
+    /// </param>
+    /// <param name="ein">
+    ///     The Employer Identification Number (EIN) to check.
+    /// </param>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains a boolean value indicating whether
     ///     the EIN exists (true) or not (false).
@@ -66,9 +64,15 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     /// <summary>
     ///     Retrieves the details of a company based on the provided company ID and user.
     /// </summary>
-    /// <param name="companyID">The ID of the company whose details are to be retrieved.</param>
-    /// <param name="user">The user requesting the company details.</param>
-    /// <returns>A dictionary containing the details of the company, its contacts, requisitions, and documents.</returns>
+    /// <param name="companyID">
+    ///     The ID of the company whose details are to be retrieved.
+    /// </param>
+    /// <param name="user">
+    ///     The user requesting the company details.
+    /// </param>
+    /// <returns>
+    ///     A dictionary containing the details of the company, its contacts, requisitions, and documents.
+    /// </returns>
     [HttpGet]
     public async Task<Dictionary<string, object>> GetCompanyDetails(int companyID, string user)
     {
@@ -227,10 +231,11 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     }
 
     /// <summary>
-    ///     Asynchronously retrieves a paginated list of companies based on the provided search model, along with related
-    ///     master table data.
+    ///     Asynchronously retrieves a paginated list of companies based on the provided search model.
     /// </summary>
-    /// <param name="searchModel">The search model containing the search parameters.</param>
+    /// <param name="searchModel">
+    ///     The search model containing the search parameters.
+    /// </param>
     /// <param name="getMasterTables">
     ///     A boolean value indicating whether to retrieve related master table data (true) or not
     ///     (false). Default is true.
@@ -239,9 +244,6 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     ///     A task that represents the asynchronous operation. The task result contains a dictionary with the following keys:
     ///     - "Companies": A list of companies matching the search parameters.
     ///     - "Count": The total number of companies matching the search parameters.
-    ///     - "NAICS": A list of NAICS codes.
-    ///     - "States": A list of states.
-    ///     - "Roles": A list of roles.
     /// </returns>
     [HttpGet]
     public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
@@ -254,7 +256,7 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
         _command.Int("PageNumber", searchModel.Page);
         _command.Int("SortColumn", searchModel.SortField);
         _command.TinyInt("SortDirection", searchModel.SortDirection);
-        _command.Varchar("Name", 255, searchModel.CompanyName);
+        _command.Varchar("Name", 30, searchModel.CompanyName);
         //_command.Varchar("Phone", 20, searchModel.Phone);
         //_command.Varchar("Email", 255, searchModel.EmailAddress);
         //_command.Varchar("State", 255, searchModel.State);
@@ -268,43 +270,6 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 
         int _count = 0;
 
-        List<IntValues> _naics = [], _states = [], _roles = [];
-
-        _naics.Add(new()
-                   {
-                       Value = 0,
-                       Text = "--Select"
-                   });
-        while (await _reader.ReadAsync())
-        {
-            _naics.Add(new()
-                       {
-                           Value = _reader.GetInt32(0),
-                           Text = _reader.GetString(1)
-                       });
-        }
-
-        await _reader.NextResultAsync();
-        while (await _reader.ReadAsync())
-        {
-            _states.Add(new()
-                        {
-                            Value = _reader.GetInt32(0),
-                            Text = _reader.GetString(1)
-                        });
-        }
-
-        await _reader.NextResultAsync();
-        while (await _reader.ReadAsync())
-        {
-            _roles.Add(new()
-                       {
-                           Value = _reader.GetByte(0),
-                           Text = _reader.GetString(1)
-                       });
-        }
-
-        await _reader.NextResultAsync();
         while (await _reader.ReadAsync())
         {
             _companies.Add(new()
@@ -338,15 +303,6 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
                    },
                    {
                        "Count", _count
-                   },
-                   {
-                       "NAICS", _naics
-                   },
-                   {
-                       "States", _states
-                   },
-                   {
-                       "Roles", _roles
                    }
                };
     }
@@ -354,7 +310,9 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     /// <summary>
     ///     Asynchronously retrieves a list of locations for a specific company from the database.
     /// </summary>
-    /// <param name="companyID">The ID of the company for which to retrieve locations.</param>
+    /// <param name="companyID">
+    ///     The ID of the company for which to retrieve locations.
+    /// </param>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains a list of locations for the
     ///     specified company.
@@ -421,8 +379,12 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     /// <summary>
     ///     Asynchronously saves the details of a company to the database.
     /// </summary>
-    /// <param name="company">The details of the company to save.</param>
-    /// <param name="user">The user performing the save operation.</param>
+    /// <param name="company">
+    ///     The details of the company to save.
+    /// </param>
+    /// <param name="user">
+    ///     The user performing the save operation.
+    /// </param>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains an integer value indicating the result
     ///     of the save operation.
@@ -476,8 +438,12 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     /// <summary>
     ///     Asynchronously saves the details of a company's contact to the database.
     /// </summary>
-    /// <param name="contact">The details of the company's contact to save.</param>
-    /// <param name="user">The user performing the save operation.</param>
+    /// <param name="contact">
+    ///     The details of the company's contact to save.
+    /// </param>
+    /// <param name="user">
+    ///     The user performing the save operation.
+    /// </param>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains a list of company contacts.
     ///     If the contact parameter is null, the method returns null.
@@ -560,8 +526,23 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     /// <summary>
     ///     Asynchronously saves the details of a company's location to the database.
     /// </summary>
-    /// <param name="location">The details of the company's location to save.</param>
-    /// <param name="user">The user performing the save operation.</param>
+    /// <param name="location">
+    ///     The details of the company's location to save.
+    /// </param>
+    /// <param name="user">
+    ///     The user performing the save operation.
+    /// </param>
+    /// <description>
+    ///     <br/>This method is responsible for saving the details of a company's location to the database. 
+    ///     It takes as parameters a CompanyLocations object, which contains the details of the location to be saved, 
+    ///     and a string representing the user performing the operation. 
+    ///     The method first checks if the location parameter is null, and if it is, it returns null. 
+    ///     Otherwise, it creates a new SQL connection and opens it. 
+    ///     It then creates a new SQL command with the stored procedure name "SaveCompanyLocation" and adds the details of the location and user to the command parameters. 
+    ///     The method then executes the command asynchronously and reads the returned rows, adding each row to a list of CompanyLocations objects. 
+    ///     Finally, it closes the SQL connection and returns the list of CompanyLocations objects. 
+    ///     This method is asynchronous and returns a Task that wraps a list of CompanyLocations objects.
+    /// </description>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains a list of company locations.
     ///     If the location parameter is null, the method returns null.

@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     04-26-2024 19:04
+// Last Updated On:     04-27-2024 21:04
 // *****************************************/
 
 #endregion
@@ -168,6 +168,11 @@ public partial class Companies
         set;
     }
 
+    private static List<IntValues> Roles
+    {
+        get;
+    } = [];
+
     /// <summary>
     ///     Gets or sets the SearchModel property of the Companies class. This property is of type CompaniesSearch and is used
     ///     to manage
@@ -236,6 +241,26 @@ public partial class Companies
         get;
         set;
     } = [];
+
+    private string User
+    {
+        get;
+        set;
+    }
+
+    private async Task AllAlphabets()
+    {
+        SearchModel.CompanyName = "";
+        SearchModel.Page = 1;
+        await Grid.Refresh();
+    }
+
+    private async Task ClearFilter()
+    {
+        SearchModel.Clear();
+        SearchModel.User = User;
+        await Grid.Refresh();
+    }
 
     /// <summary>
     ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
@@ -426,6 +451,13 @@ public partial class Companies
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
+    private async Task GetAlphabets(char alphabet)
+    {
+        SearchModel.CompanyName = alphabet.ToString();
+        SearchModel.Page = 1;
+        await Grid.Refresh();
+    }
+
     private static async Task GridPageChanged(GridPageChangedEventArgs page)
     {
         if (page.CurrentPageSize != SearchModel.ItemCount)
@@ -458,12 +490,6 @@ public partial class Companies
                                                                                           await Grid.Refresh();
                                                                                       }
                                                                                   });
-
-    private string User
-    {
-        get;
-        set;
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -504,7 +530,7 @@ public partial class Companies
                                               };
                                 return Task.CompletedTask;
                             });
-        _initializationTaskSource.SetResult(true); 
+        _initializationTaskSource.SetResult(true);
         //await Task.Delay(1000);
         await base.OnInitializedAsync();
     }
@@ -905,7 +931,7 @@ public partial class Companies
                     }
                     else
                     {
-                        if (NAICS is not {Count: not 0} || State is not {Count: not 0})
+                        if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
                         {
                             RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
                             List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
@@ -913,6 +939,7 @@ public partial class Companies
                             Dictionary<string, string> _values = await _service.BatchGet(_keys);
                             NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
                             State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
+                            State = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
                         }
 
                         _dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
@@ -974,19 +1001,5 @@ public partial class Companies
                 _semaphoreSlim.Release();
             }
         }
-    }
-
-    private async Task GetAlphabets(char alphabet)
-    {
-        SearchModel.CompanyName = alphabet.ToString();
-        SearchModel.Page = 1;
-        await Grid.Refresh();
-    }
-
-    private async Task AllAlphabets()
-    {
-        SearchModel.CompanyName = "";
-        SearchModel.Page = 1;
-        await Grid.Refresh();
     }
 }

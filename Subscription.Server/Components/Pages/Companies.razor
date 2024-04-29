@@ -4,7 +4,7 @@
 <PageHeader />
 @if (HasViewRights)
 {
-	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" CurrentPage="SearchModel.Page" ItemClick="PageNumberClick" NumericCount="7" PageSize="SearchModel.ItemCount"
+	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" ItemClick="PageNumberClick" NumericCount="7" PageSize="SearchModel.ItemCount"
 				PageSizeChanged="PageSizeChanged" TotalCount="@Count">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
