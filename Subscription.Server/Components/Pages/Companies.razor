@@ -4,15 +4,15 @@
 <PageHeader />
 @if (HasViewRights)
 {
-	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" ItemClick="PageNumberClick" NumericCount="7" PageSize="SearchModel.ItemCount"
-				PageSizeChanged="PageSizeChanged" TotalCount="@Count" Endpoint="Company/SearchCompanies" ValueChange="AutocompleteValueChange" Name="@(SearchModel.CompanyName)">
+	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies" ItemClick="PageNumberClick" Name="@(SearchModel.CompanyName)"
+				NumericCount="7" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
 					TValue="Company" Width="100%">
-				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="SearchModel.ItemCount" PageSizes="@(new[] {"5", "10", "25", "50", "75", "100"})" />
+				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})" />
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single" />
 				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CompanyAdaptor)" Key="ID" />
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanged="GridPageChanged" TValue="Company" /> @* OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Company" /> @* OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
 				<GridColumns>
 					<GridColumn Field="@nameof(Company.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
 					<GridSortSettings AllowUnsort="false">

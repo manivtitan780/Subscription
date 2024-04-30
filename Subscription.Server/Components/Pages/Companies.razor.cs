@@ -15,6 +15,7 @@
 
 #region Using
 
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 using Syncfusion.Blazor.DropDowns;
@@ -173,6 +174,7 @@ public partial class Companies
 	private static List<IntValues> Roles
 	{
 		get;
+		set;
 	} = [];
 
 	/// <summary>
@@ -462,25 +464,31 @@ public partial class Companies
 
 	private async Task GetAlphabets(char alphabet)
 	{
-		SearchModel.CompanyName = alphabet.ToString();
-		SearchModel.Page = 1;
-		await Grid.Refresh();
+		await ExecuteMethod(async () =>
+							{
+								SearchModel.CompanyName = alphabet.ToString();
+								SearchModel.Page = 1;
+								await Grid.Refresh();
+							});
 	}
 
-	private static async Task GridPageChanged(GridPageChangedEventArgs page)
+	private async Task GridPageChanging(GridPageChangingEventArgs page)
 	{
-		if (page.CurrentPageSize != SearchModel.ItemCount)
-		{
-			SearchModel.ItemCount = page.CurrentPageSize;
-			SearchModel.Page = 1;
-			await Grid.GoToPageAsync(1);
-		}
-		else
-		{
-			SearchModel.Page = page.CurrentPage;
-		}
-
-		await Grid.Refresh();
+		await ExecuteMethod(async () =>
+							{
+								if (page.CurrentPageSize != SearchModel.ItemCount)
+								{
+									SearchModel.ItemCount = page.CurrentPageSize;
+									SearchModel.Page = 1;
+									await Grid.GoToPageAsync(1);
+									await Task.Yield();
+								}
+								else
+								{
+									SearchModel.Page = page.CurrentPage;
+									await Grid.Refresh();
+								}
+							});
 	}
 
 	private Task OnActionBegin(ActionEventArgs<Company> company) => ExecuteMethod(async () =>
@@ -948,7 +956,7 @@ public partial class Companies
 							Dictionary<string, string> _values = await _service.BatchGet(_keys);
 							NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
 							State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
-							State = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
+							Roles = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
 						}
 
 						_dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);

@@ -809,3 +809,18 @@ div#tabCompany div#e-content-tabCompany_0 div.divPanelContainerVertical {
     color: #fff;
 }
 /* #endregion*/
+
+/* #region Auto Complete*/
+#divHeader .e-ddl.e-input-group.e-control-wrapper::before {
+    content: '\e754';
+    font-family: 'e-icons';
+    font-size: 18px;
+    margin-top: 3px;
+    margin-left: 4px;
+    opacity: 0.5;
+}
+
+#divHeader .e-ddl.e-input-group.e-control-wrapper {
+    border-radius: 4px;
+}
+/* #endregion*/
