@@ -303,11 +303,10 @@ body, form, html {
     }
 
 .selectedAlphabet {
-    background-color: var(--c-red);
+    background-color: var(--c-red) !important;
     font-size: 18px;
     font-weight: bold;
-    margin-top: -7px;
-    color: var(--c-wh);
+    color: var(--c-wh) !important;
 }
 
 .rightMargin {

@@ -5,7 +5,7 @@
 @if (HasViewRights)
 {
 	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" ItemClick="PageNumberClick" NumericCount="7" PageSize="SearchModel.ItemCount"
-				PageSizeChanged="PageSizeChanged" TotalCount="@Count" Endpoint="Company/SearchCompanies" ParameterName="Company" Method="SearchCompanies">
+				PageSizeChanged="PageSizeChanged" TotalCount="@Count" Endpoint="Company/SearchCompanies" ValueChange="AutocompleteValueChange" Name="@(SearchModel.CompanyName)">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
 					TValue="Company" Width="100%">
