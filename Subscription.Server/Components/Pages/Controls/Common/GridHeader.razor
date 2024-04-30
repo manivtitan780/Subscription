@@ -19,7 +19,7 @@
         }
         <SfAutoComplete CssClass="rightMargin" AllowCustom="true" EnablePersistence="false" Highlight="true" HtmlAttributes="@_htmlAttribute" ID="autoFilter" MinLength="3" Placeholder="Select&hellip;"
                         @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="200px">
-            <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@TypeInstance" Key="Key"></SfDataManager>
+            <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(DropDownAdaptor)" Key="Key"></SfDataManager>
             <AutoCompleteFieldSettings Text="Key" Value="Value"></AutoCompleteFieldSettings>
             <AutoCompleteEvents Created="Created" TItem="KeyValues" TValue="string" ValueChange="ValueChange" />
         </SfAutoComplete>
@@ -27,8 +27,4 @@
     <div id="divGrid">
         @GridContent
     </div>
-    @* <div id="divFooter" style="background: gray">
-        <SfPager @ref="Pager" PageSize="@PageSize" NumericItemsCount="@NumericCount" TotalItemsCount="@TotalCount" ItemClick="@ItemClick" PageSizes="@PageSizes" 
-                 PageSizeChanged="@PageSizeChanged" CurrentPage="@CurrentPage"></SfPager>CssClass="@(SetLeft ? "leftMargin" : "")" 
-    </div> *@
 </div>

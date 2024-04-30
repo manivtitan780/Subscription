@@ -8,7 +8,7 @@
 // File Name:           CompanyController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-08-2024 15:02
-// Last Updated On:     04-27-2024 20:04
+// Last Updated On:     04-29-2024 21:04
 // *****************************************/
 
 #endregion
@@ -26,6 +26,13 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 {
     /// <summary>
     ///     Asynchronously checks if a company's Employer Identification Number (EIN) exists in the database.
+    ///     <para>
+    ///         <br />This method, Add, is designed to calculate the sum of two integers.
+    ///         It takes two parameters, each representing an integer. The method
+    ///         performs the addition operation on these two integers and returns
+    ///         the result. This result is an integer representing the sum of the
+    ///         input parameters.
+    ///     </para>
     /// </summary>
     /// <param name="companyID">
     ///     The ID of the company to check.
@@ -63,6 +70,15 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 
     /// <summary>
     ///     Retrieves the details of a company based on the provided company ID and user.
+    ///     <para>
+    ///         <br />This asynchronous method, GetCompanyDetails, is designed to retrieve the details of a specific company
+    ///         based on
+    ///         the provided company ID and user. It interacts with the database to fetch the company's details, its contacts,
+    ///         requisitions, and documents. The method returns a dictionary containing these details. If the company ID or
+    ///         user is not found, the method will return an empty dictionary.
+    ///     </para>
+    /// </summary>
+    /// <summary>
     /// </summary>
     /// <param name="companyID">
     ///     The ID of the company whose details are to be retrieved.
@@ -525,6 +541,20 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 
     /// <summary>
     ///     Asynchronously saves the details of a company's location to the database.
+    ///     <para>
+    ///         <br />This method is responsible for saving the details of a company's location to the database.
+    ///         It takes as parameters a CompanyLocations object, which contains the details of the location to be saved,
+    ///         and a string representing the user performing the operation.
+    ///         The method first checks if the location parameter is null, and if it is, it returns null.
+    ///         Otherwise, it creates a new SQL connection and opens it.
+    ///         It then creates a new SQL command with the stored procedure name "SaveCompanyLocation" and adds the details of
+    ///         the
+    ///         location and user to the command parameters.
+    ///         The method then executes the command asynchronously and reads the returned rows, adding each row to a list of
+    ///         CompanyLocations objects.
+    ///         Finally, it closes the SQL connection and returns the list of CompanyLocations objects.
+    ///         This method is asynchronous and returns a Task that wraps a list of CompanyLocations objects.
+    ///     </para>
     /// </summary>
     /// <param name="location">
     ///     The details of the company's location to save.
@@ -532,17 +562,6 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
     /// <param name="user">
     ///     The user performing the save operation.
     /// </param>
-    /// <description>
-    ///     <br/>This method is responsible for saving the details of a company's location to the database. 
-    ///     It takes as parameters a CompanyLocations object, which contains the details of the location to be saved, 
-    ///     and a string representing the user performing the operation. 
-    ///     The method first checks if the location parameter is null, and if it is, it returns null. 
-    ///     Otherwise, it creates a new SQL connection and opens it. 
-    ///     It then creates a new SQL command with the stored procedure name "SaveCompanyLocation" and adds the details of the location and user to the command parameters. 
-    ///     The method then executes the command asynchronously and reads the returned rows, adding each row to a list of CompanyLocations objects. 
-    ///     Finally, it closes the SQL connection and returns the list of CompanyLocations objects. 
-    ///     This method is asynchronous and returns a Task that wraps a list of CompanyLocations objects.
-    /// </description>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains a list of company locations.
     ///     If the location parameter is null, the method returns null.
@@ -605,5 +624,49 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 
         await _connection.CloseAsync();
         return _locations;
+    }
+
+    /// <summary>
+    ///     This asynchronous method, SearchCompanies, is designed to interact with the database to fetch a list of companies
+    ///     based on a provided search string.
+    ///     It accepts a single parameter, which is a string representing the company name or part of it.
+    ///     The method calls a stored procedure named 'SearchCompanies' in the database, passing the search string as a
+    ///     parameter.
+    ///     The stored procedure is expected to return a list of company names that match the search string.
+    ///     The method then reads these company names and returns them as a list of strings.
+    ///     If no matches are found, the method will return an empty list.
+    /// </summary>
+    /// <param name="filter">
+    ///     The company name or part of it to search for.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of company names matching the
+    ///     search string.
+    /// </returns>
+    [HttpGet]
+    public async Task<List<KeyValues>> SearchCompanies(string filter)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("SearchCompanies", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Varchar("Company", 30, filter);
+
+        await _connection.OpenAsync();
+
+        List<KeyValues> companyNames = [];
+        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+        while (await _reader.ReadAsync())
+        {
+            companyNames.Add(new()
+                             {
+                                 Key = _reader.GetString(0),
+                                 Value = _reader.GetString(0)
+                             });
+        }
+
+        await _connection.CloseAsync();
+
+        return companyNames;
     }
 }

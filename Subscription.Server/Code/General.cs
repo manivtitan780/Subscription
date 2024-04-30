@@ -202,4 +202,69 @@ public class General
 
         return await _client.PostAsync<T>(_request);
     }
-}
+
+    /// <summary>
+    ///     Asynchronously retrieves autocomplete data for a specific method and parameter.
+    /// </summary>
+    /// <param name="endpoint">The endpoint to connect to, to fetch the list of items to display.</param>
+    /// <param name="dm">The DataManagerRequest object containing additional request parameters.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of autocomplete options
+    ///     in the form of KeyValues objects if any matches are found, or an empty list if no matches are found.
+    ///     If the DataManagerRequest object requires counts, the task result is a DataResult object containing the
+    ///     autocomplete options and their count.
+    /// </returns>
+    /// <remarks>
+    ///     This method makes an asynchronous request to the 'Admin/GetSearchDropDown' endpoint of the API,
+    ///     passing the method name, parameter name, and filter value as query parameters.
+    ///     The response is a list of strings which are then converted into KeyValues objects and returned.
+    ///     If an exception occurs during the operation, an empty list or a DataResult object with a count of 0 is returned.
+    /// </remarks>
+    internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm)
+    {
+        List<KeyValues> _dataSource = [];
+
+        if (dm.Where is not {Count: > 0} || dm.Where[0].value.NullOrWhiteSpace())
+        {
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = 0
+                                       } : _dataSource;
+        }
+
+        try
+        {
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"filter", dm.Where[0].value.ToString()}
+                                                     };
+            List<KeyValues> _response = await GetRest<List<KeyValues>>(endpoint, _parameters);
+
+            int _count = 0;
+            if (_response == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = _count
+                                           } : _dataSource;
+            }
+
+            _count = _response.Count;
+
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _response,
+                                           Count = _count
+                                       } : _response;
+        }
+        catch
+        {
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = 0
+                                       } : _dataSource;
+        }
+    }}

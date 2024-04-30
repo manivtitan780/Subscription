@@ -140,23 +140,6 @@ public partial class GridHeader
     } = true;
 
     /// <summary>
-    ///     Gets or sets the Type instance associated with the AutoCompleteButton.
-    /// </summary>
-    /// <value>
-    ///     An instance of Type that represents the type of the AutoCompleteButton.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to hold a Type instance associated with the AutoCompleteButton.
-    ///     It can be used to perform type-specific operations or behaviors on the AutoCompleteButton.
-    /// </remarks>
-    [Parameter]
-    public Type TypeInstance
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the event callback that is triggered when the value of the AutoCompleteButton changes.
     /// </summary>
     /// <value>
@@ -206,4 +189,44 @@ public partial class GridHeader
         get;
         set;
     }
+
+    [Parameter]
+    public string Endpoint
+    {
+        get;
+        set;
+    } = "";
+
+    private static string _endpoint = "";
+
+    protected override void OnParametersSet()
+    {
+        _endpoint = Endpoint;
+        base.OnParametersSet();
+    }
+
+    /// <summary>
+    ///     The DropDownAdaptor class is a specialized DataAdaptor used for handling data operations for a dropdown control.
+    ///     It overrides the ReadAsync method to provide custom data retrieval logic, specifically for autocomplete
+    ///     functionality.
+    /// </summary>
+    public class DropDownAdaptor : DataAdaptor
+    {
+        /// <summary>
+        ///     Asynchronously retrieves data for a dropdown control using autocomplete functionality.
+        /// </summary>
+        /// <param name="dm">The DataManagerRequest object containing additional request parameters.</param>
+        /// <param name="key">An optional key to further specify the data retrieval.</param>
+        /// <returns>
+        ///     A task that represents the asynchronous operation. The task result contains the data retrieved for the dropdown
+        ///     control.
+        /// </returns>
+        /// <remarks>
+        ///     This method uses the 'General.GetAutocompleteAsync' method to retrieve the data, passing in the method name and
+        ///     parameter name stored in the '_method' and '_parameterName' fields respectively, along with the DataManagerRequest
+        ///     object.
+        /// </remarks>
+        public override Task<object> ReadAsync(DataManagerRequest dm, string key = null) => General.GetAutocompleteAsync(_endpoint, dm);
+    }
+
 }
