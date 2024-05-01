@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subscription.Model", "Subsc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subscription.API", "Subscription.API\Subscription.API.csproj", "{A16BC9CD-B5FE-4E45-93A7-8AADA1E473DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subscription.Server", "Subscription.Server\Subscription.Server.csproj", "{3485F85D-DBD2-436A-95E6-7DFCC95BBE06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subscription.Server", "Subscription.Server\Subscription.Server.csproj", "{3485F85D-DBD2-436A-95E6-7DFCC95BBE06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
