@@ -4,28 +4,17 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Subscription.Model
-// File Name:           IntValues.cs
+// Project:             Subscription.Server
+// File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          03-11-2024 15:03
+// Created On:          05-01-2024 15:05
 // Last Updated On:     05-01-2024 15:05
 // *****************************************/
 
 #endregion
 
-namespace Subscription.Model;
+namespace Subscription.Server.Components.Pages;
 
-public class IntValues
+public partial class Candidates
 {
-    public string Text
-    {
-        get;
-        set;
-    }
-
-    public int Value
-    {
-        get;
-        set;
-    }
 }

@@ -137,4 +137,9 @@
     <UpToDateCheckInput Remove="Components\Pages\Companies.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Pages\Controls\Candidates\" />
+    <Folder Include="Components\Pages\Controls\Requisitions\" />
+  </ItemGroup>
+
 </Project>
