@@ -279,13 +279,14 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
         //_command.Bit("MyCompanies", searchModel.MyCompanies);
         //_command.Varchar("Status", 50, searchModel.Status);
         _command.Varchar("UserName", 10, ""); //searchModel.User);
-        _command.Bit("GetMasterTables", getMasterTables);
 
         await _connection.OpenAsync();
         await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-        int _count = 0;
+        await _reader.ReadAsync();
+        int _count = _reader.GetInt32(0);
 
+        await _reader.NextResultAsync();
         while (await _reader.ReadAsync())
         {
             _companies.Add(new()
@@ -302,10 +303,10 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
                                UpdatedBy = _reader.GetString(9).ToUpperInvariant(),
                                UpdatedDate = _reader.GetDateTime(10)
                            });
-            if (_count == 0)
-            {
-                _count = _reader.GetInt32(11);
-            }
+            //if (_count == 0)
+            //{
+            //    _count = _reader.GetInt32(11);
+            //}
         }
 
         await _reader.CloseAsync();
