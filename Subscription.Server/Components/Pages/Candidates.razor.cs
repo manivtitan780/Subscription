@@ -69,7 +69,7 @@ public partial class Candidates
 
 	public class CandidateAdaptor : DataAdaptor
 	{
-				private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+		private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
 		/// <summary>
 		///     Asynchronously reads company data for the grid view on the Companies page.
@@ -90,101 +90,103 @@ public partial class Candidates
 				return null;
 			}
 
-			if (_initializationTaskSource == null)
-			{
-				return null;
-			}
+			//if (_initializationTaskSource == null)
+			//{
+			//	return null;
+			//}
 
-			await _initializationTaskSource.Task;
-			try
-			{
-				List<Company> _dataSource = [];
+			//await _initializationTaskSource.Task;
+			//try
+			//{
+			//List<Company> _dataSource = [];
 
-				object _companyReturn = null;
-				try
-				{
-					Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Company/GetGridCompanies", null, SearchModel);
+			//object _companyReturn = null;
+			//try
+			//{
+			//	Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Company/GetGridCompanies", null, SearchModel);
 
-					if (_restResponse == null)
-					{
-						_companyReturn = dm.RequiresCounts ? new DataResult
-															 {
-																 Result = _dataSource,
-																 Count = 0 /*_count*/
-															 } : _dataSource;
-					}
-					else
-					{
-						if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
-						{
-							RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-							List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
+			//	if (_restResponse == null)
+			//	{
+			//		_companyReturn = dm.RequiresCounts ? new DataResult
+			//											 {
+			//												 Result = _dataSource,
+			//												 Count = 0 /*_count*/
+			//											 } : _dataSource;
+			//	}
+			//	else
+			//	{
+			//		if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
+			//		{
+			//			RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+			//			List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
 
-							Dictionary<string, string> _values = await _service.BatchGet(_keys);
-							NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
-							State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
-							Roles = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
-						}
+			//			Dictionary<string, string> _values = await _service.BatchGet(_keys);
+			//			NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
+			//			State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
+			//			Roles = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
+			//		}
 
-						_dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
-						int _count = _restResponse["Count"].ToInt32();
-						Count = _count;
-						if (_dataSource == null)
-						{
-							_companyReturn = dm.RequiresCounts ? new DataResult
-																 {
-																	 Result = null,
-																	 Count = 1
-																 } : null;
-						}
-						else
-						{
-							_companyReturn = dm.RequiresCounts ? new DataResult
-																 {
-																	 Result = _dataSource,
-																	 Count = _count /*_count*/
-																 } : _dataSource;
-						}
-					}
-				}
-				catch
-				{
-					if (_dataSource == null)
-					{
-						_companyReturn = dm.RequiresCounts ? new DataResult
-															 {
-																 Result = null,
-																 Count = 1
-															 } : null;
-					}
-					else
-					{
-						_dataSource.Add(new());
+			//		_dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
+			//		int _count = _restResponse["Count"].ToInt32();
+			//		Count = _count;
+			//		if (_dataSource == null)
+			//		{
+			//			_companyReturn = dm.RequiresCounts ? new DataResult
+			//												 {
+			//													 Result = null,
+			//													 Count = 1
+			//												 } : null;
+			//		}
+			//		else
+			//		{
+			//			_companyReturn = dm.RequiresCounts ? new DataResult
+			//												 {
+			//													 Result = _dataSource,
+			//													 Count = _count /*_count*/
+			//												 } : _dataSource;
+			//		}
+			//	}
+			//}
+			//catch
+			//{
+			//if (_dataSource == null)
+			//{
+			//	_companyReturn = dm.RequiresCounts ? new DataResult
+			//										 {
+			//											 Result = null,
+			//											 Count = 1
+			//										 } : null;
+			//}
+			//else
+			//{
+			//	_dataSource.Add(new());
 
-						_companyReturn = dm.RequiresCounts ? new DataResult
-															 {
-																 Result = _dataSource,
-																 Count = 1
-															 } : _dataSource;
-					}
-				}
+			//	_companyReturn = dm.RequiresCounts ? new DataResult
+			//										 {
+			//											 Result = _dataSource,
+			//											 Count = 1
+			//										 } : _dataSource;
+			//}
+			//}
 
-				if (Count > 0)
-				{
-					await Grid.SelectRowAsync(0);
-				}
+			//if (Count > 0)
+			//{
+			//	await Grid.SelectRowAsync(0);
+			//}
 
-				return _companyReturn;
-			}
-			catch
-			{
-				return null;
-			}
-			finally
-			{
-				_semaphoreSlim.Release();
-			}
+			//return _companyReturn;
+			return null;
+			//}
+			//	catch
+			//	{
+			//		return null;
+			//	}
+			//	finally
+			//	{
+			//		//_semaphoreSlim.Release();
+			//	}
+			//}
+
 		}
-
 	}
 }

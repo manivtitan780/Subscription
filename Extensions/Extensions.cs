@@ -296,4 +296,5 @@ public static partial class Extensions
     ///     A URL-encoded string.
     /// </returns>
     public static string UrlEncode(this string s) => HttpUtility.UrlEncode(s);
+
 }

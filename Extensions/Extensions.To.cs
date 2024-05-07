@@ -28,6 +28,17 @@ namespace Extensions;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static partial class Extensions
 {
+    public static async IAsyncEnumerable<T> Select<T>(this SqlDataReader reader, Func<SqlDataReader, T> projection)
+    {
+        //List<T> _results = [];
+        while (await reader.ReadAsync())
+        {
+            yield return projection(reader);
+        }
+
+        //return _results;
+	}
+
     /// <summary>
     ///     Returns a boolean value from the SqlDataReader based on the provided index.
     ///     If the value is DBNull, the method will return the provided nullReplaceValue.
