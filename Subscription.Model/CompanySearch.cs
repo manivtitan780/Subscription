@@ -13,7 +13,6 @@
 
 #endregion
 
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Subscription.Model;
 

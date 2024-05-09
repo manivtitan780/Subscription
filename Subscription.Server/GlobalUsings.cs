@@ -23,6 +23,7 @@ global using Subscription.Server.Components.Pages;
 global using Syncfusion.Blazor;
 global using Syncfusion.Blazor.Data;
 global using Syncfusion.Blazor.Popups;
+global using Syncfusion.Blazor.DropDowns;
 
 global using Subscription.Model.Validators;
 

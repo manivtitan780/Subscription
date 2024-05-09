@@ -13,7 +13,7 @@
 
 #endregion
 
-namespace ProfSvc_Classes;
+namespace Subscription.Model;
 
 /// <summary>
 ///     Represents a candidate in the professional services context.
@@ -22,12 +22,12 @@ namespace ProfSvc_Classes;
 ///     This class is used to manage and manipulate candidate data, including their personal information, status, and
 ///     resumes.
 /// </remarks>
-public class Candidates
+public class Candidate
 {
 	/// <summary>
-	///     Initializes a new instance of the <see cref="Candidates" /> class.
+	///     Initializes a new instance of the <see cref="Candidate" /> class.
 	/// </summary>
-	public Candidates()
+	public Candidate()
 	{
 		Clear();
 	}
@@ -99,7 +99,7 @@ public class Candidates
 	/// <remarks>
 	///     This property is used to store and retrieve the information about whether the candidate is considered as an MPC.
 	/// </remarks>
-	public bool Mpc
+	public bool MPC
 	{
 		get;
 		set;
@@ -227,7 +227,7 @@ public class Candidates
 		Location = "";
 		Updated = "";
 		Status = "";
-		Mpc = false;
+		MPC = false;
 		Rating = 3;
 		OriginalResume = false;
 		FormattedResume = false;
@@ -237,5 +237,5 @@ public class Candidates
 	///     Creates a deep copy of the current Candidates object.
 	/// </summary>
 	/// <returns>A new Candidates object that is a deep copy of this instance.</returns>
-	public Candidates Copy() => MemberwiseClone() as Candidates;
+	public Candidate Copy() => MemberwiseClone() as Candidate;
 }

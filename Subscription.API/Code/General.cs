@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-20-2024 20:04
-// Last Updated On:     05-07-2024 16:05
+// Last Updated On:     05-07-2024 19:05
 // *****************************************/
 
 #endregion
@@ -17,7 +17,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
-using System.Linq.Expressions;
+
 #endregion
 
 namespace Subscription.API.Code;
@@ -61,6 +61,32 @@ public static class General
 				command.ExecuteNonQuery();
 			}
 		}*/
+		/*
+		 *
+		 *		//bool _isState = false;//!searchModel.CityZip;
+		   //string _zips = "";
+		   //int _elapsedTime = 0;
+		   //if (!_isState)
+		   //{
+		   //	Stopwatch stopwatch = Stopwatch.StartNew(); // Start timing
+		   //	using RestClient _client = new($"https://zip-api.eu/api/v1/radius/US-19067/100/mi");
+		   //	//using RestClient _client = new($"https://zip-api.eu/api/v1/radius/US-{searchModel.CityName}/{searchModel.Proximity}/{(searchModel.ProximityUnit == 0 ? "km" : "mi")}");
+
+		   //	RestRequest _request = new();
+		   //	RestResponse _response = await _client.ExecuteAsync(_request);
+
+		   //	if (_response.IsSuccessful)
+		   //	{
+		   //		List<ZipApiResponse> items = JsonConvert.DeserializeObject<List<ZipApiResponse>>(_	response.Content ?? string.Empty);
+		   //		List<string> postalCodes = items.Select(i => i.postal_code).ToList();
+		   //		_zips = string.Join(",", postalCodes);
+		   //	}
+
+		   //	stopwatch.Stop(); // Stop timing
+		   //	_elapsedTime = stopwatch.Elapsed.Milliseconds;
+		   //}
+		   //Console.WriteLine($"Elapsed time: {_elapsedTime}");
+		 */
 
 		if (!_keyExists)
 		{
@@ -93,187 +119,125 @@ public static class General
 			await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
 			List<IntValues> _companies = [];
-			await SetIntValues(_reader, _companies);
+			_companies = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
-			List<CompanyContactList> _companyContacts = [];
-			while (await _reader.ReadAsync())
-			{
-				_companyContacts.Add(new()
-									 {
-										 ID = _reader.GetInt32(0),
-										 ContactName = _reader.GetString(2),
-										 CompanyID = _reader.GetInt32(1)
-									 });
-			}
+			List<CompanyContactList> _companyContacts = await _reader.Select<CompanyContactList>(contact => new()
+																											{
+																												ID = contact.GetInt32(0),
+																												ContactName = contact.GetString(2),
+																												CompanyID = contact.GetInt32(1)
+																											}).ToListAsync();
 
 			await _reader.NextResultAsync();
 			List<IntValues> _titles = [];
-			await SetIntValues(_reader, _titles);
+			_titles = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _documentTypes = [];
-			await SetIntValues(_reader, _documentTypes);
+			_documentTypes = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _educations = [];
-			await SetIntValues(_reader, _educations);
+			_educations = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _eligibilities = [];
-			await SetIntValues(_reader, _eligibilities);
+			_eligibilities = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _experiences = [];
-			await SetIntValues(_reader, _experiences);
+			_experiences = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<KeyValues> _jobOptions = [];
-			await SetKeyValues(_reader, _jobOptions);
+			_jobOptions = await SetKeyValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _leadIndustries = [];
-			await SetIntValues(_reader, _leadIndustries, 2);
+			_leadIndustries = await SetIntValues(_reader, 2);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _leadSources = [];
-			await SetIntValues(_reader, _leadSources, 2);
+			_leadSources = await SetIntValues(_reader, 2);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _leadStatuses = [];
-			await SetIntValues(_reader, _leadStatuses, 2);
+			_leadStatuses = await SetIntValues(_reader, 2);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _naics = [];
-			await SetIntValues(_reader, _naics);
+			_naics = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
-			//List<Role> _roles = [];
-			/*while (await _reader.ReadAsync()) //Roles
-			{
-				_roles.Add(new()
-						   {
-							   ID = _reader.GetByte(0),
-							   RoleName = _reader.GetString(1),
-							   Description = _reader.GetString(2),
-							   CreateOrEditCompany= _reader.GetBoolean(3),
-							   CreateOrEditCandidate = _reader.GetBoolean(4),
-							   ViewAllCompanies = _reader.GetBoolean(5),
-							   ViewMyCompanyProfile = _reader.GetBoolean(6),
-							   EditMyCompanyProfile = _reader.GetBoolean(7),
-							   CreateOrEditEditRequisition = _reader.GetBoolean(8),
-							   ViewOnlyMyCandidates = _reader.GetBoolean(9),
-							   ManageSubmittedCandidates = _reader.GetBoolean(10)
-						   });
-			}*/
 			List<Role> _roles = await _reader.Select<Role>(role => new()
-															 {
-																 ID = role.GetByte(0),
-																 RoleName = role.GetString(1),
-																 Description = role.GetString(2),
-																 CreateOrEditCompany = role.GetBoolean(3),
-																 CreateOrEditCandidate = role.GetBoolean(4),
-																 ViewAllCompanies = role.GetBoolean(5),
-																 ViewMyCompanyProfile = role.GetBoolean(6),
-																 EditMyCompanyProfile = role.GetBoolean(7),
-																 CreateOrEditEditRequisition = role.GetBoolean(8),
-																 ViewOnlyMyCandidates = role.GetBoolean(9),
-																 ManageSubmittedCandidates = role.GetBoolean(10)
-															 }).ToListAsync();
+																   {
+																	   ID = role.GetByte(0),
+																	   RoleName = role.GetString(1),
+																	   Description = role.GetString(2),
+																	   CreateOrEditCompany = role.GetBoolean(3),
+																	   CreateOrEditCandidate = role.GetBoolean(4),
+																	   ViewAllCompanies = role.GetBoolean(5),
+																	   ViewMyCompanyProfile = role.GetBoolean(6),
+																	   EditMyCompanyProfile = role.GetBoolean(7),
+																	   CreateOrEditEditRequisition = role.GetBoolean(8),
+																	   ViewOnlyMyCandidates = role.GetBoolean(9),
+																	   ManageSubmittedCandidates = role.GetBoolean(10)
+																   }).ToListAsync();
 
 			await _reader.NextResultAsync();
 			List<IntValues> _skills = [];
-			await SetIntValues(_reader, _skills);
+			_skills = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<IntValues> _states = [];
-			await SetIntValues(_reader, _states);
+			_states = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<StatusCode> _statusCodes = await _reader.Select<StatusCode>(status => new()
-																				 {
-																					 ID = status.GetInt32(6),
-																					 Code = status.GetString(0),
-																					 Status = status.GetString(1),
-																					 Icon = status.NString(2),
-																					 AppliesToCode = status.GetString(3),
-																					 SubmitCandidate = status.GetBoolean(4),
-																					 ShowCommission = status.GetBoolean(5)
-																				 }).ToListAsync();
-			//while (await _reader.ReadAsync())
-			//{
-			//	_statusCodes.Add(new()
-			//					 {
-			//						 ID = _reader.GetInt32(6),
-			//						 Code = _reader.GetString(0),
-			//						 Status = _reader.GetString(1),
-			//						 Icon = _reader.NString(2),
-			//						 AppliesToCode = _reader.GetString(3),
-			//						 SubmitCandidate = _reader.GetBoolean(4),
-			//						 ShowCommission = _reader.GetBoolean(5)
-			//					 });
-			//}
+																					   {
+																						   ID = status.GetInt32(6),
+																						   Code = status.GetString(0),
+																						   Status = status.GetString(1),
+																						   Icon = status.NString(2),
+																						   AppliesToCode = status.GetString(3),
+																						   SubmitCandidate = status.GetBoolean(4),
+																						   ShowCommission = status.GetBoolean(5)
+																					   }).ToListAsync();
 
 			await _reader.NextResultAsync();
 			List<KeyValues> _taxTerms = [];
-			await SetKeyValues(_reader, _taxTerms);
+			_taxTerms = await SetKeyValues(_reader);
 
 			await _reader.NextResultAsync();
 			List<UserList> _users = await _reader.Select<UserList>(user => new()
-																	 {
-																		 UserName = user.GetString(0),
-																		 Role = user.GetByte(1)
-																	 }).ToListAsync();
-			//while (await _reader.ReadAsync())
-			//{
-			//	_users.Add(new()
-			//			   {
-			//				   UserName = _reader.GetString(0),
-			//				   Role = _reader.GetByte(1)
-			//			   });
-			//}
+																		   {
+																			   UserName = user.GetString(0),
+																			   Role = user.GetByte(1)
+																		   }).ToListAsync();
 
 			await _reader.NextResultAsync();
 			List<AppWorkflow> _workflows = await _reader.Select<AppWorkflow>(workflow => new()
-																				   {
-																					   ID = workflow.GetInt32(0),
-																					   Step = workflow.GetString(1),
-																					   Next = workflow.NString(2),
-																					   IsLast = workflow.GetBoolean(3),
-																					   RoleIDs = workflow.GetString(4),
-																					   Schedule = workflow.GetBoolean(5),
-																					   AnyStage = workflow.GetBoolean(6),
-																					   NextFull = "",
-																					   RoleFull = ""
-																				   }).ToListAsync();
-			//while (await _reader.ReadAsync())
-			//{
-			//	_workflows.Add(new()
-			//				   {
-			//					   ID = _reader.GetInt32(0),
-			//					   Step = _reader.GetString(1),
-			//					   Next = _reader.NString(2),
-			//					   IsLast = _reader.GetBoolean(3),
-			//					   RoleIDs = _reader.GetString(4),
-			//					   Schedule = _reader.GetBoolean(5),
-			//					   AnyStage = _reader.GetBoolean(6),
-			//					   NextFull = "",
-			//					   RoleFull = ""
-			//				   });
-			//}
+																						 {
+																							 ID = workflow.GetInt32(0),
+																							 Step = workflow.GetString(1),
+																							 Next = workflow.NString(2),
+																							 IsLast = workflow.GetBoolean(3),
+																							 RoleIDs = workflow.GetString(4),
+																							 Schedule = workflow.GetBoolean(5),
+																							 AnyStage = workflow.GetBoolean(6),
+																							 NextFull = "",
+																							 RoleFull = ""
+																						 }).ToListAsync();
 
 			await _reader.NextResultAsync();
 			List<Zip> _zips = await _reader.Select<Zip>(zip => new()
-														 {
-															 ZipCode = zip.GetString(0),
-															 City = zip.GetString(1),
-															 State = zip.GetString(2),
-															 StateID = zip.GetInt32(3)
-														 }).ToListAsync();
-			//while (await _reader.ReadAsync()) //Zips
-			//{
-			//	_zips.Add(new(_reader.GetString(0), _reader.GetString(1), _reader.GetString(2), _reader.GetInt32(3)));
-			//}
+															   {
+																   ZipCode = zip.GetString(0),
+																   City = zip.GetString(1),
+																   State = zip.GetString(2),
+																   StateID = zip.GetInt32(3)
+															   }).ToListAsync();
 
 			await _reader.CloseAsync();
 
@@ -298,52 +262,28 @@ public static class General
 		}
 	}
 
-	private static async Task SetIntValues(SqlDataReader reader, ICollection<IntValues> intValues, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
+	private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
 	{
-		//while (await reader.ReadAsync())
-		//{
-		intValues = await reader.Select<IntValues>(intValue => new()
-																					{
-																						Value = keyType switch
-																								{
-																									0 => intValue.GetInt32(0),
-																									1 => intValue.GetInt16(0),
-																									2 => intValue.GetByte(0),
-																									_ => 0
-																								},
-																						Text = intValue.GetString(1)
-																					}).ToListAsync();
-		//intValues = _values.ToList();
-		//intValues.Add(new()
-		//              {
-		//                  Value = keyType switch
-		//                          {
-		//                              0 => reader.GetInt32(0),
-		//                              1 => reader.GetInt16(0),
-		//                              2 => reader.GetByte(0),
-		//                              _ => 0
-		//                          },
-		//                  Text = reader.GetString(1)
-		//              });
-		//}
+		return await reader.Select<IntValues>(intValue => new()
+														  {
+															  Value = keyType switch
+																	  {
+																		  0 => intValue.GetInt32(0),
+																		  1 => intValue.GetInt16(0),
+																		  2 => intValue.GetByte(0),
+																		  _ => 0
+																	  },
+															  Text = intValue.GetString(1)
+														  }).ToListAsync();
 	}
 
-	private static async Task SetKeyValues(SqlDataReader reader, ICollection<KeyValues> keyValues)
+	private static async Task<List<KeyValues>> SetKeyValues(SqlDataReader reader)
 	{
-		keyValues = await reader.Select<KeyValues>(keyValue => new()
-																					{
-																						Key = keyValue.GetString(0),
-																						Value = keyValue.GetString(1)
-																					}).ToListAsync();
-		//keyValues = _result.ToList();
-		//while (await reader.ReadAsync()) //Job Options
-		//{
-		//	keyValues.Add(new()
-		//				  {
-		//					  Key = reader.GetString(0),
-		//					  Value = reader.GetString(1)
-		//				  });
-		//}
+		return await reader.Select<KeyValues>(keyValue => new()
+														  {
+															  Key = keyValue.GetString(0),
+															  Value = keyValue.GetString(1)
+														  }).ToListAsync();
 	}
 
 	/// <summary>

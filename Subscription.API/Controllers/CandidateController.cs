@@ -8,8 +8,12 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-06-2024 20:05
-// Last Updated On:     05-06-2024 20:05
+// Last Updated On:     05-09-2024 19:05
 // *****************************************/
+
+#endregion
+
+#region Using
 
 #endregion
 
@@ -19,10 +23,11 @@ namespace Subscription.API.Controllers;
 public class CandidateController(IConfiguration configuration) : ControllerBase
 {
 	[HttpGet]
-	public async Task<Dictionary<string, object>> GetGridCandidates([FromBody] CandidateSearch searchModel)
+	public async Task<Dictionary<string, object>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
 	{
 		await using SqlConnection _connection = new(Start.ConnectionString);
-		List<Candidates> _candidates = [];
+		List<Candidate> _candidates = [];
+
 		await using SqlCommand _command = new("GetCandidates", _connection);
 		_command.CommandType = CommandType.StoredProcedure;
 		_command.Int("RecordsPerPage", searchModel.ItemCount);
@@ -69,7 +74,7 @@ public class CandidateController(IConfiguration configuration) : ControllerBase
 			_candidates.Add(new()
 							{
 								ID = _reader.GetInt32(0), Name = _reader.GetString(1), Phone = _reader.GetString(2), Email = _reader.GetString(3), Location = _location, Updated = _reader.GetString(5),
-								Status = _reader.GetString(6), Mpc = _reader.GetBoolean(7), Rating = _reader.GetByte(8), OriginalResume = false, FormattedResume = false
+								Status = _reader.GetString(6), MPC = _reader.GetBoolean(7), Rating = _reader.GetByte(8), OriginalResume = false, FormattedResume = false
 							});
 		}
 

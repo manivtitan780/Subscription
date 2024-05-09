@@ -13,7 +13,7 @@
 
 #endregion
 
-namespace ProfSvc_Classes;
+namespace Subscription.Model;
 
 /// <summary>
 ///     Represents a search for candidates in the professional services domain.
@@ -447,14 +447,14 @@ public class CandidateSearch
 		Proximity = 25;
 		ProximityUnit = 1;
 		Eligibility = 0;
-		Relocate = "%";
-		JobOptions = "%";
-		SecurityClearance = "%";
+		Relocate = "";
+		JobOptions = "";
+		SecurityClearance = "";
 		Page = 1;
 		ItemCount = 25;
 		SortField = 1;
 		SortDirection = 0;
-		User = "SURREAL";
+		User = "ADMIN";
 		ActiveRequisitionsOnly = true;
 	}
 

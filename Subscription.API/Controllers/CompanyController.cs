@@ -302,29 +302,6 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 																					UpdatedDate = company.GetDateTime(10)
 																				}).ToListAsync();
 
-		//_companies = _result.ToList();
-		//while (await _reader.ReadAsync())
-		//{
-		//	_companies.Add(new()
-		//				   {
-		//					   ID = _reader.GetInt32(0),
-		//					   CompanyName = _reader.GetString(1),
-		//					   Email = _reader.GetString(2),
-		//					   Phone = _reader.GetString(3),
-		//					   Address = _reader.GetString(4),
-		//					   Website = _reader.GetString(5),
-		//					   Status = _reader.GetBoolean(6),
-		//					   ContactsCount = _reader.GetInt32(7),
-		//					   LocationsCount = _reader.GetInt32(8),
-		//					   UpdatedBy = _reader.GetString(9).ToUpperInvariant(),
-		//					   UpdatedDate = _reader.GetDateTime(10)
-		//				   });
-		//	//if (_count == 0)
-		//	//{
-		//	//    _count = _reader.GetInt32(11);
-		//	//}
-		//}
-
 		await _reader.CloseAsync();
 
 		await _connection.CloseAsync();

@@ -73,6 +73,20 @@ public class Zip
 		City = city;
 		State = state;
 		StateID = stateID;
+		Latitude = 0F;
+		Longitude = 0F;
+	}
+
+	public float Longitude
+	{
+		get;
+		set;
+	}
+
+	public float Latitude
+	{
+		get;
+		set;
 	}
 
 	/// <summary>
@@ -145,12 +159,16 @@ public class Zip
 	}
 
 	/// <summary>
-	///     Resets the ZipCode and City properties to their default values.
+	///     Resets the properties to their default values.
 	/// </summary>
 	public void Clear()
 	{
 		ZipCode = "";
 		City = "";
+		State = "";
+		StateID = 0;
+		Latitude = 0F;
+		Longitude = 0F;
 	}
 
 	/// <summary>

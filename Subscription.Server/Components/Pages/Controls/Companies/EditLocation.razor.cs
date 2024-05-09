@@ -13,6 +13,8 @@
 
 #endregion
 
+using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
+
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
 public partial class EditLocation

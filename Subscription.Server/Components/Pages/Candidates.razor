@@ -1,57 +1,41 @@
 ﻿@page "/candidate"
 @layout SubscriptionLayout
-@using AnimationEffect = Syncfusion.Blazor.AnimationEffect
-@inject IJSRuntime Runtime;
 @attribute [StreamRendering]
 
 
 <PageHeader />
 @if (HasViewRights)
 {
-	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" ItemClick="PageNumberClick" Name="@(SearchModel.CompanyName)"
+	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" ItemClick="PageNumberClick" Name="@(SearchModel.Name)"
 				NumericCount="7" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
-@* 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
-					TValue="Company" Width="100%">
+ 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
+					TValue="Candidate" Width="100%">
 				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})" />
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single" />
 				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID" />
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Company" /> @* OnActionBegin="OnActionBegin" RowSelected="RowSelected" * @
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate" /> @*OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
 				<GridColumns>
-					<GridColumn Field="@nameof(Company.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
 					<GridSortSettings AllowUnsort="false">
-						@* <GridSortColumns>
+					@* <GridSortColumns>
 					<GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
-					</GridSortColumns> * @
+					</GridSortColumns> *@
 					</GridSortSettings>
-					<GridColumn AllowSorting="true" Field="@nameof(Company.CompanyName)" HeaderText="Name" Width="17%">
+                    <GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
+                    <GridColumn AllowSorting="true" HeaderText="Name" Width="20%">
 						<Template Context="aCon">
 							@{
-								if (aCon is Company _con)
+								if (aCon is Candidate _con)
 								{
-									<span>
-										@(_con.CompanyName)
-									</span>
+									<span class="@(_con.MPC ? "mpcicon" : "")">@_con.Name</span>
 								}
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="false" HeaderText="Email" Width="17%">
+					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
 						<Template Context="aCon">
 							@{
-								if (aCon is Company _con)
-								{
-									<span>
-										@(_con.Email)
-									</span>
-								}
-							}
-						</Template>
-					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Company.Phone)" HeaderText="Phone" Width="12%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
+								if (aCon is Candidate _con)
 								{
 									<span>
 										@(_con.Phone.StripPhoneNumber().FormatPhoneNumber())
@@ -60,48 +44,57 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Company.Address)" HeaderText="Location" Width="17%">
+					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
 						<Template Context="aCon">
 							@{
-								if (aCon is Company _con)
+								if (aCon is Candidate _con)
 								{
-									<span>
-										@(_con.Address.ToMarkupString())
-									</span>
+									<a href="mailto:@(_con.Email)">@_con.Email</a>
 								}
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Company.Website)" HeaderText="Website" Width="17%" />
-					<GridColumn AllowSorting="true" Field="@nameof(Company.Status)" HeaderText="Status" Width="10%">
+                    <GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
+                        <Template Context="aCon">
+                            @{
+                                if (aCon is Candidate _con)
+                                {
+                                    <span>
+                                        @(_con.Location.ToMarkupString())
+                                    </span>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
+                        <Template Context="aCon">
+                            @{
+                                if (aCon is Candidate _con)
+                                {
+                                    <span>
+                                        @(_con.Status)
+                                    </span>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
 						<Template Context="aCon">
 							@{
-								if (aCon is Company _con)
+								if (aCon is Candidate _con)
 								{
 									<span>
-										@(_con.Status ? "Active" : "Inactive")
-									</span>
-								}
-							}
-						</Template>
-					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Company.UpdatedDate)" HeaderText="Updated" Width="10%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>
-										@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy}]")
+										@(_con.Updated)
 									</span>
 								}
 							}
 						</Template>
 					</GridColumn>
 				</GridColumns>
-				<GridTemplates Context="context">
+				@*<GridTemplates Context="context">
 					<DetailTemplate>
 						@{
-							@* Add Buttons Start * @
+							//@* Add Buttons Start * @
 							<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
 										 Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
 								<SpeedDialItems>
@@ -112,7 +105,7 @@
 									<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemEditAccount" Text="Edit Account Information" Title="Edit Account Information" />
 								</SpeedDialItems>
 							</SfSpeedDial>
-							@* Add Buttons End * @
+							//@* Add Buttons End * @
 							if (context is Company)
 							{
 								<SfTab CssClass="e-fill" Height="335" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
@@ -191,14 +184,14 @@
 							}
 						}
 					</DetailTemplate>
-				</GridTemplates>
+				</GridTemplates>*@
 			</SfGrid>
- *@		</GridContent>
+		</GridContent>
 	</GridHeader>
-@* 	<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State" />
+ 	@*<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State" />
 	<EditLocation Model="SelectedLocation" @ref="CompanyLocationDialog" Save="SaveLocation" State="State" />
-	<EditContact Model="SelectedContact" @ref="CompanyContactDialog" Save="SaveContact" />
- *@}
+	<EditContact Model="SelectedContact" @ref="CompanyContactDialog" Save="SaveContact" />*@
+ }
 else
 {
 	<div class="noAccess">
