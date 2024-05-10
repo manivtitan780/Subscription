@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     05-09-2024 21:05
+// Last Updated On:     05-10-2024 19:05
 // *****************************************/
 
 #endregion
@@ -23,6 +23,13 @@ namespace Subscription.Server.Components.Pages;
 
 public partial class Candidates
 {
+    private const string StorageName = "CandidatesGrid";
+    private static TaskCompletionSource<bool> _initializationTaskSource;
+
+    private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+
+    private Candidate _target;
+
     [Inject]
     private IConfiguration Configuration
     {
@@ -47,6 +54,21 @@ public partial class Candidates
         get;
         set;
     } = true;
+
+    /// <summary>
+    ///     Gets or sets the instance of the IJSRuntime interface. This interface provides methods for interacting with
+    ///     JavaScript from .NET code.
+    /// </summary>
+    /// <remarks>
+    ///     The IJSRuntime instance is used to invoke JavaScript functions from .NET code. In the Companies class, it is used
+    ///     to open a new browser tab for document download in the `Companies.DownloadDocument()` method.
+    /// </remarks>
+    [Inject]
+    private IJSRuntime JsRuntime
+    {
+        get;
+        set;
+    }
 
     [Inject]
     private ILocalStorageService LocalStorage
@@ -86,30 +108,140 @@ public partial class Candidates
         set;
     }
 
+    private SfSpinner Spinner
+    {
+        get;
+        set;
+    }
+
     private string User
     {
         get;
         set;
     }
 
-    private Task AllAlphabets() => null;
+    private static async Task AllAlphabets()
+    {
+        SearchModel.Name = "";
+        SearchModel.Page = 1;
+        await Grid.Refresh();
+    }
 
-    private async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
+    private static async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
     {
         SearchModel.Name = filter.Value;
         SearchModel.Page = 1;
         await Grid.Refresh();
     }
 
-    private Task ClearFilter() => null;
+    private async Task ClearFilter()
+    {
+        SearchModel.Clear();
+        SearchModel.User = User;
+        await Grid.Refresh();
+    }
 
-    private Task DataHandler(object arg) => null;
+    /// <summary>
+    ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
+    /// </summary>
+    /// <returns></returns>
+    private Task DataHandler() => ExecuteMethod(async () =>
+                                                {
+                                                    DotNetObjectReference<Candidates> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
+                                                    await JsRuntime.InvokeAsync<string>("detail", _dotNetReference);
+                                                    //  send the dotnet ref to JS side
+                                                    if (Grid.TotalItemCount > 0)
+                                                    {
+                                                        await Grid.SelectRowAsync(0);
+                                                    }
+                                                });
 
-    private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> arg) => null;
+    private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
+    {
+        return ExecuteMethod(async () =>
+                             {
+                                 if (_target != null && _target != candidate.Data)
+                                 {
+                                     // return when target is equal to args.data
+                                     await Grid.ExpandCollapseDetailRowAsync(_target);
+                                 }
 
-    private Task GetAlphabets(char arg) => null;
+                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(candidate.Data.ID);
+                                 if (_index != Grid.SelectedRowIndex)
+                                 {
+                                     await Grid.SelectRowAsync(_index);
+                                 }
 
-    private Task GridPageChanging(GridPageChangingEventArgs arg) => null;
+                                 _target = candidate.Data;
+                                 //try
+                                 //{
+                                 //    if (Spinner != null)
+                                 //    {
+                                 //        await Spinner.ShowAsync();
+                                 //    }
+                                 //}
+                                 //catch
+                                 //{
+                                 //    //Ignore the error.
+                                 //}
+
+                                 //Dictionary<string, string> _parameters = new()
+                                 //                                         {
+                                 //                                             {"candidateID", _target.ID.ToString()},
+                                 //                                             {"roleID", General.GetRoleID(LoginCookyUser)}
+                                 //                                         };
+                                 //Dictionary<string, object> _response = await General.GetRest<Dictionary<string, object>>("Candidates/GetCandidateDetails", _parameters);
+
+                                 //if (_response != null)
+                                 //{
+                                 //    _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response["Candidate"]);
+                                 //    _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
+                                 //    _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
+                                 //    _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
+                                 //    _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
+                                 //    _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
+                                 //    _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["Rating"]);
+                                 //    _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPC"]);
+                                 //    _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
+                                 //    RatingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"]) ?? new();
+                                 //    GetMPCDate();
+                                 //    GetMPCNote();
+                                 //    GetRatingDate();
+                                 //    GetRatingNote();
+                                 //    SetupAddress();
+                                 //    SetCommunication();
+                                 //    SetEligibility();
+                                 //    SetJobOption();
+                                 //    SetTaxTerm();
+                                 //    SetExperience();
+                                 //}
+
+                                 //_selectedTab = _candidateActivityObject.Count > 0 ? 7 : 0;
+                                 //FormattedExists = _target.FormattedResume;
+                                 //OriginalExists = _target.OriginalResume;
+
+                                 //try
+                                 //{
+                                 //    if (Spinner != null)
+                                 //    {
+                                 //        await Spinner.HideAsync();
+                                 //    }
+                                 //}
+                                 //catch
+                                 //{
+                                 //    //Ignore the error.
+                                 //}
+                             });
+    }
+
+    /// <summary>
+    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
+    /// </summary>
+    [JSInvokable("DetailCollapse")]
+    public void DetailRowCollapse()
+    {
+        _target = null;
+    }
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -122,7 +254,34 @@ public partial class Candidates
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
-    private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+    private async Task GetAlphabets(char alphabet)
+    {
+        await ExecuteMethod(async () =>
+                            {
+                                SearchModel.Name = alphabet.ToString();
+                                SearchModel.Page = 1;
+                                await Grid.Refresh();
+                            });
+    }
+
+    private async Task GridPageChanging(GridPageChangingEventArgs page)
+    {
+        await ExecuteMethod(async () =>
+                            {
+                                if (page.CurrentPageSize != SearchModel.ItemCount)
+                                {
+                                    SearchModel.ItemCount = page.CurrentPageSize;
+                                    SearchModel.Page = 1;
+                                    await Grid.GoToPageAsync(1);
+                                    await Task.Yield();
+                                }
+                                else
+                                {
+                                    SearchModel.Page = page.CurrentPage;
+                                    await Grid.Refresh();
+                                }
+                            });
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,12 +319,9 @@ public partial class Candidates
         await base.OnInitializedAsync();
     }
 
-    private const string StorageName = "CandidatesGrid";
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg) => null;
 
-    private Task PageNumberClick(PagerItemClickEventArgs arg) => null;
-
-    private Task PageSizeChanged(PageSizeChangedArgs arg) => null;
+    private Task TabSelected(SelectEventArgs arg) => null;
 
     public class CandidateAdaptor : DataAdaptor
     {
@@ -198,7 +354,7 @@ public partial class Candidates
             await _initializationTaskSource.Task;
             try
             {
-                List<Company> _dataSource = [];
+                List<Candidate> _dataSource = [];
 
                 object _candidateReturn = null;
                 try
@@ -208,10 +364,10 @@ public partial class Candidates
                     if (_restResponse == null)
                     {
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                        {
-                            Result = _dataSource,
-                            Count = 0 /*_count*/
-                        } : _dataSource;
+                                                               {
+                                                                   Result = _dataSource,
+                                                                   Count = 0 /*_count*/
+                                                               } : _dataSource;
                     }
                     else
                     {
@@ -226,24 +382,24 @@ public partial class Candidates
                         //    Roles = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
                         //}
 
-                        _dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Candidates"].ToString() ?? string.Empty);
+                        _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_restResponse["Candidates"].ToString() ?? string.Empty);
                         int _count = _restResponse["Count"].ToInt32();
                         Count = _count;
                         if (_dataSource == null)
                         {
                             _candidateReturn = dm.RequiresCounts ? new DataResult
-                            {
-                                Result = null,
-                                Count = 1
-                            } : null;
+                                                                   {
+                                                                       Result = null,
+                                                                       Count = 1
+                                                                   } : null;
                         }
                         else
                         {
                             _candidateReturn = dm.RequiresCounts ? new DataResult
-                            {
-                                Result = _dataSource,
-                                Count = _count /*_count*/
-                            } : _dataSource;
+                                                                   {
+                                                                       Result = _dataSource,
+                                                                       Count = _count /*_count*/
+                                                                   } : _dataSource;
                         }
                     }
                 }
@@ -252,20 +408,20 @@ public partial class Candidates
                     if (_dataSource == null)
                     {
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                        {
-                            Result = null,
-                            Count = 1
-                        } : null;
+                                                               {
+                                                                   Result = null,
+                                                                   Count = 1
+                                                               } : null;
                     }
                     else
                     {
                         _dataSource.Add(new());
 
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                        {
-                            Result = _dataSource,
-                            Count = 1
-                        } : _dataSource;
+                                                               {
+                                                                   Result = _dataSource,
+                                                                   Count = 1
+                                                               } : _dataSource;
                     }
                 }
 

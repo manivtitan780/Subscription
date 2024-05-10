@@ -112,7 +112,7 @@ public partial class Companies
 		set;
 	}
 
-	public bool HasViewRights
+	private bool HasViewRights
 	{
 		get;
 		set;

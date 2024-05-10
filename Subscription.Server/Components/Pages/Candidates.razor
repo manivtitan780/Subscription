@@ -1,28 +1,28 @@
 ﻿@page "/candidate"
+@using AnimationEffect = Syncfusion.Blazor.AnimationEffect
 @layout SubscriptionLayout
 @attribute [StreamRendering]
-
 
 <PageHeader />
 @if (HasViewRights)
 {
-	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" ItemClick="PageNumberClick" Name="@(SearchModel.Name)"
-				NumericCount="7" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" TotalCount="@Count" ValueChange="AutocompleteValueChange">
+	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)"
+				NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
- 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
+			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
 					TValue="Candidate" Width="100%">
 				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})" />
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single" />
 				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID" />
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate" /> @*OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate" />@* OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
 				<GridColumns>
 					<GridSortSettings AllowUnsort="false">
-					@* <GridSortColumns>
+						@* <GridSortColumns>
 					<GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
 					</GridSortColumns> *@
 					</GridSortSettings>
-                    <GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
-                    <GridColumn AllowSorting="true" HeaderText="Name" Width="20%">
+					<GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
+					<GridColumn AllowSorting="true" HeaderText="Name" Width="20%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -54,30 +54,30 @@
 							}
 						</Template>
 					</GridColumn>
-                    <GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
-                        <Template Context="aCon">
-                            @{
-                                if (aCon is Candidate _con)
-                                {
-                                    <span>
-                                        @(_con.Location.ToMarkupString())
-                                    </span>
-                                }
-                            }
-                        </Template>
-                    </GridColumn>
-                    <GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
-                        <Template Context="aCon">
-                            @{
-                                if (aCon is Candidate _con)
-                                {
-                                    <span>
-                                        @(_con.Status)
-                                    </span>
-                                }
-                            }
-                        </Template>
-                    </GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Candidate _con)
+								{
+									<span>
+										@(_con.Location.ToMarkupString())
+									</span>
+								}
+							}
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Candidate _con)
+								{
+									<span>
+										@(_con.Status)
+									</span>
+								}
+							}
+						</Template>
+					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
 						<Template Context="aCon">
 							@{
@@ -91,110 +91,134 @@
 						</Template>
 					</GridColumn>
 				</GridColumns>
-				@*<GridTemplates Context="context">
+				<GridTemplates Context="context">
 					<DetailTemplate>
-						@{
-							//@* Add Buttons Start * @
-							<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
-										 Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
-								<SpeedDialItems>
-									<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCompany" Text="Edit Company" Title="Edit Company" />
-									<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddLocation" Text="Add Location" Title="Add Location" />
-									<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddContact" Text="Add Contact" Title="Add Contact" />
-									<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddDocument" Text="Add Document" Title="Add Document" />
-									<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemEditAccount" Text="Edit Account Information" Title="Edit Account Information" />
-								</SpeedDialItems>
-							</SfSpeedDial>
-							//@* Add Buttons End * @
-							if (context is Company)
-							{
-								<SfTab CssClass="e-fill" Height="335" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
-									<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent" ZIndex="12000" />@** @
-									<TabAnimationSettings>
-										<TabAnimationPrevious Effect="BlazorAnimationEffect.None"></TabAnimationPrevious>
-										<TabAnimationNext Effect="BlazorAnimationEffect.None"></TabAnimationNext>
-										<TabEvents Selected="TabSelected"></TabEvents>
-									</TabAnimationSettings>
-									<TabItems>
-										<TabItem>
-											<ChildContent>
-												<TabHeader Text="Company Info" />
-											</ChildContent>
-											@* CSS used id .e-tab#tabCompany div[id^="e-content-tabCompany"]* @
-											<ContentTemplate>
-												<div class="layout-2">
-													<div class="leftLayout">
-														<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"></PanelDisplayText>
-														<PanelDisplayText Label="EIN#" Text="@(_companyDetails.EIN)"></PanelDisplayText>
-														<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"></PanelDisplayText>
-														<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.FormatPhoneNumber())"></PanelDisplayText>
-														<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
-														<PanelDisplayText Label="D-U-N-S Number" Text="@(_companyDetails.DUNS)"></PanelDisplayText>
-														<PanelDisplayText Label="NAICS Code" Text="@(_companyDetails.NAICSCode.ToString())"></PanelDisplayText>
-														<PanelDisplayText Label="Status" Text="@(_companyDetails.Status ? "Active" : "Inactive")"></PanelDisplayText>
-													</div>
-													<div class="rightLayout">
-														<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_companyDetails.Notes)"></PanelDisplayText>
-													</div>
-												</div>
-											</ContentTemplate>
-										</TabItem>
-										<TabItem>
-											<ChildContent>
-												<TabHeader Text="Locations" />
-											</ChildContent>
-											<ContentTemplate>
-												<LocationPanel EditCompanyLocation="EditLocation" Model="_companyLocations" @ref="PanelLocations" />
-											</ContentTemplate>
-										</TabItem>
-										<TabItem>
-											<ChildContent>
-												<TabHeader Text="Contacts" />
-											</ChildContent>
-											<ContentTemplate>
-												<ContactPanel EditCompanyContact="EditCompanyContact" Model="_companyContacts" @ref="PanelContacts" />
-											</ContentTemplate>
-										</TabItem>
-										<TabItem>
-											<ChildContent>
-												<TabHeader Text="Documents" />
-											</ChildContent>
-											<ContentTemplate>
-												<DocumentPanel Model="_companyDocuments"></DocumentPanel>
-											</ContentTemplate>
-										</TabItem>
-										<TabItem>
-											<ChildContent>
-												<TabHeader Text="Account Information" />
-											</ChildContent>
-											<ContentTemplate>
-												<div></div>
-											</ContentTemplate>
-										</TabItem>
-										<TabItem>
-											<ChildContent>
-												<TabHeader Text="Requisitions" />
-											</ChildContent>
-											<ContentTemplate>
-												<div></div>
-											</ContentTemplate>
-										</TabItem>
-									</TabItems>
-								</SfTab>
-							}
-						}
+						@* Add Buttons Start *@
+						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
+                                     OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
+                            @* Visible="UserRights.EditCandidate" *@
+							<SpeedDialItems>
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C." />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume" />
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment" />
+							</SpeedDialItems>
+						</SfSpeedDial>
+						@* Add Buttons End *@
+                        <SfTab CssClass="e-fill" Height="365" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="0" ShowCloseButton="false" Width="95%">
+                           @*  SelectedItem="_selectedTab" *@
+							<TabAnimationSettings>
+								<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+								<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+								<TabEvents Selected="TabSelected"></TabEvents>
+							</TabAnimationSettings>
+							<TabItems>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Basic Info" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <basicinfopanel GetMPCDate="MPCDate" GetMPCNote="MPCNote" GetRatingDate="RatingDate" GetRatingNote="RatingNote" IsRequisition="@(RequisitionID > 0)"
+														Model="_candidateDetailsObject" SetCommunication="CandidateCommunication" SetEligibility="CandidateEligibility" SetExperience="CandidateExperience"
+														SetJobOption="CandidateJobOptions" SetTaxTerm="CandidateTaxTerms" SetupAddress="Address" /> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Skills" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <skillpanel DeleteSkill="DeleteSkill" EditRights="UserRights.EditCandidate" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject"
+													ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Education" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <educationpanel DeleteEducation="DeleteEducation" EditEducation="EditEducation" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
+														Model="@_candidateEducationObject" @ref="EducationPanel" UserName="@User" /> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Experience" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <experiencepanel DeleteExperience="DeleteExperience" EditExperience="EditExperience" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
+														 Model="@_candidateExperienceObject" @ref="ExperiencePanel" UserName="@User" /> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Notes" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <notespanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
+													Model="@_candidateNotesObject" @ref="PanelNotes" UserName="@User" /> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Resume" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <div class="resumeContainerBox">
+											<SfRichTextEditor Height="300px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
+												<RichTextEditorToolbarSettings Items="@_tools1">
+													<RichTextEditorCustomToolbarItems>
+														<RichTextEditorCustomToolbarItem Name="Original">
+															<Template>
+																<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !UserRights.DownloadResume)" OnClick="OriginalClick" />
+															</Template>
+														</RichTextEditorCustomToolbarItem>
+														<RichTextEditorCustomToolbarItem Name="Formatted">
+															<Template>
+																<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !UserRights.DownloadResume)" OnClick="FormattedClick" />
+															</Template>
+														</RichTextEditorCustomToolbarItem>
+													</RichTextEditorCustomToolbarItems>
+												</RichTextEditorToolbarSettings>
+											</SfRichTextEditor>
+										</div> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Attachment" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <downloadspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditCandidate" Model="@_candidateDocumentsObject" @ref="DownloadsPanel" /> *@
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Candidate Activity" />
+									</ChildContent>
+									<ContentTemplate>
+										@* <activitypanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candidateActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity"
+													   User="@User" /> *@ @*TODO: Activity Panel Rights to be set*@
+									</ContentTemplate>
+								</TabItem>
+							</TabItems>
+							<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />@**@
+						</SfTab>
 					</DetailTemplate>
-				</GridTemplates>*@
+				</GridTemplates>
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
- 	@*<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State" />
-	<EditLocation Model="SelectedLocation" @ref="CompanyLocationDialog" Save="SaveLocation" State="State" />
-	<EditContact Model="SelectedContact" @ref="CompanyContactDialog" Save="SaveContact" />*@
- }
-else
-{
-	<div class="noAccess">
-		You don't have rights to view this page.
-	</div>
-}
+	}
+	else
+	{
+		<div class="noAccess">
+			You don't have rights to view this page.
+		</div>
+	}
