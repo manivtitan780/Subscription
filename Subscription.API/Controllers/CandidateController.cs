@@ -8,12 +8,8 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-06-2024 20:05
-// Last Updated On:     05-10-2024 15:05
+// Last Updated On:     05-11-2024 15:05
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
@@ -22,6 +18,297 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class CandidateController(IConfiguration configuration) : ControllerBase
 {
+    /// <summary>
+    ///     Retrieves the detailed information of a candidate by their ID.
+    /// </summary>
+    /// <param name="candidateID">The ID of the candidate.</param>
+    /// <param name="roleID">
+    ///     The role ID associated with the user making the request. This is used for access control and
+    ///     permissions management.
+    /// </param>
+    /// <returns>
+    ///     A dictionary containing the candidate's details, notes, skills, education, experience, activity, rating, MPC,
+    ///     RatingMPC, and documents.
+    /// </returns>
+    /// <remarks>
+    ///     This method performs a database operation using a stored procedure named "GetDetailCandidate".
+    ///     It reads multiple result sets from the database to populate various aspects of the candidate's information.
+    /// </remarks>
+    [HttpGet]
+    public async Task<ActionResult<Dictionary<string, object>>> GetCandidateDetails(int candidateID, string roleID)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        CandidateDetails _candidate = null;
+        string _candRating = "", _candMPC = "";
+
+        await using SqlCommand _command = new("GetDetailCandidate", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("@CandidateID", candidateID);
+        _command.Char("@RoleID", 2, roleID);
+
+        await _connection.OpenAsync();
+        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+        if (_reader.HasRows) //Candidate Details
+        {
+            _reader.Read();
+            _candidate = new()
+                         {
+                             FirstName = _reader.NString(0), MiddleName = _reader.NString(1), LastName = _reader.NString(2), Address1 = _reader.NString(3), Address2 = _reader.NString(4),
+                             City = _reader.NString(5), StateID = _reader.GetInt32(6), ZipCode = _reader.NString(7), Email = _reader.NString(8), Phone1 = _reader.NString(9),
+                             Phone2 = _reader.NString(10), Phone3 = _reader.NString(11), PhoneExt = _reader.NInt16(12).ToString(), LinkedIn = _reader.NString(13), Facebook = _reader.NString(14),
+                             Twitter = _reader.NString(15), Title = _reader.NString(16), EligibilityID = _reader.GetInt32(17), Relocate = _reader.GetBoolean(18),
+                             Background = _reader.GetBoolean(19), JobOptions = _reader.NString(20), TaxTerm = _reader.NString(21), OriginalResume = _reader.NString(22),
+                             FormattedResume = _reader.NString(23), TextResume = _reader.NString(24), Keywords = _reader.NString(25), Communication = _reader.NString(26),
+                             RateCandidate = _reader.GetByte(27), RateNotes = _reader.NString(28), MPC = _reader.GetBoolean(29), MPCNotes = _reader.NString(30),
+                             ExperienceID = _reader.GetInt32(31), HourlyRate = _reader.GetDecimal(32), HourlyRateHigh = _reader.GetDecimal(33), SalaryHigh = _reader.GetDecimal(34),
+                             SalaryLow = _reader.GetDecimal(35), RelocationNotes = _reader.NString(36), SecurityNotes = _reader.NString(37), Refer = _reader.GetBoolean(38),
+                             ReferAccountManager = _reader.NString(39), EEO = _reader.GetBoolean(40), EEOFile = _reader.NString(41), Summary = _reader.NString(42),
+                             GooglePlus = _reader.NString(43), Created = _reader.NString(44), Updated = _reader.NString(45), CandidateID = candidateID, Status = _reader.NString(46)
+                         };
+            _candRating = _reader.NString(28);
+            _candMPC = _reader.NString(30);
+        }
+
+        _reader.NextResult(); //Notes
+        List<CandidateNotes> _notes = await _reader.FillList<CandidateNotes>(note => new()
+                                                                                   {
+                                                                                       ID = note.GetInt32(0), UpdatedDate = note.GetDateTime(1), UpdatedBy = note.GetString(2),
+                                                                                       Notes = note.GetString(3)
+                                                                                   }).ToListAsync();
+        //while (_reader.Read())
+        //{
+        //    _notes.Add(new()
+        //               {
+        //                   ID = _reader.GetInt32(0), UpdatedDate = _reader.GetDateTime(1), UpdatedBy = _reader.GetString(2), Notes = _reader.GetString(3)
+        //               });
+        //}
+
+        _reader.NextResult(); //Skills
+        List<CandidateSkills> _skills = await _reader.FillList<CandidateSkills>(skill => new()
+                                                                                       {
+                                                                                           ID = skill.GetInt32(0), Skill = skill.GetString(1), LastUsed = skill.GetInt16(2),
+                                                                                           ExpMonth = skill.GetInt16(3), UpdatedBy = skill.GetString(4)
+                                                                                       }).ToListAsync();
+        //while (_reader.Read())
+        //{
+        //    _skills.Add(new() {ID = _reader.GetInt32(0), Skill = _reader.GetString(1), LastUsed = _reader.GetInt16(2), ExpMonth = _reader.GetInt16(3), UpdatedBy = _reader.GetString(4)});
+        //}
+
+        _reader.NextResult(); //Education
+        List<CandidateEducation> _education = await _reader.FillList<CandidateEducation>(education => new()
+                                                                                                    {
+                                                                                                        ID = education.GetInt32(0), Degree = education.GetString(1), College = education.GetString(2),
+                                                                                                        State = education.GetString(3), Country = education.GetString(4),
+                                                                                                        Year = education.GetString(5), UpdatedBy = education.GetString(6)
+                                                                                                    }).ToListAsync();
+        //while (_reader.Read())
+        //{
+        //    _education.Add(new()
+        //                   {
+        //                       ID = _reader.GetInt32(0), Degree = _reader.GetString(1), College = _reader.GetString(2), State = _reader.GetString(3), Country = _reader.GetString(4),
+        //                       Year = _reader.GetString(5), UpdatedBy = _reader.GetString(6)
+        //                   });
+        //}
+
+        _reader.NextResult(); //Experience
+        List<CandidateExperience> _experience = await _reader.FillList<CandidateExperience>(experience => new()
+                                                                                                        {
+                                                                                                            ID = experience.GetInt32(0), Employer = experience.GetString(1),
+                                                                                                            Start = experience.GetString(2), End = experience.GetString(3),
+                                                                                                            Location = experience.GetString(4), Description = experience.GetString(5),
+                                                                                                            UpdatedBy = experience.GetString(6), Title = experience.GetString(7)
+                                                                                                        }).ToListAsync();
+        //while (_reader.Read())
+        //{
+        //    _experience.Add(new()
+        //                    {
+        //                        ID = _reader.GetInt32(0), Employer = _reader.GetString(1), Start = _reader.GetString(2), End = _reader.GetString(3), Location = _reader.GetString(4),
+        //                        Description = _reader.GetString(5), UpdatedBy = _reader.GetString(6), Title = _reader.GetString(7)
+        //                    });
+        //}
+
+        _reader.NextResult(); //Activity
+        List<CandidateActivity> _activity = await _reader.FillList<CandidateActivity>(activity => new()
+                                                                                                {
+                                                                                                    Requisition = activity.GetString(0), UpdatedDate = activity.GetDateTime(1),
+                                                                                                    UpdatedBy = activity.GetString(2), Positions = activity.GetInt32(3),
+                                                                                                    PositionFilled = activity.GetInt32(4), Status = activity.GetString(5),
+                                                                                                    Notes = activity.GetString(6), ID = activity.GetInt32(7), Schedule = activity.GetBoolean(8),
+                                                                                                    AppliesTo = activity.GetString(9), Color = activity.GetString(10), Icon = activity.GetString(11),
+                                                                                                    DoRoleHaveRight = activity.GetBoolean(12), LastActionBy = activity.GetString(13),
+                                                                                                    RequisitionID = activity.GetInt32(14), CandidateUpdatedBy = activity.GetString(15),
+                                                                                                    CountSubmitted = activity.GetInt32(16), StatusCode = activity.GetString(17),
+                                                                                                    ShowCalendar = activity.GetBoolean(18), DateTimeInterview = activity.NDateTime(19),
+                                                                                                    TypeOfInterview = activity.GetString(20), PhoneNumber = activity.NString(21),
+                                                                                                    InterviewDetails = activity.NString(22), Undone = activity.GetBoolean(23)
+                                                                                                }).ToListAsync();
+        //while (_reader.Read())
+        //{
+        //    _activity.Add(new()
+        //                  {
+        //                      Requisition = _reader.GetString(0), UpdatedDate = _reader.GetDateTime(1), UpdatedBy = _reader.GetString(2), Positions = _reader.GetInt32(3),
+        //                      PositionFilled = _reader.GetInt32(4), Status = _reader.GetString(5), Notes = _reader.GetString(6), ID = _reader.GetInt32(7), Schedule = _reader.GetBoolean(8),
+        //                      AppliesTo = _reader.GetString(9), Color = _reader.GetString(10), Icon = _reader.GetString(11), DoRoleHaveRight = _reader.GetBoolean(12),
+        //                      LastActionBy = _reader.GetString(13), RequisitionID = _reader.GetInt32(14), CandidateUpdatedBy = _reader.GetString(15), CountSubmitted = _reader.GetInt32(16),
+        //                      StatusCode = _reader.GetString(17), ShowCalendar = _reader.GetBoolean(18), DateTimeInterview = _reader.NDateTime(19), TypeOfInterview = _reader.GetString(20),
+        //                      PhoneNumber = _reader.NString(21), InterviewDetails = _reader.NString(22), Undone = _reader.GetBoolean(23)
+        //                  });
+        //}
+
+        _reader.NextResult(); //Managers
+
+        _reader.NextResult(); //Documents
+        List<CandidateDocument> _documents = await _reader.FillList<CandidateDocument>(document => new()
+                                                                                                 {
+                                                                                                     ID = document.GetInt32(0), Name = document.GetString(1), Location = document.GetString(2),
+                                                                                                     Notes = document.GetString(3), UpdatedBy = $"{document.NDateTime(4)} [{document.NString(5)}]",
+                                                                                                     DocumentType = document.GetString(6), InternalFileName = document.GetString(7),
+                                                                                                     DocumentTypeID = document.GetInt32(8)
+                                                                                                 }).ToListAsync();
+        //while (_reader.Read())
+        //{
+        //    _documents.Add(new()
+        //                   {
+        //                       ID = _reader.GetInt32(0), Name = _reader.GetString(1), Location = _reader.GetString(2), Notes = _reader.GetString(3),
+        //                       UpdatedBy = $"{_reader.NDateTime(4)} [{_reader.NString(5)}]", DocumentType = _reader.GetString(6), InternalFileName = _reader.GetString(7),
+        //                       DocumentTypeID = _reader.GetInt32(8)
+        //                   });
+        //}
+
+        await _reader.CloseAsync();
+
+        await _connection.CloseAsync();
+
+        //Candidate Rating
+        List<CandidateRating> _rating = [];
+        if (!_candRating.NullOrWhiteSpace())
+        {
+            string[] _ratingArray = _candRating.Split('?');
+            _rating.AddRange(_ratingArray
+                            .Select(str => new
+                                           {
+                                               _str = str,
+                                               _innerArray = str.Split('^')
+                                           })
+                            .Where(t => t._innerArray.Length == 4)
+                            .Select(t => new CandidateRating(t._innerArray[0].Replace("  ", " ").ToDateTime("M/d/yy h:mm:ss tt"), t._innerArray[1],
+                                                             t._innerArray[2].ToByte(), t._innerArray[3])));
+
+            _rating = _rating.OrderByDescending(x => x.Date).ToList();
+        }
+
+        //Candidate MPC
+        List<CandidateMPC> _mpc = [];
+        if (_candMPC.NullOrWhiteSpace())
+        {
+            return new Dictionary<string, object>
+                   {
+                       {
+                           "Candidate", _candidate
+                       },
+                       {
+                           "Notes", _notes
+                       },
+                       {
+                           "Skills", _skills
+                       },
+                       {
+                           "Education", _education
+                       },
+                       {
+                           "Experience", _experience
+                       },
+                       {
+                           "Activity", _activity
+                       },
+                       {
+                           "Rating", _rating
+                       },
+                       {
+                           "MPC", _mpc
+                       },
+                       {
+                           "RatingMPC", null
+                       },
+                       {
+                           "Document", _documents
+                       }
+                   };
+        }
+
+        string[] _mpcArray = _candMPC.Split('?');
+        _mpc.AddRange(_mpcArray
+                     .Select(str => new
+                                    {
+                                        _str = str,
+                                        _innerArray = str.Split('^')
+                                    })
+                     .Where(t => t._innerArray.Length == 4)
+                     .Select(t => new CandidateMPC(t._innerArray[0].Replace("  ", " ").ToDateTime("M/d/yy h:mm:ss tt"), t._innerArray[1], t._innerArray[2].ToBoolean(),
+                                                   t._innerArray[3])));
+
+        _mpc = _mpc.OrderByDescending(x => x.Date).ToList();
+
+        int _ratingFirst = 0;
+        bool _mpcFirst = false;
+        string _ratingComments = "", _mpcComments = "";
+        if (!_candRating.NullOrWhiteSpace())
+        {
+            CandidateRating _ratingFirstCandidate = _rating.FirstOrDefault();
+            if (_ratingFirstCandidate != null)
+            {
+                _ratingFirst = _ratingFirstCandidate.Rating;
+                _ratingComments = _ratingFirstCandidate.Comments;
+            }
+        }
+
+        if (!_candMPC.NullOrWhiteSpace())
+        {
+            CandidateMPC _mpcFirstCandidate = _mpc.FirstOrDefault();
+            if (_mpcFirstCandidate != null)
+            {
+                _mpcFirst = _mpcFirstCandidate.MPC;
+                _mpcComments = _mpcFirstCandidate.Comments;
+            }
+        }
+
+        CandidateRatingMPC _ratingMPC = new(candidateID, _ratingFirst, _ratingComments, _mpcFirst, _mpcComments);
+
+        return new Dictionary<string, object>
+               {
+                   {
+                       "Candidate", _candidate
+                   },
+                   {
+                       "Notes", _notes
+                   },
+                   {
+                       "Skills", _skills
+                   },
+                   {
+                       "Education", _education
+                   },
+                   {
+                       "Experience", _experience
+                   },
+                   {
+                       "Activity", _activity
+                   },
+                   {
+                       "Rating", _rating
+                   },
+                   {
+                       "MPC", _mpc
+                   },
+                   {
+                       "RatingMPC", _ratingMPC
+                   },
+                   {
+                       "Document", _documents
+                   }
+               };
+    }
+
     [HttpGet]
     public async Task<Dictionary<string, object>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
     {
@@ -122,20 +409,11 @@ public class CandidateController(IConfiguration configuration) : ControllerBase
 
         await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-        List<KeyValues> companyNames = await _reader.Select<KeyValues>(keyValue => new()
+        List<KeyValues> companyNames = await _reader.FillList<KeyValues>(keyValue => new()
                                                                                    {
                                                                                        Key = keyValue.GetString(0),
                                                                                        Value = keyValue.GetString(0)
                                                                                    }).ToListAsync();
-        //while (await _reader.ReadAsync())
-        //{
-        //    companyNames.Add(new()
-        //                     {
-        //                         Key = _reader.GetString(0),
-        //                         Value = _reader.GetString(0)
-        //                     });
-        //}
-
         await _connection.CloseAsync();
 
         return companyNames;

@@ -122,7 +122,7 @@ public static class General
 			_companies = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
-			List<CompanyContactList> _companyContacts = await _reader.Select<CompanyContactList>(contact => new()
+			List<CompanyContactList> _companyContacts = await _reader.FillList<CompanyContactList>(contact => new()
 																											{
 																												ID = contact.GetInt32(0),
 																												ContactName = contact.GetString(2),
@@ -170,7 +170,7 @@ public static class General
 			_naics = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
-			List<Role> _roles = await _reader.Select<Role>(role => new()
+			List<Role> _roles = await _reader.FillList<Role>(role => new()
 																   {
 																	   ID = role.GetByte(0),
 																	   RoleName = role.GetString(1),
@@ -194,7 +194,7 @@ public static class General
 			_states = await SetIntValues(_reader);
 
 			await _reader.NextResultAsync();
-			List<StatusCode> _statusCodes = await _reader.Select<StatusCode>(status => new()
+			List<StatusCode> _statusCodes = await _reader.FillList<StatusCode>(status => new()
 																					   {
 																						   ID = status.GetInt32(6),
 																						   Code = status.GetString(0),
@@ -210,14 +210,14 @@ public static class General
 			_taxTerms = await SetKeyValues(_reader);
 
 			await _reader.NextResultAsync();
-			List<UserList> _users = await _reader.Select<UserList>(user => new()
+			List<UserList> _users = await _reader.FillList<UserList>(user => new()
 																		   {
 																			   UserName = user.GetString(0),
 																			   Role = user.GetByte(1)
 																		   }).ToListAsync();
 
 			await _reader.NextResultAsync();
-			List<AppWorkflow> _workflows = await _reader.Select<AppWorkflow>(workflow => new()
+			List<AppWorkflow> _workflows = await _reader.FillList<AppWorkflow>(workflow => new()
 																						 {
 																							 ID = workflow.GetInt32(0),
 																							 Step = workflow.GetString(1),
@@ -231,7 +231,7 @@ public static class General
 																						 }).ToListAsync();
 
 			await _reader.NextResultAsync();
-			List<Zip> _zips = await _reader.Select<Zip>(zip => new()
+			List<Zip> _zips = await _reader.FillList<Zip>(zip => new()
 															   {
 																   ZipCode = zip.GetString(0),
 																   City = zip.GetString(1),
@@ -264,7 +264,7 @@ public static class General
 
 	private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
 	{
-		return await reader.Select<IntValues>(intValue => new()
+		return await reader.FillList<IntValues>(intValue => new()
 														  {
 															  Value = keyType switch
 																	  {
@@ -279,7 +279,7 @@ public static class General
 
 	private static async Task<List<KeyValues>> SetKeyValues(SqlDataReader reader)
 	{
-		return await reader.Select<KeyValues>(keyValue => new()
+		return await reader.FillList<KeyValues>(keyValue => new()
 														  {
 															  Key = keyValue.GetString(0),
 															  Value = keyValue.GetString(1)

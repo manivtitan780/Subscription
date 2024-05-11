@@ -1,7 +1,4 @@
 ﻿global using Microsoft.AspNetCore.Mvc;
-
-global using ProfSvc_Classes;
-
 global using Microsoft.AspNetCore.Mvc;
 
 global using System.Data;

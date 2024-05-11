@@ -287,7 +287,7 @@ public class CompanyController(IConfiguration configuration) : ControllerBase
 		int _count = _reader.GetInt32(0);
 
 		await _reader.NextResultAsync();
-		_companies = await _reader.Select<Company>(company => new()
+		_companies = await _reader.FillList<Company>(company => new()
 																				{
 																					ID = company.GetInt32(0),
 																					CompanyName = company.GetString(1),

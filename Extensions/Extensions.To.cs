@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
+// Solution:            Subscription
 // Project:             Extensions
 // File Name:           Extensions.To.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-22-2023 18:50
-// Last Updated On:     12-7-2023 15:26
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          02-07-2024 15:02
+// Last Updated On:     05-11-2024 15:05
 // *****************************************/
 
 #endregion
@@ -28,7 +28,7 @@ namespace Extensions;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static partial class Extensions
 {
-    public static async IAsyncEnumerable<T> Select<T>(this SqlDataReader reader, Func<SqlDataReader, T> projection)
+    public static async IAsyncEnumerable<T> FillList<T>(this SqlDataReader reader, Func<SqlDataReader, T> projection)
     {
         //List<T> _results = [];
         while (await reader.ReadAsync())
@@ -37,7 +37,7 @@ public static partial class Extensions
         }
 
         //return _results;
-	}
+    }
 
     /// <summary>
     ///     Returns a boolean value from the SqlDataReader based on the provided index.
