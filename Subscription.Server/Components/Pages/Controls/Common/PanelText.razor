@@ -1,0 +1,107 @@
+﻿<div>
+	<div>@(Label.EndsWith(":") ? Label : $"{Label}:")</div>
+	@if (IsEmail)
+	{
+		if (ID.NullOrWhiteSpace())
+		{
+			<div>
+				<a href="@($"mailto:{Text}")">@Text</a>
+			</div>
+		}
+		else
+		{
+			<div id="@ID">
+				<a href="@($"mailto:{Text}")">@Text</a>
+			</div>
+		}
+	}
+	else if (IsTel)
+	{
+		if (ID.NullOrWhiteSpace())
+		{
+			<div>
+				<a href="@($"tel:{Text}")">@Text.FormatPhoneNumber()</a>
+			</div>
+		}
+		else
+		{
+			<div id="@ID">
+				<a href="@($"tel:{Text}")">@Text.FormatPhoneNumber()</a>
+			</div>
+		}
+	}
+	else if (IntValue > 0)
+	{
+		if (ID.NullOrWhiteSpace())
+		{
+			<div>
+				@IntValue.ToString()
+			</div>
+		}
+		else
+		{
+			<div id="@ID">
+				@IntValue.ToString()
+			</div>
+		}
+	}
+	else if (DecimalValue > 0)
+	{
+		if (FormatCurrency)
+		{
+			if (ID.NullOrWhiteSpace())
+			{
+				<div>
+					@DecimalValue.CultureCurrency()
+				</div>
+			}
+			else
+			{
+				<div id="@ID">
+					@DecimalValue.CultureCurrency()
+				</div>
+			}
+		}
+		else
+		{
+			if (ID.NullOrWhiteSpace())
+			{
+				<div>
+					@DecimalValue.ToString(CultureInfo.InvariantCulture)
+				</div>
+			}
+			else
+			{
+				<div id="@ID">
+					@DecimalValue.ToString(CultureInfo.InvariantCulture)
+				</div>
+			}
+		}
+	}
+	else if (!MarkupText.ToString().NullOrWhiteSpace())
+	{
+		if (ID.NullOrWhiteSpace())
+		{
+			<div>
+				@MarkupText
+			</div>
+		}
+		else
+		{
+			<div id="@ID">
+				@MarkupText
+			</div>
+		}
+	}
+	else
+	{
+		if (ID.NullOrWhiteSpace())
+		{
+			<div>@Text</div>
+		}
+		else
+		{
+			<div>@Text</div>
+		}
+	}
+</div>

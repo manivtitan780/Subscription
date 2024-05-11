@@ -123,10 +123,26 @@
 										<TabHeader Text="Basic Info" />
 									</ChildContent>
 									<ContentTemplate>
-										@* <basicinfopanel GetMPCDate="MPCDate" GetMPCNote="MPCNote" GetRatingDate="RatingDate" GetRatingNote="RatingNote" IsRequisition="@(RequisitionID > 0)"
+										@* 										<BasicInfoPanel GetMPCDate="MPCDate" GetMPCNote="MPCNote" GetRatingDate="RatingDate" GetRatingNote="RatingNote" 
 														Model="_candidateDetailsObject" SetCommunication="CandidateCommunication" SetEligibility="CandidateEligibility" SetExperience="CandidateExperience"
-														SetJobOption="CandidateJobOptions" SetTaxTerm="CandidateTaxTerms" SetupAddress="Address" /> *@
-									</ContentTemplate>
+														SetJobOption="CandidateJobOptions" SetTaxTerm="CandidateTaxTerms" SetupAddress="Address" />
+ *@
+										<div class="layout-2">
+											<div class="leftLayout">
+												<PanelDisplayText Label="Company Name" Text="@(_candidateDetailsObject.FirstName)"></PanelDisplayText>
+												<PanelDisplayText Label="EIN#" Text="@(_candidateDetailsObject.Email)"></PanelDisplayText>
+												<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.LastName)"></PanelDisplayText>
+												<PanelDisplayText Label="Phone" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())"></PanelDisplayText>
+												<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
+												<PanelDisplayText Label="D-U-N-S Number" Text="@(_candidateDetailsObject.City)"></PanelDisplayText>
+												<PanelDisplayText Label="NAICS Code" Text="@(_candidateDetailsObject.Summary)"></PanelDisplayText>
+												<PanelDisplayText Label="Status" Text="@(_candidateDetailsObject.Status)"></PanelDisplayText>
+											</div>
+											<div class="rightLayout">
+												<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
+											</div>
+										</div>
+										</ContentTemplate>@* IsRequisition="@(RequisitionID > 0)" *@
 								</TabItem>
 								<TabItem>
 									<ChildContent>
