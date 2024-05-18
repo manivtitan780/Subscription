@@ -722,7 +722,7 @@ body, form, html {
     background: var(--c-red);
 }
 
-div#tabCompany div[id^="e-content-tabCompany"] {
+div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"] {
     border: 1px solid var(--c-red);
     height: 290px;
     width: 99%;
@@ -730,6 +730,10 @@ div#tabCompany div[id^="e-content-tabCompany"] {
 
 div#tabCompany div#e-content-tabCompany_0 div.divPanelContainerVertical {
     height: 240px;
+}
+
+div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
+    height: 260px;
 }
 
 /* #endregion Tabs*/

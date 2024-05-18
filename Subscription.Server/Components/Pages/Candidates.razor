@@ -1,5 +1,5 @@
 ﻿@page "/candidate"
-@using AnimationEffect = Syncfusion.Blazor.AnimationEffect
+@using AnimationEffect = AnimationEffect
 @layout SubscriptionLayout
 @attribute [StreamRendering]
 
@@ -95,8 +95,8 @@
 					<DetailTemplate>
 						@* Add Buttons Start *@
 						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-                                     OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
-                            @* Visible="UserRights.EditCandidate" *@
+									 OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
+							@* Visible="UserRights.EditCandidate" *@
 							<SpeedDialItems>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate" />
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating" />
@@ -111,81 +111,79 @@
 							</SpeedDialItems>
 						</SfSpeedDial>
 						@* Add Buttons End *@
-                        <SfTab CssClass="e-fill" Height="365" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
-							<TabAnimationSettings>
-								<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
-								<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
-								<TabEvents Selected="TabSelected"></TabEvents>
-							</TabAnimationSettings>
-							<TabItems>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Basic Info" />
-									</ChildContent>
-									<ContentTemplate>
-										@* 										<BasicInfoPanel GetMPCDate="MPCDate" GetMPCNote="MPCNote" GetRatingDate="RatingDate" GetRatingNote="RatingNote" 
-														Model="_candidateDetailsObject" SetCommunication="CandidateCommunication" SetEligibility="CandidateEligibility" SetExperience="CandidateExperience"
-														SetJobOption="CandidateJobOptions" SetTaxTerm="CandidateTaxTerms" SetupAddress="Address" />
- *@
-										<div class="layout-2">
-											<div class="leftLayout">
-												<PanelDisplayText Label="Company Name" Text="@(_candidateDetailsObject.FirstName)"></PanelDisplayText>
-												<PanelDisplayText Label="EIN#" Text="@(_candidateDetailsObject.Email)"></PanelDisplayText>
-												<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.LastName)"></PanelDisplayText>
-												<PanelDisplayText Label="Phone" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())"></PanelDisplayText>
-												<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
-												<PanelDisplayText Label="D-U-N-S Number" Text="@(_candidateDetailsObject.City)"></PanelDisplayText>
-												<PanelDisplayText Label="NAICS Code" Text="@(_candidateDetailsObject.Summary)"></PanelDisplayText>
-												<PanelDisplayText Label="Status" Text="@(_candidateDetailsObject.Status)"></PanelDisplayText>
+						@if (context is Candidate)
+						{
+							<SfTab CssClass="e-fill" Height="365" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
+								<TabAnimationSettings>
+									<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+									<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+									<TabEvents Selected="TabSelected"></TabEvents>
+								</TabAnimationSettings>
+								<TabItems>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Basic Info" />
+										</ChildContent>
+										<ContentTemplate>
+											<div class="layout-2">
+												<div class="leftLayout">
+													<PanelDisplayText Label="Company Name" Text="@(_candidateDetailsObject.FirstName)"></PanelDisplayText>
+													<PanelDisplayText Label="EIN#" Text="@(_candidateDetailsObject.Email)"></PanelDisplayText>
+													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.LastName)"></PanelDisplayText>
+													<PanelDisplayText Label="Phone" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())"></PanelDisplayText>
+													<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
+													<PanelDisplayText Label="D-U-N-S Number" Text="@(_candidateDetailsObject.City)"></PanelDisplayText>
+													<PanelDisplayText Label="NAICS Code" Text="@(_candidateDetailsObject.Summary)"></PanelDisplayText>
+													<PanelDisplayText Label="Status" Text="@(_candidateDetailsObject.Status)"></PanelDisplayText>
+												</div>
+												<div class="rightLayout">
+													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
+												</div>
 											</div>
-											<div class="rightLayout">
-												<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
-											</div>
-										</div>
 										</ContentTemplate>@* IsRequisition="@(RequisitionID > 0)" *@
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Skills" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <skillpanel DeleteSkill="DeleteSkill" EditRights="UserRights.EditCandidate" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject"
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Skills" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <skillpanel DeleteSkill="DeleteSkill" EditRights="UserRights.EditCandidate" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject"
 													ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> *@
-									</ContentTemplate>
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Education" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <educationpanel DeleteEducation="DeleteEducation" EditEducation="EditEducation" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Education" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <educationpanel DeleteEducation="DeleteEducation" EditEducation="EditEducation" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
 														Model="@_candidateEducationObject" @ref="EducationPanel" UserName="@User" /> *@
-									</ContentTemplate>
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Experience" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <experiencepanel DeleteExperience="DeleteExperience" EditExperience="EditExperience" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Experience" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <experiencepanel DeleteExperience="DeleteExperience" EditExperience="EditExperience" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
 														 Model="@_candidateExperienceObject" @ref="ExperiencePanel" UserName="@User" /> *@
-									</ContentTemplate>
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Notes" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <notespanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Notes" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <notespanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
 													Model="@_candidateNotesObject" @ref="PanelNotes" UserName="@User" /> *@
-									</ContentTemplate>
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Resume" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <div class="resumeContainerBox">
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Resume" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <div class="resumeContainerBox">
 											<SfRichTextEditor Height="300px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
 												<RichTextEditorToolbarSettings Items="@_tools1">
 													<RichTextEditorCustomToolbarItems>
@@ -203,28 +201,29 @@
 												</RichTextEditorToolbarSettings>
 											</SfRichTextEditor>
 										</div> *@
-									</ContentTemplate>
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Attachment" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <downloadspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditCandidate" Model="@_candidateDocumentsObject" @ref="DownloadsPanel" /> *@
-									</ContentTemplate>
-								</TabItem>
-								<TabItem>
-									<ChildContent>
-										<TabHeader Text="Candidate Activity" />
-									</ChildContent>
-									<ContentTemplate>
-										@* <activitypanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candidateActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity"
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Attachment" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <downloadspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditCandidate" Model="@_candidateDocumentsObject" @ref="DownloadsPanel" /> *@
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Candidate Activity" />
+										</ChildContent>
+										<ContentTemplate>
+											@* <activitypanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candidateActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity"
 													   User="@User" /> *@ @*TODO: Activity Panel Rights to be set*@
-									</ContentTemplate>
-								</TabItem>
-							</TabItems>
-							<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />@**@
-						</SfTab>
+										</ContentTemplate>
+									</TabItem>
+								</TabItems>
+								<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />@**@
+							</SfTab>
+						}
 					</DetailTemplate>
 				</GridTemplates>
 			</SfGrid>

@@ -96,7 +96,6 @@
 				</GridColumns>
 				<GridTemplates Context="context">
 					<DetailTemplate>
-						@{
 							@* Add Buttons Start *@
 							<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
 										 Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
@@ -109,7 +108,7 @@
 								</SpeedDialItems>
 							</SfSpeedDial>
 							@* Add Buttons End *@
-							if (context is Company)
+							@if (context is Company)
 							{
 								<SfTab CssClass="e-fill" Height="335" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
 									<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent" ZIndex="12000" />@**@
@@ -185,7 +184,6 @@
 									</TabItems>
 								</SfTab>
 							}
-						}
 					</DetailTemplate>
 				</GridTemplates>
 			</SfGrid>
