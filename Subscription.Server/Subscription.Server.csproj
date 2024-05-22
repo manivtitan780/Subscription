@@ -42,8 +42,8 @@
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.5" />
-    <PackageReference Include="Syncfusion.Blazor" Version="25.2.4" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="25.2.4" />
+    <PackageReference Include="Syncfusion.Blazor" Version="25.2.5" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="25.2.5" />
   </ItemGroup>
 
   <ItemGroup>
