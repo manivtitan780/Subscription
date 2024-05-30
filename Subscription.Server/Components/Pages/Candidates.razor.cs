@@ -538,6 +538,7 @@ public partial class Candidates
 
                                 SearchModel.Clear();
                             });
+        
         _initializationTaskSource.SetResult(true);
 
         await base.OnInitializedAsync();

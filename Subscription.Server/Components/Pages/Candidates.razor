@@ -127,19 +127,31 @@
 										<ContentTemplate>
 											<div class="layout-2">
 												<div class="leftLayout">
-													<PanelDisplayText Label="Company Name" Text="@(_candidateDetailsObject.FirstName)"></PanelDisplayText>
-													<PanelDisplayText Label="EIN#" Text="@(_candidateDetailsObject.Email)"></PanelDisplayText>
-													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.LastName)"></PanelDisplayText>
-													<PanelDisplayText Label="Phone" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())"></PanelDisplayText>
-													<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
-													<PanelDisplayText Label="D-U-N-S Number" Text="@(_candidateDetailsObject.City)"></PanelDisplayText>
-													<PanelDisplayText Label="NAICS Code" Text="@(_candidateDetailsObject.Summary)"></PanelDisplayText>
-													<PanelDisplayText Label="Status" Text="@(_candidateDetailsObject.Status)"></PanelDisplayText>
+													<PanelDisplayText Label="Address" MarkupText="@(Address)" />
+													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.Email)" />
+													<PanelDisplayText Label="Phone#" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())" />
+													<PanelDisplayText Label="Alternate Phone#" Text="@(_candidateDetailsObject.Phone2.FormatPhoneNumber())" />
+													<PanelDisplayText Label="Title" Text="@(_candidateDetailsObject.Title)" />
+													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candidateDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")" />
+													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"></PanelDisplayText>
 												</div>
 												<div class="rightLayout">
-													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
+													<div class="divPanelContainer">
+														<span class="spanLeftLabel">Rating:</span>
+														<span class="spanRightText">
+															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate"></SfRating></span>
+													</div>
+													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.Email)" />
+													<PanelDisplayText Label="Phone#" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())" />
+													<PanelDisplayText Label="Alternate Phone#" Text="@(_candidateDetailsObject.Phone2.FormatPhoneNumber())" />
+													<PanelDisplayText Label="Title" Text="@(_candidateDetailsObject.Title)" />
+													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candidateDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")" />
+													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"></PanelDisplayText>
 												</div>
-											</div>
+@*                                                 <div class="rightLayout">
+                                                    <PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
+                                                </div>
+ *@                                            </div>
 										</ContentTemplate>@* IsRequisition="@(RequisitionID > 0)" *@
 									</TabItem>
 									<TabItem>
