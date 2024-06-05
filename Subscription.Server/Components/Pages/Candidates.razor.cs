@@ -475,7 +475,6 @@ public partial class Candidates
                                     SearchModel.ItemCount = page.CurrentPageSize;
                                     SearchModel.Page = 1;
                                     await Grid.GoToPageAsync(1);
-                                    await Task.Yield();
                                 }
                                 else
                                 {
@@ -601,9 +600,9 @@ public partial class Candidates
     {
         if (_experience is {Count: > 0})
         {
-            CandidateExperience = _candidateDetailsObject.ExperienceID > 0
-                                      ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text.ToMarkupString()
-                                      : "".ToMarkupString();
+            CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
+                                      ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
+                                      : "").ToMarkupString();
         }
     }
 

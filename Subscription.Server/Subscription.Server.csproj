@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a46b8d81-ea73-47ed-9a5e-50fe3dc31541</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,8 +44,9 @@
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.6" />
-    <PackageReference Include="Syncfusion.Blazor" Version="25.2.6" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="25.2.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageReference Include="Syncfusion.Blazor" Version="25.2.7" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="25.2.7" />
   </ItemGroup>
 
   <ItemGroup>
