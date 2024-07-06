@@ -25,28 +25,25 @@ public partial class Candidates
 {
     private const string StorageName = "CandidatesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
-    private List<CandidateActivity> _candidateActivityObject = new();
+    private List<CandidateActivity> _candidateActivityObject = [];
     private CandidateDetails _candidateDetailsObject = new();
-    private List<CandidateDocument> _candidateDocumentsObject = new();
-    private List<CandidateEducation> _candidateEducationObject = new();
-    private List<CandidateExperience> _candidateExperienceObject = new();
-    private List<CandidateMPC> _candidateMPCObject = new();
-    private List<CandidateNotes> _candidateNotesObject = new();
-    private List<CandidateRating> _candidateRatingObject = new();
-    private List<CandidateSkills> _candidateSkillsObject = new();
-    private List<IntValues> _eligibility = [], _experience = [];
-    private List<KeyValues> _jobOptions = [], _taxTerms = [];
+    private List<CandidateDocument> _candidateDocumentsObject = [];
+    private List<CandidateEducation> _candidateEducationObject = [];
+    private List<CandidateExperience> _candidateExperienceObject = [];
+    private List<CandidateMPC> _candidateMPCObject = [];
+    private List<CandidateNotes> _candidateNotesObject = [];
+    private List<CandidateRating> _candidateRatingObject = [];
+    private List<CandidateSkills> _candidateSkillsObject = [];
+    private List<IntValues> _eligibility = [], _experience = [], _states;
+    private List<KeyValues> _jobOptions = [], _taxTerms = [], _statusCodes = [], _workflow = [], _communication = [], _documentTypes = [];
     private List<Role> _roles;
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
-    private List<IntValues> _states;
 
-    private List<KeyValues> _statusCodes = [], _workflow = [], _communication = [], _documentTypes = [];
 
     private Candidate _target;
-    private bool FormattedExists;
-    private bool OriginalExists;
+    private bool FormattedExists, OriginalExists;
     private CandidateRatingMPC RatingMPC = new();
 
     private MarkupString Address

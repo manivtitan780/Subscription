@@ -58,7 +58,7 @@ if (!_app.Environment.IsDevelopment())
     _app.UseHsts();
 }
 
-SyncfusionLicenseProvider.RegisterLicense("MzE2MTcyNUAzMjM1MmUzMDJlMzBLM3NDRWpvWjNoczZxREUwRFBBbW42YWNmanh3bm4yU2FqTEZFU2NoTVlRPQ==");
+SyncfusionLicenseProvider.RegisterLicense("MzM1MDQ0NUAzMjM2MmUzMDJlMzBma0N0U2U3SEpSZVlsZjhqaytVZmg0Ly8vMWdMM0NkL1hPb3BsakxyYjNjPQ==");
 
 _app.UseHttpsRedirection();
 

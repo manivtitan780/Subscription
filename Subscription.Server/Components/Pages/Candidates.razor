@@ -113,11 +113,11 @@
 						@* Add Buttons End *@
 						@if (context is Candidate)
 						{
-							<SfTab CssClass="e-fill" Height="365" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
+							<SfTab CssClass="e-fill" Height="310" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
 								<TabAnimationSettings>
-									<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
-									<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
-									<TabEvents Selected="TabSelected"></TabEvents>
+									<TabAnimationPrevious Effect="AnimationEffect.None" />
+									<TabAnimationNext Effect="AnimationEffect.None" />
+									<TabEvents Selected="TabSelected" />
 								</TabAnimationSettings>
 								<TabItems>
 									<TabItem>
@@ -127,19 +127,29 @@
 										<ContentTemplate>
 											<div class="layout-2">
 												<div class="leftLayout">
-													<PanelDisplayText Label="Address" MarkupText="@(Address)" />
-													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.Email)" />
-													<PanelDisplayText Label="Phone#" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())" />
-													<PanelDisplayText Label="Alternate Phone#" Text="@(_candidateDetailsObject.Phone2.FormatPhoneNumber())" />
-													<PanelDisplayText Label="Title" Text="@(_candidateDetailsObject.Title)" />
+													<PanelDisplayText Label="Address" MarkupText="@Address" />
+													<PanelDisplayText Label="Email Address" Text="@_candidateDetailsObject.Email" />
+													<PanelDisplayText Label="Phone#" Text="@_candidateDetailsObject.Phone1.FormatPhoneNumber()" />
+													<PanelDisplayText Label="Alternate Phone#" Text="@_candidateDetailsObject.Phone2.FormatPhoneNumber()" />
+													<PanelDisplayText Label="Title" Text="@_candidateDetailsObject.Title" />
 													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candidateDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")" />
-													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"></PanelDisplayText>
+													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")" />
+												</div>
+												<div class="leftLayout">
+													<PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility" />
+													<PanelDisplayText Label="Experience" MarkupText="@CandidateExperience" />
+													<PanelDisplayText Label="Tax Terms" MarkupText="@CandidateTaxTerms" />
+													<PanelDisplayText Label="Job Options" MarkupText="@CandidateJobOptions" />
+													<PanelDisplayText Label="Communication" MarkupText="@CandidateCommunication" />
+													<PanelDisplayText Label="Security Clearance" Text="@(_candidateDetailsObject.Background ? "Yes" : "No")" />
+													<PanelDisplayText Label="Willing to Relocate" Text="@(_candidateDetailsObject.Relocate ? "Yes" : "No")" />
 												</div>
 												<div class="rightLayout">
-													<div class="divPanelContainer">
-														<span class="spanLeftLabel">Rating:</span>
-														<span class="spanRightText">
-															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate"></SfRating></span>
+													<div class="divPanelContainer" style="margin-bottom:5px;">
+                                                        <span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
+														<span class="spanRightText ratingCandidateExpand">
+															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate"></SfRating>
+														</span>
 													</div>
 													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.Email)" />
 													<PanelDisplayText Label="Phone#" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber())" />
@@ -148,10 +158,11 @@
 													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candidateDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")" />
 													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"></PanelDisplayText>
 												</div>
-@*                                                 <div class="rightLayout">
+												@*                                                 <div class="rightLayout">
                                                     <PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
                                                 </div>
- *@                                            </div>
+ *@
+											</div>
 										</ContentTemplate>@* IsRequisition="@(RequisitionID > 0)" *@
 									</TabItem>
 									<TabItem>

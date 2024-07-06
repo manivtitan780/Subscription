@@ -502,6 +502,21 @@ body, form, html {
 
 /* #endregion Input*/
 
+/* #region Rating */
+
+.ratingCandidateExpand .e-rating-container .e-rating-item-container {
+    font-size: 16px;
+}
+
+.e-rating-container .e-rating-item-container.e-rating-selected .e-rating-icon, .e-rating-container .e-rating-item-container.e-rating-intermediate .e-rating-icon {
+    background: linear-gradient(to right, #8e181b var(--rating-value), transparent var(--rating-value));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-stroke: 1px #8e181b;
+}
+
+/* #endregion*/
+
 /* #region Pager */
 
 #divFooter div, #divHeader, #divHeader div {
@@ -516,7 +531,20 @@ body, form, html {
     background: var(--c-red);
     color: var(--c-wh);
 }
-/* #endregion */
+
+.e-pager .e-currentitem {
+    border-bottom-color: var(--c-red);
+    background: var(--c-yellow);
+}
+
+    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
+        background: var(--c-yellow);
+    }
+
+    .e-pager .e-currentitem.e-numericitem.e-focused {
+        background: var(--c-yellow);
+    }
+/* #endregion Pager */
 /* #region Pre-defined Dialogs */
 .e-confirm-dialog {
     border-radius: 6px;
@@ -724,7 +752,7 @@ body, form, html {
 
 div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"] {
     border: 1px solid var(--c-red);
-    height: 290px;
+    height: 255px;
     width: 99%;
 }
 

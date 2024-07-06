@@ -44,9 +44,9 @@
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.6" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
-    <PackageReference Include="Syncfusion.Blazor" Version="26.1.35" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="26.1.35" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Syncfusion.Blazor" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="26.1.40" />
   </ItemGroup>
 
   <ItemGroup>
@@ -144,5 +144,13 @@
     <Folder Include="Components\Pages\Controls\Candidates\" />
     <Folder Include="Components\Pages\Controls\Requisitions\" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Stop-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
+  </Target>
 
 </Project>
