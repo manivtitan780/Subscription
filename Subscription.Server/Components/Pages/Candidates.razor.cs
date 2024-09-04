@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     05-11-2024 19:05
+// Last Updated On:     08-26-2024 21:08
 // *****************************************/
 
 #endregion
@@ -35,16 +35,15 @@ public partial class Candidates
     private List<CandidateRating> _candidateRatingObject = [];
     private List<CandidateSkills> _candidateSkillsObject = [];
     private List<IntValues> _eligibility = [], _experience = [], _states;
+    private bool _formattedExists, _originalExists;
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _statusCodes = [], _workflow = [], _communication = [], _documentTypes = [];
+    private CandidateRatingMPC _ratingMPC = new();
     private List<Role> _roles;
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
 
-
     private Candidate _target;
-    private bool FormattedExists, OriginalExists;
-    private CandidateRatingMPC RatingMPC = new();
 
     private MarkupString Address
     {
@@ -300,7 +299,7 @@ public partial class Candidates
                                      _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["Rating"]);
                                      _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPC"]);
                                      _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
-                                     RatingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"]) ?? new();
+                                     _ratingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"]) ?? new();
                                      GetMPCDate();
                                      GetMPCNote();
                                      GetRatingDate();
@@ -314,8 +313,8 @@ public partial class Candidates
                                  }
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 7 : 0;
-                                 FormattedExists = _target.FormattedResume;
-                                 OriginalExists = _target.OriginalResume;
+                                 _formattedExists = _target.FormattedResume;
+                                 _originalExists = _target.OriginalResume;
 
                                  try
                                  {
@@ -534,7 +533,7 @@ public partial class Candidates
 
                                 SearchModel.Clear();
                             });
-        
+
         _initializationTaskSource.SetResult(true);
 
         await base.OnInitializedAsync();
@@ -598,8 +597,8 @@ public partial class Candidates
         if (_experience is {Count: > 0})
         {
             CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
-                                      ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
-                                      : "").ToMarkupString();
+                                       ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
+                                       : "").ToMarkupString();
         }
     }
 
