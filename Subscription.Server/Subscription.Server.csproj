@@ -45,8 +45,8 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Syncfusion.Blazor" Version="26.2.12" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="26.2.12" />
+    <PackageReference Include="Syncfusion.Blazor" Version="26.2.14" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="26.2.14" />
   </ItemGroup>
 
   <ItemGroup>
