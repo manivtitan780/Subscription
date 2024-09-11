@@ -13,12 +13,6 @@
 
 #endregion
 
-#region Using
-
-using System.Security.Claims;
-
-#endregion
-
 namespace Subscription.Server.Components.Pages;
 
 public partial class Candidates

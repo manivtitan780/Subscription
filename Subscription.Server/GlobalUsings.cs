@@ -53,6 +53,8 @@ global using Extensions;
 
 global using Newtonsoft.Json;
 
+global using System.Security.Claims;
+
 global using Subscription.Server.Components.Pages.Controls.Companies;
 
 global using Microsoft.AspNetCore.Components.Web;
