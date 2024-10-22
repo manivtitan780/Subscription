@@ -45,8 +45,26 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    /// Represents the candidate's communication rating.
+    /// </summary>
+    /// <remarks>
+    /// This property is a markup string that holds the communication rating of the candidate.
+    /// The communication rating is converted to a more descriptive string.
+    /// The conversion is as follows:
+    /// - "G" => "Good"
+    /// - "A" => "Average"
+    /// - "X" => "Excellent"
+    /// - Any other value => "Fair"
+    /// </remarks>
     private MarkupString CandidateCommunication
     {
+        /// <summary>
+        /// Gets or sets the candidate's communication rating.
+        /// </summary>
+        /// <value>
+        /// A markup string representing the communication rating.
+        /// </value>
         get;
         set;
     }
@@ -559,12 +577,12 @@ public partial class Candidates
     private void SetCommunication()
     {
         string _returnValue = _candidateDetailsObject.Communication switch
-                              {
-                                  "G" => "Good",
-                                  "A" => "Average",
-                                  "X" => "Excellent",
-                                  _ => "Fair"
-                              };
+        {
+            "G" => "Good",
+            "A" => "Average",
+            "X" => "Excellent",
+            _ => "Fair"
+        };
 
         CandidateCommunication = _returnValue.ToMarkupString();
     }
@@ -579,7 +597,7 @@ public partial class Candidates
     /// </remarks>
     private void SetEligibility()
     {
-        if (_eligibility is {Count: > 0})
+        if (_eligibility is { Count: > 0 })
         {
             CandidateEligibility = _candidateDetailsObject.EligibilityID > 0
                                        ? _eligibility.FirstOrDefault(eligibility => eligibility.Value == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
@@ -598,7 +616,7 @@ public partial class Candidates
     /// </remarks>
     private void SetExperience()
     {
-        if (_experience is {Count: > 0})
+        if (_experience is { Count: > 0 })
         {
             CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
                                        ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
@@ -621,7 +639,7 @@ public partial class Candidates
     private void SetJobOption()
     {
         string _returnValue = "";
-        if (_jobOptions is {Count: > 0})
+        if (_jobOptions is { Count: > 0 })
         {
             string[] _splitJobOptions = _candidateDetailsObject.JobOptions.Split(',');
             foreach (string _str in _splitJobOptions)
@@ -661,7 +679,7 @@ public partial class Candidates
     {
         string _returnValue = "";
 
-        if (_taxTerms is {Count: > 0})
+        if (_taxTerms is { Count: > 0 })
         {
             string[] _splitTaxTerm = _candidateDetailsObject.TaxTerm.Split(',');
             foreach (string _str in _splitTaxTerm)
@@ -801,10 +819,10 @@ public partial class Candidates
                     if (_restResponse == null)
                     {
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = _dataSource,
-                                                                   Count = 0 /*_count*/
-                                                               } : _dataSource;
+                        {
+                            Result = _dataSource,
+                            Count = 0 /*_count*/
+                        } : _dataSource;
                     }
                     else
                     {
@@ -814,18 +832,18 @@ public partial class Candidates
                         if (_dataSource == null)
                         {
                             _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                                   {
-                                                                       Result = null,
-                                                                       Count = 1
-                                                                   } : null;
+                            {
+                                Result = null,
+                                Count = 1
+                            } : null;
                         }
                         else
                         {
                             _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                                   {
-                                                                       Result = _dataSource,
-                                                                       Count = _count /*_count*/
-                                                                   } : _dataSource;
+                            {
+                                Result = _dataSource,
+                                Count = _count /*_count*/
+                            } : _dataSource;
                         }
                     }
                 }
@@ -834,20 +852,20 @@ public partial class Candidates
                     if (_dataSource == null)
                     {
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = null,
-                                                                   Count = 1
-                                                               } : null;
+                        {
+                            Result = null,
+                            Count = 1
+                        } : null;
                     }
                     else
                     {
                         _dataSource.Add(new());
 
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = _dataSource,
-                                                                   Count = 1
-                                                               } : _dataSource;
+                        {
+                            Result = _dataSource,
+                            Count = 1
+                        } : _dataSource;
                     }
                 }
 
