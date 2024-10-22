@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     08-26-2024 21:08
+// Last Updated On:     09-11-2024 19:09
 // *****************************************/
 
 #endregion
@@ -96,6 +96,9 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Represents the configuration for the application.
+    /// </summary>
     [Inject]
     private IConfiguration Configuration
     {
@@ -224,6 +227,13 @@ public partial class Candidates
         await Grid.Refresh();
     }
 
+    /// <summary>
+    ///     Clears the filter applied to the candidates.
+    /// </summary>
+    /// <remarks>
+    ///     This function is called when the "Clear Filter" button is clicked.
+    ///     It resets the filter values and reloads the candidates.
+    /// </remarks>
     private async Task ClearFilter()
     {
         SearchModel.Clear();
