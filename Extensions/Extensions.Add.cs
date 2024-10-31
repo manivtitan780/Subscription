@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
+// Solution:            Subscription
 // Project:             Extensions
 // File Name:           Extensions.Add.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-22-2023 18:50
-// Last Updated On:     12-7-2023 15:26
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          02-07-2024 15:02
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion

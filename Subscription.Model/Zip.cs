@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           Zip.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:21
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          04-17-2024 20:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -30,9 +30,9 @@ public class Zip
 	///     Initializes a new instance of the <see cref="Zip" /> class and resets its properties to their default values.
 	/// </summary>
 	public Zip()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="Zip" /> class with the specified zip code, city, and default state,
@@ -47,12 +47,12 @@ public class Zip
 	///     'AdminController' class.
 	/// </remarks>
 	public Zip(string zip, string city)
-	{
-		ZipCode = zip;
-		City = city;
-		State = "";
-		StateID = 0;
-	}
+    {
+        ZipCode = zip;
+        City = city;
+        State = "";
+        StateID = 0;
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="Zip" /> class with the specified zip code, city, state, and state ID.
@@ -68,26 +68,14 @@ public class Zip
 	///     'AdminController' class.
 	/// </remarks>
 	public Zip(string zip, string city, string state, int stateID)
-	{
-		ZipCode = zip;
-		City = city;
-		State = state;
-		StateID = stateID;
-		Latitude = 0F;
-		Longitude = 0F;
-	}
-
-	public float Longitude
-	{
-		get;
-		set;
-	}
-
-	public float Latitude
-	{
-		get;
-		set;
-	}
+    {
+        ZipCode = zip;
+        City = city;
+        State = state;
+        StateID = stateID;
+        Latitude = 0F;
+        Longitude = 0F;
+    }
 
 	/// <summary>
 	///     Gets or sets the City associated with the Zip code.
@@ -101,10 +89,22 @@ public class Zip
 	///     'EditContactDialog', and 'RequisitionDetailsPanel' classes.
 	/// </remarks>
 	public string City
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
+
+    public float Latitude
+    {
+        get;
+        set;
+    }
+
+    public float Longitude
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the State associated with the Zip code.
@@ -118,10 +118,10 @@ public class Zip
 	///     'EditContactDialog', and 'RequisitionDetailsPanel' classes.
 	/// </remarks>
 	public string State
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the State ID associated with the Zip code.
@@ -135,10 +135,10 @@ public class Zip
 	///     'EditCompanyDialog', 'EditContactDialog', and 'RequisitionDetailsPanel' classes.
 	/// </remarks>
 	public int StateID
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the Zip code.
@@ -153,23 +153,23 @@ public class Zip
 	///     EditContactDialog.
 	/// </remarks>
 	public string ZipCode
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Resets the properties to their default values.
 	/// </summary>
 	public void Clear()
-	{
-		ZipCode = "";
-		City = "";
-		State = "";
-		StateID = 0;
-		Latitude = 0F;
-		Longitude = 0F;
-	}
+    {
+        ZipCode = "";
+        City = "";
+        State = "";
+        StateID = 0;
+        Latitude = 0F;
+        Longitude = 0F;
+    }
 
 	/// <summary>
 	///     Creates a copy of the current Zip instance.

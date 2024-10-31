@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           CandidateRatingMPC.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:09
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          05-10-2024 21:05
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -33,9 +33,9 @@ public class CandidateRatingMPC
 	///     This constructor is used to reset the properties of the CandidateRatingMPC object to their default values.
 	/// </remarks>
 	public CandidateRatingMPC()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="CandidateRatingMPC" /> class.
@@ -46,13 +46,13 @@ public class CandidateRatingMPC
 	/// <param name="mpc">A boolean value indicating whether the candidate is marked as MPC (Most Placeable Candidate).</param>
 	/// <param name="mpcComments">The comments related to the candidate's MPC status.</param>
 	public CandidateRatingMPC(int id, int rating, string ratingComments, bool mpc, string mpcComments)
-	{
-		ID = id;
-		Rating = rating;
-		RatingComments = ratingComments;
-		MPC = mpc;
-		MPCComments = mpcComments;
-	}
+    {
+        ID = id;
+        Rating = rating;
+        RatingComments = ratingComments;
+        MPC = mpc;
+        MPCComments = mpcComments;
+    }
 
 	/// <summary>
 	///     Gets or sets the identifier for the CandidateRatingMPC.
@@ -66,10 +66,10 @@ public class CandidateRatingMPC
 	///     including the CandidatesController for saving the MPC status and rating of a candidate.
 	/// </remarks>
 	public int ID
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the candidate is a Most Placeable Candidate (MPC).
@@ -83,20 +83,20 @@ public class CandidateRatingMPC
 	///     status.
 	/// </remarks>
 	public bool MPC
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the comments for the Candidate's MPC (Most Placeable Candidate) status.
 	///     This property is used to store additional information or notes about the candidate's MPC status.
 	/// </summary>
 	public string MPCComments
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the rating of a candidate.
@@ -110,10 +110,10 @@ public class CandidateRatingMPC
 	///     rating.
 	/// </remarks>
 	public double Rating
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the comments for the rating of a candidate.
@@ -126,22 +126,22 @@ public class CandidateRatingMPC
 	///     `CandidatesController.SaveRating()` method.
 	/// </remarks>
 	public string RatingComments
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current CandidateRatingMPC object.
 	/// </summary>
 	/// <returns>A new CandidateRatingMPC object that is a deep copy of this instance.</returns>
 	public void Clear()
-	{
-		Rating = 0;
-		RatingComments = "";
-		MPC = false;
-		MPCComments = "";
-	}
+    {
+        Rating = 0;
+        RatingComments = "";
+        MPC = false;
+        MPCComments = "";
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current object.

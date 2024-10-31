@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           CandidateDocument.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          09-17-2022 20:01
-// Last Updated On:     10-26-2023 21:07
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          05-10-2024 21:05
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -28,9 +28,9 @@ public class CandidateDocument
 	///     This constructor calls the Clear method to reset the properties of the instance to their default values.
 	/// </remarks>
 	public CandidateDocument()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="CandidateDocument" /> class with specified parameters.
@@ -48,24 +48,24 @@ public class CandidateDocument
 	///     not null, it is cleared; otherwise, a new list is instantiated.
 	/// </remarks>
 	public CandidateDocument(int id, string name, string location, string notes, string updatedBy, string documentType, string internalFileName, int documentTypeID)
-	{
-		ID = id;
-		Name = name;
-		Location = location;
-		Notes = notes;
-		UpdatedBy = updatedBy;
-		DocumentType = documentType;
-		InternalFileName = internalFileName;
-		DocumentTypeID = documentTypeID;
-		if (Files != null)
-		{
-			Files.Clear();
-		}
-		else
-		{
-			Files = new();
-		}
-	}
+    {
+        ID = id;
+        Name = name;
+        Location = location;
+        Notes = notes;
+        UpdatedBy = updatedBy;
+        DocumentType = documentType;
+        InternalFileName = internalFileName;
+        DocumentTypeID = documentTypeID;
+        if (Files != null)
+        {
+            Files.Clear();
+        }
+        else
+        {
+            Files = new();
+        }
+    }
 
 	/// <summary>
 	///     Gets or sets the type of the candidate document.
@@ -78,10 +78,10 @@ public class CandidateDocument
 	///     the document type definitions in the system.
 	/// </remarks>
 	public string DocumentType
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the identifier for the type of the candidate document.
@@ -94,10 +94,10 @@ public class CandidateDocument
 	///     document type definitions in the system.
 	/// </remarks>
 	public int DocumentTypeID
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the list of file names associated with the candidate document.
@@ -111,10 +111,10 @@ public class CandidateDocument
 	///     and the list is cleared when a file is removed from the upload queue.
 	/// </remarks>
 	public List<string> Files
-	{
-		get;
-		set;
-	} = new();
+    {
+        get;
+        set;
+    } = new();
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the candidate document.
@@ -123,10 +123,10 @@ public class CandidateDocument
 	///     The unique identifier for the candidate document.
 	/// </value>
 	public int ID
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the internal file name of the candidate document.
@@ -135,10 +135,10 @@ public class CandidateDocument
 	///     The internal file name of the candidate document.
 	/// </value>
 	public string InternalFileName
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the location of the candidate document.
@@ -147,10 +147,10 @@ public class CandidateDocument
 	///     The location of the candidate document.
 	/// </value>
 	public string Location
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the name of the candidate document.
@@ -159,10 +159,10 @@ public class CandidateDocument
 	///     The name of the candidate document.
 	/// </value>
 	public string Name
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the notes for the candidate document.
@@ -171,10 +171,10 @@ public class CandidateDocument
 	///     The notes for the candidate document.
 	/// </value>
 	public string Notes
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the identifier of the user who last updated the document.
@@ -183,10 +183,10 @@ public class CandidateDocument
 	///     The identifier of the user who last updated the document.
 	/// </value>
 	public string UpdatedBy
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Resets the properties of the CandidateDocument instance to their default values.
@@ -198,24 +198,24 @@ public class CandidateDocument
 	///     instantiated.
 	/// </remarks>
 	public void Clear()
-	{
-		ID = 0;
-		Name = "";
-		Location = "";
-		Notes = "";
-		UpdatedBy = "";
-		DocumentType = "Others";
-		InternalFileName = Guid.Empty.ToString("N");
-		DocumentTypeID = 5;
-		if (Files != null)
-		{
-			Files.Clear();
-		}
-		else
-		{
-			Files = new();
-		}
-	}
+    {
+        ID = 0;
+        Name = "";
+        Location = "";
+        Notes = "";
+        UpdatedBy = "";
+        DocumentType = "Others";
+        InternalFileName = Guid.Empty.ToString("N");
+        DocumentTypeID = 5;
+        if (Files != null)
+        {
+            Files.Clear();
+        }
+        else
+        {
+            Files = new();
+        }
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current CandidateDocument object.

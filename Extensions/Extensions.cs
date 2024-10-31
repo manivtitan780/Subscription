@@ -7,8 +7,8 @@
 // Project:             Extensions
 // File Name:           Extensions.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          2-7-2024 15:37
-// Last Updated On:     3-12-2024 21:10
+// Created On:          02-07-2024 15:02
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -172,7 +172,7 @@ public static partial class Extensions
 
         if (!_url.StartsWith("http://") || !_url.StartsWith("https://"))
         {
-            _url = $"http://{_url}";
+            _url = $"https://{_url}";
         }
 
         return Uri.TryCreate(_url, UriKind.Absolute, out Uri _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
@@ -296,5 +296,4 @@ public static partial class Extensions
     ///     A URL-encoded string.
     /// </returns>
     public static string UrlEncode(this string s) => HttpUtility.UrlEncode(s);
-
 }

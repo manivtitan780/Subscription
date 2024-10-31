@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           AppWorkflow.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          09-17-2022 20:01
-// Last Updated On:     10-26-2023 15:16
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          04-17-2024 20:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -33,9 +33,9 @@ public class AppWorkflow
 	///     This constructor is used to reset all properties of the AppWorkflow instance to their default values.
 	/// </remarks>
 	public AppWorkflow()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="AppWorkflow" /> class.
@@ -52,18 +52,18 @@ public class AppWorkflow
 	/// <param name="stepFull">The full description of the step in the workflow. This parameter is optional.</param>
 	public AppWorkflow(int id, string step, string next, bool isLast, string roleIDs, bool schedule, bool anyStage, string nextFull,
 					   string roleFull, string stepFull = "")
-	{
-		ID = id;
-		Step = step;
-		Next = next;
-		IsLast = isLast;
-		RoleIDs = roleIDs;
-		Schedule = schedule;
-		AnyStage = anyStage;
-		NextFull = nextFull;
-		RoleFull = roleFull;
-		StepFull = stepFull;
-	}
+    {
+        ID = id;
+        Step = step;
+        Next = next;
+        IsLast = isLast;
+        RoleIDs = roleIDs;
+        Schedule = schedule;
+        AnyStage = anyStage;
+        NextFull = nextFull;
+        RoleFull = roleFull;
+        StepFull = stepFull;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the AppWorkflow instance can be executed at any stage.
@@ -77,10 +77,10 @@ public class AppWorkflow
 	///     application.
 	/// </remarks>
 	public bool AnyStage
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the AppWorkflow instance.
@@ -92,10 +92,10 @@ public class AppWorkflow
 	///     This property is used as the primary key in the database and is also used to link workflows in the system.
 	/// </remarks>
 	public int ID
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether this is the last step in the AppWorkflow instance.
@@ -109,10 +109,10 @@ public class AppWorkflow
 	///     application.
 	/// </remarks>
 	public bool IsLast
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the next step in the AppWorkflow instance.
@@ -125,10 +125,10 @@ public class AppWorkflow
 	///     It is displayed in the 'Next Step' column of the Workflow grid in the Admin section of the application.
 	/// </remarks>
 	public string Next
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the full name of the next step in the AppWorkflow instance.
@@ -142,10 +142,10 @@ public class AppWorkflow
 	///     It is displayed in the 'Next Step' column of the Workflow grid in the Admin section of the application.
 	/// </remarks>
 	public string NextFull
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the full role associated with the AppWorkflow instance.
@@ -159,10 +159,10 @@ public class AppWorkflow
 	///     It is displayed in the 'Roles' column of the Workflow grid in the Admin section of the application.
 	/// </remarks>
 	public string RoleFull
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the Role IDs associated with the AppWorkflow instance.
@@ -175,10 +175,10 @@ public class AppWorkflow
 	///     Each Role ID should be unique. At least one Role ID is required for each AppWorkflow instance.
 	/// </remarks>
 	public string RoleIDs
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the workflow step is schedulable.
@@ -192,10 +192,10 @@ public class AppWorkflow
 	///     It is also used in the `Workflow` and `WorkflowDialog` classes for rendering purposes.
 	/// </remarks>
 	public bool Schedule
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the step in the application workflow.
@@ -208,10 +208,10 @@ public class AppWorkflow
 	///     classes to control the flow of the application.
 	/// </remarks>
 	public string Step
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the full description of the step in the workflow.
@@ -224,10 +224,10 @@ public class AppWorkflow
 	///     interfaces to give users more context about the step.
 	/// </remarks>
 	public string StepFull
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Resets all properties of the AppWorkflow instance to their default values.
@@ -236,18 +236,18 @@ public class AppWorkflow
 	///     This method is typically used to prepare an AppWorkflow instance for reuse or to clear its data before disposal.
 	/// </remarks>
 	public void Clear()
-	{
-		ID = 0;
-		Step = "";
-		Next = "";
-		IsLast = false;
-		RoleIDs = "";
-		Schedule = false;
-		AnyStage = false;
-		NextFull = "";
-		RoleFull = "";
-		StepFull = "";
-	}
+    {
+        ID = 0;
+        Step = "";
+        Next = "";
+        IsLast = false;
+        RoleIDs = "";
+        Schedule = false;
+        AnyStage = false;
+        NextFull = "";
+        RoleFull = "";
+        StepFull = "";
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current AppWorkflow object.

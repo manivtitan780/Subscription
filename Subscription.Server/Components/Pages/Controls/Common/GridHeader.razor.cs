@@ -8,17 +8,17 @@
 // File Name:           GridHeader.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     04-26-2024 21:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
-
-using Syncfusion.Blazor.DropDowns;
 
 namespace Subscription.Server.Components.Pages.Controls.Common;
 
 public partial class GridHeader
 {
+    private static string _endpoint = "";
+
     private Dictionary<string, object> _htmlAttribute = new()
                                                         {
                                                             {"maxlength", 30},
@@ -26,6 +26,11 @@ public partial class GridHeader
                                                             //{"autocomplete", $"hoohoo_{new string(Enumerable.Range(0, 3).Select(_ => "abcdefghijklmnopqrstuvwxyz"[_random.Next(26)]).ToArray())}"}
                                                         };
 
+    private SfAutoComplete<string, KeyValues> Acb
+    {
+        get;
+        set;
+    }
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when the "All" button in the grid footer is clicked.
@@ -51,6 +56,12 @@ public partial class GridHeader
         set;
     }
 
+    private IEnumerable<string> Alphabets
+    {
+        get;
+        set;
+    } = Enumerable.Range('A', 26).Select(x => ((char)x).ToString());
+
     /// <summary>
     ///     Gets or sets the event callback that is triggered when the "Clear" button in the grid footer is clicked.
     ///     This event callback is of type <see cref="EventCallback{MouseEventArgs}" />, which means it will provide event data
@@ -63,12 +74,34 @@ public partial class GridHeader
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the event callback that is triggered when the AutoComplete component is created.
+    /// </summary>
+    /// <remarks>
+    ///     The Created property is an event callback that gets triggered when the AutoComplete component is created. The
+    ///     Created event callback can be used to perform any custom actions or initializations when the AutoComplete component
+    ///     is created.
+    /// </remarks>
+    [Parameter]
+    public EventCallback<object> Created
+    {
+        get;
+        set;
+    }
+
     [Parameter]
     public int CurrentPage
     {
         get;
         set;
     } = 1;
+
+    [Parameter]
+    public string Endpoint
+    {
+        get;
+        set;
+    } = "";
 
     [Parameter]
     public RenderFragment GridContent
@@ -105,13 +138,6 @@ public partial class GridHeader
     }
 
     [Parameter]
-    public CompanySearch SearchModel
-    {
-        get;
-        set;
-    } = new();
-
-    [Parameter]
     public int PageSize
     {
         get;
@@ -133,11 +159,25 @@ public partial class GridHeader
     } = [5, 10, 15, 20, 25, 50, 75, 100];
 
     [Parameter]
+    public CompanySearch SearchModel
+    {
+        get;
+        set;
+    } = new();
+
+    [Parameter]
     public bool ShowAlphabet
     {
         get;
         set;
     } = true;
+
+    [Parameter]
+    public int TotalCount
+    {
+        get;
+        set;
+    } = 100;
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when the value of the AutoCompleteButton changes.
@@ -155,49 +195,6 @@ public partial class GridHeader
         get;
         set;
     }
-
-    /// <summary>
-    ///     Gets or sets the event callback that is triggered when the AutoComplete component is created.
-    /// </summary>
-    /// <remarks>
-    ///     The Created property is an event callback that gets triggered when the AutoComplete component is created. The
-    ///     Created event callback can be used to perform any custom actions or initializations when the AutoComplete component
-    ///     is created.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<object> Created
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public int TotalCount
-    {
-        get;
-        set;
-    } = 100;
-
-    private IEnumerable<string> Alphabets
-    {
-        get;
-        set;
-    } = Enumerable.Range('A', 26).Select(x => ((char)x).ToString());
-
-    private SfAutoComplete<string, KeyValues> Acb
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public string Endpoint
-    {
-        get;
-        set;
-    } = "";
-
-    private static string _endpoint = "";
 
     protected override void OnParametersSet()
     {
@@ -228,5 +225,4 @@ public partial class GridHeader
         /// </remarks>
         public override Task<object> ReadAsync(DataManagerRequest dm, string key = null) => General.GetAutocompleteAsync(_endpoint, dm);
     }
-
 }

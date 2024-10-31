@@ -1,7 +1,7 @@
 ﻿function scroll(index) {
     const _grid = document.getElementsByClassName("e-grid")[0].blazor__instance;
     const _rowHeight = 45;
-    _grid.getContent().scrollTo({ top: (index - 1) * _rowHeight, left: 0, behavior: "smooth" });
+    _grid.getContent().scrollTo({top: (index - 1) * _rowHeight, left: 0, behavior: "smooth"});
 }
 
 function alert(message) {
@@ -25,8 +25,7 @@ window.onCreateNoSpecial = (id) => {
         var letters = /^[a-zA-Z0-9-_. ]+$/;
         if (e.key.match(letters) || e.key == "Backspace" || e.key == "Delete" || e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Tab" || e.key == "Enter") {
             return true;
-        }
-        else {
+        } else {
             e.preventDefault();
         }
     });
@@ -37,8 +36,7 @@ window.onCreate = (id, numberOnly = false) => {
         var letters = numberOnly ? /^[0-9]+$/ : /[a-zA-Z\s\-\._\[\]\(\)]/;
         if (e.key.match(letters) || e.key == "Backspace" || e.key == "Delete" || e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Tab" || e.key == "Enter") {
             return true;
-        }
-        else {
+        } else {
             e.preventDefault();
         }
     });

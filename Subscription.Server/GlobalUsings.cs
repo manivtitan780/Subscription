@@ -4,11 +4,11 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Subscription.Client
+// Project:             Subscription.Server
 // File Name:           GlobalUsings.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          2-7-2024 15:46
-// Last Updated On:     2-7-2024 15:47
+// Created On:          04-22-2024 15:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -30,7 +30,6 @@ global using Subscription.Model.Validators;
 global using System.IO.Compression;
 
 global using Syncfusion.Blazor.Buttons;
-
 global using Syncfusion.Licensing;
 
 global using Microsoft.AspNetCore.Components;
@@ -45,6 +44,7 @@ global using Syncfusion.Blazor.Spinner;
 global using Microsoft.Extensions.Logging;
 
 global using Subscription.Server.Components.Pages.Controls.Common;
+
 global using RestSharp;
 
 global using Subscription.Server.Code;
@@ -58,7 +58,6 @@ global using System.Security.Claims;
 global using Subscription.Server.Components.Pages.Controls.Companies;
 
 global using Microsoft.AspNetCore.Components.Web;
-
 
 //global using Syncfusion.Blazor.Diagrams;
 global using Syncfusion.Blazor.Navigations;

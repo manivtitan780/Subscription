@@ -8,7 +8,7 @@
 // File Name:           CompanyContactsValidator.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-25-2024 15:04
-// Last Updated On:     04-25-2024 15:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -31,7 +31,7 @@ public class CompanyContactsValidator : AbstractValidator<CompanyContacts>
         RuleFor(x => x.MiddleInitial).MaximumLength(10).WithMessage("Initial should not be more than 10 characters.");
 
         RuleFor(x => x.LastName).NotEmpty().WithMessage("Last Name should not be empty.")
-                                 .MaximumLength(50).WithMessage("Last Name should not be more than 50 characters.");
+                                .MaximumLength(50).WithMessage("Last Name should not be more than 50 characters.");
 
         RuleFor(x => x.Suffix).MaximumLength(10).WithMessage("Suffix should not be more than 10 characters.");
 

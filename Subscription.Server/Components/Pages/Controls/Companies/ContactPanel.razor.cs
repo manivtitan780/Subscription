@@ -4,11 +4,11 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Subscription.Client
+// Project:             Subscription.Server
 // File Name:           ContactPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          2-20-2024 15:16
-// Last Updated On:     2-20-2024 15:21
+// Created On:          04-22-2024 15:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -141,7 +141,7 @@ public partial class ContactPanel
         }
     }
 
-    private MarkupString SetupAddress(CompanyContacts contact)
+    private static MarkupString SetupAddress(CompanyContacts contact)
     {
         string _generateAddress = contact.StreetName;
 

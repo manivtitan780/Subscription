@@ -7,8 +7,8 @@
 // Project:             Subscription.Model
 // File Name:           Role.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          4-17-2024 19:45
-// Last Updated On:     4-22-2024 20:9
+// Created On:          04-17-2024 19:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion

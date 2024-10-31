@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           CandidateExperience.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          09-17-2022 20:01
-// Last Updated On:     10-26-2023 21:08
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          05-10-2024 21:05
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -30,9 +30,9 @@ public class CandidateExperience
 	///     default values.
 	/// </summary>
 	public CandidateExperience()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <param name="id">The unique identifier for the candidate's experience.</param>
 	/// <param name="employer">The name of the employer for the candidate's experience.</param>
@@ -43,16 +43,16 @@ public class CandidateExperience
 	/// <param name="updatedBy">The identifier of the user who last updated the candidate's experience.</param>
 	/// <param name="title">The job title of the candidate's experience.</param>
 	public CandidateExperience(int id, string employer, string start, string end, string location, string description, string updatedBy, string title)
-	{
-		ID = id;
-		Employer = employer;
-		Start = start;
-		End = end;
-		Location = location;
-		Description = description;
-		UpdatedBy = updatedBy;
-		Title = title;
-	}
+    {
+        ID = id;
+        Employer = employer;
+        Start = start;
+        End = end;
+        Location = location;
+        Description = description;
+        UpdatedBy = updatedBy;
+        Title = title;
+    }
 
 	/// <summary>
 	///     Gets or sets the description of the candidate's experience.
@@ -65,20 +65,20 @@ public class CandidateExperience
 	///     responsibilities, achievements, etc.
 	/// </remarks>
 	public string Description
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the name of the employer for the candidate's experience.
 	///     This property is required.
 	/// </summary>
 	public string Employer
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the end date of the candidate's experience.
@@ -90,10 +90,10 @@ public class CandidateExperience
 	///     If the candidate is currently employed in the role, this property may be empty.
 	/// </remarks>
 	public string End
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the candidate's experience.
@@ -105,10 +105,10 @@ public class CandidateExperience
 	///     This property is automatically assigned when a new candidate experience is created.
 	/// </remarks>
 	public int ID
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the job location of the candidate's experience.
@@ -120,10 +120,10 @@ public class CandidateExperience
 	///     This property is required and must be provided when creating or updating a candidate's experience.
 	/// </remarks>
 	public string Location
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the start date of the candidate's experience.
@@ -132,26 +132,26 @@ public class CandidateExperience
 	///     The start date of the candidate's experience.
 	/// </value>
 	public string Start
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the job title of the candidate's experience.
 	///     This property is required.
 	/// </summary>
 	public string Title
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
-	public string UpdatedBy
-	{
-		get;
-		set;
-	}
+    public string UpdatedBy
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Resets all properties of the CandidateExperience object to their default values.
@@ -162,16 +162,16 @@ public class CandidateExperience
 	///     and the ID to 0.
 	/// </remarks>
 	public void Clear()
-	{
-		ID = 0;
-		Employer = "";
-		Start = "";
-		End = "";
-		Location = "";
-		Description = "";
-		UpdatedBy = "";
-		Title = "";
-	}
+    {
+        ID = 0;
+        Employer = "";
+        Start = "";
+        End = "";
+        Location = "";
+        Description = "";
+        UpdatedBy = "";
+        Title = "";
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current CandidateExperience object.

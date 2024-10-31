@@ -8,7 +8,7 @@
 // File Name:           Extensions.To.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-07-2024 15:02
-// Last Updated On:     06-25-2024 20:06
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
@@ -28,16 +28,16 @@ namespace Extensions;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static partial class Extensions
 {
-	public static async IAsyncEnumerable<T> FillList<T>(this SqlDataReader reader, Func<SqlDataReader, T> projection)
-	{
-		//List<T> _results = [];
-		while (await reader.ReadAsync())
-		{
-			yield return projection(reader);
-		}
+    public static async IAsyncEnumerable<T> FillList<T>(this SqlDataReader reader, Func<SqlDataReader, T> projection)
+    {
+        //List<T> _results = [];
+        while (await reader.ReadAsync())
+        {
+            yield return projection(reader);
+        }
 
-		//return _results;
-	}
+        //return _results;
+    }
 
 	/// <summary>
 	///     Returns a boolean value from the SqlDataReader based on the provided index.
@@ -106,8 +106,8 @@ public static partial class Extensions
 	///     (if checkEmptyString is true).
 	/// </returns>
 	public static string NString(this SqlDataReader read, int index, string nullReplaceValue = "", bool checkEmptyString = false) =>
-		checkEmptyString ? read.IsDBNull(index) || read.GetString(index) == string.Empty ? nullReplaceValue : read.GetString(index).Trim() :
-		read.IsDBNull(index) ? nullReplaceValue : read.GetString(index).Trim();
+        checkEmptyString ? read.IsDBNull(index) || read.GetString(index) == string.Empty ? nullReplaceValue : read.GetString(index).Trim() :
+        read.IsDBNull(index) ? nullReplaceValue : read.GetString(index).Trim();
 
 	/// <summary>
 	///     Converts the string representation of a boolean value to its boolean equivalent.
@@ -128,14 +128,14 @@ public static partial class Extensions
 	///     does not represent a valid boolean value, the method returns false.
 	/// </returns>
 	public static bool ToBoolean(this object o)
-	{
-		if (o is bool _b)
-		{
-			return _b;
-		}
+    {
+        if (o is bool _b)
+        {
+            return _b;
+        }
 
-		return o != null && bool.TryParse(o.ToString(), out bool _outDate) && _outDate;
-	}
+        return o != null && bool.TryParse(o.ToString(), out bool _outDate) && _outDate;
+    }
 
 	/// <summary>
 	///     Converts the boolean value to its string equivalent.
@@ -170,15 +170,15 @@ public static partial class Extensions
 	///     does not represent a valid DateTime value, the method returns DateTime.MinValue.
 	/// </returns>
 	public static DateTime ToDateTime(this object o)
-	{
-		if (o is DateTime _time)
-		{
-			return _time;
-		}
+    {
+        if (o is DateTime _time)
+        {
+            return _time;
+        }
 
-		return o == null ? System.DateTime.MinValue :
-			   System.DateTime.TryParse(o.ToString(), out DateTime _outDate) ? _outDate : System.DateTime.MinValue;
-	}
+        return o == null ? System.DateTime.MinValue :
+               System.DateTime.TryParse(o.ToString(), out DateTime _outDate) ? _outDate : System.DateTime.MinValue;
+    }
 
 	/// <summary>
 	///     Converts the string representation of a date and time to its DateTime equivalent.
@@ -194,8 +194,8 @@ public static partial class Extensions
 	///     if the string is null or empty, or the conversion failed.
 	/// </returns>
 	public static DateTime ToDateTime(this string s, string format = "mm/dd/yyyy") =>
-		string.IsNullOrEmpty(s) ? System.DateTime.MinValue : System.DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _outDate) ?
-			_outDate : System.DateTime.MinValue;
+        string.IsNullOrEmpty(s) ? System.DateTime.MinValue : System.DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _outDate) ?
+            _outDate : System.DateTime.MinValue;
 
 	/// <summary>
 	///     Converts the object representation of a value to its decimal equivalent.
@@ -207,17 +207,17 @@ public static partial class Extensions
 	///     represent a valid decimal value, the method returns the nullValue.
 	/// </returns>
 	public static decimal ToDecimal(this object o, decimal nullValue = 0)
-	{
-		return o switch
-			   {
-				   null => nullValue,
-				   int => Convert.ToDecimal(o),
-				   decimal => Convert.ToDecimal(o),
-				   double => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue,
-				   float => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue,
-				   _ => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue
-			   };
-	}
+    {
+        return o switch
+               {
+                   null => nullValue,
+                   int => Convert.ToDecimal(o),
+                   decimal => Convert.ToDecimal(o),
+                   double => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue,
+                   float => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue,
+                   _ => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue
+               };
+    }
 
 	/// <summary>
 	///     Converts the object representation of a value to its double equivalent.
@@ -229,17 +229,17 @@ public static partial class Extensions
 	///     represent a valid double value, the method returns the nullValue.
 	/// </returns>
 	public static double ToDouble(this object o, double nullValue = 0)
-	{
-		return o switch
-			   {
-				   null => nullValue,
-				   int => Convert.ToDouble(o),
-				   double => Convert.ToDouble(o),
-				   decimal => double.TryParse(o.ToString(), out double _out) ? _out : nullValue,
-				   float => double.TryParse(o.ToString(), out double _out) ? _out : nullValue,
-				   _ => double.TryParse(o.ToString(), out double _out) ? _out : nullValue
-			   };
-	}
+    {
+        return o switch
+               {
+                   null => nullValue,
+                   int => Convert.ToDouble(o),
+                   double => Convert.ToDouble(o),
+                   decimal => double.TryParse(o.ToString(), out double _out) ? _out : nullValue,
+                   float => double.TryParse(o.ToString(), out double _out) ? _out : nullValue,
+                   _ => double.TryParse(o.ToString(), out double _out) ? _out : nullValue
+               };
+    }
 
 	/// <summary>
 	///     Converts the string representation of a short integer value to its short integer equivalent.
@@ -268,17 +268,17 @@ public static partial class Extensions
 	///     null or does not represent a valid short integer value, the method returns nullValue.
 	/// </returns>
 	public static short ToInt16(this object o, short nullValue = 0)
-	{
-		return o switch
-			   {
-				   null => nullValue,
-				   short _i => _i,
-				   decimal => (short)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
-				   double => (short)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
-				   float => (short)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
-				   _ => short.TryParse(o.ToString(), out short _outInt) ? _outInt : nullValue
-			   };
-	}
+    {
+        return o switch
+               {
+                   null => nullValue,
+                   short _i => _i,
+                   decimal => (short)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
+                   double => (short)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
+                   float => (short)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
+                   _ => short.TryParse(o.ToString(), out short _outInt) ? _outInt : nullValue
+               };
+    }
 
 	/// <summary>
 	///     Converts the object representation of a number to its 32-bit signed integer equivalent.
@@ -290,17 +290,17 @@ public static partial class Extensions
 	///     does not represent a valid number, the method returns nullValue.
 	/// </returns>
 	public static int ToInt32(this object o, int nullValue = 0)
-	{
-		return o switch
-			   {
-				   null => nullValue,
-				   int _i => _i,
-				   decimal => (int)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
-				   double => (int)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
-				   float => (int)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
-				   _ => int.TryParse(o.ToString(), out int _outInt) ? _outInt : nullValue
-			   };
-	}
+    {
+        return o switch
+               {
+                   null => nullValue,
+                   int _i => _i,
+                   decimal => (int)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
+                   double => (int)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
+                   float => (int)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
+                   _ => int.TryParse(o.ToString(), out int _outInt) ? _outInt : nullValue
+               };
+    }
 
 	/// <summary>
 	///     Converts the string representation of a number to its 32-bit signed integer equivalent.
@@ -342,18 +342,18 @@ public static partial class Extensions
 	///     converted.
 	/// </returns>
 	public static long ToInt64(this object o, int nullValue = 0)
-	{
-		return o switch
-			   {
-				   null => nullValue,
-				   int _i => Convert.ToInt64(_i),
-				   long _i => _i,
-				   decimal => (long)Math.Round(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
-				   double => (long)Math.Round(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
-				   float => (long)Math.Round(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
-				   _ => (long)Math.Round((double)(long.TryParse(o.ToString(), out long _outInt) ? _outInt : nullValue))
-			   };
-	}
+    {
+        return o switch
+               {
+                   null => nullValue,
+                   int _i => Convert.ToInt64(_i),
+                   long _i => _i,
+                   decimal => (long)Math.Round(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
+                   double => (long)Math.Round(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
+                   float => (long)Math.Round(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
+                   _ => (long)Math.Round((double)(long.TryParse(o.ToString(), out long _outInt) ? _outInt : nullValue))
+               };
+    }
 
 	/// <summary>
 	///     Converts the given string to a MarkupString.
@@ -364,14 +364,14 @@ public static partial class Extensions
 	///     empty, or consists only of white-space characters, an empty MarkupString is returned.
 	/// </returns>
 	public static MarkupString ToMarkupString(this string s)
-	{
-		if (s.NullOrWhiteSpace())
-		{
-			return (MarkupString)"";
-		}
+    {
+        if (s.NullOrWhiteSpace())
+        {
+            return (MarkupString)"";
+        }
 
-		s = s.Replace(Environment.NewLine, "<br/>");
+        s = s.Replace(Environment.NewLine, "<br/>");
 
-		return (MarkupString)s;
-	}
+        return (MarkupString)s;
+    }
 }

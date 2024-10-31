@@ -103,11 +103,11 @@
     border-radius: 10px;
 }
 
-    /* Handle on hover */
+/* Handle on hover */
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--c-yellow) !important;
-    }
+::-webkit-scrollbar-thumb:hover {
+    background: var(--c-yellow) !important;
+}
 
 /* #endregion Scroll Bars */
 
@@ -122,6 +122,7 @@ body, form, html {
 ::-webkit-input-placeholder, ::placeholder {
     color: #aaa;
 }
+
 /* #endregion Body, Form, HTML */
 
 /* #region General Classes */
@@ -140,18 +141,18 @@ body, form, html {
     width: calc(100vw - 30px);
 }
 
-    #divMainGrid > #divHeader {
-        height: 50px;
-    }
+#divMainGrid > #divHeader {
+    height: 50px;
+}
 
-    #divMainGrid > #divGrid {
-        height: calc(100% - 50px);
-        /*border: 1px solid red;*/
-    }
+#divMainGrid > #divGrid {
+    height: calc(100% - 50px);
+    /*border: 1px solid red;*/
+}
 
-    #divMainGrid > #divFooter {
-        height: 50px;
-    }
+#divMainGrid > #divFooter {
+    height: 50px;
+}
 
 .layout-2 {
     display: flex;
@@ -238,6 +239,7 @@ body, form, html {
     text-align: center;
 
 }
+
 /* #endregion General Classes */
 
 /* #region AppBar */
@@ -248,9 +250,9 @@ body, form, html {
     color: var(--c-content);
 }
 
-    .e-appbar.e-primary .e-appbar-separator {
-        border: none;
-    }
+.e-appbar.e-primary .e-appbar-separator {
+    border: none;
+}
 
 /* #endregion AppBar */
 
@@ -293,14 +295,14 @@ body, form, html {
     width: 45px;
 }
 
-    .buttonAlphabet:not(.selectedAlphabet):focus, .buttonAlphabet:not(.selectedAlphabet):active, .buttonAlphabet:not(.selectedAlphabet):hover, .buttonAlphabetClear:not(.selectedAlphabet):focus, 
-    .buttonAlphabetClear:not(.selectedAlphabet):active, .buttonAlphabetClear:not(.selectedAlphabet):hover {
-        background: var(--c-red);
-        border: none;
-        outline: 0;
-        padding: 0;
-        color: var(--c-wh);
-    }
+.buttonAlphabet:not(.selectedAlphabet):focus, .buttonAlphabet:not(.selectedAlphabet):active, .buttonAlphabet:not(.selectedAlphabet):hover, .buttonAlphabetClear:not(.selectedAlphabet):focus,
+.buttonAlphabetClear:not(.selectedAlphabet):active, .buttonAlphabetClear:not(.selectedAlphabet):hover {
+    background: var(--c-red);
+    border: none;
+    outline: 0;
+    padding: 0;
+    color: var(--c-wh);
+}
 
 .selectedAlphabet {
     background-color: var(--c-red) !important;
@@ -312,6 +314,7 @@ body, form, html {
 .rightMargin {
     margin-right: 15px;
 }
+
 /* #endregion Buttons */
 
 /* #region Data Form*/
@@ -336,32 +339,32 @@ body, form, html {
     border-radius: 5px;
 }
 
-    .dialogPopup .e-dlg-header-content {
-        background: var(--c-red);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        color: var(--c-wh);
-        padding: 0px;
-    }
+.dialogPopup .e-dlg-header-content {
+    background: var(--c-red);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: var(--c-wh);
+    padding: 0px;
+}
 
-    .dialogPopup .e-dlg-header {
-        border-radius: 5px;
-        color: var(--c-wh);
-        font-size: 24px;
-        text-align: center;
-        text-transform: uppercase;
-        width: 100%;
-    }
+.dialogPopup .e-dlg-header {
+    border-radius: 5px;
+    color: var(--c-wh);
+    font-size: 24px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
 
-    .dialogPopup .e-dlg-content {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        padding: 24px;
-    }
+.dialogPopup .e-dlg-content {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 24px;
+}
 
-    .dialogPopup .e-dlg-header-content + .e-dlg-content {
-        padding-top: 24px !important;
-    }
+.dialogPopup .e-dlg-header-content + .e-dlg-content {
+    padding-top: 24px !important;
+}
 
 /* #endregion*/
 
@@ -371,11 +374,11 @@ body, form, html {
     background-color: var(--c-red) !important;
 }
 
-    .e-gridheader thead tr {
-        background: var(--c-red);
-        color: var(--c-content);
-        height: 45px;
-    }
+.e-gridheader thead tr {
+    background: var(--c-red);
+    color: var(--c-content);
+    height: 45px;
+}
 
 .e-gridcontent tbody tr {
     height: 45px;
@@ -425,23 +428,24 @@ body, form, html {
     font-size: 12px;
 }
 
-    .e-grid .e-icon-gdownarrow::before, .e-grid-menu .e-icon-gdownarrow::before {
-        content: "\e70d";
-    }
+.e-grid .e-icon-gdownarrow::before, .e-grid-menu .e-icon-gdownarrow::before {
+    content: "\e70d";
+}
 
 .e-grid .e-icon-grightarrow {
     font-size: 12px;
 }
 
-    .e-grid .e-icon-grightarrow::before, .e-grid-menu .e-icon-grightarrow::before {
-        content: "\e87e";
-    }
+.e-grid .e-icon-grightarrow::before, .e-grid-menu .e-icon-grightarrow::before {
+    content: "\e87e";
+}
 
 
 .e-rowcell a {
     color: var(--c-red);
     text-decoration: none;
 }
+
 /* #endregion Grid Detailed Arrows */
 
 /* #endregion Grid */
@@ -477,32 +481,32 @@ body, form, html {
     border-color: var(--c-red) !important;
 }
 
-    .e-error.invalid::after, span.invalid::after, .e-multiselect.e-error::after {
-        border-color: var(--c-red) !important;
-        color: var(--c-red) !important;
-        content: "\ef1b" !important; /* Exclamation inside triangle */
-        font-family: var(--font-icon);
-        font-size: 18px;
-        margin-right: 5px;
-        margin-top: 3px;
-    }
+.e-error.invalid::after, span.invalid::after, .e-multiselect.e-error::after {
+    border-color: var(--c-red) !important;
+    color: var(--c-red) !important;
+    content: "\ef1b" !important; /* Exclamation inside triangle */
+    font-family: var(--font-icon);
+    font-size: 18px;
+    margin-right: 5px;
+    margin-top: 3px;
+}
 
-    .e-error.invalid .e-float-text {
-        color: var(--c-red) !important;
-    }
+.e-error.invalid .e-float-text {
+    color: var(--c-red) !important;
+}
 
 .e-input-group:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error) {
     border-color: #aaa;
     box-shadow: none;
 }
 
-    .e-input[disabled], .e-input-group .e-input[disabled], .e-input-group.e-control-wrapper .e-input[disabled], .e-input-group.e-disabled, .e-input-group.e-disabled input, .e-input-group.e-disabled input.e-input, .e-input-group.e-disabled textarea, .e-input-group.e-disabled textarea.e-input, .e-input-group.e-control-wrapper.e-disabled, .e-input-group.e-control-wrapper.e-disabled input, .e-input-group.e-control-wrapper.e-disabled input.e-input, .e-input-group.e-control-wrapper.e-disabled textarea, .e-input-group.e-control-wrapper.e-disabled textarea.e-input, .e-float-input.e-disabled input, .e-float-input.e-disabled textarea, .e-float-input input[disabled], .e-float-input input.e-disabled, .e-float-input textarea[disabled], .e-float-input textarea.e-disabled, .e-float-input.e-control-wrapper.e-disabled input, .e-float-input.e-control-wrapper.e-disabled textarea, .e-float-input.e-control-wrapper input[disabled], .e-float-input.e-control-wrapper input.e-disabled, .e-float-input.e-control-wrapper textarea[disabled], .e-float-input.e-control-wrapper textarea.e-disabled, .e-input-group.e-disabled span, .e-input-group.e-control-wrapper.e-disabled span,
-    .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left).e-disabled, .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error).e-disabled .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left).e-disabled, .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error).e-disabled .e-input-in-wrap {
-        cursor: not-allowed;
-        background-color: #eaeaea;
-        color: #555;
-        -webkit-text-fill-color: inherit;
-    }
+.e-input[disabled], .e-input-group .e-input[disabled], .e-input-group.e-control-wrapper .e-input[disabled], .e-input-group.e-disabled, .e-input-group.e-disabled input, .e-input-group.e-disabled input.e-input, .e-input-group.e-disabled textarea, .e-input-group.e-disabled textarea.e-input, .e-input-group.e-control-wrapper.e-disabled, .e-input-group.e-control-wrapper.e-disabled input, .e-input-group.e-control-wrapper.e-disabled input.e-input, .e-input-group.e-control-wrapper.e-disabled textarea, .e-input-group.e-control-wrapper.e-disabled textarea.e-input, .e-float-input.e-disabled input, .e-float-input.e-disabled textarea, .e-float-input input[disabled], .e-float-input input.e-disabled, .e-float-input textarea[disabled], .e-float-input textarea.e-disabled, .e-float-input.e-control-wrapper.e-disabled input, .e-float-input.e-control-wrapper.e-disabled textarea, .e-float-input.e-control-wrapper input[disabled], .e-float-input.e-control-wrapper input.e-disabled, .e-float-input.e-control-wrapper textarea[disabled], .e-float-input.e-control-wrapper textarea.e-disabled, .e-input-group.e-disabled span, .e-input-group.e-control-wrapper.e-disabled span,
+.e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left).e-disabled, .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error).e-disabled .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left).e-disabled, .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error).e-disabled .e-input-in-wrap {
+    cursor: not-allowed;
+    background-color: #eaeaea;
+    color: #555;
+    -webkit-text-fill-color: inherit;
+}
 
 /* #endregion Input*/
 
@@ -541,40 +545,41 @@ body, form, html {
     background: var(--c-yellow);
 }
 
-    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
-        background: var(--c-yellow);
-    }
+.e-pager .e-currentitem, .e-pager .e-currentitem:hover {
+    background: var(--c-yellow);
+}
 
-    .e-pager .e-currentitem.e-numericitem.e-focused {
-        background: var(--c-yellow);
-    }
+.e-pager .e-currentitem.e-numericitem.e-focused {
+    background: var(--c-yellow);
+}
+
 /* #endregion Pager */
 /* #region Pre-defined Dialogs */
 .e-confirm-dialog {
     border-radius: 6px;
 }
 
-    .e-confirm-dialog .e-dlg-header-content + .e-dlg-content {
-        padding: 20px 24px;
-    }
+.e-confirm-dialog .e-dlg-header-content + .e-dlg-content {
+    padding: 20px 24px;
+}
 
-    .e-confirm-dialog .e-dlg-header-content {
-        background: var(--c-bbb);
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-        padding: 8px 24px;
-    }
+.e-confirm-dialog .e-dlg-header-content {
+    background: var(--c-bbb);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 8px 24px;
+}
 
-    .e-confirm-dialog .e-dlg-overlay {
-        background: rgba(200, 200, 200, 0.4);
-    }
+.e-confirm-dialog .e-dlg-overlay {
+    background: rgba(200, 200, 200, 0.4);
+}
 
-    .e-confirm-dialog .e-footer-content {
-        background: var(--c-eee);
-        border-bottom-left-radius: 6px;
-        border-bottom-right-radius: 6px;
-        padding: 8px 24px;
-    }
+.e-confirm-dialog .e-footer-content {
+    background: var(--c-eee);
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    padding: 8px 24px;
+}
 
 /* #endregion Pre-defined Dialogs*/
 
@@ -670,10 +675,10 @@ body, form, html {
     z-index: auto;
 }
 
-    .e-btn.e-fab span {
-        margin-left: auto;
-        margin-right: auto;
-    }
+.e-btn.e-fab span {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .e-speeddial-popup.e-speeddial-linear .e-speeddial-li {
     margin: 2px 5px;
@@ -685,10 +690,10 @@ body, form, html {
     color: var(--c-wh) !important;
 }
 
-    .e-speeddial-popup.e-speeddial-vert-right .e-speeddial-li span:last-child {
-        border: none;
-        box-shadow: none;
-    }
+.e-speeddial-popup.e-speeddial-vert-right .e-speeddial-li span:last-child {
+    border: none;
+    box-shadow: none;
+}
 
 .e-speeddial-popup.e-speeddial-vert-right .e-speeddial-li {
     background-color: var(--c-red);
@@ -696,7 +701,7 @@ body, form, html {
 }
 
 .e-speeddial-popup.e-speeddial-linear .e-speeddial-li:hover,
-/*sets the background and border color for text and icon to when Li is in hovered state*/
+    /*sets the background and border color for text and icon to when Li is in hovered state*/
 .e-speeddial-popup.e-speeddial-linear .e-speeddial-li:hover .e-speeddial-li-text,
 .e-speeddial-popup.e-speeddial-linear .e-speeddial-li:hover .e-speeddial-li-icon {
     background-color: var(--c-red) !important;
@@ -828,6 +833,7 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     border-color: var(--c-yellowlight) !important;
     color: var(--c-bk) !important;
 }
+
 /* #endregion Login Page*/
 
 /* #region CheckBox*/
@@ -844,6 +850,7 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     box-shadow: none;
     color: #fff;
 }
+
 /* #endregion*/
 
 /* #region Auto Complete*/
@@ -859,4 +866,5 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
 #divHeader .e-ddl.e-input-group.e-control-wrapper {
     border-radius: 4px;
 }
+
 /* #endregion*/

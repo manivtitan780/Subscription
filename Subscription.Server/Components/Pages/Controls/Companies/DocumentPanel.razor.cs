@@ -4,11 +4,11 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Subscription.Client
+// Project:             Subscription.Server
 // File Name:           DocumentPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          3-7-2024 15:47
-// Last Updated On:     3-7-2024 15:47
+// Created On:          04-22-2024 15:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion

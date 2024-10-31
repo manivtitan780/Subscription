@@ -4,18 +4,20 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Subscription.Client
+// Project:             Subscription.Server
 // File Name:           EditContact.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          4-18-2024 16:16
-// Last Updated On:     4-18-2024 16:16
+// Created On:          04-22-2024 15:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
 
-using Syncfusion.Blazor.DropDowns;
+#region Using
 
 using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
+
+#endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
@@ -48,6 +50,12 @@ public partial class EditContact
         set;
     }
 
+    private List<LocationDrop> Location
+    {
+        get;
+        set;
+    } = [];
+
     [Parameter]
     public CompanyContacts Model
     {
@@ -67,12 +75,6 @@ public partial class EditContact
         get;
         set;
     }
-
-    private List<LocationDrop> Location
-    {
-        get;
-        set;
-    } = [];
 
     private async Task CancelForm(MouseEventArgs args)
     {
@@ -97,6 +99,16 @@ public partial class EditContact
         CompanyContactEditForm.EditContext?.Validate();
     }
 
+    private void LocationChanged(ChangeEventArgs<int, LocationDrop> location)
+    {
+        Model.StreetName = location.ItemData.StreetAddress;
+        Model.City = location.ItemData.City;
+        Model.State = location.ItemData.State;
+        Model.ZipCode = location.ItemData.Zip;
+        Model.StateID = location.ItemData.StateID;
+        StateHasChanged();
+    }
+
     protected override void OnParametersSet()
     {
         Context = new(Model);
@@ -113,14 +125,4 @@ public partial class EditContact
     }
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
-
-    private void LocationChanged(ChangeEventArgs<int, LocationDrop> location)
-    {
-        Model.StreetName = location.ItemData.StreetAddress;
-        Model.City = location.ItemData.City;
-        Model.State = location.ItemData.State;
-        Model.ZipCode = location.ItemData.Zip;
-        Model.StateID = location.ItemData.StateID;
-        StateHasChanged();
-    }
 }

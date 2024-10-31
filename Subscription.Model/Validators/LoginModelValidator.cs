@@ -7,8 +7,8 @@
 // Project:             Subscription.Model
 // File Name:           LoginModelValidator.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          4-21-2024 21:4
-// Last Updated On:     4-21-2024 21:6
+// Created On:          04-21-2024 21:04
+// Last Updated On:     10-29-2024 15:10
 // *****************************************/
 
 #endregion
