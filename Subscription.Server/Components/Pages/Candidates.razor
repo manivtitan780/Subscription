@@ -30,7 +30,7 @@
 									<span class="@(_con.MPC ? "mpcicon" : "")">@_con.Name</span>
 								}
 							}
-						</Template>
+						</template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
 						<Template Context="aCon">
@@ -42,7 +42,7 @@
 									</span>
 								}
 							}
-						</Template>
+						</template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
 						<Template Context="aCon">
@@ -52,7 +52,7 @@
 									<a href="mailto:@(_con.Email)">@_con.Email</a>
 								}
 							}
-						</Template>
+						</template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
 						<Template Context="aCon">
@@ -64,7 +64,7 @@
 									</span>
 								}
 							}
-						</Template>
+						</template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
 						<Template Context="aCon">
@@ -76,7 +76,7 @@
 									</span>
 								}
 							}
-						</Template>
+						</template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
 						<Template Context="aCon">
@@ -88,7 +88,7 @@
 									</span>
 								}
 							}
-						</Template>
+						</template>
 					</GridColumn>
 				</GridColumns>
 				<GridTemplates Context="context">
@@ -146,7 +146,7 @@
 												</div>
 												<div class="rightLayout">
 													<div class="divPanelContainer" style="margin-bottom:5px;">
-                                                        <span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
+														<span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
 														<span class="spanRightText ratingCandidateExpand">
 															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate" />
 														</span>
@@ -252,10 +252,10 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
-	}
-	else
-	{
-		<div class="noAccess">
-			You don't have rights to view this page.
-		</div>
-	}
+}
+else
+{
+	<div class="noAccess">
+		You don't have rights to view this page.
+	</div>
+}

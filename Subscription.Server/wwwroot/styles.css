@@ -59,6 +59,7 @@
     --font-size-med: 9pt;
     --font-size-small: 8pt;
     --font-icon: 'icofont';
+    --rating-value: #8e181b;
 }
 
 /* #endregion Global Variables */
@@ -344,7 +345,7 @@ body, form, html {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     color: var(--c-wh);
-    padding: 0px;
+    padding: 0;
 }
 
 .dialogPopup .e-dlg-header {

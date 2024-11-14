@@ -16,7 +16,6 @@
 #region Using
 
 global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.AspNetCore.Mvc;
 
 global using System.Data;
 
