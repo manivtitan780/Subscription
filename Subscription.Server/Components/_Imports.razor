@@ -1,26 +1,33 @@
-﻿@using System.Net.Http
+﻿@using System.Globalization
+@using System.Net.Http
 @using System.Net.Http.Json
+@using Blazored.FluentValidation
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
-@using static RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
-@using Subscription.Server
-@using Subscription.Server.Components
-@using Subscription.Server.Components.Pages
 @using Subscription.Model
 @using Subscription.Model.Validators
+@using Subscription.Server
+@using Subscription.Server.Components
+@using Subscription.Server.Components.Layout;
+@using Subscription.Server.Components.Pages;
+@using Subscription.Server.Components.Pages.Controls;
+@using Subscription.Server.Components.Pages.Controls.Candidates;
+@using Subscription.Server.Components.Pages.Controls.Common;
+@using Subscription.Server.Components.Pages.Controls.Companies;
 @using Syncfusion;
 @using Syncfusion.Blazor;
-@using Syncfusion.Blazor.Data;
 @using Syncfusion.Blazor.Buttons;
 @using Syncfusion.Blazor.Calendars;
 @using Syncfusion.Blazor.Charts;
+@using Syncfusion.Blazor.Data;
 @using Syncfusion.Blazor.DataForm;
 @using Syncfusion.Blazor.DropDowns;
 @using Syncfusion.Blazor.Grids;
 @using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Layouts;
 @using Syncfusion.Blazor.Lists;
 @using Syncfusion.Blazor.Navigations;
 @using Syncfusion.Blazor.Notifications;
@@ -31,16 +38,9 @@
 @using Syncfusion.Blazor.Schedule;
 @using Syncfusion.Blazor.Spinner;
 @using Syncfusion.Blazor.SplitButtons;
-@using Subscription.Server.Components.Pages.Controls;
-@using Subscription.Server.Components.Pages.Controls.Common;
-@using Subscription.Server.Components.Pages.Controls.Companies;
-@using Syncfusion.Blazor.Layouts;
-@using GridSelectionMode = Syncfusion.Blazor.Grids.SelectionMode;
-@using GridSelectionType = Syncfusion.Blazor.Grids.SelectionType;
+@using static RenderMode;
 @using BlazorAnimationEffect = AnimationEffect;
-@using SelectionMode = Syncfusion.Blazor.Grids.SelectionMode;
-@using SelectionType = Syncfusion.Blazor.Grids.SelectionType;
-@using Blazored.FluentValidation
-@using Subscription.Server.Components.Layout
-@using System.Globalization
-@using Subscription.Server.Components.Pages.Controls.Candidates
+@using GridSelectionMode = Syncfusion.Blazor.Grids.SelectionMode
+@using GridSelectionType = Syncfusion.Blazor.Grids.SelectionType
+@using SelectionMode = Syncfusion.Blazor.Grids.SelectionMode
+@using SelectionType = Syncfusion.Blazor.Grids.SelectionType
