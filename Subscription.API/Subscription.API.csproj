@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2"/>
         <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0">
           <PrivateAssets>all</PrivateAssets>
@@ -32,6 +33,7 @@
         </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
+        <PackageReference Include="System.Runtime.Caching" Version="9.0.0" />
         <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
         <PackageReference Include="System.Text.Json" Version="9.0.0" />
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
