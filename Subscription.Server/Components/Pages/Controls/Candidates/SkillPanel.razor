@@ -1,0 +1,41 @@
+﻿<div class="skillContainerBox">
+	<div>
+		<div>Primary Skills:</div>
+		<div style="height: 105px; overflow-y: auto;">
+			@Model.Keywords
+		</div>
+		<div style="font-weight: bold; height: 35px; margin-top: 15px;">Summary:</div>
+		<div style="height: 105px; overflow-y: auto;">
+			@Model.Summary
+		</div>
+	</div>
+	<div>
+		<div>Skills:</div>
+		<div>
+			<SfGrid AllowPaging="false" DataSource="@ModelSkill" EnableHover="true" Height="210px" ID="gridSkill" @ref="GridSkill" RowHeight="@RowHeight"
+					SelectedRowIndex="0" TValue="CandidateSkills" Width="99%">
+				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
+				<GridEvents RowSelected="RowSelected" TValue="CandidateSkills" />
+				<GridColumns>
+					<GridColumn Field="@nameof(CandidateSkills.Skill)" HeaderText="Skill" Width="30%" />
+					<GridColumn Field="@nameof(CandidateSkills.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
+					<GridColumn Field="@nameof(CandidateSkills.LastUsed)" HeaderText="Last Used" Width="25%" />
+					<GridColumn Field="@nameof(CandidateSkills.ExpMonth)" HeaderText="Exp. (month)" Width="25%" />
+					<GridColumn Field="@nameof(CandidateSkills.UpdatedBy)" HeaderText="Updated By" Width="20%" />
+					<GridColumn Width="10%">
+						<Template Context="bCon">
+							@{
+								if (bCon is CandidateSkills _con && _con.UpdatedBy == UserName && !IsRequisition && EditRights)
+								{
+									<SfButton Content="" IconCss="editIconInner" @onclick="() => EditSkillDialog(_con.ID)" />
+									<SfButton Content="" IconCss="deleteIconInner" @onclick="() => DeleteSkillMethod(_con.ID)" />
+								}
+							}
+						</Template>
+					</GridColumn>
+				</GridColumns>
+			</SfGrid>
+		</div>
+	</div>
+</div>
+<ConfirmDialog Delete="() => DeleteSkill.InvokeAsync(_selectedID)" Entity="Skill" Height="160px" @ref="DialogConfirm" Width="336px"></ConfirmDialog>

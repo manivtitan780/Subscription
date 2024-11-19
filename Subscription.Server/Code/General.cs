@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     11-19-2024 20:11
 // *****************************************/
 
 #endregion
@@ -236,6 +236,27 @@ public class General
     ///     If a JSON body is provided, it is added to the request.
     ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
     /// </remarks>
+    internal static Task<Dictionary<string, object>> PostRest(string endpoint, Dictionary<string, string> parameters, object jsonBody = null, byte[] fileArray = null, string fileName = "",
+                                                              string parameterName = "file") =>
+        PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
+
+    /// <summary>
+    ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.
+    /// </summary>
+    /// <param name="endpoint">The API endpoint to which the request is sent.</param>
+    /// <param name="parameters">The parameters to be included in the request.</param>
+    /// <param name="jsonBody">The JSON body to be included in the request. Default is null.</param>
+    /// <param name="fileArray">Array of bytes containing the file contents. Default is null.</param>
+    /// <param name="fileName">Name of the file to be uploaded. Default is blank and will be used in fileArray is not null.</param>
+    /// <param name="parameterName">Name of the parameter to pass to the RESTful API. Default is `file`.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a dictionary with the response data.
+    /// </returns>
+    /// <remarks>
+    ///     This method uses the RestClient to send a POST request to the API.
+    ///     If a JSON body is provided, it is added to the request.
+    ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
+    /// </remarks>
     internal static async Task<T> PostRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, byte[] fileArray = null, string fileName = "",
                                               string parameterName = "file")
     {
@@ -263,6 +284,55 @@ public class General
         {
             _request.AddFile(parameterName, fileArray, fileName);
         }
+
+        return await _client.PostAsync<T>(_request);
+    }
+
+    /// <summary>
+    ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.
+    /// </summary>
+    /// <param name="endpoint">The API endpoint to which the request is sent.</param>
+    /// <param name="parameters">The parameters to be included in the request.</param>
+    /// <param name="jsonBody">The JSON body to be included in the request. Default is null.</param>
+    /// <param name="fileArray">Array of bytes containing the file contents. Default is null.</param>
+    /// <param name="fileName">Name of the file to be uploaded. Default is blank and will be used in fileArray is not null.</param>
+    /// <param name="parameterName">Name of the parameter to pass to the RESTful API. Default is `file`.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a dictionary with the response data.
+    /// </returns>
+    /// <remarks>
+    ///     This method uses the RestClient to send a POST request to the API.
+    ///     If a JSON body is provided, it is added to the request.
+    ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
+    /// </remarks>
+    internal static async Task<T> PostRestParameter<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, byte[] fileArray = null, string fileName = "",
+                                                       string parameterName = "file")
+    {
+        using RestClient _client = new(Start.APIHost);
+        RestRequest _request = new(endpoint, Method.Post)
+                               {
+                                   AlwaysMultipartFormData = true
+                               };
+
+        if (jsonBody != null)
+        {
+            _request.AddJsonBody(jsonBody);
+        }
+
+        if (parameters != null)
+        {
+            foreach (KeyValuePair<string, string> _parameter in parameters)
+            {
+                _request.AddParameter(_parameter.Key, _parameter.Value, ParameterType.GetOrPost);
+            }
+        }
+
+        if (fileArray == null)
+        {
+            return await _client.PostAsync<T>(_request);
+        }
+
+        _request.AddFile(parameterName, fileArray, fileName);
 
         return await _client.PostAsync<T>(_request);
     }

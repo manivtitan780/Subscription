@@ -30,7 +30,7 @@
 									<span class="@(_con.MPC ? "mpcicon" : "")">@_con.Name</span>
 								}
 							}
-						</template>
+						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
 						<Template Context="aCon">
@@ -42,7 +42,7 @@
 									</span>
 								}
 							}
-						</template>
+						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
 						<Template Context="aCon">
@@ -52,7 +52,7 @@
 									<a href="mailto:@(_con.Email)">@_con.Email</a>
 								}
 							}
-						</template>
+						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
 						<Template Context="aCon">
@@ -64,7 +64,7 @@
 									</span>
 								}
 							}
-						</template>
+						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
 						<Template Context="aCon">
@@ -76,7 +76,7 @@
 									</span>
 								}
 							}
-						</template>
+						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
 						<Template Context="aCon">
@@ -88,7 +88,7 @@
 									</span>
 								}
 							}
-						</template>
+						</Template>
 					</GridColumn>
 				</GridColumns>
 				<GridTemplates Context="context">
@@ -148,7 +148,7 @@
 													<div class="divPanelContainer" style="margin-bottom:5px;">
 														<span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
 														<span class="spanRightText ratingCandidateExpand">
-															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate" />ḥ
+															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate" />
 														</span>
 													</div>
 													<PanelDisplayText Label="Rating Date" MarkupText="@RatingDate" />
@@ -157,10 +157,6 @@
 													<PanelDisplayText Label="M.P.C. Date" MarkupText="@MPCDate" />
 													<PanelDisplayText Label="M.P.C. Notes" MarkupText="@MPCNote" />
 												</div>
-												@*                                                 <div class="rightLayout">
-                                                    <PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_candidateDetailsObject.MPCNotes)"></PanelDisplayText>
-                                                </div>
- *@
 											</div>
 										</ContentTemplate>@* IsRequisition="@(RequisitionID > 0)" *@
 									</TabItem>
@@ -169,8 +165,8 @@
 											<TabHeader Text="Skills" />
 										</ChildContent>
 										<ContentTemplate>
-											@* <skillpanel DeleteSkill="DeleteSkill" EditRights="UserRights.EditCandidate" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject"
-													ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> *@
+											<SkillPanel DeleteSkill="DeleteSkill" EditRights="UserRights.EditCandidate" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject" 
+											 		ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> 
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>

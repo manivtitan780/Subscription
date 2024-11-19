@@ -1,0 +1,40 @@
+﻿<SfDialog CloseOnEscape="true" Height="@Height" ID="modalConfirm" IsModal="true" MinHeight="100px" @ref="Dialog" Target="#divTarget" Visible="false" Width="@Width">
+	<DialogTemplates>
+		<Header>
+			@(ToggleStatus ? $"{(ToggleValue == 1 ? "Enable" : "Disable")} {Entity}" : IsUndoActivity ? "Undo Activity" : $"Delete {Entity}")
+		</Header>
+		<Content>
+			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+			<div style="margin: 10px; text-align: center">
+				<label class="wishNewCandidate">
+					@if (IsUndoActivity)
+					{
+						<span>
+							Are you sure you want to undo the previous Submission Status?
+							<br />Note: This operation cannot be reversed and the Status has to be submitted again.
+						</span>
+					}
+					else if (ToggleStatus)
+					{
+						<span>
+							Are you sure you want to
+							<strong>@(ToggleValue == 1 ? "enable" : "disable")</strong> this @Entity?
+						</span>
+					}
+					else
+					{
+						<span>
+							Are you sure you want to delete this @Entity?
+							<br />Note: This action cannot be reversed.
+						</span>
+					}
+				</label>
+				<SfButton Content="@(ToggleStatus ? ToggleValue == 1 ? "Enable" : "Disable" : IsUndoActivity ? "Undo Activity" : "Delete")" CssClass="confirmButton" Disabled="@DeleteDisabled" IsPrimary="true"
+						  @onclick="DeleteEntity" />
+				<SfButton Content="Cancel" CssClass="cancelButton" Disabled="@CancelDisabled" IsPrimary="true" @onclick="CancelEntity" />
+			</div>
+		</Content>
+	</DialogTemplates>
+	<DialogPositionData X="center" Y="center" />
+	<DialogEvents OnOverlayModalClick="ModalClick" />
+</SfDialog>

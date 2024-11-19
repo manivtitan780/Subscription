@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     09-11-2024 19:09
+// Last Updated On:     11-19-2024 20:11
 // *****************************************/
 
 #endregion
@@ -46,25 +46,19 @@ public partial class Candidates
     }
 
     /// <summary>
-    /// Represents the candidate's communication rating.
+    ///     Represents the candidate's communication rating.
     /// </summary>
     /// <remarks>
-    /// This property is a markup string that holds the communication rating of the candidate.
-    /// The communication rating is converted to a more descriptive string.
-    /// The conversion is as follows:
-    /// - "G" => "Good"
-    /// - "A" => "Average"
-    /// - "X" => "Excellent"
-    /// - Any other value => "Fair"
+    ///     This property is a markup string that holds the communication rating of the candidate.
+    ///     The communication rating is converted to a more descriptive string.
+    ///     The conversion is as follows:
+    ///     - "G" => "Good"
+    ///     - "A" => "Average"
+    ///     - "X" => "Excellent"
+    ///     - Any other value => "Fair"
     /// </remarks>
     private MarkupString CandidateCommunication
     {
-        /// <summary>
-        /// Gets or sets the candidate's communication rating.
-        /// </summary>
-        /// <value>
-        /// A markup string representing the communication rating.
-        /// </value>
         get;
         set;
     }
@@ -219,6 +213,21 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the SkillPanel instance associated with the Candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to interact with the SkillPanel component, which provides functionality for managing
+    ///     candidate skills.
+    ///     It includes methods for editing and deleting skills, and properties for managing the display and behavior of the
+    ///     skill grid.
+    /// </remarks>
+    private SkillPanel SkillPanel
+    {
+        get;
+        set;
+    }
+
     private SfSpinner Spinner
     {
         get;
@@ -259,6 +268,13 @@ public partial class Candidates
         await Grid.Refresh();
     }
 
+    private Dictionary<string, string> CreateParameters(int id) => new()
+                                                                   {
+                                                                       {"id", id.ToString()},
+                                                                       {"candidateID", _target.ID.ToString()},
+                                                                       {"user", User}
+                                                                   };
+
     /// <summary>
     ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
     /// </summary>
@@ -273,6 +289,29 @@ public partial class Candidates
                                                         await Grid.SelectRowAsync(0);
                                                     }
                                                 });
+
+    /// <summary>
+    ///     Asynchronously deletes a skill from a candidate's profile.
+    /// </summary>
+    /// <param name="id">The unique identifier of the skill to be deleted.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method sends a POST request to the "Candidates/DeleteSkill" endpoint with the skill's ID,
+    ///     the candidate's ID, and the current user's ID as parameters. If the current user is not logged in,
+    ///     the user ID is set to "JOLLY". The method also sets a flag to prevent multiple simultaneous requests.
+    ///     If the request is successful, the method updates the candidate's skills list with the response from the server.
+    /// </remarks>
+    private Task DeleteSkill(int id) => ExecuteMethod(async () =>
+                                                      {
+                                                          Dictionary<string, string> _parameters = CreateParameters(id);
+                                                          Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteSkill", _parameters);
+                                                          if (_response == null)
+                                                          {
+                                                              return;
+                                                          }
+
+                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
+                                                      });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
     {
@@ -577,12 +616,12 @@ public partial class Candidates
     private void SetCommunication()
     {
         string _returnValue = _candidateDetailsObject.Communication switch
-        {
-            "G" => "Good",
-            "A" => "Average",
-            "X" => "Excellent",
-            _ => "Fair"
-        };
+                              {
+                                  "G" => "Good",
+                                  "A" => "Average",
+                                  "X" => "Excellent",
+                                  _ => "Fair"
+                              };
 
         CandidateCommunication = _returnValue.ToMarkupString();
     }
@@ -597,7 +636,7 @@ public partial class Candidates
     /// </remarks>
     private void SetEligibility()
     {
-        if (_eligibility is { Count: > 0 })
+        if (_eligibility is {Count: > 0})
         {
             CandidateEligibility = _candidateDetailsObject.EligibilityID > 0
                                        ? _eligibility.FirstOrDefault(eligibility => eligibility.Value == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
@@ -616,7 +655,7 @@ public partial class Candidates
     /// </remarks>
     private void SetExperience()
     {
-        if (_experience is { Count: > 0 })
+        if (_experience is {Count: > 0})
         {
             CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
                                        ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
@@ -639,7 +678,7 @@ public partial class Candidates
     private void SetJobOption()
     {
         string _returnValue = "";
-        if (_jobOptions is { Count: > 0 })
+        if (_jobOptions is {Count: > 0})
         {
             string[] _splitJobOptions = _candidateDetailsObject.JobOptions.Split(',');
             foreach (string _str in _splitJobOptions)
@@ -679,7 +718,7 @@ public partial class Candidates
     {
         string _returnValue = "";
 
-        if (_taxTerms is { Count: > 0 })
+        if (_taxTerms is {Count: > 0})
         {
             string[] _splitTaxTerm = _candidateDetailsObject.TaxTerm.Split(',');
             foreach (string _str in _splitTaxTerm)
@@ -819,10 +858,10 @@ public partial class Candidates
                     if (_restResponse == null)
                     {
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                        {
-                            Result = _dataSource,
-                            Count = 0 /*_count*/
-                        } : _dataSource;
+                                                               {
+                                                                   Result = _dataSource,
+                                                                   Count = 0 /*_count*/
+                                                               } : _dataSource;
                     }
                     else
                     {
@@ -832,18 +871,18 @@ public partial class Candidates
                         if (_dataSource == null)
                         {
                             _candidateReturn = dm.RequiresCounts ? new DataResult
-                            {
-                                Result = null,
-                                Count = 1
-                            } : null;
+                                                                   {
+                                                                       Result = null,
+                                                                       Count = 1
+                                                                   } : null;
                         }
                         else
                         {
                             _candidateReturn = dm.RequiresCounts ? new DataResult
-                            {
-                                Result = _dataSource,
-                                Count = _count /*_count*/
-                            } : _dataSource;
+                                                                   {
+                                                                       Result = _dataSource,
+                                                                       Count = _count /*_count*/
+                                                                   } : _dataSource;
                         }
                     }
                 }
@@ -852,20 +891,20 @@ public partial class Candidates
                     if (_dataSource == null)
                     {
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                        {
-                            Result = null,
-                            Count = 1
-                        } : null;
+                                                               {
+                                                                   Result = null,
+                                                                   Count = 1
+                                                               } : null;
                     }
                     else
                     {
                         _dataSource.Add(new());
 
                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                        {
-                            Result = _dataSource,
-                            Count = 1
-                        } : _dataSource;
+                                                               {
+                                                                   Result = _dataSource,
+                                                                   Count = 1
+                                                               } : _dataSource;
                     }
                 }
 

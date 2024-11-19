@@ -33,6 +33,8 @@ global using Subscription.Model;
 global using Subscription.Model.Validators;
 global using Subscription.Server.Code;
 global using Subscription.Server.Components.Pages.Controls.Companies;
+global using Subscription.Server.Components.Pages.Controls.Candidates;
+global using Subscription.Server.Components.Pages.Controls.Common;
 //global using Subscription.Server.Components.Pages;
 global using Syncfusion.Blazor;
 global using Syncfusion.Blazor.Buttons;
