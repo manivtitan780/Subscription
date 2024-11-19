@@ -8,7 +8,7 @@
 // File Name:           Login.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     04-23-2024 19:04
+// Last Updated On:     11-19-2024 19:11
 // *****************************************/
 
 #endregion
@@ -60,20 +60,6 @@ public partial class Login
         set;
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
-        if (_claims != null)
-        {
-            string _userName = _claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-            if (!_userName.NullOrWhiteSpace())
-            {
-                NavigationManager.NavigateTo($"{NavigationManager.BaseUri}company", true);
-            }
-        }
-        await base.OnInitializedAsync();
-    }
-
     private async Task LoginToApplication(EditContext arg)
     {
         Dictionary<string, string> _parameters = new()
@@ -106,5 +92,20 @@ public partial class Login
 
             NavigationManager.NavigateTo($"{NavigationManager.BaseUri}company");
         }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
+        if (_claims != null)
+        {
+            string _userName = _claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            if (!_userName.NullOrWhiteSpace())
+            {
+                NavigationManager.NavigateTo($"{NavigationManager.BaseUri}company", true);
+            }
+        }
+
+        await base.OnInitializedAsync();
     }
 }

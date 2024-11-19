@@ -18,9 +18,9 @@ namespace Subscription.API.Controllers;
 /// <summary>
 ///     Represents a controller for handling company related requests.
 /// </summary>
-/// <param name="configuration">
+/*/// <param name="configuration">
 ///     The application configuration, injected by the ASP.NET Core DI container.
-/// </param>
+/// </param>*/
 [ApiController, Route("api/[controller]/[action]")]
 public class CompanyController : ControllerBase
 {
