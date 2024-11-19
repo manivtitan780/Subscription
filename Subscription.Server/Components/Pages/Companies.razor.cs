@@ -13,20 +13,16 @@
 
 #endregion
 
-#region Using
-
-#endregion
-
 namespace Subscription.Server.Components.Pages;
 
 public partial class Companies
 {
-    private const string StorageName = "CompaniesGrid";
+    // private const string StorageName = "CompaniesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CompanyContacts> _companyContacts = [];
 
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
-    private List<CompanyDocuments> _companyDocuments = [];
+    private List<CompanyDocuments> _companyDocuments = [];/**/
     private List<CompanyLocations> _companyLocations = [];
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -42,7 +38,7 @@ public partial class Companies
         set;
     }
 
-    public EditContact CompanyContactDialog
+    private EditContact CompanyContactDialog
     {
         get;
         set;
@@ -183,7 +179,7 @@ public partial class Companies
         set;
     } = new();
 
-	/// <summary>
+	/*/// <summary>
 	///     Gets or sets a clone of the CompanySearch model. This clone is used to manage the state of the search functionality
 	///     in the Companies page. It holds the search parameters and criteria used to filter and display the company data in
 	///     the grid view.
@@ -192,7 +188,7 @@ public partial class Companies
     {
         get;
         set;
-    } = new();
+    } = new();*/
 
     private CompanyContacts SelectedContact
     {
@@ -486,7 +482,7 @@ public partial class Companies
                             });
     }
 
-    private Task OnActionBegin(ActionEventArgs<Company> company) => ExecuteMethod(async () =>
+    /*private Task OnActionBegin(ActionEventArgs<Company> company) => ExecuteMethod(async () =>
                                                                                   {
                                                                                       if (company.RequestType == GridAction.Sorting)
                                                                                       {
@@ -501,7 +497,7 @@ public partial class Companies
                                                                                           //await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                                           await Grid.Refresh();
                                                                                       }
-                                                                                  });
+                                                                                  });*/
 
     protected override async Task OnInitializedAsync()
     {
@@ -560,7 +556,7 @@ public partial class Companies
         await Grid.Refresh();
     }
 
-    private Task RowSelected(RowSelectEventArgs<Company> company) => null;
+    /*private Task RowSelected(RowSelectEventArgs<Company> company) => null;*/
 
     private async Task SaveCompany() => await ExecuteMethod(async () =>
                                                             {

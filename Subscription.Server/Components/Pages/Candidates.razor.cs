@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages;
 
 public partial class Candidates
 {
-    private const string StorageName = "CandidatesGrid";
+    //private const string StorageName = "CandidatesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CandidateActivity> _candidateActivityObject = [];
     private CandidateDetails _candidateDetailsObject = new();

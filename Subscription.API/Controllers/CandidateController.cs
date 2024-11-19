@@ -16,7 +16,7 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class CandidateController(IConfiguration configuration) : ControllerBase
+public class CandidateController : ControllerBase
 {
     /// <summary>
     ///     Retrieves the detailed information of a candidate by their ID.

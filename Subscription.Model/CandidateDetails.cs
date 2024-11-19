@@ -871,7 +871,7 @@ public class CandidateDetails
 	/// </remarks>
 	public CandidateDetails Copy() => MemberwiseClone() as CandidateDetails;
 
-	/// <summary>
+	/*/// <summary>
 	///     Enumerates the possible communication ratings for a candidate.
 	/// </summary>
 	/// <remarks>
@@ -881,9 +881,9 @@ public class CandidateDetails
 	///     - X (2) => Excellent
 	///     - G (3) => Good
 	///     - F (4) => Fair
-	/// </remarks>
-	private enum CommunicationEnum
+	/// </remarks>*/
+	/*private enum CommunicationEnum
     {
         A = 1, X = 2, G = 3, F = 4
-    }
+    }*/
 }

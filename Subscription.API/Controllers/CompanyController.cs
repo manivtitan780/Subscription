@@ -22,7 +22,7 @@ namespace Subscription.API.Controllers;
 ///     The application configuration, injected by the ASP.NET Core DI container.
 /// </param>
 [ApiController, Route("api/[controller]/[action]")]
-public class CompanyController(IConfiguration configuration) : ControllerBase
+public class CompanyController : ControllerBase
 {
 	/// <summary>
 	///     Asynchronously checks if a company's Employer Identification Number (EIN) exists in the database.
