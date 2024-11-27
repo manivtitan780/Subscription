@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-19-2024 20:11
+// Last Updated On:     11-27-2024 15:11
 // *****************************************/
 
 #endregion
@@ -124,6 +124,16 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
+    ///     This instance is used to display and manage the dialog for editing a candidate's skills.
+    /// </summary>
+    private EditSkillDialog DialogSkill
+    {
+        get;
+        set;
+    }
+
     private static SfGrid<Candidate> Grid
     {
         get;
@@ -196,6 +206,18 @@ public partial class Candidates
     }
 
     public static CandidateSearch SearchModel
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the selected skill for the candidate.
+    /// </summary>
+    /// <value>
+    ///     The selected skill of type <see cref="CandidateSkills" />.
+    /// </value>
+    private CandidateSkills SelectedSkill
     {
         get;
         set;
@@ -399,6 +421,41 @@ public partial class Candidates
     {
         _target = null;
     }
+
+    /// <summary>
+    ///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
+    ///     it prepares the system to add a new skill. Otherwise, it prepares the system to edit the existing skill.
+    /// </summary>
+    /// <param name="id">The identifier of the skill to be edited.</param>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
+    ///     immediately.
+    ///     Then it sets the action in progress.
+    ///     If the target skill is null or new, it prepares the system to add a new skill.
+    ///     Otherwise, it prepares the system to edit the existing skill.
+    ///     Finally, it ends the action in progress and shows the dialog to edit the skill.
+    /// </remarks>
+    private Task EditSkill(int id) => ExecuteMethod(() =>
+                                                    {
+                                                        if (id == 0)
+                                                        {
+                                                            if (SelectedSkill == null)
+                                                            {
+                                                                SelectedSkill = new();
+                                                            }
+                                                            else
+                                                            {
+                                                                SelectedSkill.Clear();
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            SelectedSkill = SkillPanel.SelectedRow.Copy();
+                                                        }
+
+                                                        return DialogSkill.ShowDialog();
+                                                    });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return

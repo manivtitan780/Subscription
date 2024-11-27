@@ -8,7 +8,7 @@
 // File Name:           SkillPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          11-19-2024 20:11
-// Last Updated On:     11-19-2024 20:11
+// Last Updated On:     11-19-2024 21:11
 // *****************************************/
 
 #endregion

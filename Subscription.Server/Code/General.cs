@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     11-19-2024 20:11
+// Last Updated On:     11-27-2024 15:11
 // *****************************************/
 
 #endregion
@@ -23,6 +23,54 @@ namespace Subscription.Server.Code;
 
 public class General
 {
+    /// <summary>
+    ///     Asynchronously executes the provided cancel method, hides the spinner and dialog, and enables the dialog buttons.
+    ///     This method is designed to be used as a common cancellation routine for various dialogs in the application.
+    /// </summary>
+    /// <param name="args">The mouse event arguments associated with the cancel action.</param>
+    /// <param name="spinner">The spinner control to be hidden when the cancel method completes.</param>
+    /// <param name="footer">The dialog footer containing the buttons to be enabled when the cancel method completes.</param>
+    /// <param name="dialog">The dialog to be hidden when the cancel method completes.</param>
+    /// <param name="cancelMethod">The cancel method to be invoked asynchronously.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    internal static async Task CallCancelMethod(MouseEventArgs args, SfSpinner spinner, DialogFooter footer, SfDialog dialog, EventCallback<MouseEventArgs> cancelMethod)
+    {
+        await cancelMethod.InvokeAsync(args);
+        footer.EnableButtons();
+        await spinner.HideAsync();
+        await dialog.HideAsync();
+    }
+
+    /// <summary>
+    ///     Asynchronously executes the provided save method, shows the spinner, disables the dialog buttons, and then hides
+    ///     the spinner and dialog, and enables the dialog buttons.
+    ///     This method is designed to be used as a common save routine for various dialogs in the application.
+    /// </summary>
+    /// <param name="editContext">The edit context associated with the save action.</param>
+    /// <param name="spinner">
+    ///     The spinner control to be shown when the save method starts and hidden when the save method
+    ///     completes.
+    /// </param>
+    /// <param name="footer">
+    ///     The dialog footer containing the buttons to be disabled when the save method starts and enabled
+    ///     when the save method completes.
+    /// </param>
+    /// <param name="dialog">The dialog to be hidden when the save method completes.</param>
+    /// <param name="saveMethod">The save method to be invoked asynchronously.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    internal static async Task CallSaveMethod(EditContext editContext, SfSpinner spinner, DialogFooter footer, SfDialog dialog, EventCallback<EditContext> saveMethod)
+    {
+        if (!footer.ButtonsDisabled())
+        {
+            await spinner.ShowAsync();
+            footer.DisableButtons();
+            await saveMethod.InvokeAsync(editContext);
+            footer.EnableButtons();
+            await spinner.HideAsync();
+            await dialog.HideAsync();
+        }
+    }
+
     /// <summary>
     ///     Deserializes a JSON string to an object of a specified type.
     /// </summary>
@@ -327,12 +375,10 @@ public class General
             }
         }
 
-        if (fileArray == null)
+        if (fileArray != null)
         {
-            return await _client.PostAsync<T>(_request);
+            _request.AddFile(parameterName, fileArray, fileName);
         }
-
-        _request.AddFile(parameterName, fileArray, fileName);
 
         return await _client.PostAsync<T>(_request);
     }

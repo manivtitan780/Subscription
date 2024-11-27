@@ -1,0 +1,20 @@
+﻿<SfDialog Header="Edit Skill" Height="375px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center" />
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<EditForm Model="Model" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm">
+			<FluentValidationValidator />
+			<div class="divContainerTable">
+				<TextBoxControl @bind-Value="@(Model.Skill)" @bind-Value:event="ValueChanged" CreateTooltip="true" ID="textSkill" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Skill"
+								ValidationMessage="@(() => Model.Skill)" />
+				<NumericControl @bind-Value="@(Model.LastUsed)" @bind-Value:event="ValueChanged" CreateTooltip="true" Decimals="0" Format="g" ID="numericLastUsed" Max="2100" Placeholder="Last Used (Year)"
+								TValue="short" ValidationMessage="@(() => Model.LastUsed)" />
+				<NumericControl @bind-Value="@(Model.ExpMonth)" @bind-Value:event="ValueChanged" CreateTooltip="true" Decimals="0" Format="g" ID="numericExpMonth" Max="1000"
+								Placeholder="Experience (Months)" TValue="short" ValidationMessage="@(() => Model.ExpMonth)" />
+			</div>
+			<DialogFooter CancelMethod="CancelSkillDialog" @ref="FooterDialog" />
+		</EditForm>
+	</ChildContent>
+</SfDialog>
