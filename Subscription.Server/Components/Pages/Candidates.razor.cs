@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-27-2024 19:11
+// Last Updated On:     11-27-2024 20:11
 // *****************************************/
 
 #endregion
@@ -139,6 +139,13 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the count of items.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the total number of items in the data source.
+    ///     It is updated whenever the data source is refreshed or a new set of items is loaded.
+    /// </remarks>
     private static int Count
     {
         get;
@@ -155,12 +162,26 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the instance of the Syncfusion grid component used to display candidates.
+    /// </summary>
+    /// <remarks>
+    ///     This grid is used to display the list of candidates and their details.
+    ///     It supports various operations such as sorting, filtering, and paging.
+    /// </remarks>
     private static SfGrid<Candidate> Grid
     {
         get;
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the user has view rights.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to determine if the current user has the necessary permissions to view the candidates.
+    ///     It is set based on the user's claims retrieved during the initialization of the component.
+    /// </remarks>
     private bool HasViewRights
     {
         get;
@@ -182,6 +203,13 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the instance of the ILocalStorageService used in the application.
+    /// </summary>
+    /// <remarks>
+    ///     This service is used to manage local storage in the browser.
+    ///     It is used to store and retrieve data such as user preferences and application state.
+    /// </remarks>
     [Inject]
     private ILocalStorageService LocalStorage
     {
@@ -254,6 +282,13 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the search model used for filtering candidates.
+    /// </summary>
+    /// <remarks>
+    ///     This model contains the search parameters used to filter the list of candidates displayed in the grid.
+    ///     It includes properties such as Name and Page for pagination and filtering.
+    /// </remarks>
     public static CandidateSearch SearchModel
     {
         get;
@@ -299,12 +334,26 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the instance of the Syncfusion spinner control used in the application.
+    /// </summary>
+    /// <remarks>
+    ///     This spinner is displayed during long-running operations such as data loading or saving.
+    ///     It provides visual feedback to the user that an operation is in progress.
+    /// </remarks>
     private SfSpinner Spinner
     {
         get;
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the username of the current user.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the username of the user currently logged into the application.
+    ///     It is retrieved from the user's claims during the initialization of the component.
+    /// </remarks>
     private string User
     {
         get;
