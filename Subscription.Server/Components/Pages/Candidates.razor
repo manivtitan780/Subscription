@@ -165,7 +165,7 @@
 											<TabHeader Text="Skills" />
 										</ChildContent>
 										<ContentTemplate>
-											<SkillPanel DeleteSkill="DeleteSkill" EditRights="UserRights.EditCandidate" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject" 
+											<SkillPanel DeleteSkill="DeleteSkill" EditRights="HasEditRights" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject" 
 											 		ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> 
 										</ContentTemplate>
 									</TabItem>

@@ -164,6 +164,18 @@ public class Role
     }
 
     /// <summary>
+    ///     Gets or sets a value indicating whether the role has permission to forward resumes.
+    /// </summary>
+    /// <value>
+    ///     true if the role can forward resumes; otherwise, false.
+    /// </value>
+    public bool ViewAllCandidates
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     ///     Resets all properties of the Role instance to their default values.
     /// </summary>
     /// <remarks>

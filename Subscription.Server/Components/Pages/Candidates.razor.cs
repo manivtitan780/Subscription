@@ -79,7 +79,7 @@ public partial class Candidates
     ///     If the `EligibilityID` is greater than 0, the eligibility status is set to the corresponding value from the
     ///     `_eligibility` collection.
     ///     If the `EligibilityID` is not greater than 0, the eligibility status is set to an empty string.
-    ///     This property is used in the `SetEligibility()` method and in the `BuildRenderTree()` method of the `Candidate`
+    ///     This property is in the `SetEligibility()` method and in the `BuildRenderTree()` method of the `Candidate`
     ///     component.
     /// </remarks>
     private MarkupString CandidateEligibility
@@ -140,6 +140,15 @@ public partial class Candidates
     }
 
     /// <summary>
+    ///     Gets or sets the Requisition ID for which to submit the Candidate for.
+    /// </summary>
+    private int RequisitionID
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     ///     Gets or sets the count of items.
     /// </summary>
     /// <remarks>
@@ -183,6 +192,19 @@ public partial class Candidates
     ///     It is set based on the user's claims retrieved during the initialization of the component.
     /// </remarks>
     private bool HasViewRights
+    {
+        get;
+        set;
+    } = true;
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether the user has edit rights.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to determine if the current user has the necessary permissions to edit the candidates.
+    ///     It is set based on the user's claims retrieved during the initialization of the component.
+    /// </remarks>
+    private bool HasEditRights
     {
         get;
         set;
@@ -717,7 +739,8 @@ public partial class Candidates
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
                                     }
 
-                                    HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCompanies");
+                                    HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCandidates");
+                                    HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditCandidate");
                                 }
 
                                 if (Start.APIHost.NullOrWhiteSpace())

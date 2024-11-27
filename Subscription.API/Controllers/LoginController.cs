@@ -126,6 +126,11 @@ public class LoginController(IConfiguration configuration) : ControllerBase
                 _permissions.Add("ViewOnlyMyCandidates");
             }
 
+            if (_userRole is {ViewAllCandidates: true})
+            {
+                _permissions.Add("ViewAllCandidates");
+            }
+
             if (_userRole is {ManageSubmittedCandidates: true})
             {
                 _permissions.Add("ManageSubmittedCandidates");
