@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-27-2024 15:11
+// Last Updated On:     11-27-2024 19:11
 // *****************************************/
 
 #endregion
@@ -39,6 +39,13 @@ public partial class Candidates
 
     private Candidate _target;
 
+    /// <summary>
+    ///     Represents the address of the candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the address of the candidate.
+    ///     The address is constructed from various address fields of the candidate's details.
+    /// </remarks>
     private MarkupString Address
     {
         get;
@@ -96,12 +103,26 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Represents the job options for the candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the job options of the candidate.
+    ///     The job options are constructed from the candidate's details and the `_jobOptions` collection.
+    /// </remarks>
     private MarkupString CandidateJobOptions
     {
         get;
         set;
     }
 
+    /// <summary>
+    ///     Represents the tax terms for the candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the tax terms of the candidate.
+    ///     The tax terms are constructed from the candidate's details and the `_taxTerms` collection.
+    /// </remarks>
     private MarkupString CandidateTaxTerms
     {
         get;
@@ -168,12 +189,26 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Represents the date of the candidate's MPC.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the date of the candidate's MPC.
+    ///     The date is retrieved from the `_candidateMPCObject` collection and formatted.
+    /// </remarks>
     private MarkupString MPCDate
     {
         get;
         set;
     }
 
+    /// <summary>
+    ///     Represents the note of the candidate's MPC.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the note of the candidate's MPC.
+    ///     The note is retrieved from the `_candidateMPCObject` collection.
+    /// </remarks>
     private MarkupString MPCNote
     {
         get;
@@ -193,12 +228,26 @@ public partial class Candidates
         set;
     }
 
+    /// <summary>
+    ///     Represents the date of the candidate's rating.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the date of the candidate's rating.
+    ///     The date is retrieved from the `_candidateRatingObject` collection and formatted.
+    /// </remarks>
     private MarkupString RatingDate
     {
         get;
         set;
     }
 
+    /// <summary>
+    ///     Represents the note of the candidate's rating.
+    /// </summary>
+    /// <remarks>
+    ///     This property is a markup string that holds the note of the candidate's rating.
+    ///     The note is retrieved from the `_candidateRatingObject` collection.
+    /// </remarks>
     private MarkupString RatingNote
     {
         get;
