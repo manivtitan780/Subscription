@@ -185,6 +185,10 @@ body, form, html {
     margin-bottom: 12px;
 }
 
+.companyPanel{
+    height: calc(100% - 20px);
+}
+
 .leftLayout {
     border-right: 1px solid var(--c-grayDF);
 }
@@ -417,7 +421,7 @@ body, form, html {
 }
 
 #gridCompanyTab > .e-gridcontent .e-content {
-    height: 245px;
+    height: 230px;
 }
 
 .e-grid.sf-grid .e-gridcontent .e-content.e-yscroll {
@@ -762,7 +766,7 @@ body, form, html {
 
 div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"] {
     border: 1px solid var(--c-red);
-    height: 255px;
+    height: 280px;
     width: 99%;
 }
 
