@@ -61,7 +61,7 @@ _app.Use(async (context, next) =>
 
 				 if (_isLocal)
 				 {
-					 Start.APIHost = _config["APIHost"];
+					 Start.APIHost = _config["APIHost"]; 
 					 Start.ConnectionString = _config.GetConnectionString("DBConnect");
 					 Start.CacheServer = _config["Garnet:HostName"];
 					 Start.CachePort = _config["Garnet:SslPort"];

@@ -182,7 +182,8 @@ public static class General
                                                                          EditMyCompanyProfile = role.GetBoolean(7),
                                                                          CreateOrEditEditRequisition = role.GetBoolean(8),
                                                                          ViewOnlyMyCandidates = role.GetBoolean(9),
-                                                                         ManageSubmittedCandidates = role.GetBoolean(10)
+                                                                         ViewAllCandidates = role.GetBoolean(10),
+                                                                         ManageSubmittedCandidates = role.GetBoolean(11)
                                                                      }).ToListAsync();
 
             await _reader.NextResultAsync();
