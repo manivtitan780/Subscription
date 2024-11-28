@@ -8,7 +8,7 @@
 // File Name:           EditSkillDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          11-27-2024 15:11
-// Last Updated On:     11-27-2024 15:11
+// Last Updated On:     11-28-2024 15:11
 // *****************************************/
 
 #endregion
@@ -26,6 +26,8 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditSkillDialog
 {
+    private readonly CandidateSkillsValidator _candidateSkillsValidator = new();
+
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the cancel action is triggered in the dialog.
 	/// </summary>
@@ -35,6 +37,12 @@ public partial class EditSkillDialog
 	/// </remarks>
 	[Parameter]
     public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private EditContext Context
     {
         get;
         set;
@@ -60,7 +68,7 @@ public partial class EditSkillDialog
 	///     This form is used within the EditSkillDialog to capture the details of a candidate's skill.
 	///     It includes fields for the employer, description, location, title, and start and end dates of the experience.
 	/// </remarks>
-	private EditForm EditSkillForm
+	private SfDataForm EditSkillForm
     {
         get;
         set;
@@ -133,7 +141,25 @@ public partial class EditSkillDialog
 	///     and enable the dialog buttons.
 	/// </remarks>
 	/// <returns>A task that represents the asynchronous operation.</returns>
-	private async Task CancelSkillDialog(MouseEventArgs args) => await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+	private async Task CancelSkillDialog(MouseEventArgs args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        Context.Validate();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
 
 	/// <summary>
 	///     Validates the form context when the dialog is opened.
@@ -155,7 +181,13 @@ public partial class EditSkillDialog
 	///     dialog, and save event callback.
 	///     It is responsible for executing the save operation when the user confirms the changes in the EditSkillDialog.
 	/// </remarks>
-	private async Task SaveSkillDialog(EditContext editContext) => await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+	private async Task SaveSkillDialog(EditContext editContext)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
 
 	/// <summary>
 	///     Asynchronously shows the dialog for editing a candidate's skill.

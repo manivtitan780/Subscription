@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-27-2024 20:11
+// Last Updated On:     11-27-2024 21:11
 // *****************************************/
 
 #endregion
@@ -39,344 +39,344 @@ public partial class Candidates
 
     private Candidate _target;
 
-    /// <summary>
-    ///     Represents the address of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the address of the candidate.
-    ///     The address is constructed from various address fields of the candidate's details.
-    /// </remarks>
-    private MarkupString Address
+	/// <summary>
+	///     Represents the address of the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the address of the candidate.
+	///     The address is constructed from various address fields of the candidate's details.
+	/// </remarks>
+	private MarkupString Address
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the candidate's communication rating.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the communication rating of the candidate.
-    ///     The communication rating is converted to a more descriptive string.
-    ///     The conversion is as follows:
-    ///     - "G" => "Good"
-    ///     - "A" => "Average"
-    ///     - "X" => "Excellent"
-    ///     - Any other value => "Fair"
-    /// </remarks>
-    private MarkupString CandidateCommunication
+	/// <summary>
+	///     Represents the candidate's communication rating.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the communication rating of the candidate.
+	///     The communication rating is converted to a more descriptive string.
+	///     The conversion is as follows:
+	///     - "G" => "Good"
+	///     - "A" => "Average"
+	///     - "X" => "Excellent"
+	///     - Any other value => "Fair"
+	/// </remarks>
+	private MarkupString CandidateCommunication
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the eligibility status of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the eligibility status of a candidate. The eligibility status is determined based on
-    ///     the `EligibilityID` of the candidate.
-    ///     If the `EligibilityID` is greater than 0, the eligibility status is set to the corresponding value from the
-    ///     `_eligibility` collection.
-    ///     If the `EligibilityID` is not greater than 0, the eligibility status is set to an empty string.
-    ///     This property is in the `SetEligibility()` method and in the `BuildRenderTree()` method of the `Candidate`
-    ///     component.
-    /// </remarks>
-    private MarkupString CandidateEligibility
+	/// <summary>
+	///     Gets or sets the eligibility status of the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to store the eligibility status of a candidate. The eligibility status is determined based on
+	///     the `EligibilityID` of the candidate.
+	///     If the `EligibilityID` is greater than 0, the eligibility status is set to the corresponding value from the
+	///     `_eligibility` collection.
+	///     If the `EligibilityID` is not greater than 0, the eligibility status is set to an empty string.
+	///     This property is in the `SetEligibility()` method and in the `BuildRenderTree()` method of the `Candidate`
+	///     component.
+	/// </remarks>
+	private MarkupString CandidateEligibility
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the Candidate's experience.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the Candidate's experience retrieved from the
-    ///     `_candidateDetailsObject.ExperienceID`.
-    ///     If the `ExperienceID` is greater than 0, it fetches the corresponding experience from the `_experience` collection.
-    ///     Otherwise, it is set to an empty string.
-    /// </remarks>
-    private MarkupString CandidateExperience
+	/// <summary>
+	///     Gets or sets the Candidate's experience.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to store the Candidate's experience retrieved from the
+	///     `_candidateDetailsObject.ExperienceID`.
+	///     If the `ExperienceID` is greater than 0, it fetches the corresponding experience from the `_experience` collection.
+	///     Otherwise, it is set to an empty string.
+	/// </remarks>
+	private MarkupString CandidateExperience
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the job options for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the job options of the candidate.
-    ///     The job options are constructed from the candidate's details and the `_jobOptions` collection.
-    /// </remarks>
-    private MarkupString CandidateJobOptions
+	/// <summary>
+	///     Represents the job options for the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the job options of the candidate.
+	///     The job options are constructed from the candidate's details and the `_jobOptions` collection.
+	/// </remarks>
+	private MarkupString CandidateJobOptions
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the tax terms for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the tax terms of the candidate.
-    ///     The tax terms are constructed from the candidate's details and the `_taxTerms` collection.
-    /// </remarks>
-    private MarkupString CandidateTaxTerms
+	/// <summary>
+	///     Represents the tax terms for the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the tax terms of the candidate.
+	///     The tax terms are constructed from the candidate's details and the `_taxTerms` collection.
+	/// </remarks>
+	private MarkupString CandidateTaxTerms
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the configuration for the application.
-    /// </summary>
-    [Inject]
+	/// <summary>
+	///     Represents the configuration for the application.
+	/// </summary>
+	[Inject]
     private IConfiguration Configuration
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the Requisition ID for which to submit the Candidate for.
-    /// </summary>
-    private int RequisitionID
+	/// <summary>
+	///     Gets or sets the count of items.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to store the total number of items in the data source.
+	///     It is updated whenever the data source is refreshed or a new set of items is loaded.
+	/// </remarks>
+	private static int Count
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the count of items.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the total number of items in the data source.
-    ///     It is updated whenever the data source is refreshed or a new set of items is loaded.
-    /// </remarks>
-    private static int Count
+	/// <summary>
+	///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
+	///     This instance is used to display and manage the dialog for editing a candidate's skills.
+	/// </summary>
+	private EditSkillDialog DialogSkill
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
-    ///     This instance is used to display and manage the dialog for editing a candidate's skills.
-    /// </summary>
-    private EditSkillDialog DialogSkill
+	/// <summary>
+	///     Gets or sets the instance of the Syncfusion grid component used to display candidates.
+	/// </summary>
+	/// <remarks>
+	///     This grid is used to display the list of candidates and their details.
+	///     It supports various operations such as sorting, filtering, and paging.
+	/// </remarks>
+	private static SfGrid<Candidate> Grid
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the instance of the Syncfusion grid component used to display candidates.
-    /// </summary>
-    /// <remarks>
-    ///     This grid is used to display the list of candidates and their details.
-    ///     It supports various operations such as sorting, filtering, and paging.
-    /// </remarks>
-    private static SfGrid<Candidate> Grid
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether the user has view rights.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to determine if the current user has the necessary permissions to view the candidates.
-    ///     It is set based on the user's claims retrieved during the initialization of the component.
-    /// </remarks>
-    private bool HasViewRights
+	/// <summary>
+	///     Gets or sets a value indicating whether the user has edit rights.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to determine if the current user has the necessary permissions to edit the candidates.
+	///     It is set based on the user's claims retrieved during the initialization of the component.
+	/// </remarks>
+	private bool HasEditRights
     {
         get;
         set;
     } = true;
 
-    /// <summary>
-    ///     Gets or sets a value indicating whether the user has edit rights.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to determine if the current user has the necessary permissions to edit the candidates.
-    ///     It is set based on the user's claims retrieved during the initialization of the component.
-    /// </remarks>
-    private bool HasEditRights
+	/// <summary>
+	///     Gets or sets a value indicating whether the user has view rights.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to determine if the current user has the necessary permissions to view the candidates.
+	///     It is set based on the user's claims retrieved during the initialization of the component.
+	/// </remarks>
+	private bool HasViewRights
     {
         get;
         set;
     } = true;
 
-    /// <summary>
-    ///     Gets or sets the instance of the IJSRuntime interface. This interface provides methods for interacting with
-    ///     JavaScript from .NET code.
-    /// </summary>
-    /// <remarks>
-    ///     The IJSRuntime instance is used to invoke JavaScript functions from .NET code. In the Companies class, it is used
-    ///     to open a new browser tab for document download in the `Companies.DownloadDocument()` method.
-    /// </remarks>
-    [Inject]
+	/// <summary>
+	///     Gets or sets the instance of the IJSRuntime interface. This interface provides methods for interacting with
+	///     JavaScript from .NET code.
+	/// </summary>
+	/// <remarks>
+	///     The IJSRuntime instance is used to invoke JavaScript functions from .NET code. In the Companies class, it is used
+	///     to open a new browser tab for document download in the `Companies.DownloadDocument()` method.
+	/// </remarks>
+	[Inject]
     private IJSRuntime JsRuntime
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the instance of the ILocalStorageService used in the application.
-    /// </summary>
-    /// <remarks>
-    ///     This service is used to manage local storage in the browser.
-    ///     It is used to store and retrieve data such as user preferences and application state.
-    /// </remarks>
-    [Inject]
+	/// <summary>
+	///     Gets or sets the instance of the ILocalStorageService used in the application.
+	/// </summary>
+	/// <remarks>
+	///     This service is used to manage local storage in the browser.
+	///     It is used to store and retrieve data such as user preferences and application state.
+	/// </remarks>
+	[Inject]
     private ILocalStorageService LocalStorage
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the date of the candidate's MPC.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the date of the candidate's MPC.
-    ///     The date is retrieved from the `_candidateMPCObject` collection and formatted.
-    /// </remarks>
-    private MarkupString MPCDate
+	/// <summary>
+	///     Represents the date of the candidate's MPC.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the date of the candidate's MPC.
+	///     The date is retrieved from the `_candidateMPCObject` collection and formatted.
+	/// </remarks>
+	private MarkupString MPCDate
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the note of the candidate's MPC.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the note of the candidate's MPC.
-    ///     The note is retrieved from the `_candidateMPCObject` collection.
-    /// </remarks>
-    private MarkupString MPCNote
+	/// <summary>
+	///     Represents the note of the candidate's MPC.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the note of the candidate's MPC.
+	///     The note is retrieved from the `_candidateMPCObject` collection.
+	/// </remarks>
+	private MarkupString MPCNote
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the instance of the NavigationManager service used in the Companies page.
-    ///     This service provides methods and properties to manage and interact with the URI of the application.
-    ///     It is used for tasks such as navigating to different pages and constructing URIs for use within the application.
-    ///     For example, it is used in the `DownloadDocument` method to construct a URI for downloading a document.
-    /// </summary>
-    [Inject]
+	/// <summary>
+	///     Gets or sets the instance of the NavigationManager service used in the Companies page.
+	///     This service provides methods and properties to manage and interact with the URI of the application.
+	///     It is used for tasks such as navigating to different pages and constructing URIs for use within the application.
+	///     For example, it is used in the `DownloadDocument` method to construct a URI for downloading a document.
+	/// </summary>
+	[Inject]
     private NavigationManager NavManager
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the date of the candidate's rating.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the date of the candidate's rating.
-    ///     The date is retrieved from the `_candidateRatingObject` collection and formatted.
-    /// </remarks>
-    private MarkupString RatingDate
+	/// <summary>
+	///     Represents the date of the candidate's rating.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the date of the candidate's rating.
+	///     The date is retrieved from the `_candidateRatingObject` collection and formatted.
+	/// </remarks>
+	private MarkupString RatingDate
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Represents the note of the candidate's rating.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the note of the candidate's rating.
-    ///     The note is retrieved from the `_candidateRatingObject` collection.
-    /// </remarks>
-    private MarkupString RatingNote
+	/// <summary>
+	///     Represents the note of the candidate's rating.
+	/// </summary>
+	/// <remarks>
+	///     This property is a markup string that holds the note of the candidate's rating.
+	///     The note is retrieved from the `_candidateRatingObject` collection.
+	/// </remarks>
+	private MarkupString RatingNote
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the search model used for filtering candidates.
-    /// </summary>
-    /// <remarks>
-    ///     This model contains the search parameters used to filter the list of candidates displayed in the grid.
-    ///     It includes properties such as Name and Page for pagination and filtering.
-    /// </remarks>
-    public static CandidateSearch SearchModel
+	/// <summary>
+	///     Gets or sets the Requisition ID for which to submit the Candidate for.
+	/// </summary>
+	private int RequisitionID
+    {
+        get;
+        set;
+    }
+
+	/// <summary>
+	///     Gets or sets the search model used for filtering candidates.
+	/// </summary>
+	/// <remarks>
+	///     This model contains the search parameters used to filter the list of candidates displayed in the grid.
+	///     It includes properties such as Name and Page for pagination and filtering.
+	/// </remarks>
+	public static CandidateSearch SearchModel
     {
         get;
         set;
     } = new();
 
-    /// <summary>
-    ///     Gets or sets the selected skill for the candidate.
-    /// </summary>
-    /// <value>
-    ///     The selected skill of type <see cref="CandidateSkills" />.
-    /// </value>
-    private CandidateSkills SelectedSkill
+	/// <summary>
+	///     Gets or sets the selected skill for the candidate.
+	/// </summary>
+	/// <value>
+	///     The selected skill of type <see cref="CandidateSkills" />.
+	/// </value>
+	private CandidateSkills SelectedSkill
     {
         get;
         set;
     } = new();
 
-    /// <summary>
-    ///     Gets or sets an instance of the ILocalStorageService.
-    ///     This service is used for managing local storage in the application.
-    ///     It is used to store and retrieve the state of the Companies grid, including search parameters and pagination.
-    /// </summary>
-    [Inject]
+	/// <summary>
+	///     Gets or sets an instance of the ILocalStorageService.
+	///     This service is used for managing local storage in the application.
+	///     It is used to store and retrieve the state of the Companies grid, including search parameters and pagination.
+	/// </summary>
+	[Inject]
     private ISessionStorageService SessionStorage
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the SkillPanel instance associated with the Candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to interact with the SkillPanel component, which provides functionality for managing
-    ///     candidate skills.
-    ///     It includes methods for editing and deleting skills, and properties for managing the display and behavior of the
-    ///     skill grid.
-    /// </remarks>
-    private SkillPanel SkillPanel
+	/// <summary>
+	///     Gets or sets the SkillPanel instance associated with the Candidate.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to interact with the SkillPanel component, which provides functionality for managing
+	///     candidate skills.
+	///     It includes methods for editing and deleting skills, and properties for managing the display and behavior of the
+	///     skill grid.
+	/// </remarks>
+	private SkillPanel SkillPanel
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the instance of the Syncfusion spinner control used in the application.
-    /// </summary>
-    /// <remarks>
-    ///     This spinner is displayed during long-running operations such as data loading or saving.
-    ///     It provides visual feedback to the user that an operation is in progress.
-    /// </remarks>
-    private SfSpinner Spinner
+	/// <summary>
+	///     Gets or sets the instance of the Syncfusion spinner control used in the application.
+	/// </summary>
+	/// <remarks>
+	///     This spinner is displayed during long-running operations such as data loading or saving.
+	///     It provides visual feedback to the user that an operation is in progress.
+	/// </remarks>
+	private SfSpinner Spinner
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the username of the current user.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the username of the user currently logged into the application.
-    ///     It is retrieved from the user's claims during the initialization of the component.
-    /// </remarks>
-    private string User
+	/// <summary>
+	///     Gets or sets the username of the current user.
+	/// </summary>
+	/// <remarks>
+	///     This property is used to store the username of the user currently logged into the application.
+	///     It is retrieved from the user's claims during the initialization of the component.
+	/// </remarks>
+	private string User
     {
         get;
         set;
@@ -396,14 +396,14 @@ public partial class Candidates
         await Grid.Refresh();
     }
 
-    /// <summary>
-    ///     Clears the filter applied to the candidates.
-    /// </summary>
-    /// <remarks>
-    ///     This function is called when the "Clear Filter" button is clicked.
-    ///     It resets the filter values and reloads the candidates.
-    /// </remarks>
-    private async Task ClearFilter()
+	/// <summary>
+	///     Clears the filter applied to the candidates.
+	/// </summary>
+	/// <remarks>
+	///     This function is called when the "Clear Filter" button is clicked.
+	///     It resets the filter values and reloads the candidates.
+	/// </remarks>
+	private async Task ClearFilter()
     {
         SearchModel.Clear();
         SearchModel.User = User;
@@ -417,43 +417,43 @@ public partial class Candidates
                                                                        {"user", User}
                                                                    };
 
-    /// <summary>
-    ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
-    /// </summary>
-    /// <returns></returns>
-    private Task DataHandler() => ExecuteMethod(async () =>
-                                                {
-                                                    DotNetObjectReference<Candidates> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
-                                                    await JsRuntime.InvokeAsync<string>("detail", _dotNetReference);
-                                                    //  send the dotnet ref to JS side
-                                                    if (Grid.TotalItemCount > 0)
-                                                    {
-                                                        await Grid.SelectRowAsync(0);
-                                                    }
-                                                });
+	/// <summary>
+	///     Handles the OnInitializedAsync lifecycle event of the Companies page.
+	/// </summary>
+	/// <returns></returns>
+	private Task DataHandler() => ExecuteMethod(async () =>
+												{
+													DotNetObjectReference<Candidates> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
+													await JsRuntime.InvokeAsync<string>("detail", _dotNetReference);
+													//  send the dotnet ref to JS side
+													if (Grid.TotalItemCount > 0)
+													{
+														await Grid.SelectRowAsync(0);
+													}
+												});
 
-    /// <summary>
-    ///     Asynchronously deletes a skill from a candidate's profile.
-    /// </summary>
-    /// <param name="id">The unique identifier of the skill to be deleted.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidates/DeleteSkill" endpoint with the skill's ID,
-    ///     the candidate's ID, and the current user's ID as parameters. If the current user is not logged in,
-    ///     the user ID is set to "JOLLY". The method also sets a flag to prevent multiple simultaneous requests.
-    ///     If the request is successful, the method updates the candidate's skills list with the response from the server.
-    /// </remarks>
-    private Task DeleteSkill(int id) => ExecuteMethod(async () =>
-                                                      {
-                                                          Dictionary<string, string> _parameters = CreateParameters(id);
-                                                          Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteSkill", _parameters);
-                                                          if (_response == null)
-                                                          {
-                                                              return;
-                                                          }
+	/// <summary>
+	///     Asynchronously deletes a skill from a candidate's profile.
+	/// </summary>
+	/// <param name="id">The unique identifier of the skill to be deleted.</param>
+	/// <returns>A Task representing the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method sends a POST request to the "Candidates/DeleteSkill" endpoint with the skill's ID,
+	///     the candidate's ID, and the current user's ID as parameters. If the current user is not logged in,
+	///     the user ID is set to "JOLLY". The method also sets a flag to prevent multiple simultaneous requests.
+	///     If the request is successful, the method updates the candidate's skills list with the response from the server.
+	/// </remarks>
+	private Task DeleteSkill(int id) => ExecuteMethod(async () =>
+													  {
+														  Dictionary<string, string> _parameters = CreateParameters(id);
+														  Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteSkill", _parameters);
+														  if (_response == null)
+														  {
+															  return;
+														  }
 
-                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
-                                                      });
+														  _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
+													  });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
     {
@@ -533,60 +533,60 @@ public partial class Candidates
                              });
     }
 
-    /// <summary>
-    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
-    /// </summary>
-    [JSInvokable("DetailCollapse")]
+	/// <summary>
+	///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
+	/// </summary>
+	[JSInvokable("DetailCollapse")]
     public void DetailRowCollapse()
     {
         _target = null;
     }
 
-    /// <summary>
-    ///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
-    ///     it prepares the system to add a new skill. Otherwise, it prepares the system to edit the existing skill.
-    /// </summary>
-    /// <param name="id">The identifier of the skill to be edited.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
-    ///     immediately.
-    ///     Then it sets the action in progress.
-    ///     If the target skill is null or new, it prepares the system to add a new skill.
-    ///     Otherwise, it prepares the system to edit the existing skill.
-    ///     Finally, it ends the action in progress and shows the dialog to edit the skill.
-    /// </remarks>
-    private Task EditSkill(int id) => ExecuteMethod(() =>
-                                                    {
-                                                        if (id == 0)
-                                                        {
-                                                            if (SelectedSkill == null)
-                                                            {
-                                                                SelectedSkill = new();
-                                                            }
-                                                            else
-                                                            {
-                                                                SelectedSkill.Clear();
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            SelectedSkill = SkillPanel.SelectedRow.Copy();
-                                                        }
+	/// <summary>
+	///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
+	///     it prepares the system to add a new skill. Otherwise, it prepares the system to edit the existing skill.
+	/// </summary>
+	/// <param name="id">The identifier of the skill to be edited.</param>
+	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
+	///     immediately.
+	///     Then it sets the action in progress.
+	///     If the target skill is null or new, it prepares the system to add a new skill.
+	///     Otherwise, it prepares the system to edit the existing skill.
+	///     Finally, it ends the action in progress and shows the dialog to edit the skill.
+	/// </remarks>
+	private Task EditSkill(int id) => ExecuteMethod(() =>
+													{
+														if (id == 0)
+														{
+															if (SelectedSkill == null)
+															{
+																SelectedSkill = new();
+															}
+															else
+															{
+																SelectedSkill.Clear();
+															}
+														}
+														else
+														{
+															SelectedSkill = SkillPanel.SelectedRow.Copy();
+														}
 
-                                                        return DialogSkill.ShowDialog();
-                                                    });
+														return DialogSkill.ShowDialog();
+													});
 
-    /// <summary>
-    ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
-    ///     immediately.
-    ///     If an exception occurs during the execution of the task, it will be logged using the provided logger.
-    /// </summary>
-    /// <param name="task">The task to be executed.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
-    private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
+	/// <summary>
+	///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
+	///     immediately.
+	///     If an exception occurs during the execution of the task, it will be logged using the provided logger.
+	/// </summary>
+	/// <param name="task">The task to be executed.</param>
+	/// <returns>
+	///     A task that represents the asynchronous operation.
+	/// </returns>
+	private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
     private async Task GetAlphabets(char alphabet)
     {
@@ -598,14 +598,14 @@ public partial class Candidates
                             });
     }
 
-    /// <summary>
-    ///     Retrieves the most recent date from the CandidateMPC list and converts it to a MarkupString.
-    ///     The method first checks if the MpcNotes property of the CandidateDetails object is empty.
-    ///     If it is, an empty MarkupString is assigned to the MPCDate property.
-    ///     Then, the method finds the CandidateMPC object with the latest date.
-    ///     If such an object exists, the method formats its date and assigns it to the MPCDate property.
-    /// </summary>
-    private void GetMPCDate()
+	/// <summary>
+	///     Retrieves the most recent date from the CandidateMPC list and converts it to a MarkupString.
+	///     The method first checks if the MpcNotes property of the CandidateDetails object is empty.
+	///     If it is, an empty MarkupString is assigned to the MPCDate property.
+	///     Then, the method finds the CandidateMPC object with the latest date.
+	///     If such an object exists, the method formats its date and assigns it to the MPCDate property.
+	/// </summary>
+	private void GetMPCDate()
     {
         string _mpcDate = "";
         if (_candidateDetailsObject.MPCNotes == "")
@@ -622,15 +622,15 @@ public partial class Candidates
         MPCDate = _mpcDate.ToMarkupString();
     }
 
-    /// <summary>
-    ///     The GetMPCNote method is responsible for retrieving the most recent note from the CandidateMPC object list.
-    ///     If the MpcNotes property of the _candidateDetailsObject is empty, an empty string is converted to a MarkupString
-    ///     and assigned to the MPCNote property.
-    ///     The method then finds the CandidateMPC object with the latest date and assigns its Comments property to the
-    ///     _mpcNote variable.
-    ///     Finally, the _mpcNote is converted to a MarkupString and assigned to the MPCNote property.
-    /// </summary>
-    private void GetMPCNote()
+	/// <summary>
+	///     The GetMPCNote method is responsible for retrieving the most recent note from the CandidateMPC object list.
+	///     If the MpcNotes property of the _candidateDetailsObject is empty, an empty string is converted to a MarkupString
+	///     and assigned to the MPCNote property.
+	///     The method then finds the CandidateMPC object with the latest date and assigns its Comments property to the
+	///     _mpcNote variable.
+	///     Finally, the _mpcNote is converted to a MarkupString and assigned to the MPCNote property.
+	/// </summary>
+	private void GetMPCNote()
     {
         string _mpcNote = "";
         if (_candidateDetailsObject.MPCNotes == "")
@@ -647,15 +647,15 @@ public partial class Candidates
         MPCNote = _mpcNote.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Retrieves the rating date for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method fetches the maximum (latest) date from the candidate's rating list and formats it into a string.
-    ///     The formatted string includes the date and the user's initials. If the candidate's rating notes are empty,
-    ///     an empty string is returned. The result is converted into a MarkupString and stored in the RatingDate property.
-    /// </remarks>
-    private void GetRatingDate()
+	/// <summary>
+	///     Retrieves the rating date for the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method fetches the maximum (latest) date from the candidate's rating list and formats it into a string.
+	///     The formatted string includes the date and the user's initials. If the candidate's rating notes are empty,
+	///     an empty string is returned. The result is converted into a MarkupString and stored in the RatingDate property.
+	/// </remarks>
+	private void GetRatingDate()
     {
         string _ratingDate = "";
         if (_candidateDetailsObject.RateNotes == "")
@@ -673,17 +673,17 @@ public partial class Candidates
         RatingDate = _ratingDate.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Retrieves the rating note for a candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method checks if the candidate's rating notes are empty. If they are, it sets the RatingNote property to an
-    ///     empty string.
-    ///     If the candidate has rating notes, it retrieves the most recent rating note based on the date and sets the
-    ///     RatingNote property to this value.
-    ///     The RatingNote property is then converted to a MarkupString for display purposes.
-    /// </remarks>
-    private void GetRatingNote()
+	/// <summary>
+	///     Retrieves the rating note for a candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method checks if the candidate's rating notes are empty. If they are, it sets the RatingNote property to an
+	///     empty string.
+	///     If the candidate has rating notes, it retrieves the most recent rating note based on the date and sets the
+	///     RatingNote property to this value.
+	///     The RatingNote property is then converted to a MarkupString for display purposes.
+	/// </remarks>
+	private void GetRatingNote()
     {
         string _ratingNote = "";
         if (_candidateDetailsObject.RateNotes == "")
@@ -778,20 +778,20 @@ public partial class Candidates
         await base.OnInitializedAsync();
     }
 
-    /// <summary>
-    ///     Sets the communication rating of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method retrieves the communication rating from the candidate details object and converts it to a more
-    ///     descriptive string.
-    ///     The conversion is as follows:
-    ///     - "G" => "Good"
-    ///     - "A" => "Average"
-    ///     - "X" => "Excellent"
-    ///     - Any other value => "Fair"
-    ///     The resulting string is then assigned to the CandidateCommunication property.
-    /// </remarks>
-    private void SetCommunication()
+	/// <summary>
+	///     Sets the communication rating of the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method retrieves the communication rating from the candidate details object and converts it to a more
+	///     descriptive string.
+	///     The conversion is as follows:
+	///     - "G" => "Good"
+	///     - "A" => "Average"
+	///     - "X" => "Excellent"
+	///     - Any other value => "Fair"
+	///     The resulting string is then assigned to the CandidateCommunication property.
+	/// </remarks>
+	private void SetCommunication()
     {
         string _returnValue = _candidateDetailsObject.Communication switch
                               {
@@ -804,15 +804,15 @@ public partial class Candidates
         CandidateCommunication = _returnValue.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Sets the eligibility status of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method checks if the eligibility list has any items. If it does, it sets the CandidateEligibility property to
-    ///     the eligibility value of the candidate details object if it exists. If the eligibility ID of the candidate details
-    ///     object is not greater than 0, it sets the CandidateEligibility property to an empty string.
-    /// </remarks>
-    private void SetEligibility()
+	/// <summary>
+	///     Sets the eligibility status of the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method checks if the eligibility list has any items. If it does, it sets the CandidateEligibility property to
+	///     the eligibility value of the candidate details object if it exists. If the eligibility ID of the candidate details
+	///     object is not greater than 0, it sets the CandidateEligibility property to an empty string.
+	/// </remarks>
+	private void SetEligibility()
     {
         if (_eligibility is {Count: > 0})
         {
@@ -822,16 +822,16 @@ public partial class Candidates
         }
     }
 
-    /// <summary>
-    ///     Sets the experience of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method checks if the experience list is not null and has more than zero elements.
-    ///     If the candidate's ExperienceID is greater than zero, it sets the CandidateExperience
-    ///     to the corresponding experience value from the experience list.
-    ///     If the ExperienceID is not greater than zero, it sets the CandidateExperience to an empty string.
-    /// </remarks>
-    private void SetExperience()
+	/// <summary>
+	///     Sets the experience of the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method checks if the experience list is not null and has more than zero elements.
+	///     If the candidate's ExperienceID is greater than zero, it sets the CandidateExperience
+	///     to the corresponding experience value from the experience list.
+	///     If the ExperienceID is not greater than zero, it sets the CandidateExperience to an empty string.
+	/// </remarks>
+	private void SetExperience()
     {
         if (_experience is {Count: > 0})
         {
@@ -841,19 +841,19 @@ public partial class Candidates
         }
     }
 
-    /// <summary>
-    ///     Sets the job options for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method performs the following steps:
-    ///     - Checks if the job options list is not null and has more than zero elements.
-    ///     - Splits the job options from the candidate details object by comma.
-    ///     - Iterates through each split job option.
-    ///     - If the split job option is not an empty string, it finds the corresponding job option in the job options list and
-    ///     appends it to the return value.
-    ///     - Finally, it converts the return value to a markup string and sets it as the candidate's job options.
-    /// </remarks>
-    private void SetJobOption()
+	/// <summary>
+	///     Sets the job options for the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method performs the following steps:
+	///     - Checks if the job options list is not null and has more than zero elements.
+	///     - Splits the job options from the candidate details object by comma.
+	///     - Iterates through each split job option.
+	///     - If the split job option is not an empty string, it finds the corresponding job option in the job options list and
+	///     appends it to the return value.
+	///     - Finally, it converts the return value to a markup string and sets it as the candidate's job options.
+	/// </remarks>
+	private void SetJobOption()
     {
         string _returnValue = "";
         if (_jobOptions is {Count: > 0})
@@ -880,19 +880,19 @@ public partial class Candidates
         CandidateJobOptions = _returnValue.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Sets the tax terms for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method performs the following steps:
-    ///     - Checks if the tax terms list is not null and has more than zero items.
-    ///     - Splits the candidate's tax term string by comma.
-    ///     - Iterates through each split tax term.
-    ///     - If the tax term is not an empty string, it finds the corresponding tax term from the tax terms list and appends
-    ///     it to the return value.
-    ///     - Sets the `CandidateTaxTerms` property with the return value converted to a markup string.
-    /// </remarks>
-    private void SetTaxTerm()
+	/// <summary>
+	///     Sets the tax terms for the candidate.
+	/// </summary>
+	/// <remarks>
+	///     This method performs the following steps:
+	///     - Checks if the tax terms list is not null and has more than zero items.
+	///     - Splits the candidate's tax term string by comma.
+	///     - Iterates through each split tax term.
+	///     - If the tax term is not an empty string, it finds the corresponding tax term from the tax terms list and appends
+	///     it to the return value.
+	///     - Sets the `CandidateTaxTerms` property with the return value converted to a markup string.
+	/// </remarks>
+	private void SetTaxTerm()
     {
         string _returnValue = "";
 
@@ -920,17 +920,17 @@ public partial class Candidates
         CandidateTaxTerms = _returnValue.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Sets up the address for the candidate by concatenating the address fields.
-    /// </summary>
-    /// <remarks>
-    ///     This method concatenates the Address1, Address2, City, StateID, and ZipCode fields of the candidate's details.
-    ///     Each part of the address is separated by a comma or a line break.
-    ///     If a part of the address is empty, it is skipped.
-    ///     If the generated address starts with a comma, it is removed.
-    ///     The final address is converted to a markup string and stored in the Address field.
-    /// </remarks>
-    private void SetupAddress()
+	/// <summary>
+	///     Sets up the address for the candidate by concatenating the address fields.
+	/// </summary>
+	/// <remarks>
+	///     This method concatenates the Address1, Address2, City, StateID, and ZipCode fields of the candidate's details.
+	///     Each part of the address is separated by a comma or a line break.
+	///     If a part of the address is empty, it is skipped.
+	///     If the generated address starts with a comma, it is removed.
+	///     The final address is converted to a markup string and stored in the Address field.
+	/// </remarks>
+	private void SetupAddress()
     {
         string _generateAddress = _candidateDetailsObject.Address1;
 
@@ -983,7 +983,7 @@ public partial class Candidates
             }
         }
 
-        if (_generateAddress.StartsWith(","))
+        if (_generateAddress is {Length: > 1} && _generateAddress.StartsWith(','))
         {
             _generateAddress = _generateAddress[1..].Trim();
         }
@@ -999,19 +999,19 @@ public partial class Candidates
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
-        /// <summary>
-        ///     Asynchronously reads company data for the grid view on the Companies page.
-        ///     This method checks if the CompaniesList is not null and contains data, in which case it does not retrieve new data.
-        ///     If the CompaniesList is null or empty, it calls the GetCompanyReadAdaptor method to retrieve company data.
-        ///     If there are any companies in the retrieved data, it selects the first row in the grid view.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key to identify a specific data item. Default is null.</param>
-        /// <returns>
-        ///     A Task that represents the asynchronous read operation. The value of the TResult parameter contains the
-        ///     retrieved data.
-        /// </returns>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+		/// <summary>
+		///     Asynchronously reads company data for the grid view on the Companies page.
+		///     This method checks if the CompaniesList is not null and contains data, in which case it does not retrieve new data.
+		///     If the CompaniesList is null or empty, it calls the GetCompanyReadAdaptor method to retrieve company data.
+		///     If there are any companies in the retrieved data, it selects the first row in the grid view.
+		/// </summary>
+		/// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
+		/// <param name="key">An optional key to identify a specific data item. Default is null.</param>
+		/// <returns>
+		///     A Task that represents the asynchronous read operation. The value of the TResult parameter contains the
+		///     retrieved data.
+		/// </returns>
+		public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
         {
             if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
             {
