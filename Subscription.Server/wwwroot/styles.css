@@ -246,7 +246,7 @@ body, form, html {
 
 .skillContainerBox {
     display: grid;
-    grid-template-columns: minmax(400px, 35%) 1fr;
+    grid-template-columns: minmax(300px, 40%) 1fr;
     gap: 10px; /* margin between the two divs */
     height: calc(100% - 20px);
 }
