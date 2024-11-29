@@ -1,5 +1,5 @@
 ﻿<div class="skillContainerBox">
-	<div>
+	<div class="leftContent">
 		<div>Primary Skills:</div>
 		<div style="height: 105px; overflow-y: auto;">
 			@Model.Keywords
@@ -9,7 +9,7 @@
 			@Model.Summary
 		</div>
 	</div>
-	<div>
+	<div class="rightContent">
 		<div>Skills:</div>
 		<div>
 			<SfGrid AllowPaging="false" DataSource="@ModelSkill" EnableHover="true" Height="210px" ID="gridSkill" @ref="GridSkill" RowHeight="@RowHeight"

@@ -242,7 +242,25 @@ body, form, html {
     margin-top: 40px;
     width: 100%;
     text-align: center;
+}
 
+.skillContainerBox {
+    display: grid;
+    grid-template-columns: minmax(400px, 35%) 1fr;
+    gap: 10px; /* margin between the two divs */
+    height: calc(100% - 20px);
+}
+
+.leftContent {
+    margin: 10px 0 10px 10px;
+    height: calc(100% - 40px)
+    /*background-color: #f0f0f0;  Just for visual reference */
+}
+
+.rightContent {
+    margin: 10px 0 10px 10px;
+    height: calc(100% - 40px); 
+    /*background-color: #d0d0d0;  Just for visual reference */
 }
 
 /* #endregion General Classes */
