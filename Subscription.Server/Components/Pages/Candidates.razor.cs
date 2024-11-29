@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-27-2024 21:11
+// Last Updated On:     11-29-2024 20:11
 // *****************************************/
 
 #endregion
@@ -116,6 +116,12 @@ public partial class Candidates
         set;
     }
 
+    private EditSkillDialog CandidateSkillDialog
+    {
+        get;
+        set;
+    }
+
 	/// <summary>
 	///     Represents the tax terms for the candidate.
 	/// </summary>
@@ -152,6 +158,7 @@ public partial class Candidates
         set;
     }
 
+	/*
 	/// <summary>
 	///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
 	///     This instance is used to display and manage the dialog for editing a candidate's skills.
@@ -159,8 +166,9 @@ public partial class Candidates
 	private EditSkillDialog DialogSkill
     {
         get;
-        set;
+        private set;
     }
+    */
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion grid component used to display candidates.
@@ -542,11 +550,17 @@ public partial class Candidates
         _target = null;
     }
 
+	public EditContext EditConSkill
+	{
+		get;
+		set;
+	}
+
 	/// <summary>
 	///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
 	///     it prepares the system to add a new skill. Otherwise, it prepares the system to edit the existing skill.
 	/// </summary>
-	/// <param name="id">The identifier of the skill to be edited.</param>
+	/// <param name="skill">The identifier of the skill to be edited.</param>
 	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
 	/// <remarks>
 	///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
@@ -556,9 +570,27 @@ public partial class Candidates
 	///     Otherwise, it prepares the system to edit the existing skill.
 	///     Finally, it ends the action in progress and shows the dialog to edit the skill.
 	/// </remarks>
-	private Task EditSkill(int id) => ExecuteMethod(() =>
+	private Task EditSkill(int skill) => ExecuteMethod(async () =>
 													{
-														if (id == 0)
+														if (skill == 0)
+														{
+															if (SelectedSkill == null)
+															{
+																SelectedSkill = new();
+															}
+															else
+															{
+																SelectedSkill.Clear();
+															}
+														}
+														else
+														{
+															SelectedSkill = SkillPanel.SelectedRow != null ? SkillPanel.SelectedRow.Copy() : new();
+														}
+
+														EditConSkill = new(SelectedSkill);
+														await CandidateSkillDialog.ShowDialog();
+														/*if (skill == 0)
 														{
 															if (SelectedSkill == null)
 															{
@@ -574,7 +606,7 @@ public partial class Candidates
 															SelectedSkill = SkillPanel.SelectedRow.Copy();
 														}
 
-														return DialogSkill.ShowDialog();
+														return CandidateSkillDialog.ShowDialog();*/
 													});
 
 	/// <summary>
@@ -777,6 +809,39 @@ public partial class Candidates
 
         await base.OnInitializedAsync();
     }
+
+	/// <summary>
+	///     Asynchronously saves the skill of a candidate.
+	/// </summary>
+	/// <param name="skill">The context of the skill to be saved.</param>
+	/// <returns>A Task representing the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method creates a new RestClient and RestRequest to make a POST request to the "Candidates/SaveSkill" endpoint.
+	///     The skill model is added to the request body in JSON format.
+	///     The user ID from the LoginCookyUser and the candidate ID are added as query parameters.
+	///     The response from the server is expected to be a dictionary containing the updated skills.
+	///     If the response is not null, it deserializes the "Skills" value from the response into a list of CandidateSkills
+	///     and assigns it to the _candidateSkillsObject.
+	/// </remarks>
+	private Task SaveSkill(EditContext skill) => ExecuteMethod(async () =>
+															   {
+																   if (skill.Model is CandidateSkills _skill)
+																   {
+																	   Dictionary<string, string> _parameters = new()
+																												{
+																													{"candidateID", _target.ID.ToString()},
+																													{"user", User}
+																												};
+
+																	   Dictionary<string, object> _response = await General.PostRest("Candidates/SaveSkill", _parameters, _skill);
+																	   if (_response == null)
+																	   {
+																		   return;
+																	   }
+
+																	   _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
+																   }
+															   });
 
 	/// <summary>
 	///     Sets the communication rating of the candidate.

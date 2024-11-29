@@ -7,10 +7,10 @@
 @if (HasViewRights)
 {
 	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)"
-				NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
+	            NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
-					TValue="Candidate" Width="100%">
+			        TValue="Candidate" Width="100%">
 				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})" />
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single" />
 				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID" />
@@ -95,7 +95,7 @@
 					<DetailTemplate>
 						@* Add Buttons Start *@
 						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-									 OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
+						             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
 							@* Visible="UserRights.EditCandidate" *@
 							<SpeedDialItems>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate" />
@@ -166,7 +166,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<SkillPanel DeleteSkill="DeleteSkill" EditRights="HasEditRights" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject" 
-											 		ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> 
+											            ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User" /> 
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -247,6 +247,7 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
+	<EditSkillDialog Model="SelectedSkill" @ref="CandidateSkillDialog" Save="SaveSkill" />
 }
 else
 {

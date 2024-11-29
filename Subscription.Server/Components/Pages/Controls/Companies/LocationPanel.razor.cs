@@ -85,7 +85,7 @@ public partial class LocationPanel
     public CompanyLocations SelectedRow
     {
         get;
-        set;
+        private set;
     }
 
     /// <summary>

@@ -211,7 +211,7 @@ public partial class SkillPanel
 	public CandidateSkills SelectedRow
     {
         get;
-        private set;
+		private set;
     }
 
 	/// <summary>
@@ -254,7 +254,8 @@ public partial class SkillPanel
 	///     provided ID, selects the row in the grid, and invokes the EditExperience event callback.
 	/// </remarks>
 	private async Task EditSkillDialog(int id)
-    {
+	{
+		_selectedID = id;
         int _index = await GridSkill.GetRowIndexByPrimaryKeyAsync(id);
         await GridSkill.SelectRowAsync(_index);
         await EditSkill.InvokeAsync(id);
