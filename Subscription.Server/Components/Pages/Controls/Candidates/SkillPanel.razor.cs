@@ -126,24 +126,6 @@ public partial class SkillPanel
     }
 
 	/// <summary>
-	///     Gets or sets the JavaScript runtime instance for this component.
-	/// </summary>
-	/// <value>
-	///     The JavaScript runtime instance.
-	/// </value>
-	/// <remarks>
-	///     This property is used to invoke JavaScript functions from .NET methods. It is injected into the component using the
-	///     [Inject] attribute. The JavaScript runtime instance allows for interaction with the JavaScript side of the Blazor
-	///     application, enabling the execution of JavaScript code from .NET and vice versa.
-	/// </remarks>
-	[Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
-
-	/// <summary>
 	///     Gets or sets the model representing the details of a candidate.
 	/// </summary>
 	/// <value>
@@ -208,7 +190,7 @@ public partial class SkillPanel
 	///     This property is updated whenever a row is selected in the grid, and it is used to perform operations on the
 	///     selected skill entry, such as editing or deleting the entry.
 	/// </remarks>
-	public CandidateSkills SelectedRow
+	internal CandidateSkills SelectedRow
     {
         get;
 		private set;

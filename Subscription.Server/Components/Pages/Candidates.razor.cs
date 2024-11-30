@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-29-2024 20:11
+// Last Updated On:     11-30-2024 19:11
 // *****************************************/
 
 #endregion
@@ -158,12 +158,29 @@ public partial class Candidates
         set;
     }
 
-	/*
-	/// <summary>
-	///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
-	///     This instance is used to display and manage the dialog for editing a candidate's skills.
-	/// </summary>
-	private EditSkillDialog DialogSkill
+    public EditContext EditConSkill
+    {
+        get;
+        set;
+    }
+   public EditContext EditConEducation
+	{
+		get;
+		set;
+	}
+
+    private EducationPanel EducationPanel
+    {
+        get;
+        set;
+    }
+
+    /*
+    /// <summary>
+    ///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
+    ///     This instance is used to display and manage the dialog for editing a candidate's skills.
+    /// </summary>
+    private EditSkillDialog DialogSkill
     {
         get;
         private set;
@@ -326,6 +343,16 @@ public partial class Candidates
     } = new();
 
 	/// <summary>
+	///     Gets or sets the selected education for the candidate. This property is of type
+	///     <see cref="Subscription.Model.CandidateEducation" />.
+	/// </summary>
+	private CandidateEducation SelectedEducation
+    {
+        get;
+        set;
+    } = new();
+
+	/// <summary>
 	///     Gets or sets the selected skill for the candidate.
 	/// </summary>
 	/// <value>
@@ -441,6 +468,33 @@ public partial class Candidates
 												});
 
 	/// <summary>
+	///     Asynchronously deletes the education record of a candidate.
+	/// </summary>
+	/// <param name="id">The identifier of the education record to be deleted.</param>
+	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method sends a POST request to the "Candidates/DeleteEducation" endpoint with the education record's ID, the
+	///     candidate's ID, and the user's ID as parameters.
+	///     If the action is not in progress, it sets the action in progress, sends the request, and updates the candidate's
+	///     education object with the response.
+	///     If the response is null, the method returns immediately. If an exception occurs during the request, it is caught
+	///     and ignored.
+	///     After the request is completed, the action progress is set to false.
+	/// </remarks>
+	private Task DeleteEducation(int id) => ExecuteMethod(async () =>
+														  {
+															  Dictionary<string, string> _parameters = CreateParameters(id);
+															  Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteEducation", _parameters);
+
+															  if (_response == null)
+															  {
+																  return;
+															  }
+
+															  _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
+														  });
+
+	/// <summary>
 	///     Asynchronously deletes a skill from a candidate's profile.
 	/// </summary>
 	/// <param name="id">The unique identifier of the skill to be deleted.</param>
@@ -550,11 +604,43 @@ public partial class Candidates
         _target = null;
     }
 
-	public EditContext EditConSkill
-	{
-		get;
-		set;
-	}
+	/// <summary>
+	///     Asynchronously edits the education details of a candidate. If the education record is not selected or is new,
+	///     it prepares the system to add a new education record. Otherwise, it prepares the system to edit the existing
+	///     education record.
+	/// </summary>
+	/// <param name="id">The ID of the education record to be edited. If the ID is 0, a new education record will be prepared.</param>
+	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
+	///     immediately.
+	///     Then it sets the action in progress.
+	///     If the target education record is null or new, it prepares the system to add a new education record.
+	///     Otherwise, it prepares the system to edit the existing education record.
+	///     Finally, it resets the action progress and shows the dialog to edit the education record.
+	/// </remarks>
+	private Task EditEducation(int id) => ExecuteMethod(async () =>
+														{
+															if (id == 0)
+															{
+																if (SelectedEducation == null)
+																{
+																	SelectedEducation = new();
+																}
+																else
+																{
+																	SelectedEducation.Clear();
+																}
+															}
+															else
+															{
+																SelectedEducation = EducationPanel.SelectedRow != null ? EducationPanel.SelectedRow.Copy() : new();
+															}
+
+															EditConEducation = new(SelectedEducation);
+															await Task.CompletedTask;
+															//return DialogEducation.ShowDialog();
+														});
 
 	/// <summary>
 	///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
@@ -571,43 +657,26 @@ public partial class Candidates
 	///     Finally, it ends the action in progress and shows the dialog to edit the skill.
 	/// </remarks>
 	private Task EditSkill(int skill) => ExecuteMethod(async () =>
-													{
-														if (skill == 0)
-														{
-															if (SelectedSkill == null)
-															{
-																SelectedSkill = new();
-															}
-															else
-															{
-																SelectedSkill.Clear();
-															}
-														}
-														else
-														{
-															SelectedSkill = SkillPanel.SelectedRow != null ? SkillPanel.SelectedRow.Copy() : new();
-														}
+													   {
+														   if (skill == 0)
+														   {
+															   if (SelectedSkill == null)
+															   {
+																   SelectedSkill = new();
+															   }
+															   else
+															   {
+																   SelectedSkill.Clear();
+															   }
+														   }
+														   else
+														   {
+															   SelectedSkill = SkillPanel.SelectedRow != null ? SkillPanel.SelectedRow.Copy() : new();
+														   }
 
-														EditConSkill = new(SelectedSkill);
-														await CandidateSkillDialog.ShowDialog();
-														/*if (skill == 0)
-														{
-															if (SelectedSkill == null)
-															{
-																SelectedSkill = new();
-															}
-															else
-															{
-																SelectedSkill.Clear();
-															}
-														}
-														else
-														{
-															SelectedSkill = SkillPanel.SelectedRow.Copy();
-														}
-
-														return CandidateSkillDialog.ShowDialog();*/
-													});
+														   EditConSkill = new(SelectedSkill);
+														   await CandidateSkillDialog.ShowDialog();
+												   });
 
 	/// <summary>
 	///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -833,7 +902,7 @@ public partial class Candidates
 																													{"user", User}
 																												};
 
-																	   Dictionary<string, object> _response = await General.PostRest("Candidates/SaveSkill", _parameters, _skill);
+																	   Dictionary<string, object> _response = await General.PostRest("Candidate/SaveSkill", _parameters, _skill);
 																	   if (_response == null)
 																	   {
 																		   return;

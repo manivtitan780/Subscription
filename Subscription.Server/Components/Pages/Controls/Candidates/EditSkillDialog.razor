@@ -8,14 +8,13 @@
 	The form uses validation and displays a spinner during long-running operations.
 </remarks>
 *@
-<SfDialog Header="Edit Skill" Height="375px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+<SfDialog CssClass="dialogPopup" Header="Edit Skill" Height="435px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="@Context" ID="companyEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm"
-		            ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="Context" ID="companyEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelSkillDialog" type="button">Cancel</SfButton>
@@ -24,18 +23,18 @@
 				<FluentValidationValidator Validator="_candidateSkillsValidator"/>
 			</FormValidator>
 			<FormItems>
-				<FormGroup ColumnCount="9" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Contact Information">
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Skill Information">
 					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Skill)" LabelText="Skill Name:" Placeholder="Skill Name" ID="textSkillName"/>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.LastUsed)" LabelText="First Name:" Placeholder="First Name" ID="numericLastUsed">
 						<Template>
 							<label class="e-form-label" for="numericLastUsed">Last Used:</label>
-							<SfNumericTextBox @bind-Value="Model.LastUsed" ID="numericLastUsed" Placeholder="Last Used (Year)" TValue="short" Decimals="0" Format="g" Max="2100"/>
+							<SfNumericTextBox @bind-Value="Model.LastUsed" ID="numericLastUsed" Placeholder="Last Used (Year)" TValue="short" Decimals="0" Format="g" Max="2100" ShowSpinButton="false"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" EField="@nameof(Model.ExpMonth)" LabelText="Experience (Months):" Placeholder="Experience">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ExpMonth)" LabelText="Experience (Months):" Placeholder="Experience">
 						<Template>
 							<label class="e-form-label" for="numericExpMonth">Experience (Months):</label>
-							<SfNumericTextBox @bind-Value="Model.ExpMonth" ID="numericExpMonth" Placeholder="Experience (Months)" TValue="short" Decimals="0" Format="g" Max="1000" Min="0"/>
+							<SfNumericTextBox @bind-Value="Model.ExpMonth" ID="numericExpMonth" Placeholder="Experience (Months)" TValue="short" Decimals="0" Format="g" Max="1000" Min="0" ShowSpinButton="false"/>
 						</Template>
 					</FormItem>
 				</FormGroup>

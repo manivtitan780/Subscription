@@ -354,6 +354,9 @@ body, form, html {
     margin-top: 20px !important;
 }
 
+.e-data-form .e-form-group {
+    margin-top: 10px !important;
+}
 /* #endregion Data Form */
 
 /* #region Dialog for Popups */
@@ -386,7 +389,7 @@ body, form, html {
 }
 
 .dialogPopup .e-dlg-header-content + .e-dlg-content {
-    padding-top: 24px !important;
+    padding-top: 16px !important;
 }
 
 /* #endregion*/
@@ -482,6 +485,7 @@ body, form, html {
 .e-input-group.e-input-focus:not(.e-success):not(.e-warning):not(.e-error), .e-input-group.e-control-wrapper.e-input-focus:not(.e-success):not(.e-warning):not(.e-error) {
     border-color: var(--c-red);
     border-radius: 2px;
+    border-width: 1px;
     box-shadow: 0 0 0 0 var(--c-red);
 }
 

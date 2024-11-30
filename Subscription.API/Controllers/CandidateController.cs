@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-06-2024 20:05
-// Last Updated On:     09-11-2024 16:09
+// Last Updated On:     11-30-2024 19:11
 // *****************************************/
 
 #endregion
@@ -255,6 +255,21 @@ public class CandidateController : ControllerBase
                };
     }
 
+    /// <summary>
+    ///     Retrieves a list of candidates based on the provided search model.
+    /// </summary>
+    /// <param name="searchModel">
+    ///     The search model containing the criteria for filtering candidates. This includes parameters such as
+    ///     item count, page number, sort field, sort direction, name, keywords, skills, city, state, proximity, eligibility,
+    ///     relocation, job options, security clearance, and user.
+    /// </param>
+    /// <returns>
+    ///     A dictionary containing the list of candidates and the total count of candidates matching the search criteria.
+    /// </returns>
+    /// <remarks>
+    ///     This method performs a database operation using a stored procedure named "GetCandidates".
+    ///     It reads the result set from the database to populate the list of candidates and the total count.
+    /// </remarks>
     [HttpGet]
     public async Task<Dictionary<string, object>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
     {
@@ -322,6 +337,72 @@ public class CandidateController : ControllerBase
                    },
                    {
                        "Count", _count
+                   }
+               };
+    }
+
+    /// <summary>
+    ///     Saves a candidate's skill to the database.
+    /// </summary>
+    /// <param name="skill">The skill of the candidate to be saved.</param>
+    /// <param name="candidateID">The ID of the candidate whose skill is to be saved.</param>
+    /// <param name="user">The user who is performing the save operation.</param>
+    /// <returns>A dictionary containing the updated list of skills for the candidate.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to save the skill,
+    ///     and returns a dictionary containing the updated list of skills.
+    ///     If the operation is successful, the dictionary will contain a list of remaining skills for the
+    ///     candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<Dictionary<string, object>> SaveSkill(CandidateSkills skill, int candidateID, string user)
+    {
+        await Task.Delay(1);
+        List<CandidateSkills> _skills = [];
+        if (skill == null)
+        {
+            return new()
+                   {
+                       {
+                           "Skills", _skills
+                       }
+                   };
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        try
+        {
+            await using SqlCommand _command = new("SaveSkill", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("EntitySkillId", skill.ID);
+            _command.Varchar("Skill", 100, skill.Skill);
+            _command.Int("CandidateID", candidateID);
+            _command.SmallInt("LastUsed", skill.LastUsed);
+            _command.SmallInt("ExpMonth", skill.ExpMonth);
+            _command.Varchar("User", 10, user);
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            if (_reader.HasRows)
+            {
+                while (_reader.Read())
+                {
+                    _skills.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetInt16(2), _reader.GetInt16(3), _reader.GetString(4)));
+                }
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch
+        {
+            //TODO: Log the exception
+        }
+
+        await _connection.CloseAsync();
+
+        return new()
+               {
+                   {
+                       "Skills", _skills
                    }
                };
     }

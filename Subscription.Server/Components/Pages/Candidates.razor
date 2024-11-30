@@ -174,8 +174,8 @@
 											<TabHeader Text="Education" />
 										</ChildContent>
 										<ContentTemplate>
-											@* <educationpanel DeleteEducation="DeleteEducation" EditEducation="EditEducation" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
-														Model="@_candidateEducationObject" @ref="EducationPanel" UserName="@User" /> *@
+											 <EducationPanel DeleteEducation="DeleteEducation" EditEducation="EditEducation" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)"
+														Model="@_candidateEducationObject" @ref="EducationPanel" UserName="@User" /> 
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
