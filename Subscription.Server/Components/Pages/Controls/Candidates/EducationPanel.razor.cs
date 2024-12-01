@@ -3,17 +3,13 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           EducationPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-23-2023 19:53
-// Last Updated On:     12-28-2023 16:19
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          11-30-2024 19:11
+// Last Updated On:     11-30-2024 20:11
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
@@ -36,7 +32,7 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EducationPanel
 {
-	private int _selectedID;
+    private int _selectedID;
 
 	/// <summary>
 	///     Gets or sets the event callback that triggers when an education detail is to be deleted.
@@ -45,23 +41,32 @@ public partial class EducationPanel
 	///     The event callback for deleting an education detail.
 	/// </value>
 	[Parameter]
-	public EventCallback<int> DeleteEducation
-	{
-		get;
-		set;
-	}
+    public EventCallback<int> DeleteEducation
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
-	///     Gets or sets the ConfirmDialog instance used for displaying confirmation dialogs.
+	///     Gets or sets the dialog service used for displaying confirmation dialogs.
 	/// </summary>
 	/// <value>
-	///     The ConfirmDialog instance.
+	///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+	///     interactions
+	///     with those dialogs.
 	/// </value>
-	private ConfirmDialog DialogConfirm
-	{
-		get;
-		set;
-	}
+	/// <remarks>
+	///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+	///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+	///     This service is injected into the component and used in methods like <see cref="DeleteEducationMethod" /> to
+	///     confirm actions before proceeding.
+	/// </remarks>
+	[Inject]
+    private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the event callback that triggers when an education detail is to be edited.
@@ -70,11 +75,11 @@ public partial class EducationPanel
 	///     The event callback for editing an education detail.
 	/// </value>
 	[Parameter]
-	public EventCallback<int> EditEducation
-	{
-		get;
-		set;
-	}
+    public EventCallback<int> EditEducation
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the user has the rights to edit the education details.
@@ -83,11 +88,11 @@ public partial class EducationPanel
 	///     true if the user has the rights to edit; otherwise, false. The default value is true.
 	/// </value>
 	[Parameter]
-	public bool EditRights
-	{
-		get;
-		set;
-	} = true;
+    public bool EditRights
+    {
+        get;
+        set;
+    } = true;
 
 	/// <summary>
 	///     Gets or sets the grid that displays the education details of a candidate.
@@ -96,10 +101,10 @@ public partial class EducationPanel
 	///     The grid displaying the education details of a candidate.
 	/// </value>
 	private SfGrid<CandidateEducation> GridEducation
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current operation is a requisition.
@@ -108,11 +113,11 @@ public partial class EducationPanel
 	///     true if the current operation is a requisition; otherwise, false. The default value is false.
 	/// </value>
 	[Parameter]
-	public bool IsRequisition
-	{
-		get;
-		set;
-	}
+    public bool IsRequisition
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a list of CandidateEducation objects representing the education details of a candidate.
@@ -121,11 +126,11 @@ public partial class EducationPanel
 	///     A list of CandidateEducation objects.
 	/// </value>
 	[Parameter]
-	public List<CandidateEducation> Model
-	{
-		get;
-		set;
-	}
+    public List<CandidateEducation> Model
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the height of a row in the grid.
@@ -134,11 +139,11 @@ public partial class EducationPanel
 	///     The height of a row in the grid. The default value is 38.
 	/// </value>
 	[Parameter]
-	public int RowHeight
-	{
-		get;
-		set;
-	} = 38;
+    public int RowHeight
+    {
+        get;
+        set;
+    } = 38;
 
 	/// <summary>
 	///     Gets the selected row in the grid. This property is of type <see cref="Subscription.Model.CandidateEducation" />.
@@ -151,10 +156,10 @@ public partial class EducationPanel
 	///     selected candidate.
 	/// </remarks>
 	internal CandidateEducation SelectedRow
-	{
-		get;
-		private set;
-	}
+    {
+        get;
+        private set;
+    }
 
 	/// <summary>
 	///     Gets or sets the logged-in Username.
@@ -163,11 +168,11 @@ public partial class EducationPanel
 	///     The currently logged-in Username.
 	/// </value>
 	[Parameter]
-	public string UserName
-	{
-		get;
-		set;
-	}
+    public string UserName
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Asynchronously deletes the education detail of a candidate.
@@ -179,12 +184,15 @@ public partial class EducationPanel
 	///     selects the row in the grid, and shows a confirmation dialog.
 	/// </remarks>
 	private async Task DeleteEducationMethod(int id)
-	{
-		_selectedID = id;
-		int _index = await GridEducation.GetRowIndexByPrimaryKeyAsync(id);
-		await GridEducation.SelectRowAsync(_index);
-		await DialogConfirm.ShowDialog();
-	}
+    {
+        _selectedID = id;
+        int _index = await GridEducation.GetRowIndexByPrimaryKeyAsync(id);
+        await GridEducation.SelectRowAsync(_index);
+        if (await DialogService.ConfirmAsync(null, "Delete Education", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Education</i>?")))
+        {
+            await DeleteEducation.InvokeAsync(_selectedID);
+        }
+    }
 
 	/// <summary>
 	///     Asynchronously opens the dialog for editing the education details of a candidate.
@@ -196,12 +204,12 @@ public partial class EducationPanel
 	///     provided ID, selects the row in the grid, and invokes the EditEducation event callback.
 	/// </remarks>
 	private async Task EditEducationDialog(int id)
-	{
-		_selectedID = id;
-		int _index = await GridEducation.GetRowIndexByPrimaryKeyAsync(id);
-		await GridEducation.SelectRowAsync(_index);
-		await EditEducation.InvokeAsync(id);
-	}
+    {
+        _selectedID = id;
+        int _index = await GridEducation.GetRowIndexByPrimaryKeyAsync(id);
+        await GridEducation.SelectRowAsync(_index);
+        await EditEducation.InvokeAsync(id);
+    }
 
 	/// <summary>
 	///     Handles the row selection event in the education details grid.
@@ -212,10 +220,10 @@ public partial class EducationPanel
 	///     It sets the SelectedRow property to the data of the selected row.
 	/// </remarks>
 	private void RowSelected(RowSelectEventArgs<CandidateEducation> education)
-	{
-		if (education != null)
-		{
-			SelectedRow = education.Data;
-		}
-	}
+    {
+        if (education != null)
+        {
+            SelectedRow = education.Data;
+        }
+    }
 }

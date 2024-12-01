@@ -8,7 +8,7 @@
 // File Name:           SkillPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          11-19-2024 20:11
-// Last Updated On:     11-19-2024 21:11
+// Last Updated On:     11-30-2024 20:11
 // *****************************************/
 
 #endregion
@@ -48,17 +48,21 @@ public partial class SkillPanel
     }
 
 	/// <summary>
-	///     Gets or sets the ConfirmDialog component used to display a confirmation dialog to the user.
+	///     Gets or sets the dialog service used for displaying confirmation dialogs.
 	/// </summary>
 	/// <value>
-	///     The ConfirmDialog component.
+	///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+	///     interactions
+	///     with those dialogs.
 	/// </value>
 	/// <remarks>
-	///     The ConfirmDialog component is used to display a confirmation dialog to the user when they attempt to delete a
-	///     skill entry.
-	///     The dialog provides the user with the option to confirm or cancel the deletion operation.
+	///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+	///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+	///     This service is injected into the component and used in methods like <see cref="DeleteSkillMethod" />
+	///     to confirm actions before proceeding.
 	/// </remarks>
-	private ConfirmDialog DialogConfirm
+	[Inject]
+    private SfDialogService DialogService
     {
         get;
         set;
@@ -193,7 +197,7 @@ public partial class SkillPanel
 	internal CandidateSkills SelectedRow
     {
         get;
-		private set;
+        private set;
     }
 
 	/// <summary>
@@ -223,7 +227,10 @@ public partial class SkillPanel
         _selectedID = id;
         int _index = await GridSkill.GetRowIndexByPrimaryKeyAsync(id);
         await GridSkill.SelectRowAsync(_index);
-        await DialogConfirm.ShowDialog();
+        if (await DialogService.ConfirmAsync(null, "Delete Skill", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Skill</i>?")))
+        {
+            await DeleteSkill.InvokeAsync(_selectedID);
+        }
     }
 
 	/// <summary>
@@ -236,8 +243,8 @@ public partial class SkillPanel
 	///     provided ID, selects the row in the grid, and invokes the EditExperience event callback.
 	/// </remarks>
 	private async Task EditSkillDialog(int id)
-	{
-		_selectedID = id;
+    {
+        _selectedID = id;
         int _index = await GridSkill.GetRowIndexByPrimaryKeyAsync(id);
         await GridSkill.SelectRowAsync(_index);
         await EditSkill.InvokeAsync(id);
