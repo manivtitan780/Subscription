@@ -169,6 +169,12 @@ public partial class Candidates
         get;
         set;
     }
+	
+    public EditContext EditConExperience
+    {
+        get;
+        set;
+    }
 
     public EditContext EditConSkill
     {
@@ -358,6 +364,16 @@ public partial class Candidates
         get;
         set;
     } = new();
+	
+	/// <summary>
+	///     Gets or sets the selected education for the candidate. This property is of type
+	///     <see cref="Subscription.Model.CandidateExperience" />.
+	/// </summary>
+	private CandidateExperience SelectedExperience
+    {
+        get;
+        set;
+    } = new();
 
 	/// <summary>
 	///     Gets or sets the selected skill for the candidate.
@@ -424,7 +440,13 @@ public partial class Candidates
         set;
     }
 
-    private static async Task AllAlphabets()
+	public ExperiencePanel ExperiencePanel
+	{
+		get;
+		set;
+	}
+
+	private static async Task AllAlphabets()
     {
         SearchModel.Name = "";
         SearchModel.Page = 1;
@@ -491,7 +513,7 @@ public partial class Candidates
 	private Task DeleteEducation(int id) => ExecuteMethod(async () =>
 														  {
 															  Dictionary<string, string> _parameters = CreateParameters(id);
-															  Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteEducation", _parameters);
+															  Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteEducation", _parameters);
 
 															  if (_response == null)
 															  {
@@ -499,6 +521,33 @@ public partial class Candidates
 															  }
 
 															  _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
+														  });
+	
+	/// <summary>
+	///     Asynchronously deletes the experience record of a candidate.
+	/// </summary>
+	/// <param name="id">The identifier of the education record to be deleted.</param>
+	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method sends a POST request to the "Candidates/DeleteExperience" endpoint with the experience record's ID, the
+	///     candidate's ID, and the user's ID as parameters.
+	///     If the action is not in progress, it sets the action in progress, sends the request, and updates the candidate's
+	///     experience object with the response.
+	///     If the response is null, the method returns immediately. If an exception occurs during the request, it is caught
+	///     and ignored.
+	///     After the request is completed, the action progress is set to false.
+	/// </remarks>
+	private Task DeleteExperience(int id) => ExecuteMethod(async () =>
+														  {
+															  Dictionary<string, string> _parameters = CreateParameters(id);
+															  Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteExperience", _parameters);
+
+															  if (_response == null)
+															  {
+																  return;
+															  }
+
+															  _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
 														  });
 
 	/// <summary>
@@ -646,6 +695,29 @@ public partial class Candidates
 
 															EditConEducation = new(SelectedEducation);
 															await CandidateEducationDialog.ShowDialog();
+														});
+
+	private Task EditExperience(int id) => ExecuteMethod(async () =>
+														{
+															if (id == 0)
+															{
+																if (SelectedExperience == null)
+																{
+																	SelectedExperience = new();
+																}
+																else
+																{
+																	SelectedExperience.Clear();
+																}
+															}
+															else
+															{
+																SelectedExperience = ExperiencePanel.SelectedRow != null ? ExperiencePanel.SelectedRow.Copy() : new();
+															}
+
+															EditConExperience = new(SelectedExperience);
+															await Task.Delay(0);
+															//await CandidateEducationDialog.ShowDialog();
 														});
 
 	/// <summary>

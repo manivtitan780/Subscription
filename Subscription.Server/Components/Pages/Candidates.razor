@@ -183,8 +183,8 @@
 											<TabHeader Text="Experience" />
 										</ChildContent>
 										<ContentTemplate>
-											@* <experiencepanel DeleteExperience="DeleteExperience" EditExperience="EditExperience" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
-														 Model="@_candidateExperienceObject" @ref="ExperiencePanel" UserName="@User" /> *@
+											 <ExperiencePanel DeleteExperience="DeleteExperience" EditExperience="EditExperience" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)"
+														 Model="@_candidateExperienceObject" @ref="ExperiencePanel" UserName="@User" /> 
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>

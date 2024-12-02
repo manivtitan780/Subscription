@@ -3,23 +3,17 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           ExperiencePanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-23-2023 19:53
-// Last Updated On:     12-28-2023 16:20
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          12-02-2024 20:12
+// Last Updated On:     12-02-2024 21:12
 // *****************************************/
 
 #endregion
 
-#region Using
-
-using Profsvc_AppTrack.Client.Pages.Controls.Common;
-
-#endregion
-
-namespace Profsvc_AppTrack.Client.Pages.Controls.Candidates;
+namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 /// <summary>
 ///     Represents a user interface component that provides functionality for managing a candidate's experiences.
@@ -37,7 +31,7 @@ namespace Profsvc_AppTrack.Client.Pages.Controls.Candidates;
 /// </remarks>
 public partial class ExperiencePanel
 {
-	private int _selectedID;
+    private int _selectedID;
 
 	/// <summary>
 	///     Gets or sets the event callback that is triggered when an experience entry is to be deleted.
@@ -46,28 +40,32 @@ public partial class ExperiencePanel
 	///     The event callback that takes an integer parameter representing the ID of the experience entry to be deleted.
 	/// </value>
 	[Parameter]
-	public EventCallback<int> DeleteExperience
-	{
-		get;
-		set;
-	}
+    public EventCallback<int> DeleteExperience
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
-	///     Gets or sets the ConfirmDialog component used to display a confirmation dialog to the user.
+	///     Gets or sets the dialog service used for displaying confirmation dialogs.
 	/// </summary>
 	/// <value>
-	///     The ConfirmDialog component.
+	///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+	///     interactions
+	///     with those dialogs.
 	/// </value>
 	/// <remarks>
-	///     The ConfirmDialog component is used to display a confirmation dialog to the user when they attempt to delete an
-	///     experience entry.
-	///     The dialog provides the user with the option to confirm or cancel the deletion operation.
+	///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+	///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+	///     This service is injected into the component and used in methods like <see cref="DeleteExperienceMethod" /> to
+	///     confirm actions before proceeding.
 	/// </remarks>
-	private ConfirmDialog DialogConfirm
-	{
-		get;
-		set;
-	}
+	[Inject]
+    private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the event callback that is triggered when an experience entry is to be edited.
@@ -76,11 +74,11 @@ public partial class ExperiencePanel
 	///     The event callback that takes an integer parameter representing the ID of the experience entry to be edited.
 	/// </value>
 	[Parameter]
-	public EventCallback<int> EditExperience
-	{
-		get;
-		set;
-	}
+    public EventCallback<int> EditExperience
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current user has rights to edit the experience entries.
@@ -94,11 +92,11 @@ public partial class ExperiencePanel
 	///     true, meaning that, by default, users have the rights to edit the entries.
 	/// </remarks>
 	[Parameter]
-	public bool EditRights
-	{
-		get;
-		set;
-	} = true;
+    public bool EditRights
+    {
+        get;
+        set;
+    } = true;
 
 	/// <summary>
 	///     Gets or sets the Syncfusion Blazor Grid component that displays the list of a candidate's experiences.
@@ -114,10 +112,10 @@ public partial class ExperiencePanel
 	///     The grid is bound to the Model property, which provides the data source for the grid.
 	/// </remarks>
 	private SfGrid<CandidateExperience> GridExperience
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current context is a requisition.
@@ -131,29 +129,11 @@ public partial class ExperiencePanel
 	///     false, meaning that, by default, the context is not a requisition.
 	/// </remarks>
 	[Parameter]
-	public bool IsRequisition
-	{
-		get;
-		set;
-	}
-
-	/// <summary>
-	///     Gets or sets the JavaScript runtime instance for this component.
-	/// </summary>
-	/// <value>
-	///     The JavaScript runtime instance.
-	/// </value>
-	/// <remarks>
-	///     This property is used to invoke JavaScript functions from .NET methods. It is injected into the component using the
-	///     [Inject] attribute. The JavaScript runtime instance allows for interaction with the JavaScript side of the Blazor
-	///     application, enabling the execution of JavaScript code from .NET and vice versa.
-	/// </remarks>
-	[Inject]
-	private IJSRuntime JsRuntime
-	{
-		get;
-		set;
-	}
+    public bool IsRequisition
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the model for the experience entries.
@@ -167,11 +147,11 @@ public partial class ExperiencePanel
 	///     Each entry includes details about a particular experience of the candidate.
 	/// </remarks>
 	[Parameter]
-	public List<CandidateExperience> Model
-	{
-		get;
-		set;
-	}
+    public List<CandidateExperience> Model
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the height of each row in the grid displaying the experience entries.
@@ -186,11 +166,11 @@ public partial class ExperiencePanel
 	///     information in each row.
 	/// </remarks>
 	[Parameter]
-	public int RowHeight
-	{
-		get;
-		set;
-	} = 38;
+    public int RowHeight
+    {
+        get;
+        set;
+    } = 38;
 
 	/// <summary>
 	///     Gets or sets the currently selected row in the grid.
@@ -205,10 +185,10 @@ public partial class ExperiencePanel
 	///     selected experience entry, such as editing or deleting the entry.
 	/// </remarks>
 	internal CandidateExperience SelectedRow
-	{
-		get;
-		private set;
-	}
+    {
+        get;
+        private set;
+    }
 
 	/// <summary>
 	///     Gets or sets the logged-in Username.
@@ -217,11 +197,11 @@ public partial class ExperiencePanel
 	///     The currently logged-in Username.
 	/// </value>
 	[Parameter]
-	public string UserName
-	{
-		get;
-		set;
-	}
+    public string UserName
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Asynchronously deletes the experience detail of a candidate.
@@ -233,12 +213,16 @@ public partial class ExperiencePanel
 	///     selects the row in the grid, and shows a confirmation dialog.
 	/// </remarks>
 	private async Task DeleteExperienceMethod(int id)
-	{
-		_selectedID = id;
-		int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
-		await GridExperience.SelectRowAsync(_index);
-		await DialogConfirm.ShowDialog();
-	}
+    {
+        _selectedID = id;
+        int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
+        await GridExperience.SelectRowAsync(_index);
+		if (await DialogService.ConfirmAsync(null, "Delete Experience", General.DialogOptions("Are you sure you want to <strong>disable</strong> this " +
+																							  "<i>Candidate Experience</i>?")))
+		{
+			await DeleteExperience.InvokeAsync(_selectedID);
+		}
+    }
 
 	/// <summary>
 	///     Asynchronously opens the dialog for editing the experience details of a candidate.
@@ -250,29 +234,29 @@ public partial class ExperiencePanel
 	///     provided ID, selects the row in the grid, and invokes the EditExperience event callback.
 	/// </remarks>
 	private async Task EditExperienceDialog(int id)
-	{
-		_selectedID = id;
-		int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
-		await GridExperience.SelectRowAsync(_index);
-		await EditExperience.InvokeAsync(id);
-	}
+    {
+        _selectedID = id;
+        int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
+        await GridExperience.SelectRowAsync(_index);
+        await EditExperience.InvokeAsync(id);
+    }
 
-    /// <summary>
-    ///     Handles the row selection event in the experience details grid.
-    /// </summary>
-    /// <param name="experience">
-    ///     The event arguments containing the selected row data of type
-    ///     <see cref="CandidateExperience" />.
-    /// </param>
-    /// <remarks>
-    ///     This method is triggered when a row is selected in the experience details grid.
-    ///     It sets the SelectedRow property to the data of the selected row.
-    /// </remarks>
-    private void RowSelected(RowSelectEventArgs<CandidateExperience> experience)
-	{
-		if (experience != null)
-		{
-			SelectedRow = experience.Data;
-		}
-	}
+	/// <summary>
+	///     Handles the row selection event in the experience details grid.
+	/// </summary>
+	/// <param name="experience">
+	///     The event arguments containing the selected row data of type
+	///     <see cref="CandidateExperience" />.
+	/// </param>
+	/// <remarks>
+	///     This method is triggered when a row is selected in the experience details grid.
+	///     It sets the SelectedRow property to the data of the selected row.
+	/// </remarks>
+	private void RowSelected(RowSelectEventArgs<CandidateExperience> experience)
+    {
+        if (experience != null)
+        {
+            SelectedRow = experience.Data;
+        }
+    }
 }
