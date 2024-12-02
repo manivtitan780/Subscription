@@ -8,7 +8,7 @@
     The form uses validation and displays a spinner during long-running operations.
 </remarks>
 *@
-<SfDialog CssClass="dialogPopup" Header="Edit Education" Height="505px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+<SfDialog CssClass="dialogPopup" Header="Edit Education" Height="585px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -24,34 +24,39 @@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Education Information">
-					<FormItem ColumnSpan="1" LabelText="School / College:" ID="textCollege">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.College)" LabelText="School / College:" ID="textCollege">
 						<Template>
+							<label class="e-form-label" for="textCollege">School / College:</label>
 							<SfTextBox @bind-Value="Model.College" Created='() => TextOnly("textCollege", true)' HtmlAttributes="_textBoxAttributes" ID="textCollege"
-							           Placeholder="School / College"/>
+							           Placeholder="School / College" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" LabelText="Degree:" ID="textDegree">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)" LabelText="Degree:" ID="textDegree">
 						<Template>
+							<label class="e-form-label" for="textDegree">Degree:</label>
 							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' HtmlAttributes="_textBoxAttributes" ID="textDegree"
-							           Placeholder="Degree"/>
+							           Placeholder="Degree" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" LabelText="State:" ID="textState">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.State)" LabelText="State:" ID="textState">
 						<Template>
+							<label class="e-form-label" for="textState">State:</label>
 							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' HtmlAttributes="_textBoxAttributes" ID="textState"
-							           Placeholder="State"/>
+							           Placeholder="State" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" LabelText="Country:" ID="textCountry">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)" LabelText="Country:" ID="textCountry">
 						<Template>
+							<label class="e-form-label" for="textCountry">Country:</label>
 							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' HtmlAttributes="_textBoxAttributes" ID="textCountry"
-							           Placeholder="Country"/>
+							           Placeholder="Country" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" LabelText="Graduation Year:" ID="textYear">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)" LabelText="Graduation Year:" ID="textYear">
 						<Template>
+							<label class="e-form-label" for="textYear">Graduation Year:</label>
 							<SfTextBox @bind-Value="Model.Year" Created='() => TextOnly("textYear", true)' HtmlAttributes="_textBoxAttributes" ID="textYear"
-							           Placeholder="Graduation Year"/>
+							           Placeholder="Graduation Year" />
 						</Template>
 					</FormItem>
 				</FormGroup>
