@@ -149,12 +149,9 @@ public partial class EditSkillDialog
         await General.DisplaySpinner(Spinner, false);
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e)
-    {
-        Context.Validate();
-    }
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
-    protected override void OnParametersSet()
+	protected override void OnParametersSet()
     {
         Context = new(Model);
         Context.OnFieldChanged += Context_OnFieldChanged;
@@ -169,7 +166,7 @@ public partial class EditSkillDialog
 	///     associated with the editing of a candidate's skill. If the form context is not valid,
 	///     the form will not be submitted.
 	/// </remarks>
-	private void OpenDialog() => EditSkillForm.EditContext?.Validate();
+	private void OpenDialog() => Context.Validate();
 
 	/// <summary>
 	///     Asynchronously saves the changes made in the EditSkillDialog.

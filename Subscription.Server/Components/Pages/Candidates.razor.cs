@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     11-30-2024 19:11
+// Last Updated On:     12-02-2024 15:12
 // *****************************************/
 
 #endregion
@@ -65,6 +65,12 @@ public partial class Candidates
 	///     - Any other value => "Fair"
 	/// </remarks>
 	private MarkupString CandidateCommunication
+    {
+        get;
+        set;
+    }
+
+    public EditEducationDialog CandidateEducationDialog
     {
         get;
         set;
@@ -158,16 +164,17 @@ public partial class Candidates
         set;
     }
 
+    public EditContext EditConEducation
+    {
+        get;
+        set;
+    }
+
     public EditContext EditConSkill
     {
         get;
         set;
     }
-   public EditContext EditConEducation
-	{
-		get;
-		set;
-	}
 
     private EducationPanel EducationPanel
     {
@@ -638,8 +645,7 @@ public partial class Candidates
 															}
 
 															EditConEducation = new(SelectedEducation);
-															await Task.CompletedTask;
-															//return DialogEducation.ShowDialog();
+															await CandidateEducationDialog.ShowDialog();
 														});
 
 	/// <summary>
@@ -676,7 +682,7 @@ public partial class Candidates
 
 														   EditConSkill = new(SelectedSkill);
 														   await CandidateSkillDialog.ShowDialog();
-												   });
+													   });
 
 	/// <summary>
 	///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -878,6 +884,38 @@ public partial class Candidates
 
         await base.OnInitializedAsync();
     }
+
+	/// <summary>
+	///     Asynchronously saves the education details of a candidate.
+	/// </summary>
+	/// <param name="education">The edit context containing the candidate's education details.</param>
+	/// <returns>A task that represents the asynchronous operation.</returns>
+	/// <remarks>
+	///     This method sends a POST request to the "Candidates/SaveEducation" endpoint with the candidate's education details.
+	///     The user ID of the logged-in user or "JOLLY" (if no user is logged in) and the candidate's ID are added as query
+	///     parameters to the request.
+	///     If the response is not null, the education details from the response are deserialized and stored in the
+	///     _candidateEducationObject.
+	/// </remarks>
+	private Task SaveEducation(EditContext education) => ExecuteMethod(async () =>
+																	   {
+																		   if (education.Model is CandidateEducation _candidateEducation)
+																		   {
+																			   Dictionary<string, string> _parameters = new()
+																														{
+																															{"candidateID", _target.ID.ToString()},
+																															{"user", User}
+																														};
+																			   Dictionary<string, object> _response =
+																				   await General.PostRest("Candidates/SaveEducation", _parameters, _candidateEducation);
+																			   if (_response == null)
+																			   {
+																				   return;
+																			   }
+
+																			   _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
+																		   }
+																	   });
 
 	/// <summary>
 	///     Asynchronously saves the skill of a candidate.

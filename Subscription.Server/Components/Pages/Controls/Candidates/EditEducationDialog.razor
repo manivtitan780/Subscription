@@ -24,42 +24,37 @@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Education Information">
-					@*<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.College)" LabelText="School / College:" Placeholder="School / College" ID="textCollege"/>
-					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Degree)" LabelText="Degree:" Placeholder="Degree" ID="textDegree"/>
-					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.State)" LabelText="State:" Placeholder="State" ID="textState"/>
-					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Country)" LabelText="Country:" Placeholder="Country" ID="textCountry"/>
-					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Year)" LabelText="Graduation Year:" Placeholder="Graduation Year" ID="textYear"/>*@
 					<FormItem ColumnSpan="1" LabelText="School / College:" ID="textCollege">
 						<Template>
-							<SfTextBox @bind-Value="Model.College" Created='() => TextOnly("textCollege", true)' HtmlAttributes="_textBoxAttributes" ID="textCollege" 
-							           Placeholder="School / College"  />
+							<SfTextBox @bind-Value="Model.College" Created='() => TextOnly("textCollege", true)' HtmlAttributes="_textBoxAttributes" ID="textCollege"
+							           Placeholder="School / College"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" LabelText="Degree:" ID="textDegree">
 						<Template>
-							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' HtmlAttributes="_textBoxAttributes" ID="textDegree" 
+							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' HtmlAttributes="_textBoxAttributes" ID="textDegree"
 							           Placeholder="Degree"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" LabelText="State:" ID="textState">
 						<Template>
-							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' HtmlAttributes="_textBoxAttributes" ID="textState" 
+							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' HtmlAttributes="_textBoxAttributes" ID="textState"
 							           Placeholder="State"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" LabelText="Country:" ID="textCountry">
 						<Template>
-							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' HtmlAttributes="_textBoxAttributes" ID="textCountry" 
+							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' HtmlAttributes="_textBoxAttributes" ID="textCountry"
 							           Placeholder="Country"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" LabelText="Graduation Year:" ID="textYear">
 						<Template>
-							<SfTextBox @bind-Value="Model.Year" Created='() => TextOnly("textYear", true)' HtmlAttributes="_textBoxAttributes" ID="textYear" 
+							<SfTextBox @bind-Value="Model.Year" Created='() => TextOnly("textYear", true)' HtmlAttributes="_textBoxAttributes" ID="textYear"
 							           Placeholder="Graduation Year"/>
 						</Template>
 					</FormItem>
-					</FormGroup>
+				</FormGroup>
 			</FormItems>
 		</SfDataForm>
 		@*<EditForm Model="Model" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm">

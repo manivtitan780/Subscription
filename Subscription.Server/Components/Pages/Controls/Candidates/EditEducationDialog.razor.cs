@@ -180,7 +180,22 @@ public partial class EditEducationDialog
 	///     It calls the 'CallCancelMethod' from the 'General' class to handle the cancel operation,
 	///     which includes hiding the spinner and dialog, and enabling the dialog buttons.
 	/// </remarks>
-	private async Task CancelEducationDialog(MouseEventArgs args) => await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+	private async Task CancelEducationDialog(MouseEventArgs args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
 
 	/// <summary>
 	///     Validates the form context of the dialog for editing the education details of a candidate.
@@ -189,7 +204,7 @@ public partial class EditEducationDialog
 	///     This method is used to validate the form fields in the dialog when it is opened.
 	///     It is typically called when the dialog is about to be displayed to the user.
 	/// </remarks>
-	private void OpenDialog() => EditEducationForm.EditContext?.Validate();
+	private void OpenDialog() => Context.Validate();
 
 	/// <summary>
 	///     Asynchronously saves the education details of a candidate.
@@ -201,7 +216,13 @@ public partial class EditEducationDialog
 	///     executing the save operation, and then hiding the spinner and dialog, and enabling the dialog buttons.
 	/// </remarks>
 	/// <returns>A task that represents the asynchronous operation.</returns>
-	private async Task SaveEducationDialog(EditContext editContext) => await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+	private async Task SaveEducationDialog(EditContext editContext)
+	{
+		await General.DisplaySpinner(Spinner);
+		await Save.InvokeAsync(editContext);
+		await Dialog.HideAsync();
+		await General.DisplaySpinner(Spinner, false);
+	}
 
 	/// <summary>
 	///     Asynchronously shows the dialog for editing the education details of a candidate.
