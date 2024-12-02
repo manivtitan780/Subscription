@@ -74,7 +74,7 @@ public partial class EditSkillDialog
         set;
     }
 
-	/// <summary>
+	/*/// <summary>
 	///     Gets or sets the footer dialog of the EditSkillDialog.
 	/// </summary>
 	/// <remarks>
@@ -85,7 +85,7 @@ public partial class EditSkillDialog
     {
         get;
         set;
-    }
+    }*/
 
 	/// <summary>
 	///     Gets or sets the notes that is being edited in the dialog.

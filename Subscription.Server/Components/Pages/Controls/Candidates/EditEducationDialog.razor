@@ -1,0 +1,83 @@
+﻿@*
+<summary>
+    Represents the dialog for editing a candidate's education details.
+</summary>
+<remarks>
+    This component displays a modal dialog that allows users to edit the details of a candidate's education.
+    It includes a form with fields for school/college, degree, state, country, and graduation year.
+    The form uses validation and displays a spinner during long-running operations.
+</remarks>
+*@
+<SfDialog CssClass="dialogPopup" Header="Edit Education" Height="505px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Education</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelEducationDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator></FluentValidationValidator>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Education Information">
+					@*<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.College)" LabelText="School / College:" Placeholder="School / College" ID="textCollege"/>
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Degree)" LabelText="Degree:" Placeholder="Degree" ID="textDegree"/>
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.State)" LabelText="State:" Placeholder="State" ID="textState"/>
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Country)" LabelText="Country:" Placeholder="Country" ID="textCountry"/>
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Year)" LabelText="Graduation Year:" Placeholder="Graduation Year" ID="textYear"/>*@
+					<FormItem ColumnSpan="1" LabelText="School / College:" ID="textCollege">
+						<Template>
+							<SfTextBox @bind-Value="Model.College" Created='() => TextOnly("textCollege", true)' HtmlAttributes="_textBoxAttributes" ID="textCollege" 
+							           Placeholder="School / College"  />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" LabelText="Degree:" ID="textDegree">
+						<Template>
+							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' HtmlAttributes="_textBoxAttributes" ID="textDegree" 
+							           Placeholder="Degree"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" LabelText="State:" ID="textState">
+						<Template>
+							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' HtmlAttributes="_textBoxAttributes" ID="textState" 
+							           Placeholder="State"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" LabelText="Country:" ID="textCountry">
+						<Template>
+							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' HtmlAttributes="_textBoxAttributes" ID="textCountry" 
+							           Placeholder="Country"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" LabelText="Graduation Year:" ID="textYear">
+						<Template>
+							<SfTextBox @bind-Value="Model.Year" Created='() => TextOnly("textYear", true)' HtmlAttributes="_textBoxAttributes" ID="textYear" 
+							           Placeholder="Graduation Year"/>
+						</Template>
+					</FormItem>
+					</FormGroup>
+			</FormItems>
+		</SfDataForm>
+		@*<EditForm Model="Model" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm">
+			@ * <DataAnnotationsValidator /> * @
+			<FluentValidationValidator></FluentValidationValidator>
+			<div class="divContainerTable">
+				<TextBoxControl @bind-Value="@(Model.College)" @bind-Value:event="ValueChanged" ID="textCollege" MaxLength="100" MinLength="1" Multiline="false"
+								Placeholder="School / College" ValidationMessage="@(() => Model.College)" />
+				<TextBoxControl @bind-Value="@(Model.Degree)" @bind-Value:event="ValueChanged" Created='() => TextOnly("textDegree", false)' ID="textDegree" MaxLength="100" MinLength="1" Multiline="false"
+								Placeholder="Degree" ValidationMessage="@(() => Model.Degree)" />
+				<TextBoxControl @bind-Value="@(Model.State)" @bind-Value:event="ValueChanged" Created='() => TextOnly("textState", false)' ID="textState" MaxLength="100" MinLength="1" Multiline="false"
+								Placeholder="State" ValidationMessage="@(() => Model.State)" />
+				<TextBoxControl @bind-Value="@(Model.Country)" @bind-Value:event="ValueChanged" Created='() => TextOnly("textCountry", false)' ID="textCountry" MaxLength="100" MinLength="1" Multiline="false"
+								Placeholder="Country" ValidationMessage="@(() => Model.Country)" />
+				<TextBoxControl @bind-Value="@(Model.Year)" @bind-Value:event="ValueChanged" ID="textYear" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Graduation Year"
+								ValidationMessage="@(() => Model.Year)" />
+			</div>
+			<DialogFooter CancelMethod="CancelEducationDialog" @ref="FooterDialog" />
+		</EditForm>*@
+	</ChildContent>
+</SfDialog>
