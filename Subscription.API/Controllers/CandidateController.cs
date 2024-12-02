@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-06-2024 20:05
-// Last Updated On:     11-30-2024 19:11
+// Last Updated On:     12-02-2024 20:12
 // *****************************************/
 
 #endregion
@@ -18,23 +18,23 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class CandidateController : ControllerBase
 {
-    /// <summary>
-    ///     Retrieves the detailed information of a candidate by their ID.
-    /// </summary>
-    /// <param name="candidateID">The ID of the candidate.</param>
-    /// <param name="roleID">
-    ///     The role ID associated with the user making the request. This is used for access control and
-    ///     permissions management.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing the candidate's details, notes, skills, education, experience, activity, rating, MPC,
-    ///     RatingMPC, and documents.
-    /// </returns>
-    /// <remarks>
-    ///     This method performs a database operation using a stored procedure named "GetDetailCandidate".
-    ///     It reads multiple result sets from the database to populate various aspects of the candidate's information.
-    /// </remarks>
-    [HttpGet]
+	/// <summary>
+	///     Retrieves the detailed information of a candidate by their ID.
+	/// </summary>
+	/// <param name="candidateID">The ID of the candidate.</param>
+	/// <param name="roleID">
+	///     The role ID associated with the user making the request. This is used for access control and
+	///     permissions management.
+	/// </param>
+	/// <returns>
+	///     A dictionary containing the candidate's details, notes, skills, education, experience, activity, rating, MPC,
+	///     RatingMPC, and documents.
+	/// </returns>
+	/// <remarks>
+	///     This method performs a database operation using a stored procedure named "GetDetailCandidate".
+	///     It reads multiple result sets from the database to populate various aspects of the candidate's information.
+	/// </remarks>
+	[HttpGet]
     public async Task<ActionResult<Dictionary<string, object>>> GetCandidateDetails(int candidateID, string roleID)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -255,22 +255,22 @@ public class CandidateController : ControllerBase
                };
     }
 
-    /// <summary>
-    ///     Retrieves a list of candidates based on the provided search model.
-    /// </summary>
-    /// <param name="searchModel">
-    ///     The search model containing the criteria for filtering candidates. This includes parameters such as
-    ///     item count, page number, sort field, sort direction, name, keywords, skills, city, state, proximity, eligibility,
-    ///     relocation, job options, security clearance, and user.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing the list of candidates and the total count of candidates matching the search criteria.
-    /// </returns>
-    /// <remarks>
-    ///     This method performs a database operation using a stored procedure named "GetCandidates".
-    ///     It reads the result set from the database to populate the list of candidates and the total count.
-    /// </remarks>
-    [HttpGet]
+	/// <summary>
+	///     Retrieves a list of candidates based on the provided search model.
+	/// </summary>
+	/// <param name="searchModel">
+	///     The search model containing the criteria for filtering candidates. This includes parameters such as
+	///     item count, page number, sort field, sort direction, name, keywords, skills, city, state, proximity, eligibility,
+	///     relocation, job options, security clearance, and user.
+	/// </param>
+	/// <returns>
+	///     A dictionary containing the list of candidates and the total count of candidates matching the search criteria.
+	/// </returns>
+	/// <remarks>
+	///     This method performs a database operation using a stored procedure named "GetCandidates".
+	///     It reads the result set from the database to populate the list of candidates and the total count.
+	/// </remarks>
+	[HttpGet]
     public async Task<Dictionary<string, object>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -341,20 +341,156 @@ public class CandidateController : ControllerBase
                };
     }
 
-    /// <summary>
-    ///     Saves a candidate's skill to the database.
-    /// </summary>
-    /// <param name="skill">The skill of the candidate to be saved.</param>
-    /// <param name="candidateID">The ID of the candidate whose skill is to be saved.</param>
-    /// <param name="user">The user who is performing the save operation.</param>
-    /// <returns>A dictionary containing the updated list of skills for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the skill,
-    ///     and returns a dictionary containing the updated list of skills.
-    ///     If the operation is successful, the dictionary will contain a list of remaining skills for the
-    ///     candidate.
-    /// </remarks>
-    [HttpPost]
+	/// <summary>
+	///     Saves a candidate's education record to the database.
+	/// </summary>
+	/// <param name="education">The education record of the candidate to be saved.</param>
+	/// <param name="candidateID">The ID of the candidate whose education record is to be saved.</param>
+	/// <param name="user">The user who is performing the save operation.</param>
+	/// <returns>A dictionary containing the updated list of education records for the candidate.</returns>
+	/// <remarks>
+	///     This method connects to the database, executes a stored procedure to save the education record,
+	///     and returns a dictionary containing the updated list of education records.
+	///     If the operation is successful, the dictionary will contain a list of the candidate's education records.
+	/// </remarks>
+	[HttpPost]
+    public async Task<Dictionary<string, object>> SaveEducation(CandidateEducation education, int candidateID, string user)
+    {
+        List<CandidateEducation> _education = [];
+        if (education == null)
+        {
+            return new()
+                   {
+                       {
+                           "Education", _education
+                       }
+                   };
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        try
+        {
+            await using SqlCommand _command = new("SaveEducation", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("Id", education.ID);
+            _command.Int("CandidateID", candidateID);
+            _command.Varchar("Degree", 100, education.Degree);
+            _command.Varchar("College", 255, education.College);
+            _command.Varchar("State", 100, education.State);
+            _command.Varchar("Country", 100, education.Country);
+            _command.Varchar("Year", 10, education.Year);
+            _command.Varchar("User", 10, user);
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            if (_reader.HasRows)
+            {
+                while (_reader.Read())
+                {
+                    _education.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetString(2), _reader.GetString(3), _reader.GetString(4), 
+                                       _reader.GetString(5), _reader.GetString(6)));
+                }
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch
+        {
+            //
+        }
+
+        await _connection.CloseAsync();
+
+        return new()
+               {
+                   {
+                       "Education", _education
+                   }
+               };
+    }
+
+	/// <summary>
+	///     Saves a candidate's experience record to the database.
+	/// </summary>
+	/// <param name="experience">The experience record of the candidate to be saved.</param>
+	/// <param name="candidateID">The ID of the candidate whose experience record is to be saved.</param>
+	/// <param name="user">The user who is performing the save operation.</param>
+	/// <returns>A dictionary containing the updated list of experience records for the candidate.</returns>
+	/// <remarks>
+	///     This method connects to the database, executes a stored procedure to save the experience record,
+	///     and returns a dictionary containing the updated list of experience records.
+	///     If the operation is successful, the dictionary will contain a list of updated experience records for the
+	///     candidate.
+	/// </remarks>
+	[HttpPost]
+    public async Task<Dictionary<string, object>> SaveExperience(CandidateExperience experience, int candidateID, string user)
+    {
+        List<CandidateExperience> _experiences = [];
+        if (experience == null)
+        {
+            return new()
+                   {
+                       {
+                           "Experience", _experiences
+                       }
+                   };
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        try
+        {
+            await using SqlCommand _command = new("SaveExperience", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("Id", experience.ID);
+            _command.Int("CandidateID", candidateID);
+            _command.Varchar("Employer", 100, experience.Employer);
+            _command.Varchar("Start", 10, experience.Start);
+            _command.Varchar("End", 10, experience.End);
+            _command.Varchar("Location", 100, experience.Location);
+            _command.Varchar("Description", 1000, experience.Description);
+            _command.Varchar("Title", 1000, experience.Title);
+            _command.Varchar("User", 10, user);
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            if (_reader.HasRows)
+            {
+                while (_reader.Read())
+                {
+                    _experiences.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetString(2), _reader.GetString(3), _reader.GetString(4),
+                                         _reader.GetString(5), _reader.GetString(6), _reader.GetString(7)));
+                }
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch
+        {
+            //
+        }
+
+        await _connection.CloseAsync();
+
+        return new()
+               {
+                   {
+                       "Experience", _experiences
+                   }
+               };
+    }
+
+	/// <summary>
+	///     Saves a candidate's skill to the database.
+	/// </summary>
+	/// <param name="skill">The skill of the candidate to be saved.</param>
+	/// <param name="candidateID">The ID of the candidate whose skill is to be saved.</param>
+	/// <param name="user">The user who is performing the save operation.</param>
+	/// <returns>A dictionary containing the updated list of skills for the candidate.</returns>
+	/// <remarks>
+	///     This method connects to the database, executes a stored procedure to save the skill,
+	///     and returns a dictionary containing the updated list of skills.
+	///     If the operation is successful, the dictionary will contain a list of remaining skills for the
+	///     candidate.
+	/// </remarks>
+	[HttpPost]
     public async Task<Dictionary<string, object>> SaveSkill(CandidateSkills skill, int candidateID, string user)
     {
         await Task.Delay(1);
@@ -407,24 +543,24 @@ public class CandidateController : ControllerBase
                };
     }
 
-    /// <summary>
-    ///     This asynchronous method, SearchCompanies, is designed to interact with the database to fetch a list of companies
-    ///     based on a provided search string.
-    ///     It accepts a single parameter, which is a string representing the company name or part of it.
-    ///     The method calls a stored procedure named 'SearchCompanies' in the database, passing the search string as a
-    ///     parameter.
-    ///     The stored procedure is expected to return a list of company names that match the search string.
-    ///     The method then reads these company names and returns them as a list of strings.
-    ///     If no matches are found, the method will return an empty list.
-    /// </summary>
-    /// <param name="filter">
-    ///     The company name or part of it to search for.
-    /// </param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation. The task result contains a list of company names matching the
-    ///     search string.
-    /// </returns>
-    [HttpGet]
+	/// <summary>
+	///     This asynchronous method, SearchCompanies, is designed to interact with the database to fetch a list of companies
+	///     based on a provided search string.
+	///     It accepts a single parameter, which is a string representing the company name or part of it.
+	///     The method calls a stored procedure named 'SearchCompanies' in the database, passing the search string as a
+	///     parameter.
+	///     The stored procedure is expected to return a list of company names that match the search string.
+	///     The method then reads these company names and returns them as a list of strings.
+	///     If no matches are found, the method will return an empty list.
+	/// </summary>
+	/// <param name="filter">
+	///     The company name or part of it to search for.
+	/// </param>
+	/// <returns>
+	///     A task that represents the asynchronous operation. The task result contains a list of company names matching the
+	///     search string.
+	/// </returns>
+	[HttpGet]
     public async Task<List<KeyValues>> SearchCandidates(string filter)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);

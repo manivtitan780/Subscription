@@ -27,57 +27,38 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.College)" LabelText="School / College:" ID="textCollege">
 						<Template>
 							<label class="e-form-label" for="textCollege">School / College:</label>
-							<SfTextBox @bind-Value="Model.College" Created='() => TextOnly("textCollege", true)' HtmlAttributes="_textBoxAttributes" ID="textCollege"
-							           Placeholder="School / College" />
+							<SfTextBox @bind-Value="Model.College" HtmlAttributes="_textBoxAttributes" ID="textCollege" Placeholder="School / College"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)" LabelText="Degree:" ID="textDegree">
 						<Template>
 							<label class="e-form-label" for="textDegree">Degree:</label>
 							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' HtmlAttributes="_textBoxAttributes" ID="textDegree"
-							           Placeholder="Degree" />
+							           Placeholder="Degree"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.State)" LabelText="State:" ID="textState">
 						<Template>
 							<label class="e-form-label" for="textState">State:</label>
 							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' HtmlAttributes="_textBoxAttributes" ID="textState"
-							           Placeholder="State" />
+							           Placeholder="State"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)" LabelText="Country:" ID="textCountry">
 						<Template>
 							<label class="e-form-label" for="textCountry">Country:</label>
 							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' HtmlAttributes="_textBoxAttributes" ID="textCountry"
-							           Placeholder="Country" />
+							           Placeholder="Country"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)" LabelText="Graduation Year:" ID="textYear">
 						<Template>
 							<label class="e-form-label" for="textYear">Graduation Year:</label>
-							<SfTextBox @bind-Value="Model.Year" Created='() => TextOnly("textYear", true)' HtmlAttributes="_textBoxAttributes" ID="textYear"
-							           Placeholder="Graduation Year" />
+							<SfTextBox @bind-Value="Model.Year" HtmlAttributes="_textBoxAttributes" ID="textYear" Placeholder="Graduation Year"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
 			</FormItems>
 		</SfDataForm>
-		@*<EditForm Model="Model" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm">
-			@ * <DataAnnotationsValidator /> * @
-			<FluentValidationValidator></FluentValidationValidator>
-			<div class="divContainerTable">
-				<TextBoxControl @bind-Value="@(Model.College)" @bind-Value:event="ValueChanged" ID="textCollege" MaxLength="100" MinLength="1" Multiline="false"
-								Placeholder="School / College" ValidationMessage="@(() => Model.College)" />
-				<TextBoxControl @bind-Value="@(Model.Degree)" @bind-Value:event="ValueChanged" Created='() => TextOnly("textDegree", false)' ID="textDegree" MaxLength="100" MinLength="1" Multiline="false"
-								Placeholder="Degree" ValidationMessage="@(() => Model.Degree)" />
-				<TextBoxControl @bind-Value="@(Model.State)" @bind-Value:event="ValueChanged" Created='() => TextOnly("textState", false)' ID="textState" MaxLength="100" MinLength="1" Multiline="false"
-								Placeholder="State" ValidationMessage="@(() => Model.State)" />
-				<TextBoxControl @bind-Value="@(Model.Country)" @bind-Value:event="ValueChanged" Created='() => TextOnly("textCountry", false)' ID="textCountry" MaxLength="100" MinLength="1" Multiline="false"
-								Placeholder="Country" ValidationMessage="@(() => Model.Country)" />
-				<TextBoxControl @bind-Value="@(Model.Year)" @bind-Value:event="ValueChanged" ID="textYear" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Graduation Year"
-								ValidationMessage="@(() => Model.Year)" />
-			</div>
-			<DialogFooter CancelMethod="CancelEducationDialog" @ref="FooterDialog" />
-		</EditForm>*@
 	</ChildContent>
 </SfDialog>

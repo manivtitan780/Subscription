@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-02-2024 15:12
+// Last Updated On:     12-02-2024 20:12
 // *****************************************/
 
 #endregion
@@ -891,7 +891,7 @@ public partial class Candidates
 	/// <param name="education">The edit context containing the candidate's education details.</param>
 	/// <returns>A task that represents the asynchronous operation.</returns>
 	/// <remarks>
-	///     This method sends a POST request to the "Candidates/SaveEducation" endpoint with the candidate's education details.
+	///     This method sends a POST request to the "Candidate/SaveEducation" endpoint with the candidate's education details.
 	///     The user ID of the logged-in user or "JOLLY" (if no user is logged in) and the candidate's ID are added as query
 	///     parameters to the request.
 	///     If the response is not null, the education details from the response are deserialized and stored in the
@@ -906,8 +906,8 @@ public partial class Candidates
 																															{"candidateID", _target.ID.ToString()},
 																															{"user", User}
 																														};
-																			   Dictionary<string, object> _response =
-																				   await General.PostRest("Candidates/SaveEducation", _parameters, _candidateEducation);
+																			   Dictionary<string, object> _response = await General.PostRest("Candidate/SaveEducation", _parameters,
+																																			 _candidateEducation);
 																			   if (_response == null)
 																			   {
 																				   return;
