@@ -8,7 +8,7 @@
 // File Name:           EditEducationDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-02-2024 14:12
-// Last Updated On:     12-02-2024 15:12
+// Last Updated On:     12-03-2024 15:12
 // *****************************************/
 
 #endregion
@@ -27,6 +27,8 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditEducationDialog
 {
+    private readonly CandidateEducationValidator _candidateEducationValidator = new();
+
     private readonly Dictionary<string, object> _textBoxAttributes = new()
                                                                      {
                                                                          {"MaxLength", "100"},
@@ -83,22 +85,6 @@ public partial class EditEducationDialog
 	///     It is also used to perform form validation when the dialog is opened.
 	/// </remarks>
 	private SfDataForm EditEducationForm
-    {
-        get;
-        set;
-    }
-
-	/// <summary>
-	///     Gets or sets the footer dialog of the EditEducationDialog.
-	/// </summary>
-	/// <value>
-	///     The footer dialog of type <see cref="DialogFooter" /> which contains the Cancel and Save buttons.
-	/// </value>
-	/// <remarks>
-	///     This property is used to manage the footer of the dialog, which includes the Cancel and Save buttons.
-	///     It is bound to the DialogFooter component in the Razor markup.
-	/// </remarks>
-	private DialogFooter FooterDialog
     {
         get;
         set;
@@ -217,12 +203,12 @@ public partial class EditEducationDialog
 	/// </remarks>
 	/// <returns>A task that represents the asynchronous operation.</returns>
 	private async Task SaveEducationDialog(EditContext editContext)
-	{
-		await General.DisplaySpinner(Spinner);
-		await Save.InvokeAsync(editContext);
-		await Dialog.HideAsync();
-		await General.DisplaySpinner(Spinner, false);
-	}
+    {
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
 
 	/// <summary>
 	///     Asynchronously shows the dialog for editing the education details of a candidate.

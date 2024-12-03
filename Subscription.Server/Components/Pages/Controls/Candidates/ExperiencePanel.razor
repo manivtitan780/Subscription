@@ -15,7 +15,7 @@
 		<GridColumns>
 			<GridColumn Field="@nameof(CandidateExperience.Employer)" HeaderText="Degree" Width="20%"/>
 			<GridColumn Field="@nameof(CandidateExperience.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false"/>
-			<GridColumn HeaderText="Duration" Width="10%">
+			<GridColumn HeaderText="Duration" Width="12%">
 				<Template Context="aCon">
 					@{
 						if (aCon is CandidateExperience _con)
@@ -27,7 +27,7 @@
 			</GridColumn>
 			<GridColumn Field="@nameof(CandidateExperience.Location)" HeaderText="Location" Width="30%"/>
 			<GridColumn Field="@nameof(CandidateExperience.Title)" HeaderText="Title" Width="15%"/>
-			<GridColumn Field="@nameof(CandidateExperience.UpdatedBy)" HeaderText="Updated By" Width="15%"/>
+			<GridColumn Field="@nameof(CandidateExperience.UpdatedBy)" HeaderText="Updated By" Width="13%"/>
 			<GridColumn Width="10%">
 				<Template Context="bCon">
 					@{

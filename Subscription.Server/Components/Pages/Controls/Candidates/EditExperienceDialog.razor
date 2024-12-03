@@ -1,0 +1,85 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Experience" Height="685px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="experienceEditForm" OnValidSubmit="SaveExperienceDialog" @ref="EditExperienceForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Experience</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelExperienceDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateExperienceValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Experience Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Employer)" LabelText="Employer:" ID="textEmployer">
+						<Template>
+							<label class="e-form-label" for="textEmployer">Employer:</label>
+							<SfTextBox @bind-Value="Model.Employer" HtmlAttributes="_textBoxAttributes" ID="textEmployer" Placeholder="Employer Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Description)" LabelText="Description:" ID="textDescription">
+						<Template>
+							<label class="e-form-label" for="textDescription">Description:</label>
+							<SfTextBox @bind-Value="Model.Description" HtmlAttributes="_textBoxAttributesBig" ID="textDescription" Placeholder="Description" Multiline="true"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Location)" LabelText="Location:" ID="textLocation">
+						<Template>
+							<label class="e-form-label" for="textLocation">Location:</label>
+							<SfTextBox @bind-Value="Model.Location" HtmlAttributes="_textBoxAttributes" ID="textLocation" Placeholder="Location"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)" LabelText="Job Title:" ID="textTitle">
+						<Template>
+							<label class="e-form-label" for="textTitle">Job Title:</label>
+							<SfTextBox @bind-Value="Model.Title" HtmlAttributes="_textBoxAttributes" ID="textTitle" Placeholder="Job Title"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Start)" LabelText="Experience Start Date:" ID="textStart">
+						<Template>
+							<label class="e-form-label" for="textStart">Experience Start Date:</label>
+							<SfTextBox @bind-Value="Model.Start" HtmlAttributes="_textBoxAttributes" ID="textStart" Placeholder="Experience Start Date"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.End)" LabelText="Experience Ending Date:" ID="textEnd">
+						<Template>
+							<label class="e-form-label" for="textEnd">Experience Ending Date:</label>
+							<SfTextBox @bind-Value="Model.End" HtmlAttributes="_textBoxAttributes" ID="textEnd" Placeholder="Experience Ending Date"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>
+
+@*<SfDialog Header="Edit Experience" Height="619px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center" />
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<EditForm Model="Model" OnValidSubmit="SaveExperienceDialog" @ref="EditExperienceForm">
+			$1$ <DataAnnotationsValidator /> #1#
+			<FluentValidationValidator></FluentValidationValidator>
+			<div class="divContainerTable">
+				<TextBoxControl @bind-Value="@(Model.Employer)" @bind-Value:event="ValueChanged" ID="textEmployer" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Employer Name"
+								ValidationMessage="@(() => Model.Employer)" />
+				<TextBoxControl @bind-Value="@(Model.Description)" @bind-Value:event="ValueChanged" ID="textDescription" MaxLength="1000" MinLength="1" Multiline="true" Placeholder="Description"
+								ValidationMessage="@(() => Model.Description)" />
+				<TextBoxControl @bind-Value="@(Model.Location)" @bind-Value:event="ValueChanged" ID="textLocation" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Location"
+								ValidationMessage="@(() => Model.Location)" />
+				<TextBoxControl @bind-Value="@(Model.Title)" @bind-Value:event="ValueChanged" ID="textTitle" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Job Title"
+								ValidationMessage="@(() => Model.Title)" />
+				<TextBoxControl @bind-Value="@(Model.Start)" @bind-Value:event="ValueChanged" ID="textStart" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Experience Start Date"
+								ValidationMessage="@(() => Model.Start)" />
+				<TextBoxControl @bind-Value="@(Model.End)" @bind-Value:event="ValueChanged" ID="textEnd" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Experience Ending Date"
+								ValidationMessage="@(() => Model.End)" />
+			</div>
+			<DialogFooter CancelMethod="CancelExperienceDialog" @ref="FooterDialog" />
+		</EditForm>
+	</ChildContent>
+</SfDialog>*@

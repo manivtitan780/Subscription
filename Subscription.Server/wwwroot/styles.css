@@ -363,6 +363,7 @@ body, form, html {
 
 .dialogPopup {
     border-radius: 5px;
+    margin-right: 7px;
 }
 
 .dialogPopup .e-dlg-header-content {
