@@ -31,7 +31,7 @@
 			<GridColumn Width="10%">
 				<Template Context="bCon">
 					@{
-						if (bCon is CandidateEducation _con)
+						if (bCon is CandidateEducation _con && _con.UpdatedBy == UserName && !IsRequisition && EditRights)
 						{
 							<div class="buttonContain">
 								<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditEducationDialog(_con.ID)"/>

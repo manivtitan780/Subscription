@@ -8,7 +8,7 @@
 // File Name:           CandidateEducationValidator.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-02-2024 19:12
-// Last Updated On:     12-02-2024 19:12
+// Last Updated On:     12-04-2024 20:12
 // *****************************************/
 
 #endregion
@@ -33,7 +33,10 @@ public class CandidateEducationValidator : AbstractValidator<CandidateEducation>
     /// </remarks>
     public CandidateEducationValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x.College).NotEmpty().WithMessage("School/College/Institution is required.");
+
         RuleFor(x => x.Degree).NotEmpty().WithMessage("Degree/Diploma/Course Name is required.");
     }
 }

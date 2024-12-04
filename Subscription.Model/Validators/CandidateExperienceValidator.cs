@@ -8,7 +8,7 @@
 // File Name:           CandidateExperienceValidator.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-02-2024 20:12
-// Last Updated On:     12-02-2024 20:12
+// Last Updated On:     12-04-2024 20:12
 // *****************************************/
 
 #endregion
@@ -34,6 +34,8 @@ public class CandidateExperienceValidator : AbstractValidator<CandidateExperienc
     /// </remarks>
     public CandidateExperienceValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x.Employer).NotEmpty().WithMessage("Employer is required.");
 
         RuleFor(x => x.Location).NotEmpty().WithMessage("Location is required.");

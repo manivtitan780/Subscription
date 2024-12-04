@@ -192,8 +192,8 @@
 											<TabHeader Text="Notes" />
 										</ChildContent>
 										<ContentTemplate>
-											@* <notespanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="UserRights.EditCandidate" IsRequisition="@(RequisitionID > 0)"
-													Model="@_candidateNotesObject" @ref="PanelNotes" UserName="@User" /> *@
+											 <NotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)"
+													Model="@_candidateNotesObject" @ref="NotesPanel" UserName="@User" /> 
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>

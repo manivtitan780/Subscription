@@ -206,6 +206,12 @@ public partial class Candidates
         get;
         set;
     }
+    
+   public EditContext EditConNotes
+    {
+        get;
+        set;
+    }
 
     public EditContext EditConSkill
     {
@@ -412,6 +418,12 @@ public partial class Candidates
         set;
     } = new();
 
+    private CandidateNotes SelectedNotes
+    {
+        get;
+        set;
+    } = new();
+
     /// <summary>
     ///     Gets or sets the selected skill for the candidate.
     /// </summary>
@@ -472,6 +484,12 @@ public partial class Candidates
     ///     It is retrieved from the user's claims during the initialization of the component.
     /// </remarks>
     private string User
+    {
+        get;
+        set;
+    }
+
+    private NotesPanel NotesPanel
     {
         get;
         set;
@@ -579,6 +597,19 @@ public partial class Candidates
                                                                }
 
                                                                _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
+                                                           });
+    
+    private Task DeleteNotes(int id) => ExecuteMethod(async () =>
+                                                           {
+                                                               Dictionary<string, string> _parameters = CreateParameters(id);
+                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteNotes", _parameters);
+
+                                                               if (_response == null)
+                                                               {
+                                                                   return;
+                                                               }
+
+                                                               _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
                                                            });
 
     /// <summary>
@@ -766,6 +797,29 @@ public partial class Candidates
 
                                                              EditConExperience = new(SelectedExperience);
                                                              await CandidateExperienceDialog.ShowDialog();
+                                                         });
+
+    private Task EditNotes(int id) => ExecuteMethod(async () =>
+                                                         {
+                                                             if (id == 0)
+                                                             {
+                                                                 if (SelectedNotes == null)
+                                                                 {
+                                                                     SelectedNotes = new();
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     SelectedNotes.Clear();
+                                                                 }
+                                                             }
+                                                             else
+                                                             {
+                                                                 SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
+                                                             }
+
+                                                             EditConNotes = new(SelectedNotes);
+                                                             await Task.CompletedTask;
+                                                             //await CandidateNotesDialog.ShowDialog();
                                                          });
 
     /// <summary>

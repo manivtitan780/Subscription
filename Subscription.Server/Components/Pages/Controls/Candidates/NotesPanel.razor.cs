@@ -5,10 +5,10 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           ExperiencePanel.razor.cs
+// File Name:           NotesPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-02-2024 20:12
-// Last Updated On:     12-02-2024 21:12
+// Created On:          12-04-2024 20:12
+// Last Updated On:     12-04-2024 20:12
 // *****************************************/
 
 #endregion
@@ -16,31 +16,28 @@
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 /// <summary>
-///     Represents a user interface component that provides functionality for managing a candidate's experiences.
+///     The NotesPanel class is a partial class that represents a panel for displaying and managing notes related to
+///     candidates.
 /// </summary>
 /// <remarks>
-///     The ExperiencePanel class is a Blazor component that provides the following functionalities:
-///     - Deleting an experience entry (via the DeleteExperience event).
-///     - Editing an experience entry (via the EditExperience event).
-///     - Displaying a list of experience entries in a grid (via the GridExperience property).
-///     - Determining if the current user has rights to edit the experience entries (via the EditRights property).
-///     - Determining if the current context is a requisition (via the IsRequisition property).
-///     - Providing a model for the experience entries (via the Model property).
-///     - Customizing the row height in the grid (via the RowHeight property).
-///     - Keeping track of the currently selected row in the grid (via the SelectedRow property).
+///     The NotesPanel class includes properties for managing the display and interaction with notes, such as deletion and
+///     editing of notes,
+///     user rights for editing, and the display grid for the notes. It also includes methods for handling the deletion and
+///     editing of notes,
+///     and the selection of a row in the grid.
 /// </remarks>
-public partial class ExperiencePanel
+public partial class NotesPanel
 {
     private int _selectedID;
 
 	/// <summary>
-	///     Gets or sets the event callback that is triggered when an experience entry is to be deleted.
+	///     Gets or sets the event callback that is triggered when a note entry is to be deleted.
 	/// </summary>
 	/// <value>
-	///     The event callback that takes an integer parameter representing the ID of the experience entry to be deleted.
+	///     The event callback that takes an integer parameter representing the ID of the note entry to be deleted.
 	/// </value>
 	[Parameter]
-    public EventCallback<int> DeleteExperience
+    public EventCallback<int> DeleteNotes
     {
         get;
         set;
@@ -61,33 +58,33 @@ public partial class ExperiencePanel
 	///     confirm actions before proceeding.
 	/// </remarks>
 	[Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+	private SfDialogService DialogService
+	{
+		get;
+		set;
+	}
 
 	/// <summary>
-	///     Gets or sets the event callback that is triggered when an experience entry is to be edited.
+	///     Gets or sets the event callback that is triggered when a note entry is to be edited.
 	/// </summary>
 	/// <value>
-	///     The event callback that takes an integer parameter representing the ID of the experience entry to be edited.
+	///     The event callback that takes an integer parameter representing the ID of the note entry to be edited.
 	/// </value>
 	[Parameter]
-    public EventCallback<int> EditExperience
+    public EventCallback<int> EditNotes
     {
         get;
         set;
     }
 
 	/// <summary>
-	///     Gets or sets a value indicating whether the current user has rights to edit the experience entries.
+	///     Gets or sets a value indicating whether the current user has rights to edit the note entries.
 	/// </summary>
 	/// <value>
 	///     true if the current user has edit rights; otherwise, false. The default is true.
 	/// </value>
 	/// <remarks>
-	///     This property is a boolean flag that determines if the current user has the rights to edit the experience entries.
+	///     This property is a boolean flag that determines if the current user has the rights to edit the note entries.
 	///     If EditRights is true, the user can edit the entries; if EditRights is false, the user cannot. The default value is
 	///     true, meaning that, by default, users have the rights to edit the entries.
 	/// </remarks>
@@ -99,19 +96,19 @@ public partial class ExperiencePanel
     } = true;
 
 	/// <summary>
-	///     Gets or sets the Syncfusion Blazor Grid component that displays the list of a candidate's experiences.
+	///     Gets or sets the Syncfusion Blazor Grid component that displays the list of a candidate's notes.
 	/// </summary>
 	/// <value>
-	///     The Syncfusion Blazor Grid component that displays the candidate's experiences.
+	///     The Syncfusion Blazor Grid component that displays the candidate's notes.
 	/// </value>
 	/// <remarks>
 	///     The GridExperience property is a Syncfusion Blazor Grid component that displays a list of a candidate's
-	///     experiences.
-	///     Each row in the grid represents an experience entry of the candidate.
+	///     notes.
+	///     Each row in the grid represents a note entry of the candidate.
 	///     The grid provides functionalities such as sorting, filtering, and paging.
 	///     The grid is bound to the Model property, which provides the data source for the grid.
 	/// </remarks>
-	private SfGrid<CandidateExperience> GridExperience
+	private SfGrid<CandidateNotes> GridNotes
     {
         get;
         set;
@@ -136,31 +133,31 @@ public partial class ExperiencePanel
     }
 
 	/// <summary>
-	///     Gets or sets the model for the experience entries.
+	///     Gets or sets the model for the note entries.
 	/// </summary>
 	/// <value>
-	///     A list of CandidateExperience objects representing the experience entries of a candidate.
+	///     A list of CandidateNotes objects representing the note entries of a candidate.
 	/// </value>
 	/// <remarks>
-	///     The Model property is a list of CandidateExperience objects that represent the experience entries of a candidate.
-	///     These entries are displayed in a grid in the ExperiencePanel.
-	///     Each entry includes details about a particular experience of the candidate.
+	///     The Model property is a list of CandidateNotes objects that represent the note entries of a candidate.
+	///     These entries are displayed in a grid in the NotesPanel.
+	///     Each entry includes details about a particular note of the candidate.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateExperience> Model
+    public List<CandidateNotes> Model
     {
         get;
         set;
     }
 
 	/// <summary>
-	///     Gets or sets the height of each row in the grid displaying the experience entries.
+	///     Gets or sets the height of each row in the grid displaying the note entries.
 	/// </summary>
 	/// <value>
 	///     An integer representing the height of each row in pixels. The default is 38.
 	/// </value>
 	/// <remarks>
-	///     The RowHeight property determines the height of each row in the grid that displays the experience entries of a
+	///     The RowHeight property determines the height of each row in the grid that displays the note entries of a
 	///     candidate.
 	///     This property allows for customization of the grid's appearance and can be adjusted to accommodate the amount of
 	///     information in each row.
@@ -176,15 +173,15 @@ public partial class ExperiencePanel
 	///     Gets or sets the currently selected row in the grid.
 	/// </summary>
 	/// <value>
-	///     A CandidateExperience object representing the currently selected experience entry in the grid.
+	///     A CandidateNotes object representing the currently selected note entry in the grid.
 	/// </value>
 	/// <remarks>
 	///     The SelectedRow property is used to keep track of the currently selected row in the grid that displays the
-	///     experience entries of a candidate.
+	///     note entries of a candidate.
 	///     This property is updated whenever a row is selected in the grid, and it is used to perform operations on the
-	///     selected experience entry, such as editing or deleting the entry.
+	///     selected note entry, such as editing or deleting the entry.
 	/// </remarks>
-	internal CandidateExperience SelectedRow
+	internal CandidateNotes SelectedRow
     {
         get;
         private set;
@@ -204,58 +201,58 @@ public partial class ExperiencePanel
     }
 
 	/// <summary>
-	///     Asynchronously deletes the experience detail of a candidate.
+	///     Asynchronously deletes the note detail of a candidate.
 	/// </summary>
-	/// <param name="id">The ID of the experience detail to be deleted.</param>
+	/// <param name="id">The ID of the note detail to be deleted.</param>
 	/// <returns>A Task representing the asynchronous operation.</returns>
 	/// <remarks>
 	///     This method sets the selected ID to the provided ID, gets the index of the row in the grid corresponding to the ID,
 	///     selects the row in the grid, and shows a confirmation dialog.
 	/// </remarks>
-	private async Task DeleteExperienceMethod(int id)
+	private async Task DeleteNotesMethod(int id)
     {
         _selectedID = id;
-        int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
-        await GridExperience.SelectRowAsync(_index);
-		if (await DialogService.ConfirmAsync(null, "Delete Experience", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Experience</i>?")))
+        int _index = await GridNotes.GetRowIndexByPrimaryKeyAsync(id);
+        await GridNotes.SelectRowAsync(_index);
+		if (await DialogService.ConfirmAsync(null, "Delete Notes", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Notes</i>?")))
 		{
-			await DeleteExperience.InvokeAsync(_selectedID);
+			await DeleteNotes.InvokeAsync(_selectedID);
 		}
     }
 
 	/// <summary>
-	///     Asynchronously opens the dialog for editing the experience details of a candidate.
+	///     Asynchronously opens the dialog for editing the note details of a candidate.
 	/// </summary>
-	/// <param name="id">The ID of the experience detail to be edited.</param>
+	/// <param name="id">The ID of the note detail to be edited.</param>
 	/// <returns>A Task representing the asynchronous operation.</returns>
 	/// <remarks>
 	///     This method sets the selected ID to the provided ID, gets the index of the row in the grid corresponding to the
 	///     provided ID, selects the row in the grid, and invokes the EditExperience event callback.
 	/// </remarks>
-	private async Task EditExperienceDialog(int id)
+	private async Task EditNotesDialog(int id)
     {
-        _selectedID = id;
-        int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
-        await GridExperience.SelectRowAsync(_index);
-        await EditExperience.InvokeAsync(id);
+		_selectedID = id;
+        int _index = await GridNotes.GetRowIndexByPrimaryKeyAsync(id);
+        await GridNotes.SelectRowAsync(_index);
+        await EditNotes.InvokeAsync(id);
     }
 
 	/// <summary>
-	///     Handles the row selection event in the experience details grid.
+	///     Handles the row selection event in the note details grid.
 	/// </summary>
-	/// <param name="experience">
+	/// <param name="note">
 	///     The event arguments containing the selected row data of type
-	///     <see cref="CandidateExperience" />.
+	///     <see cref="CandidateNotes" />.
 	/// </param>
 	/// <remarks>
-	///     This method is triggered when a row is selected in the experience details grid.
+	///     This method is triggered when a row is selected in the note details grid.
 	///     It sets the SelectedRow property to the data of the selected row.
 	/// </remarks>
-	private void RowSelected(RowSelectEventArgs<CandidateExperience> experience)
+	private void RowSelected(RowSelectEventArgs<CandidateNotes> note)
     {
-        if (experience != null)
+        if (note != null)
         {
-            SelectedRow = experience.Data;
+            SelectedRow = note.Data;
         }
     }
 }
