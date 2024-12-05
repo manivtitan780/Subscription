@@ -3,20 +3,17 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           EditNotesDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-23-2023 19:53
-// Last Updated On:     12-28-2023 16:11
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          12-04-2024 20:12
+// Last Updated On:     12-04-2024 21:12
 // *****************************************/
 
 #endregion
 
-using Profsvc_AppTrack.Client.Code;
-using Profsvc_AppTrack.Client.Pages.Admin.Controls;
-
-namespace Profsvc_AppTrack.Client.Pages.Controls.Candidates;
+namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 /// <summary>
 ///     Represents a dialog for editing notes related to a candidate.
@@ -27,6 +24,14 @@ namespace Profsvc_AppTrack.Client.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditNotesDialog
 {
+    private readonly CandidateNotesValidator _candidateNotesValidator = new();
+
+    private readonly Dictionary<string, object> _textBoxAttributes = new()
+                                                                     {
+                                                                         {"MaxLength", "1000"},
+                                                                         {"MinLength", "1"}
+                                                                     };
+
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the cancel action is triggered in the dialog.
 	/// </summary>
@@ -35,11 +40,17 @@ public partial class EditNotesDialog
 	///     It is invoked when the user clicks on the cancel button in the dialog.
 	/// </remarks>
 	[Parameter]
-	public EventCallback<MouseEventArgs> Cancel
-	{
-		get;
-		set;
-	}
+    public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private EditContext Context
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion Blazor Dialog component used in the EditNotesDialog.
@@ -49,10 +60,10 @@ public partial class EditNotesDialog
 	///     It is shown or hidden using the ShowDialog and CallCancelMethod methods respectively.
 	/// </remarks>
 	private SfDialog Dialog
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the form used for editing a candidate's or lead's note.
@@ -61,11 +72,11 @@ public partial class EditNotesDialog
 	///     This form is used within the EditNotesDialog to capture the details of a candidate's or lead's note.
 	///     It includes fields for the employer, description, location, title, and start and end dates of the experience.
 	/// </remarks>
-	private EditForm EditNotesForm
-	{
-		get;
-		set;
-	}
+	private SfDataForm EditNotesForm
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the entity type for which the notes are being edited.
@@ -78,24 +89,24 @@ public partial class EditNotesDialog
 	///     It is set to the type of entity (e.g., "Candidate") for which the notes are being edited.
 	/// </remarks>
 	[Parameter]
-	public string Entity
-	{
-		get;
-		set;
-	} = "Candidate";
+    public string Entity
+    {
+        get;
+        set;
+    } = "Candidate";
 
-	/// <summary>
-	///     Gets or sets the footer dialog of the EditNotesDialog.
-	/// </summary>
-	/// <remarks>
-	///     This property represents the footer dialog of the EditNotesDialog, which contains the Save and Cancel buttons.
-	///     The footer dialog is a part of the DialogFooter class, which manages the Cancel and Save buttons in the dialog.
-	/// </remarks>
-	private DialogFooter FooterDialog
-	{
-		get;
-		set;
-	}
+    /*/// <summary>
+    ///     Gets or sets the footer dialog of the EditNotesDialog.
+    /// </summary>
+    /// <remarks>
+    ///     This property represents the footer dialog of the EditNotesDialog, which contains the Save and Cancel buttons.
+    ///     The footer dialog is a part of the DialogFooter class, which manages the Cancel and Save buttons in the dialog.
+    /// </remarks>
+    private DialogFooter FooterDialog
+    {
+        get;
+        set;
+    }*/
 
 	/// <summary>
 	///     Gets or sets the notes that is being edited in the dialog.
@@ -108,11 +119,11 @@ public partial class EditNotesDialog
 	///     are reflected in the form and vice versa.
 	/// </remarks>
 	[Parameter]
-	public CandidateNotes Model
-	{
-		get;
-		set;
-	}
+    public CandidateNotes Model
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the save action is triggered in the dialog.
@@ -122,11 +133,11 @@ public partial class EditNotesDialog
 	///     It is invoked when the user clicks on the save button in the dialog.
 	/// </remarks>
 	[Parameter]
-	public EventCallback<EditContext> Save
-	{
-		get;
-		set;
-	}
+    public EventCallback<EditContext> Save
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion spinner control used in the dialog.
@@ -136,10 +147,10 @@ public partial class EditNotesDialog
 	///     The visibility of the spinner is controlled programmatically based on the state of the operation.
 	/// </remarks>
 	private SfSpinner Spinner
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the title of the dialog.
@@ -151,11 +162,11 @@ public partial class EditNotesDialog
 	///     This property is used to set the header of the dialog. It is displayed at the top of the dialog when it is opened.
 	/// </remarks>
 	[Parameter]
-	public string Title
-	{
-		get;
-		set;
-	}
+    public string Title
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Asynchronously cancels the operation of editing a candidate's or lead's note.
@@ -167,7 +178,22 @@ public partial class EditNotesDialog
 	///     and enable the dialog buttons.
 	/// </remarks>
 	/// <returns>A task that represents the asynchronous operation.</returns>
-	private async Task CancelNotesDialog(MouseEventArgs args) => await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+	private async Task CancelNotesDialog(MouseEventArgs args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
 
 	/// <summary>
 	///     Validates the form context when the dialog is opened.
@@ -177,7 +203,7 @@ public partial class EditNotesDialog
 	///     associated with the editing of a candidate's or lead's note. If the form context is not valid,
 	///     the form will not be submitted.
 	/// </remarks>
-	private void OpenDialog() => EditNotesForm.EditContext?.Validate();
+	private void OpenDialog() => Context.Validate();
 
 	/// <summary>
 	///     Asynchronously saves the changes made in the EditNotesDialog.
@@ -189,7 +215,13 @@ public partial class EditNotesDialog
 	///     dialog, and save event callback.
 	///     It is responsible for executing the save operation when the user confirms the changes in the EditNotesDialog.
 	/// </remarks>
-	private async Task SaveNotesDialog(EditContext editContext) => await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+	private async Task SaveNotesDialog(EditContext editContext)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
 
 	/// <summary>
 	///     Asynchronously shows the dialog for editing a candidate's or lead's note.

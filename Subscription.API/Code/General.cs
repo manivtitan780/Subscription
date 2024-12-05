@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-20-2024 20:04
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     12-05-2024 20:12
 // *****************************************/
 
 #endregion
@@ -38,55 +38,6 @@ public static class General
     {
         RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
         bool _keyExists = await _service.CheckKeyExists(CacheObjects.Companies.ToString());
-        /*using (SqlConnection connection = new(Start.ConnectionString))
-        {
-            connection.Open();
-
-            // Create a command to insert the hash into the database.
-            using (SqlCommand command = new("UPDATE Users SET Salt = @hash", connection))
-            {
-                // Add the hash as a parameter.
-                command.Parameters.Add("@hash", SqlDbType.Binary, 64).Value = SHA512PasswordHash("#@@^$^$@(((res$");
-
-                // Execute the command.
-                command.ExecuteNonQuery();
-            }
-
-            using (SqlCommand command = new("UPDATE Users SET Password = @Password", connection))
-            {
-                // Add the hash as a parameter.
-                command.Parameters.Add("@Password", SqlDbType.Binary, 64).Value = ComputeHashWithSalt("Password$100", SHA512PasswordHash("#@@^$^$@(((res$"));
-
-                // Execute the command.
-                command.ExecuteNonQuery();
-            }
-        }*/
-        /*
-         *
-         *		//bool _isState = false;//!searchModel.CityZip;
-           //string _zips = "";
-           //int _elapsedTime = 0;
-           //if (!_isState)
-           //{
-           //	Stopwatch stopwatch = Stopwatch.StartNew(); // Start timing
-           //	using RestClient _client = new($"https://zip-api.eu/api/v1/radius/US-19067/100/mi");
-           //	//using RestClient _client = new($"https://zip-api.eu/api/v1/radius/US-{searchModel.CityName}/{searchModel.Proximity}/{(searchModel.ProximityUnit == 0 ? "km" : "mi")}");
-
-           //	RestRequest _request = new();
-           //	RestResponse _response = await _client.ExecuteAsync(_request);
-
-           //	if (_response.IsSuccessful)
-           //	{
-           //		List<ZipApiResponse> items = JsonConvert.DeserializeObject<List<ZipApiResponse>>(_	response.Content ?? string.Empty);
-           //		List<string> postalCodes = items.Select(i => i.postal_code).ToList();
-           //		_zips = string.Join(",", postalCodes);
-           //	}
-
-           //	stopwatch.Stop(); // Stop timing
-           //	_elapsedTime = stopwatch.Elapsed.Milliseconds;
-           //}
-           //Console.WriteLine($"Elapsed time: {_elapsedTime}");
-         */
 
         if (!_keyExists)
         {
@@ -183,7 +134,9 @@ public static class General
                                                                          CreateOrEditEditRequisition = role.GetBoolean(8),
                                                                          ViewOnlyMyCandidates = role.GetBoolean(9),
                                                                          ViewAllCandidates = role.GetBoolean(10),
-                                                                         ManageSubmittedCandidates = role.GetBoolean(11)
+                                                                         ManageSubmittedCandidates = role.GetBoolean(11),
+                                                                         DownloadOriginal = role.GetBoolean(12),
+                                                                         DownloadFormatted = role.GetBoolean(13)
                                                                      }).ToListAsync();
 
             await _reader.NextResultAsync();
@@ -287,17 +240,17 @@ public static class General
                                                             }).ToListAsync();
     }
 
-	/// <summary>
-	///     Computes the SHA-512 hash of the input text.
-	/// </summary>
-	/// <param name="inputText">The text to be hashed.</param>
-	/// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-	public static byte[] SHA512PasswordHash(string inputText) => SHA512.Create().ComputeHash(new UTF8Encoding().GetBytes(inputText));
+    /// <summary>
+    ///     Computes the SHA-512 hash of the input text.
+    /// </summary>
+    /// <param name="inputText">The text to be hashed.</param>
+    /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
+    public static byte[] SHA512PasswordHash(string inputText) => SHA512.Create().ComputeHash(new UTF8Encoding().GetBytes(inputText));
 
-	/// <summary>
-	///     Computes the SHA-512 hash of the input text.
-	/// </summary>
-	/// <param name="inputText">The text to be hashed.</param>
-	/// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-	public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.Create().ComputeHash(inputText);
+    /// <summary>
+    ///     Computes the SHA-512 hash of the input text.
+    /// </summary>
+    /// <param name="inputText">The text to be hashed.</param>
+    /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
+    public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.Create().ComputeHash(inputText);
 }

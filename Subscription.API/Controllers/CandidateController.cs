@@ -476,6 +476,72 @@ public class CandidateController : ControllerBase
                    }
                };
     }
+	/// <summary>
+	///     Saves the notes of a candidate in the database.
+	/// </summary>
+	/// <param name="candidateNote">An instance of <see cref="CandidateNotes" /> containing the note details.</param>
+	/// <param name="candidateID">The ID of the candidate for whom the note is to be saved.</param>
+	/// <param name="user">The user who is performing the save operation.</param>
+	/// <returns>A dictionary containing the updated list of notes for the candidate.</returns>
+	/// <remarks>
+	///     This method connects to the database, executes a stored procedure to save the note,
+	///     and returns a dictionary containing the updated list of notes.
+	///     If the operation is successful, the dictionary will contain a list of notes for the candidate.
+	///     If the candidateNote parameter is null, an empty list of notes is returned.
+	/// </remarks>
+	[HttpPost]
+	public async Task<Dictionary<string, object>> SaveNotes(CandidateNotes candidateNote, int candidateID, string user)
+	{
+		await Task.Delay(1);
+		List<CandidateNotes> _notes = [];
+		if (candidateNote == null)
+		{
+			return new()
+				   {
+					   {
+						   "Notes", _notes
+					   }
+				   };
+		}
+
+		await using SqlConnection _connection = new(Start.ConnectionString);
+		await _connection.OpenAsync();
+		try
+		{
+			await using SqlCommand _command = new("SaveNote", _connection);
+			_command.CommandType = CommandType.StoredProcedure;
+			_command.Int("Id", candidateNote.ID);
+			_command.Int("CandidateID", candidateID);
+			_command.Varchar("Note", -1, candidateNote.Notes);
+			_command.Bit("IsPrimary", false);
+			_command.Varchar("EntityType", 5, "CND");
+			_command.Varchar("User", 10, user);
+			await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+			if (_reader.HasRows)
+			{
+				while (_reader.Read())
+				{
+					_notes.Add(new(_reader.GetInt32(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetString(3)));
+				}
+			}
+
+			await _reader.CloseAsync();
+		}
+		catch
+		{
+			//
+		}
+
+		await _connection.CloseAsync();
+
+		return new()
+			   {
+				   {
+					   "Notes", _notes
+				   }
+			   };
+	}
+
 
 	/// <summary>
 	///     Saves a candidate's skill to the database.

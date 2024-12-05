@@ -46,6 +46,7 @@ global using Syncfusion.Blazor.Grids;
 global using Syncfusion.Blazor.Navigations;
 global using Syncfusion.Blazor.Popups;
 global using Syncfusion.Blazor.Spinner;
+global using Syncfusion.Blazor.RichTextEditor;
 global using Syncfusion.Licensing;
 
 #endregion

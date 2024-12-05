@@ -14,9 +14,9 @@
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="Context" ID="companyEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
+				<SfButton CssClass="e-primary" type="submit">Save Skill</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelSkillDialog" type="button">Cancel</SfButton>
 			</FormButtons>
 			<FormValidator>

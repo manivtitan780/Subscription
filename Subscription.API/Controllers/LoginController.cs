@@ -93,47 +93,57 @@ public class LoginController(IConfiguration configuration) : ControllerBase
 
             if (_userRole is {CreateOrEditCompany: true})
             {
-                _permissions.Add("CreateOrEditCompany");
+                _permissions.Add(nameof(_userRole.CreateOrEditCompany));
             }
 
             if (_userRole is {CreateOrEditCandidate: true})
             {
-                _permissions.Add("CreateOrEditCandidate");
+                _permissions.Add(nameof(_userRole.CreateOrEditCandidate));
             }
 
             if (_userRole is {ViewAllCompanies: true})
             {
-                _permissions.Add("ViewAllCompanies");
+                _permissions.Add(nameof(_userRole.ViewAllCompanies));
             }
 
             if (_userRole is {ViewMyCompanyProfile: true})
             {
-                _permissions.Add("ViewMyCompanyProfile");
+                _permissions.Add(nameof(_userRole.ViewMyCompanyProfile));
             }
 
             if (_userRole is {EditMyCompanyProfile: true})
             {
-                _permissions.Add("EditMyCompanyProfile");
+                _permissions.Add(nameof(_userRole.EditMyCompanyProfile));
             }
 
             if (_userRole is {CreateOrEditEditRequisition: true})
             {
-                _permissions.Add("CreateOrEditEditRequisition");
+                _permissions.Add(nameof(_userRole.CreateOrEditEditRequisition));
             }
 
             if (_userRole is {ViewOnlyMyCandidates: true})
             {
-                _permissions.Add("ViewOnlyMyCandidates");
+                _permissions.Add(nameof(_userRole.ViewOnlyMyCandidates));
             }
 
             if (_userRole is {ViewAllCandidates: true})
             {
-                _permissions.Add("ViewAllCandidates");
+                _permissions.Add(nameof(_userRole.ViewAllCandidates));
             }
 
             if (_userRole is {ManageSubmittedCandidates: true})
             {
-                _permissions.Add("ManageSubmittedCandidates");
+                _permissions.Add(nameof(_userRole.ManageSubmittedCandidates));
+            }
+
+            if (_userRole is {DownloadOriginal: true})
+            {
+                _permissions.Add(nameof(_userRole.DownloadOriginal));
+            }
+
+            if (_userRole is {DownloadFormatted: true})
+            {
+                _permissions.Add(nameof(_userRole.DownloadFormatted));
             }
 
             return GenerateToken(userName, _permissions);

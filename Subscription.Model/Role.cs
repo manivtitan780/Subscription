@@ -175,6 +175,18 @@ public class Role
         set;
     }
 
+    public bool DownloadOriginal
+    {
+        get;
+        set;
+    }
+
+    public bool DownloadFormatted
+    {
+        get;
+        set;
+    }
+    
     /// <summary>
     ///     Resets all properties of the Role instance to their default values.
     /// </summary>
