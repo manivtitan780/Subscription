@@ -202,7 +202,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<div class="resumeContainerBox">
-												<SfRichTextEditor Height="300px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
+												<SfRichTextEditor Height="280px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
 													<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
@@ -223,7 +223,7 @@
 									</TabItem>
 									<TabItem>
 										<ChildContent>
-											<TabHeader Text="Attachment"/>
+											<TabHeader Text="Documents"/>
 										</ChildContent>
 										<ContentTemplate>
 											@* <downloadspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditCandidate" Model="@_candidateDocumentsObject" @ref="DownloadsPanel" /> *@

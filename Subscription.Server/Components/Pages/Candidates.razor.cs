@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-03-2024 15:12
+// Last Updated On:     12-05-2024 20:12
 // *****************************************/
 
 #endregion
@@ -38,6 +38,12 @@ public partial class Candidates
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
 
     private Candidate _target;
+
+    private readonly List<ToolbarItemModel> _tools1 =
+    [
+        new() {Name = "Original", TooltipText = "Show Original Resume"},
+        new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
+    ];
 
     /// <summary>
     ///     Represents the address of the candidate.
@@ -133,12 +139,6 @@ public partial class Candidates
         set;
     }
 
-    private EditNotesDialog CandidateNotesDialog
-    {
-        get;
-        set;
-    }
-
     /// <summary>
     ///     Represents the job options for the candidate.
     /// </summary>
@@ -147,6 +147,12 @@ public partial class Candidates
     ///     The job options are constructed from the candidate's details and the `_jobOptions` collection.
     /// </remarks>
     private MarkupString CandidateJobOptions
+    {
+        get;
+        set;
+    }
+
+    private EditNotesDialog CandidateNotesDialog
     {
         get;
         set;
@@ -201,6 +207,18 @@ public partial class Candidates
         set;
     }
 
+    private bool DownloadFormatted
+    {
+        get;
+        set;
+    }
+
+    private bool DownloadOriginal
+    {
+        get;
+        set;
+    }
+
     public EditContext EditConEducation
     {
         get;
@@ -212,8 +230,8 @@ public partial class Candidates
         get;
         set;
     }
-    
-   public EditContext EditConNotes
+
+    public EditContext EditConNotes
     {
         get;
         set;
@@ -232,6 +250,12 @@ public partial class Candidates
     }
 
     public ExperiencePanel ExperiencePanel
+    {
+        get;
+        set;
+    }
+
+    public bool FormattedExists
     {
         get;
         set;
@@ -351,6 +375,18 @@ public partial class Candidates
     /// </summary>
     [Inject]
     private NavigationManager NavManager
+    {
+        get;
+        set;
+    }
+
+    private NotesPanel NotesPanel
+    {
+        get;
+        set;
+    }
+
+    public bool OriginalExists
     {
         get;
         set;
@@ -495,24 +531,6 @@ public partial class Candidates
         set;
     }
 
-    private NotesPanel NotesPanel
-    {
-        get;
-        set;
-    }
-
-    public bool OriginalExists
-    {
-        get;
-        set;
-    }
-
-    public bool FormattedExists
-    {
-        get;
-        set;
-    }
-
     private static async Task AllAlphabets()
     {
         SearchModel.Name = "";
@@ -616,19 +634,19 @@ public partial class Candidates
 
                                                                _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
                                                            });
-    
+
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
-                                                           {
-                                                               Dictionary<string, string> _parameters = CreateParameters(id);
-                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteNotes", _parameters);
+                                                      {
+                                                          Dictionary<string, string> _parameters = CreateParameters(id);
+                                                          Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteNotes", _parameters);
 
-                                                               if (_response == null)
-                                                               {
-                                                                   return;
-                                                               }
+                                                          if (_response == null)
+                                                          {
+                                                              return;
+                                                          }
 
-                                                               _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
-                                                           });
+                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
+                                                      });
 
     /// <summary>
     ///     Asynchronously deletes a skill from a candidate's profile.
@@ -818,26 +836,26 @@ public partial class Candidates
                                                          });
 
     private Task EditNotes(int id) => ExecuteMethod(async () =>
-                                                         {
-                                                             if (id == 0)
-                                                             {
-                                                                 if (SelectedNotes == null)
-                                                                 {
-                                                                     SelectedNotes = new();
-                                                                 }
-                                                                 else
-                                                                 {
-                                                                     SelectedNotes.Clear();
-                                                                 }
-                                                             }
-                                                             else
-                                                             {
-                                                                 SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
-                                                             }
+                                                    {
+                                                        if (id == 0)
+                                                        {
+                                                            if (SelectedNotes == null)
+                                                            {
+                                                                SelectedNotes = new();
+                                                            }
+                                                            else
+                                                            {
+                                                                SelectedNotes.Clear();
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
+                                                        }
 
-                                                             EditConNotes = new(SelectedNotes);
-                                                             await CandidateNotesDialog.ShowDialog();
-                                                         });
+                                                        EditConNotes = new(SelectedNotes);
+                                                        await CandidateNotesDialog.ShowDialog();
+                                                    });
 
     /// <summary>
     ///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
@@ -885,6 +903,14 @@ public partial class Candidates
     ///     A task that represents the asynchronous operation.
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
+
+    /// <summary>
+    ///     Handles the click event on the Formatted button in the Candidate page.
+    ///     This method triggers the retrieval of the formatted resume of a candidate.
+    /// </summary>
+    /// <param name="arg">The mouse event arguments.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    private Task FormattedClick(MouseEventArgs arg) => GetResumeOnClick("Formatted");
 
     private async Task GetAlphabets(char alphabet)
     {
@@ -998,6 +1024,33 @@ public partial class Candidates
         RatingNote = _ratingNote.ToMarkupString();
     }
 
+    /// <summary>
+    ///     Handles the retrieval of a candidate's resume based on the specified resume type.
+    /// </summary>
+    /// <param name="resumeType">The type of the resume to retrieve. This can be "Original" or "Formatted".</param>
+    /// <returns>A Task representing the asynchronous operation of retrieving the resume.</returns>
+    /// <remarks>
+    ///     This method sends a GET request to the "Candidates/DownloadResume" endpoint with the candidate's ID and the resume
+    ///     type as query parameters.
+    ///     If the request is successful, it shows the retrieved resume in the DownloadsPanel.
+    /// </remarks>
+    private Task GetResumeOnClick(string resumeType) => ExecuteMethod(async () =>
+                                                                      {
+                                                                          /*Dictionary<string, string> _parameters = new()
+                                                                                                                   {
+                                                                                                                       {"candidateID", _target.ID.ToString()},
+                                                                                                                       {"resumeType", resumeType}
+                                                                                                                   };
+                                                                          DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadResume", _parameters);
+
+                                                                          if (_restResponse != null)
+                                                                          {
+                                                                              await DownloadsPanel.ShowResume(_restResponse.DocumentLocation, _target.ID, "Original Resume",
+                                                                                                              _restResponse.InternalFileName);
+                                                                          }*/
+                                                                          await Task.CompletedTask;
+                                                                      });
+
     private async Task GridPageChanging(GridPageChangingEventArgs page)
     {
         await ExecuteMethod(async () =>
@@ -1090,53 +1143,6 @@ public partial class Candidates
     private Task OriginalClick(MouseEventArgs arg) => GetResumeOnClick("Original");
 
     /// <summary>
-    ///     Handles the click event on the Formatted button in the Candidate page.
-    ///     This method triggers the retrieval of the formatted resume of a candidate.
-    /// </summary>
-    /// <param name="arg">The mouse event arguments.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    private Task FormattedClick(MouseEventArgs arg) => GetResumeOnClick("Formatted");
-    /// <summary>
-    ///     Handles the retrieval of a candidate's resume based on the specified resume type.
-    /// </summary>
-    /// <param name="resumeType">The type of the resume to retrieve. This can be "Original" or "Formatted".</param>
-    /// <returns>A Task representing the asynchronous operation of retrieving the resume.</returns>
-    /// <remarks>
-    ///     This method sends a GET request to the "Candidates/DownloadResume" endpoint with the candidate's ID and the resume
-    ///     type as query parameters.
-    ///     If the request is successful, it shows the retrieved resume in the DownloadsPanel.
-    /// </remarks>
-    private Task GetResumeOnClick(string resumeType) => ExecuteMethod(async () =>
-                                                                      {
-                                                                          /*Dictionary<string, string> _parameters = new()
-                                                                                                                   {
-                                                                                                                       {"candidateID", _target.ID.ToString()},
-                                                                                                                       {"resumeType", resumeType}
-                                                                                                                   };
-                                                                          DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadResume", _parameters);
-
-                                                                          if (_restResponse != null)
-                                                                          {
-                                                                              await DownloadsPanel.ShowResume(_restResponse.DocumentLocation, _target.ID, "Original Resume",
-                                                                                                              _restResponse.InternalFileName);
-                                                                          }*/
-                                                                          await Task.CompletedTask;
-                                                                      });
-
-
-    private bool DownloadFormatted
-    {
-        get;
-        set;
-    }
-
-    private bool DownloadOriginal
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Asynchronously saves the education details of a candidate.
     /// </summary>
     /// <param name="education">The edit context containing the candidate's education details.</param>
@@ -1200,30 +1206,23 @@ public partial class Candidates
                                                                          });
 
     private Task SaveNote(EditContext note) => ExecuteMethod(async () =>
-                                                                         {
-                                                                             if (note.Model is CandidateNotes _candidateNotes)
-                                                                             {
-                                                                                 Dictionary<string, string> _parameters = new()
-                                                                                                                          {
-                                                                                                                              {"candidateID", _target.ID.ToString()},
-                                                                                                                              {"user", User}
-                                                                                                                          };
-                                                                                 Dictionary<string, object> _response = await General.PostRest("Candidate/SaveNotes", _parameters, _candidateNotes);
-                                                                                 if (_response == null)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                             {
+                                                                 if (note.Model is CandidateNotes _candidateNotes)
+                                                                 {
+                                                                     Dictionary<string, string> _parameters = new()
+                                                                                                              {
+                                                                                                                  {"candidateID", _target.ID.ToString()},
+                                                                                                                  {"user", User}
+                                                                                                              };
+                                                                     Dictionary<string, object> _response = await General.PostRest("Candidate/SaveNotes", _parameters, _candidateNotes);
+                                                                     if (_response == null)
+                                                                     {
+                                                                         return;
+                                                                     }
 
-                                                                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
-                                                                             }
-                                                                         });
-
-    private readonly List<ToolbarItemModel> _tools1 =
-    [
-        new() {Name = "Original", TooltipText = "Show Original Resume"},
-        new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
-    ];
-
+                                                                     _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
+                                                                 }
+                                                             });
 
     /// <summary>
     ///     Asynchronously saves the skill of a candidate.

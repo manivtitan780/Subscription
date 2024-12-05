@@ -695,6 +695,7 @@ body, form, html {
 
 .e-fab.e-btn.e-fab-right {
     right : 20px;
+    z-index: 20;
 }
 
 .e-btn.e-fab {
