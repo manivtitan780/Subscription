@@ -41,4 +41,9 @@ public class Start
         set;
     }
 
+    public static string UploadPath
+    {
+        get;
+        set;
+    }
 }

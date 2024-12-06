@@ -203,6 +203,12 @@ public partial class DownloadsPanel
         set;
     }
 
+    private ViewWordDocument DocumentViewWord
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Initiates the process of deleting a document.
     /// </summary>
@@ -288,7 +294,7 @@ public partial class DownloadsPanel
                 //await DocumentViewPDF.ShowDialog();
             }
 
-            //await DocumentViewWord.ShowDialog();
+            await DocumentViewWord.ShowDialog();
             await Task.CompletedTask;
         }
     }
@@ -316,12 +322,12 @@ public partial class DownloadsPanel
 
         //DocumentDetails _restResponse = await _restClient.GetAsync<DocumentDetails>(_request);
 
-        /*Dictionary<string, string> _parameters = new()
+        Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"documentID", documentID.ToString()}
-                                                 };*/
+                                                 };
 
-        /*DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadFile", _parameters);
+        DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidate/DownloadFile", _parameters);
 
         if (_restResponse != null)
         {
@@ -335,14 +341,14 @@ public partial class DownloadsPanel
                 //await DocumentViewPDF.ShowDialog();
                 if (_location.EndsWith(".pdf"))
                 {
-                    await DocumentViewPDF.ShowDialog();
+                    //wait DocumentViewPDF.ShowDialog();
                 }
                 else
                 {
                     await DocumentViewWord.ShowDialog();
                 }
             }
-        }*/
+        }
 
         await Spinner.HideAsync();
     }

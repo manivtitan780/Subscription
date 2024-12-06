@@ -4,9 +4,9 @@
 		<Header>@($"Document: {DocumentName} ({DocumentLocation})")</Header>
 		<Content>
 			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
-            <Syncfusion.Blazor.DocumentEditor.SfDocumentEditorContainer EnableToolbar="true" Height="calc(85vh - 44px)" ID="documentWordViewer" @ref="EditorDocument" RestrictEditing="true" ShowPropertiesPane="false" ToolbarItems="_items">
-				<Syncfusion.Blazor.DocumentEditor.DocumentEditorContainerEvents OnToolbarClick="ToolbarClicked"></Syncfusion.Blazor.DocumentEditor.DocumentEditorContainerEvents>
-			</Syncfusion.Blazor.DocumentEditor.SfDocumentEditorContainer>
+            <SfDocumentEditorContainer EnableToolbar="true" Height="calc(85vh - 80px)" ID="documentWordViewer" @ref="EditorDocument" RestrictEditing="true" ShowPropertiesPane="false" ToolbarItems="_items">
+				<DocumentEditorContainerEvents OnToolbarClick="ToolbarClicked"></DocumentEditorContainerEvents>
+			</SfDocumentEditorContainer>
 		</Content>
 	</DialogTemplates>
 	<DialogPositionData X="center" Y="center" />

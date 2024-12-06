@@ -28,7 +28,7 @@ _builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
 
 _builder.Services.AddBlazoredSessionStorage(); // Session storage
-_builder.Services.AddBlazoredLocalStorage(); // Local storage
+_builder.Services.AddBlazoredLocalStorage();   // Local storage
 _builder.Services.AddMemoryCache();
 _builder.Services.AddSignalR(e =>
                              {
@@ -94,6 +94,8 @@ _app.Use(async (context, next) =>
                      Start.CachePort = _config["GarnetServer:SslPort"];
                      Start.Access = _config["GarnetServer:Access"];
                  }
+
+                 Start.UploadPath = _config["RootPath"];
              }
 
              await next.Invoke();

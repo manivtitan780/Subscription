@@ -189,7 +189,7 @@ public partial class ViewPDFDocument
 							 _ => "Candidate"
 						 };
 
-		string _fileName = Path.Combine("Start.UploadsPath", "Uploads", _entity, EntityID.ToString(), InternalFileName); //TODO: Include Uploads Path
+		string _fileName = Path.Combine(Start.UploadPath, "Uploads", _entity, EntityID.ToString(), InternalFileName); //TODO: Include Uploads Path
 		if (DocumentLocation.EndsWith(".pdf"))
 		{
 			_base64String = Convert.ToBase64String(await File.ReadAllBytesAsync(_fileName));

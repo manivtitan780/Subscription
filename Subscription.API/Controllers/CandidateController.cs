@@ -407,6 +407,76 @@ public class CandidateController : ControllerBase
                    }
                };
     }
+	
+	/// <summary>
+	///     Downloads a file associated with a specific document ID.
+	/// </summary>
+	/// <param name="documentID">The ID of the document to be downloaded.</param>
+	/// <returns>A <see cref="DocumentDetails" /> object containing details of the downloaded document.</returns>
+	/// <remarks>
+	///     This method connects to the database, executes a stored procedure to fetch the document details,
+	///     and returns a <see cref="DocumentDetails" /> object containing the details of the document.
+	///     If the document does not exist, null is returned.
+	/// </remarks>
+	[HttpGet]
+	public async Task<DocumentDetails> DownloadFile(int documentID)
+	{
+		await using SqlConnection _connection = new(Start.ConnectionString);
+		await using SqlCommand _command = new("Professional.dbo.GetCandidateDocumentDetails", _connection);
+		_command.CommandType = CommandType.StoredProcedure;
+		_command.Int("DocumentID", documentID);
+
+		await _connection.OpenAsync();
+		await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+		DocumentDetails _documentDetails = null;
+		while (_reader.Read())
+		{
+			_documentDetails = new(_reader.GetInt32(0), _reader.NString(1), _reader.NString(2), _reader.NString(3));
+		}
+
+		await _reader.CloseAsync();
+
+		await _connection.CloseAsync();
+		
+		return _documentDetails;
+	}
+
+	/// <summary>
+	///     Downloads the resume of a candidate.
+	/// </summary>
+	/// <param name="candidateID">The ID of the candidate whose resume is to be downloaded.</param>
+	/// <param name="resumeType">The type of the resume to be downloaded, Original or Formatted.</param>
+	/// <returns>A <see cref="DocumentDetails" /> object containing the details of the downloaded resume.</returns>
+	/// <remarks>
+	///     This method connects to the database using a stored procedure to download the candidate's resume.
+	///     The resume details are then encapsulated in a <see cref="DocumentDetails" /> object and returned.
+	/// </remarks>
+	[HttpGet]
+	public async Task<DocumentDetails> DownloadResume(int candidateID, string resumeType)
+	{
+		await using SqlConnection _connection = new(Start.ConnectionString);
+		await using SqlCommand _command = new("DownloadCandidateResume", _connection);
+		_command.CommandType = CommandType.StoredProcedure;
+		_command.Int("CandidateID", candidateID);
+		_command.Varchar("ResumeType", 20, resumeType);
+
+		await _connection.OpenAsync();
+		await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+		DocumentDetails _documentDetails = null;
+		while (_reader.Read())
+		{
+			_documentDetails = new(candidateID, $"{resumeType} Resume", _reader.NString(0), _reader.NString(1));
+		}
+
+		await _reader.CloseAsync();
+
+		await _connection.CloseAsync();
+
+		return _documentDetails;
+	}
+
 
 	/// <summary>
 	///     Saves a candidate's experience record to the database.

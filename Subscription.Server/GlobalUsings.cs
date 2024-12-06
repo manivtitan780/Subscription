@@ -48,5 +48,7 @@ global using Syncfusion.Blazor.Popups;
 global using Syncfusion.Blazor.Spinner;
 global using Syncfusion.Blazor.RichTextEditor;
 global using Syncfusion.Licensing;
-
+global using Syncfusion.Pdf;
+global using Syncfusion.Blazor.SfPdfViewer;
+global using Syncfusion.Blazor.DocumentEditor;
 #endregion
