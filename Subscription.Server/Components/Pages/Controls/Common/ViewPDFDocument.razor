@@ -1,0 +1,14 @@
+﻿<SfDialog AllowPrerender="true" ID="dialogPdf" IsModal="true" MinHeight="85vh" @ref="Dialog" ShowCloseIcon="true" style="height: 85vh;" Target="#divTarget" Visible="false" Width="75vw">
+	<DialogTemplates>
+		<Header>@($"Document: {DocumentName} ({DocumentLocation})")</Header>
+		<Content>
+			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+			<Syncfusion.Blazor.SfPdfViewer.SfPdfViewer2 DownloadFileName="@DownloadFileName" EnableErrorDialog="false" @ref="PdfViewer">
+				<Syncfusion.Blazor.SfPdfViewer.PdfViewerToolbarSettings ToolbarItems="_toolbarItems"></Syncfusion.Blazor.SfPdfViewer.PdfViewerToolbarSettings>
+			</Syncfusion.Blazor.SfPdfViewer.SfPdfViewer2>
+		</Content>
+	</DialogTemplates>
+	<DialogPositionData X="center" Y="center" />
+	<DialogAnimationSettings Duration="500" Effect="DialogEffect.Fade" />
+	<DialogEvents OnOverlayModalClick="OverlayClick" Opened="OpenDialog" />
+</SfDialog>

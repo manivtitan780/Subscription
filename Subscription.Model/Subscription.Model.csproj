@@ -15,24 +15,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="Subscription.Model.csproj.vspscc"/>
+        <None Remove="Subscription.Model.csproj.vspscc" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.FluentValidation" Version="2.2.0"/>
+        <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
         <PackageReference Include="FluentValidation" Version="11.11.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="RestSharp" Version="112.1.0"/>
-        <PackageReference Include="Serilog" Version="4.1.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="RestSharp" Version="112.1.0" />
+        <PackageReference Include="Serilog" Version="4.2.0" />
         <PackageReference Include="StackExchange.Redis" Version="2.8.22" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Extensions\Extensions.csproj"/>
+        <ProjectReference Include="..\Extensions\Extensions.csproj" />
     </ItemGroup>
 
 </Project>

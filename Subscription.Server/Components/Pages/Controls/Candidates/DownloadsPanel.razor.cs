@@ -13,12 +13,6 @@
 
 #endregion
 
-/*
-using ConfirmDialog = Profsvc_AppTrack.Client.Pages.Controls.Common.ConfirmDialog;
-using ViewPDFDocument = Profsvc_AppTrack.Client.Pages.Controls.Common.ViewPDFDocument;
-*/
-// ReSharper disable MemberCanBePrivate.Global
-
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 /// <summary>
@@ -76,7 +70,7 @@ public partial class DownloadsPanel
     /// <remarks>
     ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    ///     This service is injected into the component and used in methods like <see cref="DeleteSkillMethod" />
+    ///     This service is injected into the component and used in methods like <see cref="DeleteDocumentMethod" />
     ///     to confirm actions before proceeding.
     /// </remarks>
     [Inject]
@@ -190,7 +184,7 @@ public partial class DownloadsPanel
     public CandidateDocument SelectedRow
     {
         get;
-        set;
+        private set;
     }
 
     /// <summary>
@@ -322,10 +316,10 @@ public partial class DownloadsPanel
 
         //DocumentDetails _restResponse = await _restClient.GetAsync<DocumentDetails>(_request);
 
-        Dictionary<string, string> _parameters = new()
+        /*Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"documentID", documentID.ToString()}
-                                                 };
+                                                 };*/
 
         /*DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadFile", _parameters);
 
