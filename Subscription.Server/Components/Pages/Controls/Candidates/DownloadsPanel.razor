@@ -1,55 +1,52 @@
-﻿<div class="downloadContainerBox">
-	<div>
-		<div>
-			<SfGrid AllowPaging="false" DataSource="@Model" EnableHeaderFocus="true" EnableHover="true" Height="255px" ID="gridDownload" @ref="GridDownload" RowHeight="@RowHeight"
-					SelectedRowIndex="0" TValue="CandidateDocument" Width="99%">
-				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
-				<GridEvents RowSelected="RowSelected" TValue="CandidateDocument" />
-				<GridColumns>
-					<GridColumn Field="@nameof(CandidateDocument.DocumentType)" HeaderText="Type" Width="35%"></GridColumn>
-					<GridColumn Field="@nameof(CandidateDocument.Name)" HeaderText="Name" Width="35%"></GridColumn>
-					<GridColumn Field="@nameof(CandidateDocument.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"></GridColumn>
-					<GridColumn Field="@nameof(CandidateDocument.UpdatedBy)" HeaderText="Updated By" Width="20%"></GridColumn>
-					<GridColumn Width="10%">
-						<Template Context="bCon">
-							@{
-								if (bCon is CandidateDocument _con)
-								{
-									<SfButton Content="" IconCss="viewIconInner" @onclick="() => ViewDocumentDialog(_con.ID)" />
-									if (EditRights)
-									{
-										<SfButton Content="" IconCss="downloadIconInner" @onclick="() => DownloadDocumentDialog(_con.ID)" />
-										<SfButton Content="" IconCss="deleteIconInner" @onclick="() => DeleteDocumentMethod(_con.ID)" />
-									}
-								}
-							}
-						</Template>
-					</GridColumn>
-				</GridColumns>
-				<GridTemplates Context="context">
-					<DetailTemplate>
-						@{
-							CandidateDocument _document = context as CandidateDocument;
-						}
-
-						@if (_document != null)
+﻿<div>
+	<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" Height="230px" ID="gridDownload" @ref="GridDownload" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateDocument" Width="100%">
+		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+		<GridEvents RowSelected="RowSelected" TValue="CandidateDocument"/>
+		<GridColumns>
+			<GridColumn Field="@nameof(CandidateDocument.DocumentType)" HeaderText="Type" Width="35%"/>
+			<GridColumn Field="@nameof(CandidateDocument.Name)" HeaderText="Name" Width="35%"/>
+			<GridColumn Field="@nameof(CandidateDocument.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+			<GridColumn Field="@nameof(CandidateDocument.UpdatedBy)" HeaderText="Updated By" Width="20%"/>
+			<GridColumn Width="10%">
+				<Template Context="bCon">
+					@{
+						if (bCon is CandidateDocument _con)
 						{
-							if (_document.Notes.NullOrWhiteSpace())
-							{
-								<div class="blankActivityNotes">There are no Notes for this Candidate.</div>
-							}
-							else
-							{
-								<div class="activityNotes">@_document.Notes</div>
-							}
+							<div class="buttonContain">
+								<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.ID)" title="View"/>
+								@if (EditRights)
+								{
+									<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)" title="Download"/>
+									<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteDocumentMethod(_con.ID)" title="Delete"/>
+								}
+							</div>
 						}
-					</DetailTemplate>
-				</GridTemplates>
-			</SfGrid>
-		</div>
-	</div>
+					}
+				</Template>
+			</GridColumn>
+		</GridColumns>
+		<GridTemplates Context="context">
+			<DetailTemplate>
+				@{
+					CandidateDocument _document = context as CandidateDocument;
+				}
+
+				@if (_document != null)
+				{
+					if (_document.Notes.NullOrWhiteSpace())
+					{
+						<div class="blankActivityNotes">There are no Notes for this Candidate.</div>
+					}
+					else
+					{
+						<div class="activityNotes">@_document.Notes</div>
+					}
+				}
+			</DetailTemplate>
+		</GridTemplates>
+	</SfGrid>
 </div>
-<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
-<ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px" />
+<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+@*<ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px" />
 <ViewPDFDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_candidateID" InternalFileName="@_internalFileName" @ref="@DocumentViewPDF" />
-<ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_candidateID" EntityType="EntityType.Candidate" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" />
+<ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_candidateID" EntityType="EntityType.Candidate" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" />*@

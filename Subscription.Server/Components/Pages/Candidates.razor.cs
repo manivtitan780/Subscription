@@ -531,6 +531,74 @@ public partial class Candidates
         set;
     }
 
+    private DownloadsPanel DownloadsPanel
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the selected document for download associated with a candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the document selected by the user for download.
+    ///     The document is selected in the DownloadsPanel and used in the `DownloadDocument` method.
+    /// </remarks>
+    private CandidateDocument SelectedDownload
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Asynchronously deletes a document associated with a candidate.
+    /// </summary>
+    /// <param name="arg">The ID of the document to be deleted.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method sends a POST request to the Candidates/DeleteCandidateDocument endpoint with the document ID and user
+    ///     ID as parameters.
+    ///     If the action is successful, the candidate's documents are updated.
+    /// </remarks>
+    private Task DeleteDocument(int arg) => ExecuteMethod(async () =>
+                                                          {
+                                                              Dictionary<string, string> _parameters = new()
+                                                                                                       {
+                                                                                                           {"documentID", arg.ToString()},
+                                                                                                           {"user", User}
+                                                                                                       };
+
+                                                              Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteCandidateDocument", _parameters);
+                                                              if (_response == null)
+                                                              {
+                                                                  return;
+                                                              }
+
+                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
+                                                          });
+
+
+    /// <summary>
+    ///     Initiates the download of a document associated with a candidate.
+    /// </summary>
+    /// <param name="arg">The identifier of the document to be downloaded.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method first checks if another download operation is in progress. If not, it sets the SelectedDownload
+    ///     property to the document selected in the DownloadsPanel.
+    ///     It then constructs a query string by concatenating the internal file name of the document, the ID of the target
+    ///     candidate, the location of the document, and a zero, separated by "^" characters.
+    ///     The query string is then Base64 encoded. The method then invokes a JavaScript function to open a new browser tab
+    ///     with a URL constructed from the BaseUri of the NavigationManager, the string "Download/", and the encoded query
+    ///     string.
+    /// </remarks>
+    private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
+                                                            {
+                                                                SelectedDownload = DownloadsPanel.SelectedRow;
+                                                                string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.Location}^0".ToBase64String();
+                                                                await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
+                                                            });
+
     private static async Task AllAlphabets()
     {
         SearchModel.Name = "";

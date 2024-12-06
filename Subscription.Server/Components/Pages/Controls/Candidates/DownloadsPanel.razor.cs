@@ -3,24 +3,23 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           DownloadsPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     09-05-2023 14:56
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          12-05-2024 21:12
+// Last Updated On:     12-06-2024 15:12
 // *****************************************/
 
 #endregion
 
-using Profsvc_AppTrack.Client.Code;
-using Profsvc_AppTrack.Client.Pages.Controls.Common;
-
+/*
 using ConfirmDialog = Profsvc_AppTrack.Client.Pages.Controls.Common.ConfirmDialog;
 using ViewPDFDocument = Profsvc_AppTrack.Client.Pages.Controls.Common.ViewPDFDocument;
+*/
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace Profsvc_AppTrack.Client.Pages.Controls.Candidates;
+namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 /// <summary>
 ///     Represents a panel for managing candidate documents in the application.
@@ -67,6 +66,27 @@ public partial class DownloadsPanel
     }
 
     /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    ///     This service is injected into the component and used in methods like <see cref="DeleteSkillMethod" />
+    ///     to confirm actions before proceeding.
+    /// </remarks>
+    [Inject]
+    private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
+
+    /*/// <summary>
     ///     Gets or sets the instance of the ViewPDFDocument component used for displaying PDF documents.
     /// </summary>
     /// <value>
@@ -93,7 +113,7 @@ public partial class DownloadsPanel
     {
         get;
         set;
-    }
+    }*/
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when a document is to be downloaded.
@@ -203,7 +223,10 @@ public partial class DownloadsPanel
         _selectedID = id;
         int _index = await GridDownload.GetRowIndexByPrimaryKeyAsync(id);
         await GridDownload.SelectRowAsync(_index);
-        await DialogConfirm.ShowDialog();
+        if (await DialogService.ConfirmAsync(null, "Delete Document", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Document</i>?")))
+        {
+            await DeleteDocument.InvokeAsync(_selectedID);
+        }
     }
 
     /// <summary>
@@ -268,12 +291,11 @@ public partial class DownloadsPanel
             //await DocumentViewPDF.ShowDialog();
             if (documentLocation.EndsWith(".pdf"))
             {
-                await DocumentViewPDF.ShowDialog();
+                //await DocumentViewPDF.ShowDialog();
             }
-            else
-            {
-                await DocumentViewWord.ShowDialog();
-            }
+
+            //await DocumentViewWord.ShowDialog();
+            await Task.CompletedTask;
         }
     }
 
@@ -302,10 +324,10 @@ public partial class DownloadsPanel
 
         Dictionary<string, string> _parameters = new()
                                                  {
-                                                     {"documentID", documentID.ToString() }
+                                                     {"documentID", documentID.ToString()}
                                                  };
 
-        DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadFile", _parameters);
+        /*DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadFile", _parameters);
 
         if (_restResponse != null)
         {
@@ -326,7 +348,7 @@ public partial class DownloadsPanel
                     await DocumentViewWord.ShowDialog();
                 }
             }
-        }
+        }*/
 
         await Spinner.HideAsync();
     }
