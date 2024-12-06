@@ -253,8 +253,8 @@ public partial class ViewWordDocument
         WordDocument _document = WordDocument.Load(_stream, ImportFormatType.Docx);
         await _stream.DisposeAsync();
         string _serializedString = System.Text.Json.JsonSerializer.Serialize(_document);
-        using SfDocumentEditor _editor = EditorDocument.DocumentEditor;
-        await _editor.OpenAsync(_serializedString);
+        //using SfDocumentEditor _editor = EditorDocument.DocumentEditor;
+        await EditorDocument.DocumentEditor.OpenAsync(_serializedString);
         await Spinner.HideAsync();
         IsOpening = false;
         await EditorDocument.ResizeAsync();

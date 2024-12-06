@@ -42,6 +42,7 @@ public partial class ViewPDFDocument
 		ToolbarItem.MagnificationTool,
 		ToolbarItem.SelectionTool,
 		ToolbarItem.PanTool,
+		ToolbarItem.SearchOption,
 		ToolbarItem.PrintOption,
 		ToolbarItem.DownloadOption
 	];

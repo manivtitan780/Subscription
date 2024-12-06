@@ -3,9 +3,9 @@
 		<Header>@($"Document: {DocumentName} ({DocumentLocation})")</Header>
 		<Content>
 			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
-			<Syncfusion.Blazor.SfPdfViewer.SfPdfViewer2 DownloadFileName="@DownloadFileName" EnableErrorDialog="false" @ref="PdfViewer">
-				<Syncfusion.Blazor.SfPdfViewer.PdfViewerToolbarSettings ToolbarItems="_toolbarItems"></Syncfusion.Blazor.SfPdfViewer.PdfViewerToolbarSettings>
-			</Syncfusion.Blazor.SfPdfViewer.SfPdfViewer2>
+			<SfPdfViewer2 DownloadFileName="@DownloadFileName" EnableErrorDialog="false" Height="calc(85vh - 80px)" @ref="PdfViewer">
+				<PdfViewerToolbarSettings ToolbarItems="_toolbarItems"></PdfViewerToolbarSettings>
+			</SfPdfViewer2>
 		</Content>
 	</DialogTemplates>
 	<DialogPositionData X="center" Y="center" />

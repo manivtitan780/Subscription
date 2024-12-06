@@ -209,6 +209,12 @@ public partial class DownloadsPanel
         set;
     }
 
+    private ViewPDFDocument DocumentViewPDF
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Initiates the process of deleting a document.
     /// </summary>
@@ -341,7 +347,7 @@ public partial class DownloadsPanel
                 //await DocumentViewPDF.ShowDialog();
                 if (_location.EndsWith(".pdf"))
                 {
-                    //wait DocumentViewPDF.ShowDialog();
+                    await DocumentViewPDF.ShowDialog();
                 }
                 else
                 {
