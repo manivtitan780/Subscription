@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     11-27-2024 15:11
+// Last Updated On:     12-07-2024 16:12
 // *****************************************/
 
 #endregion
@@ -285,8 +285,7 @@ public class General
     ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
     /// </remarks>
     internal static Task<Dictionary<string, object>> PostRest(string endpoint, Dictionary<string, string> parameters, object jsonBody = null, byte[] fileArray = null, string fileName = "",
-                                                              string parameterName = "file") =>
-        PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
+                                                              string parameterName = "file") => PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
 
     /// <summary>
     ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.

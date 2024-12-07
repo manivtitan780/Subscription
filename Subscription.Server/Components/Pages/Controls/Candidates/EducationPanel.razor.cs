@@ -143,7 +143,7 @@ public partial class EducationPanel
     {
         get;
         set;
-    } = 38;
+    } = 42;
 
 	/// <summary>
 	///     Gets the selected row in the grid. This property is of type <see cref="Subscription.Model.CandidateEducation" />.

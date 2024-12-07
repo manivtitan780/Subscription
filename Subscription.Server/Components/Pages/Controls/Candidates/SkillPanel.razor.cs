@@ -180,7 +180,7 @@ public partial class SkillPanel
     {
         get;
         set;
-    } = 38;
+    } = 42;
 
 	/// <summary>
 	///     Gets or sets the currently selected row in the grid.

@@ -3,23 +3,23 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           ViewPDFDocument.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-23-2023 19:53
-// Last Updated On:     12-29-2023 15:33
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          12-06-2024 15:12
+// Last Updated On:     12-07-2024 16:12
 // *****************************************/
 
 #endregion
 
 #region Using
 
-using Syncfusion.Blazor.SfPdfViewer;
-using Syncfusion.Pdf;
+using Syncfusion.DocIORenderer;
 
 using ToolbarItem = Syncfusion.Blazor.SfPdfViewer.ToolbarItem;
 using WFormatType = Syncfusion.DocIO.FormatType;
+using WordDocument = Syncfusion.DocIO.DLS.WordDocument;
 
 #endregion
 
@@ -37,15 +37,15 @@ public partial class ViewPDFDocument
 	///     magnification, selection, pan, print, and download options.
 	/// </summary>
 	private List<ToolbarItem> _toolbarItems =
-	[
-		ToolbarItem.PageNavigationTool,
-		ToolbarItem.MagnificationTool,
-		ToolbarItem.SelectionTool,
-		ToolbarItem.PanTool,
-		ToolbarItem.SearchOption,
-		ToolbarItem.PrintOption,
-		ToolbarItem.DownloadOption
-	];
+    [
+        ToolbarItem.PageNavigationTool,
+        ToolbarItem.MagnificationTool,
+        ToolbarItem.SelectionTool,
+        ToolbarItem.PanTool,
+        ToolbarItem.SearchOption,
+        ToolbarItem.PrintOption,
+        ToolbarItem.DownloadOption
+    ];
 
 	/// <summary>
 	///     Gets or sets the SfDialog instance used to display the PDF document.
@@ -54,10 +54,10 @@ public partial class ViewPDFDocument
 	///     The dialog's visibility is controlled programmatically using the ShowAsync and HideAsync methods.
 	/// </summary>
 	private SfDialog Dialog
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the location of the document. This property is used to determine the type of the document
@@ -65,28 +65,28 @@ public partial class ViewPDFDocument
 	///     or URL of the document.
 	/// </summary>
 	[Parameter]
-	public string DocumentLocation
-	{
-		get;
-		set;
-	}
+    public string DocumentLocation
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the name of the document. This property is used to display the document's name
 	///     in the dialog header when the PDF document is viewed.
 	/// </summary>
 	[Parameter]
-	public string DocumentName
-	{
-		get;
-		set;
-	}
+    public string DocumentName
+    {
+        get;
+        set;
+    }
 
-	private string DownloadFileName
-	{
-		get;
-		set;
-	}
+    private string DownloadFileName
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the ID of the entity. This property is used to identify the specific entity
@@ -94,11 +94,11 @@ public partial class ViewPDFDocument
 	///     the unique identifier of the entity.
 	/// </summary>
 	[Parameter]
-	public int EntityID
-	{
-		get;
-		set;
-	}
+    public int EntityID
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the type of the entity. This property is used to determine the specific type of the entity
@@ -107,11 +107,11 @@ public partial class ViewPDFDocument
 	///     which includes Candidate, Requisition, Companies, Leads, and Benefits.
 	/// </summary>
 	[Parameter]
-	public EntityType EntityType
-	{
-		get;
-		set;
-	}
+    public EntityType EntityType
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the internal file name of the document. This property is used to construct the file path
@@ -119,11 +119,11 @@ public partial class ViewPDFDocument
 	///     representing the internal name of the file.
 	/// </summary>
 	[Parameter]
-	public string InternalFileName
-	{
-		get;
-		set;
-	}
+    public string InternalFileName
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the PdfViewer component. This component is used to display the PDF document in the dialog.
@@ -131,20 +131,25 @@ public partial class ViewPDFDocument
 	///     display the PDF document.
 	/// </summary>
 	private SfPdfViewer2 PdfViewer
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the SfSpinner component. This component is used to display a loading spinner
 	///     while the PDF document is being loaded and processed.
 	/// </summary>
 	private SfSpinner Spinner
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
+
+    private async Task CloseDialog(CloseEventArgs arg)
+    {
+        await PdfViewer.UnloadAsync();
+    }
 
 	/// <summary>
 	///     Determines the format type of the document based on its file extension.
@@ -154,19 +159,19 @@ public partial class ViewPDFDocument
 	///     The possible return values are Docx, Doc, Rtf, or Automatic.
 	/// </returns>
 	private WFormatType GetWFormatType()
-	{
-		if (DocumentLocation.EndsWith(".docx"))
-		{
-			return WFormatType.Docx;
-		}
+    {
+        if (DocumentLocation.EndsWith(".docx"))
+        {
+            return WFormatType.Docx;
+        }
 
-		if (DocumentLocation.EndsWith(".doc"))
-		{
-			return WFormatType.Doc;
-		}
+        if (DocumentLocation.EndsWith(".doc"))
+        {
+            return WFormatType.Doc;
+        }
 
-		return DocumentLocation.EndsWith(".rtf") ? WFormatType.Rtf : WFormatType.Automatic;
-	}
+        return DocumentLocation.EndsWith(".rtf") ? WFormatType.Rtf : WFormatType.Automatic;
+    }
 
 	/// <summary>
 	///     Asynchronously opens the dialog to display the PDF document. This method first shows a loading spinner,
@@ -176,48 +181,49 @@ public partial class ViewPDFDocument
 	/// </summary>
 	/// <returns>A Task representing the asynchronous operation.</returns>
 	private async Task OpenDialog()
-	{
-		await Spinner.ShowAsync();
-		await Task.Yield();
-		string _base64String = "";
-		string _entity = EntityType switch
-						 {
-							 EntityType.Candidate => "Candidate",
-							 EntityType.Requisition => "Requisition",
-							 EntityType.Companies => "Company",
-							 EntityType.Leads => "Leads",
-							 EntityType.Benefits => "Benefits",
-							 _ => "Candidate"
-						 };
+    {
+        await Spinner.ShowAsync();
+        await Task.Yield();
+        string _base64String = "";
+        string _entity = EntityType switch
+                         {
+                             EntityType.Candidate => "Candidate",
+                             EntityType.Requisition => "Requisition",
+                             EntityType.Companies => "Company",
+                             EntityType.Leads => "Leads",
+                             EntityType.Benefits => "Benefits",
+                             _ => "Candidate"
+                         };
 
-		string _fileName = Path.Combine(Start.UploadPath, "Uploads", _entity, EntityID.ToString(), InternalFileName); //TODO: Include Uploads Path
-		if (DocumentLocation.EndsWith(".pdf"))
-		{
-			_base64String = Convert.ToBase64String(await File.ReadAllBytesAsync(_fileName));
-		}
-		else
-		{
-			PdfDocument _pdfDocument = new();
-			//using (WordDocument _doc = new(new MemoryStream(await File.ReadAllBytesAsync(_fileName)), GetWFormatType()))
-			//{
-			//    _pdfDocument = new DocIORenderer().ConvertToPDF(_doc);
-			//    _doc.Close();
-			//}
+        string _fileName = Path.Combine(Start.UploadPath, "Uploads", _entity, EntityID.ToString(), InternalFileName); //TODO: Include Uploads Path
+        if (DocumentLocation.EndsWith(".pdf"))
+        {
+            _base64String = Convert.ToBase64String(await File.ReadAllBytesAsync(_fileName));
+        }
+        else
+        {
+            PdfDocument _pdfDocument = new();
+            using (MemoryStream _mem = new(await File.ReadAllBytesAsync(_fileName)))
+            {
+                WordDocument _doc = new(_mem, GetWFormatType());
+                _pdfDocument = new DocIORenderer().ConvertToPDF(_doc);
+                _doc.Close();
+            }
 
-			using MemoryStream _outputStream = new();
-			_pdfDocument.Save(_outputStream);
-			_outputStream.Position = 0;
-			_base64String = Convert.ToBase64String(_outputStream.ToArray());
-			_pdfDocument.Close();
-			_outputStream.Close();
-		}
+            using MemoryStream _outputStream = new();
+            _pdfDocument.Save(_outputStream);
+            _outputStream.Position = 0;
+            _base64String = Convert.ToBase64String(_outputStream.ToArray());
+            _pdfDocument.Close();
+            _outputStream.Close();
+        }
 
-		DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : DocumentLocation + ".pdf";
-		await PdfViewer.LoadAsync("data:application/pdf;base64," + _base64String);
-		await Spinner.HideAsync();
-		//IsOpening = false;
-		StateHasChanged();
-	}
+        DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : DocumentLocation + ".pdf";
+        await PdfViewer.LoadAsync("data:application/pdf;base64," + _base64String);
+        await Spinner.HideAsync();
+        //IsOpening = false;
+        StateHasChanged();
+    }
 
 	/// <summary>
 	///     Handles the OverlayClick event of the SfDialog.

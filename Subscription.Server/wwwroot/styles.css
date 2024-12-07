@@ -694,8 +694,8 @@ body, form, html {
 }
 
 .e-fab.e-btn.e-fab-right {
-    right : 20px;
-    z-index: 20;
+    right   : 20px;
+    z-index : 20;
 }
 
 .e-btn.e-fab {
@@ -896,3 +896,26 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
 }
 
 /* #endregion*/
+
+/* #region PDFViewer */
+
+.e-pv-search-bar {
+    top : 40px !important;
+}
+
+.e-pv-notification-dialog .e-dlg-header-content, .e-pv-notification-dialog .e-footer-content {
+    padding : 7px 24px !important;
+}
+
+.e-pv-notification-dialog .e-dlg-header-content {
+    background : var(--c-bbb);
+}
+
+.e-pv-notification-dialog .e-footer-content {
+    background : var(--c-eee);
+}
+.e-pv-notification-dialog .e-dlg-content {
+    padding : 15px 24px !important;
+}
+
+/* #endregion PDFViewer */

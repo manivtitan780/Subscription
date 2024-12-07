@@ -172,7 +172,7 @@ public partial class DownloadsPanel
     {
         get;
         set;
-    } = 38;
+    } = 42;
 
     /// <summary>
     ///     Gets or sets the selected row in the panel.
@@ -203,11 +203,11 @@ public partial class DownloadsPanel
         set;
     }
 
-    private ViewWordDocument DocumentViewWord
+    /*private ViewWordDocument DocumentViewWord
     {
         get;
         set;
-    }
+    }*/
 
     private ViewPDFDocument DocumentViewPDF
     {
@@ -295,13 +295,13 @@ public partial class DownloadsPanel
             _documentLocation = documentLocation;
             _internalFileName = internalFileName;
             //await DocumentViewPDF.ShowDialog();
-            if (documentLocation.EndsWith(".pdf"))
-            {
-                //await DocumentViewPDF.ShowDialog();
-            }
+            //if (documentLocation.EndsWith(".pdf"))
+            //{
+                await DocumentViewPDF.ShowDialog();
+            //}
 
-            await DocumentViewWord.ShowDialog();
-            await Task.CompletedTask;
+            //await DocumentViewWord.ShowDialog();
+            //await Task.CompletedTask;
         }
     }
 
@@ -345,14 +345,14 @@ public partial class DownloadsPanel
                 _documentLocation = _location;
                 _internalFileName = _restResponse.InternalFileName;
                 //await DocumentViewPDF.ShowDialog();
-                if (_location.EndsWith(".pdf"))
-                {
+                //if (_location.EndsWith(".pdf"))
+                //{
                     await DocumentViewPDF.ShowDialog();
-                }
-                else
-                {
-                    await DocumentViewWord.ShowDialog();
-                }
+                //}
+                //else
+                //{
+                //    await DocumentViewWord.ShowDialog();
+                //}
             }
         }
 

@@ -1,4 +1,6 @@
-﻿function scroll(index) {
+﻿let dotnetInstance;
+
+function scroll(index) {
     const _grid = document.getElementsByClassName("e-grid")[0].blazor__instance;
     const _rowHeight = 45;
     _grid.getContent().scrollTo({top: (index - 1) * _rowHeight, left: 0, behavior: "smooth"});
@@ -8,7 +10,12 @@ function alert(message) {
     alert(message);
 }
 
-var dotnetInstance;
+window.changeDivContent = function () {
+    let element = document.querySelector('.e-pv-notification-popup-content');
+    if (element) {
+        element.textContent = "No more matches found.";
+    }
+}
 
 function detail(dotnet) {
     dotnetInstance = dotnet; // dotnet instance to invoke C# method from JS  
@@ -22,8 +29,8 @@ document.addEventListener("click", (args) => {
 
 window.onCreateNoSpecial = (id) => {
     document.getElementById(id).addEventListener("keydown", (e) => {
-        var letters = /^[a-zA-Z0-9-_. ]+$/;
-        if (e.key.match(letters) || e.key == "Backspace" || e.key == "Delete" || e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Tab" || e.key == "Enter") {
+        let letters = /^[a-zA-Z0-9-_. ]+$/;
+        if (e.key.match(letters) || e.key === "Backspace" || e.key === "Delete" || e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "Tab" || e.key === "Enter") {
             return true;
         } else {
             e.preventDefault();
@@ -33,8 +40,8 @@ window.onCreateNoSpecial = (id) => {
 
 window.onCreate = (id, numberOnly = false) => {
     document.getElementById(id).addEventListener("keydown", (e) => {
-        var letters = numberOnly ? /^[0-9]+$/ : /[a-zA-Z\s\-\._\[\]\(\)]/;
-        if (e.key.match(letters) || e.key == "Backspace" || e.key == "Delete" || e.key == "ArrowRight" || e.key == "ArrowLeft" || e.key == "Tab" || e.key == "Enter") {
+        let letters = numberOnly ? /^[0-9]+$/ : /[a-zA-Z\s\-._\[\]()]/;
+        if (e.key.match(letters) || e.key === "Backspace" || e.key === "Delete" || e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "Tab" || e.key === "Enter") {
             return true;
         } else {
             e.preventDefault();
@@ -44,13 +51,13 @@ window.onCreate = (id, numberOnly = false) => {
 
 
 window.insertTextAtCursor = function (inputID, text) {
-    var input = document.getElementById(inputID);
+    let input = document.getElementById(inputID);
     if (input != null) {
-        var _startPos = input.selectionStart;
-        var _endPos = input.selectionEnd;
-        var _currentValue = input.value;
+        let _startPos = input.selectionStart;
+        let _endPos = input.selectionEnd;
+        let _currentValue = input.value;
 
-        var _startText = "", _endText = "";
+        let _startText = "", _endText = "";
         if (text == null) {
             text = "";
         }
