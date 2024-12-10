@@ -8,14 +8,12 @@
 // File Name:           ViewPDFDocument.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-06-2024 15:12
-// Last Updated On:     12-07-2024 16:12
+// Last Updated On:     12-07-2024 19:12
 // *****************************************/
 
 #endregion
 
 #region Using
-
-using Syncfusion.DocIORenderer;
 
 using ToolbarItem = Syncfusion.Blazor.SfPdfViewer.ToolbarItem;
 using WFormatType = Syncfusion.DocIO.FormatType;
@@ -43,8 +41,8 @@ public partial class ViewPDFDocument
         ToolbarItem.SelectionTool,
         ToolbarItem.PanTool,
         ToolbarItem.SearchOption,
-        ToolbarItem.PrintOption,
-        ToolbarItem.DownloadOption
+        ToolbarItem.PrintOption /*,
+        ToolbarItem.DownloadOption*/
     ];
 
 	/// <summary>
@@ -216,6 +214,7 @@ public partial class ViewPDFDocument
             _base64String = Convert.ToBase64String(_outputStream.ToArray());
             _pdfDocument.Close();
             _outputStream.Close();
+            _pdfDocument.Dispose();
         }
 
         DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : DocumentLocation + ".pdf";

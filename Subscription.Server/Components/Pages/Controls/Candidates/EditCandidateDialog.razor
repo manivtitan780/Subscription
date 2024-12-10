@@ -1,0 +1,297 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="DialogOpen"/>
+		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="SaveCandidateDialog" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Candidate</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Candidate Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)" ID="textFirst">
+						<Template>
+							<label class="e-form-label" for="textFirst">First Name:</label>
+							<SfTextBox @bind-Value="Model.FirstName" HtmlAttributes="_textBoxAttributes" ID="textFirst" Placeholder="First Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.MiddleName)" ID="textMiddle">
+						<Template>
+							<label class="e-form-label" for="textMiddle">Middle Name:</label>
+							<SfTextBox @bind-Value="Model.MiddleName" HtmlAttributes="_textBoxAttributes" ID="textMiddle" Placeholder="Middle Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LastName)" ID="textLast">
+						<Template>
+							<label class="e-form-label" for="textLast">Last Name:</label>
+							<SfTextBox @bind-Value="Model.LastName" HtmlAttributes="_textBoxAttributes" ID="textLast" Placeholder="Last Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Address1)" ID="textAddress1">
+						<Template>
+							<label class="e-form-label" for="textAddress1">Address:</label>
+							<SfTextBox @bind-Value="Model.Address1" HtmlAttributes="_textBoxAttributes" ID="textAddress1" Placeholder="Address"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Address2)" ID="textAddress2">
+						<Template>
+							<label class="e-form-label" for="textAddress2">Address 2:</label>
+							<SfTextBox @bind-Value="Model.Address2" HtmlAttributes="_textBoxAttributes" ID="textAddress2" Placeholder="Address 2"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.City)" LabelText="City:" ID="textCity">
+						<Template>
+							<label class="e-form-label" for="textCity">City:</label>
+							<SfTextBox @bind-Value="Model.City" HtmlAttributes="_textBoxAttributes" ID="textCity" Placeholder="City"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)" LabelText="State:" ID="dropState">
+						<Template>
+							<label class="e-form-label" for="dropState">State:</label>
+							<SfDropDownList @bind-Value="Model.StateID" DataSource="States" ID="dropState" TextField="Value" TValue="int" ValueField="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)" LabelText="Zip Code:" ID="textZip">
+						<Template>
+							<label class="e-form-label" for="textZip">Zip Code:</label>
+							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>
+
+@*<EditForm Model="Model" OnValidSubmit="SaveCandidateDialog" @ref="EditCandidateForm">
+			$1$ <DataAnnotationsValidator /> * @
+
+			<FluentValidationValidator/>
+			<div style="height: 100%">
+				<div class="divContainerTable">
+					<div class="divFlex">
+						<div class="divFlexLabel">
+							<label class="labelStatus" for="textFirst">First Name</label>
+							<label class="labelStatus" for="textMiddle"> / Middle Initial</label>
+							<label class="labelStatus" for="textLast"> / Last Name:</label>
+						</div>
+						<div class="divFlexSmall" style="display: flex;">
+							<div style="width: 38%">
+								<textboxcontrol @bind-Value="@(Model.FirstName)" @bind-Value:event="ValueChanged" CreateDivTag="false" ID="textFirst" MaxLength="50"
+								                MinLength="1" Placeholder="First Name" ValidationMessage="@(() => Model.FirstName)" Width="100%"/>
+							</div>
+							<div style="margin-left: 3%; width: 18%;">
+								<textboxcontrol @bind-Value="@(Model.MiddleName)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="false" ID="textMiddle" MaxLength="10"
+								                Placeholder="Middle Name" Width="100%"/>
+							</div>
+							<div style="margin-left: 3%; width: 38%;">
+								<textboxcontrol @bind-Value="@(Model.LastName)" @bind-Value:event="ValueChanged" CreateDivTag="false" ID="textLast" MaxLength="50"
+								                MinLength="1" Placeholder="Last Name" ValidationMessage="@(() => Model.LastName)" Width="100%"/>
+							</div>
+						</div>
+					</div>
+					<div class="divFlex" style="height: 100px">
+						<div class="divFlexLabel">
+							<label class="labelStatus" for="textAddress1">Address:</label>
+						</div>
+						<div class="divFlexSmall" style="height: 68px;">
+							<textboxcontrol @bind-Value="@(Model.Address1)" @bind-Value:event="ValueChanged" CreateDivTag="false" ID="textAddress1" MaxLength="255"
+							                MinLength="1" Placeholder="Address" ValidationMessage="@(() => Model.Address1)" Width="100%"/>
+							<div style="margin-top: 4px;">
+								<textboxcontrol @bind-Value="@(Model.Address2)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="false" ID="textAddress2" MaxLength="255"
+								                Placeholder="Address" Width="100%"/>
+							</div>
+						</div>
+					</div>
+					<div class="divFlex">
+						<div style="display: flex; width: 100%">
+							<div class="divFlexLabel" style="width: 35%">
+								<label class="labelStatus" for="textCity">City:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 3%; width: 35%;">
+								<label class="labelStatus" for="dropState">State:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 3%; width: 24%;">
+								<label class="labelStatus" for="textZip">Zip Code:</label>
+							</div>
+						</div>
+						<div style="display: flex; width: 100%">
+							<div class="divFlexSmall" style="width: 35%">
+								<textboxcontrol @bind-Value="@(Model.City)" @bind-Value:event="ValueChanged" CreateDivTag="false" ID="textCity" MaxLength="50"
+								                MinLength="1" Placeholder="City" ValidationMessage="@(() => Model.City)" Width="100%"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 3%; width: 35%;">
+								<dropdowncontrol @bind-Value="@Model.StateID" @bind-Value:event="ValueChanged" DataSource="States" DropDownValueChange="StateIDChanged" ID="dropState" TextField="Value"
+								                 TItem="IntValues" TValue="int" ValueField="Key"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 3%; width: 24%;">
+								<maskedtextboxcontrol @bind-Value="@(Model.ZipCode)" @bind-Value:event="ValueChanged" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"
+								                      ValidationMessage="@(() => Model.ZipCode)"/>
+							</div>
+						</div>
+					</div>
+					<textboxcontrol @bind-Value="@(Model.Email)" @bind-Value:event="ValueChanged" CreateDivTag="true" ID="textEmail" MaxLength="255"
+					                MinLength="1" Placeholder="Email Address" ValidationMessage="@(() => Model.Email)" Width="100%"/>
+					<div class="divFlex">
+						<div style="display: flex; width: 100%">
+							<div class="divFlexLabel" style="width: 48%">
+								<label class="labelStatus" for="textPhone1">Cell Phone:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 4%; width: 48%;">
+								<label class="labelStatus" for="textPhone2">Alternate Phone:</label>
+							</div>
+						</div>
+						<div style="display: flex; width: 100%">
+							<div class="divFlexSmall" style="width: 48%">
+								<maskedtextboxcontrol @bind-Value="@(Model.Phone1)" @bind-Value:event="ValueChanged" ID="textPhone1" Mask="(000) 000-0000" Placeholder="Cell Phone"
+								                      ValidationMessage="@(() => Model.Phone1)"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 4%; width: 48%;">
+								<maskedtextboxcontrol @bind-Value="@(Model.Phone2)" @bind-Value:event="ValueChanged" CreateTooltip="false" ID="textPhone2" Mask="(000) 000-0000" Placeholder="Alternate Phone"/>
+							</div>
+						</div>
+					</div>
+					<textboxcontrol @bind-Value="@(Model.Title)" @bind-Value:event="ValueChanged" CreateDivTag="true" ID="textTitle" MaxLength="200"
+					                MinLength="1" Placeholder="Title" ValidationMessage="@(() => Model.Title)" Width="100%"/>
+					<textboxcontrol @bind-Value="@(Model.Keywords)" @bind-Value:event="ValueChanged" CreateDivTag="true" ID="textKeywords" MaxLength="200"
+					                MinLength="1" Multiline="true" Placeholder="Keywords" Rows="5" ValidationMessage="@(() => Model.Keywords)" Width="100%"/>
+					<textboxcontrol @bind-Value="@(Model.Summary)" @bind-Value:event="ValueChanged" CreateDivTag="true" CreateTooltip="false" ID="textSummary"
+					                MaxLength="32767" Multiline="true" Placeholder="Summary" Rows="5" Width="100%"/>
+					<div class="divFlex">
+						<div style="display: flex; width: 100%">
+							<div class="divFlexLabel" style="width: 48%">
+								<label class="labelStatus" for="numericHourlyLow">Hourly Rate Min. / Max. ($):</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 4%; width: 48%;">
+								<label class="labelStatus" for="numericSalaryLow">Salary Min. / Max. ($):</label>
+							</div>
+						</div>
+						<div style="display: flex; width: 100%">
+							<div class="divFlexSmall" style="width: 23%">
+								<numericcontrol @bind-Value="@(Model.HourlyRate)" @bind-Value:event="ValueChanged" CreateDivTag="false" Decimals="2" Format="c2" ID="numericHourlyLow"
+								                Max="2000" Placeholder="Hourly Rate (Min.)" TValue="decimal" ValidationMessage="@(() => Model.HourlyRate)"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 2%; width: 23%;">
+								<numericcontrol @bind-Value="@(Model.HourlyRateHigh)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="true" Decimals="2" Format="c2"
+								                ID="numericHourlyHigh" Max="2000" Placeholder="Hourly Rate (Max.)" TValue="decimal" ValidationMessage="@(() => Model.HourlyRateHigh)"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 4%; width: 23%;">
+								<numericcontrol @bind-Value="@(Model.SalaryLow)" @bind-Value:event="ValueChanged" CreateDivTag="false" Decimals="2" Format="c2" ID="numericSalaryLow"
+								                Max="1000000" Placeholder="Salary (Min.)" TValue="decimal" ValidationMessage="@(() => Model.SalaryLow)"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 2%; width: 23%;">
+								<numericcontrol @bind-Value="@(Model.SalaryHigh)" @bind-Value:event="ValueChanged" CreateDivTag="false" Decimals="2" Format="c2" ID="numericSalaryHigh"
+								                Max="1000000" Placeholder="Salary (Max.)" TValue="decimal" ValidationMessage="@(() => Model.SalaryHigh)"/>
+							</div>
+						</div>
+					</div>
+					<div class="divFlex">
+						<div style="display: flex; width: 100%">
+							<div class="divFlexLabel" style="width: 32%">
+								<label class="labelStatus" for="dropEligibility">Eligibility:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 2%; width: 32%;">
+								<label class="labelStatus" for="dropExperience">Experience:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 2%; width: 32%;">
+								<label class="labelStatus" for="dropCommunication">Communication:</label>
+							</div>
+						</div>
+						<div style="display: flex; width: 100%">
+							<div class="divFlexSmall" style="width: 32%">
+								<dropdowncontrol @bind-Value="@Model.EligibilityID" @bind-Value:event="ValueChanged" DataSource="@Eligibility" ID="dropEligibility" TextField="Value" TItem="IntValues"
+								                 TValue="int" ValueField="Key"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 2%; width: 32%;">
+								<dropdowncontrol @bind-Value="@Model.ExperienceID" @bind-Value:event="ValueChanged" DataSource="@Experience" ID="dropExperience" TextField="Value" TItem="IntValues"
+								                 TValue="int" ValueField="Key"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 2%; width: 32%;">
+								<dropdowncontrol @bind-Value="@Model.Communication" @bind-Value:event="ValueChanged" DataSource="@Communication" ID="dropCommunication" TextField="Value" TItem="KeyValues"
+								                 TValue="string" ValueField="Key"/>
+							</div>
+						</div>
+					</div>
+					<div class="divFlex" style="height: 108px">
+						<div class="divFlexLabel">
+							<label class="labelStatus" for="multiTaxTerms">Tax Terms:</label>
+						</div>
+						<div class="divFlexSmall" id="divMultiTaxTerm">
+							<multiselectcontrol @bind-Value="@(Model.TaxTerm)" @bind-Value:event="ValueChanged" CreateTooltip="false" DataSource="TaxTerms" FilterBarPlaceholder="Search Tax Term&hellip;" ID="multiTaxTerms"
+							                    KeyField="Key" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" ValueField="Value"/>
+						</div>
+					</div>
+					<div class="divFlex" style="height: 146px">
+						<div class="divFlexLabel">
+							<label class="labelStatus" for="multiJobOptions">Job Options:</label>
+						</div>
+						<div class="divFlexSmall" id="divMultiJobOption">
+							<multiselectcontrol @bind-Value="@(Model.JobOptions)" @bind-Value:event="ValueChanged" CreateTooltip="false" DataSource="JobOptions" FilterBarPlaceholder="Search Job Option&hellip;" ID="multiJobOptions"
+							                    KeyField="Key" Placeholder="Select Job Option(s)" TItem="KeyValues" TValue="string" ValueField="Value"/>
+						</div>
+					</div>
+					<div class="divFlex">
+						<div style="display: flex; width: 100%">
+							<div class="divFlexLabel" style="width: 48%">
+								<label class="labelStatus" for="textLinkedIn">LinkedIn:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 4%; width: 48%;">
+								<label class="labelStatus" for="textFacebook">Facebook:</label>
+							</div>
+						</div>
+						<div style="display: flex; width: 100%">
+							<div class="divFlexSmall" style="width: 48%">
+								<textboxcontrol @bind-Value="@(Model.LinkedIn)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="false" ID="textLinkedIn" MaxLength="255"
+								                Placeholder="LinkedIn Profile" Width="100%"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 4%; width: 48%;">
+								<textboxcontrol @bind-Value="@(Model.Facebook)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="false" ID="textFacebook" MaxLength="255"
+								                Placeholder="Facebook Profile" Width="100%"/>
+							</div>
+						</div>
+					</div>
+					<div class="divFlex">
+						<div style="display: flex; width: 100%">
+							<div class="divFlexLabel" style="width: 48%">
+								<label class="labelStatus" for="textTwitter">Twitter:</label>
+							</div>
+							<div class="divFlexLabel" style="margin-left: 4%; width: 48%;">
+								<label class="labelStatus" for="textGoogle">Google:</label>
+							</div>
+						</div>
+						<div style="display: flex; width: 100%">
+							<div class="divFlexSmall" style="width: 48%">
+								<textboxcontrol @bind-Value="@(Model.Twitter)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="false" ID="textTwitter" MaxLength="255"
+								                Placeholder="Twitter Profile" Width="100%"/>
+							</div>
+							<div class="divFlexSmall" style="margin-left: 4%; width: 48%;">
+								<textboxcontrol @bind-Value="@(Model.GooglePlus)" @bind-Value:event="ValueChanged" CreateDivTag="false" CreateTooltip="false" ID="textGoogle" MaxLength="255"
+								                Placeholder="Google Plus Profile" Width="100%"/>
+							</div>
+						</div>
+					</div>
+					<switchcontrol @bind-BindValue="@(Model.Relocate)" ID="checkedRelocate" OffLabel="NO" OnLabel="YES" Placeholder="Willing to Relocate?"/>
+					<textboxcontrol @bind-Value="@(Model.RelocationNotes)" @bind-Value:event="ValueChanged" CreateDivTag="true" CreateTooltip="false" ID="textRelocationNotes" MaxLength="200"
+					                Placeholder="Relocation Notes" Readonly="@(!Model.Relocate)" Width="100%"/>
+					<switchcontrol @bind-BindValue="@(Model.Background)" ID="checkedEnabled" OffLabel="NO" OnLabel="YES" Placeholder="Security Clearance?"/>
+					<textboxcontrol @bind-Value="@(Model.SecurityNotes)" @bind-Value:event="ValueChanged" CreateDivTag="true" CreateTooltip="false" ID="textSecurityNotes" MaxLength="200"
+					                Placeholder="Security Clearance Notes" Readonly="@(!Model.Background)" Width="100%"/>
+					<div class="divFlex">
+						<div class="divFlexLabel">
+							<label class="labelStatus" for="richTextResume">Text Resume:</label>
+						</div>
+						<div class="divFlexBig">
+							<SfRichTextEditor @bind-Value="Model.TextResume" Height="400px" ID="richTextResume">
+								<RichTextEditorToolbarSettings Items="_tools"/>
+							</SfRichTextEditor>
+						</div>
+					</div>
+				</div>
+			</div>
+			<DialogFooter CancelMethod="CancelDialog" @ref="FooterDialog"/>
+		</EditForm>*@
