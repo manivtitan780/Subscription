@@ -27,34 +27,31 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.College)" LabelText="School / College:" ID="textCollege">
 						<Template>
 							<label class="e-form-label" for="textCollege">School / College:</label>
-							<SfTextBox @bind-Value="Model.College" HtmlAttributes="_textBoxAttributes" ID="textCollege" Placeholder="School / College"/>
+							<SfTextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)" LabelText="Degree:" ID="textDegree">
 						<Template>
 							<label class="e-form-label" for="textDegree">Degree:</label>
-							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' HtmlAttributes="_textBoxAttributes" ID="textDegree"
-							           Placeholder="Degree"/>
+							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' ID="textDegree" MaxLength="100" Placeholder="Degree"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.State)" LabelText="State:" ID="textState">
 						<Template>
 							<label class="e-form-label" for="textState">State:</label>
-							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' HtmlAttributes="_textBoxAttributes" ID="textState"
-							           Placeholder="State"/>
+							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' ID="textState" MaxLength="100" Placeholder="State"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)" LabelText="Country:" ID="textCountry">
 						<Template>
 							<label class="e-form-label" for="textCountry">Country:</label>
-							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' HtmlAttributes="_textBoxAttributes" ID="textCountry"
-							           Placeholder="Country"/>
+							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' ID="textCountry" MaxLength="100" Placeholder="Country"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)" LabelText="Graduation Year:" ID="textYear">
 						<Template>
 							<label class="e-form-label" for="textYear">Graduation Year:</label>
-							<SfTextBox @bind-Value="Model.Year" HtmlAttributes="_textBoxAttributes" ID="textYear" Placeholder="Graduation Year"/>
+							<SfTextBox @bind-Value="Model.Year" ID="textYear" MaxLength="100" Placeholder="Graduation Year"/>
 						</Template>
 					</FormItem>
 				</FormGroup>

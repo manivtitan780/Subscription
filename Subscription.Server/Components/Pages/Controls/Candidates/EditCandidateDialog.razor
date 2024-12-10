@@ -17,43 +17,43 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)" ID="textFirst">
 						<Template>
 							<label class="e-form-label" for="textFirst">First Name:</label>
-							<SfTextBox @bind-Value="Model.FirstName" HtmlAttributes="_textBoxAttributes" ID="textFirst" Placeholder="First Name"/>
+							<SfTextBox @bind-Value="Model.FirstName" ID="textFirst" MaxLength="50" Placeholder="First Name"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.MiddleName)" ID="textMiddle">
 						<Template>
 							<label class="e-form-label" for="textMiddle">Middle Name:</label>
-							<SfTextBox @bind-Value="Model.MiddleName" HtmlAttributes="_textBoxAttributes" ID="textMiddle" Placeholder="Middle Name"/>
+							<SfTextBox @bind-Value="Model.MiddleName" HtmlAttributes="_textBoxAttributes" ID="textMiddle" MaxLength="10" Placeholder="Middle Name"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.LastName)" ID="textLast">
 						<Template>
 							<label class="e-form-label" for="textLast">Last Name:</label>
-							<SfTextBox @bind-Value="Model.LastName" HtmlAttributes="_textBoxAttributes" ID="textLast" Placeholder="Last Name"/>
+							<SfTextBox @bind-Value="Model.LastName" HtmlAttributes="_textBoxAttributes" ID="textLast" MaxLength="50" Placeholder="Last Name"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Address1)" ID="textAddress1">
 						<Template>
 							<label class="e-form-label" for="textAddress1">Address:</label>
-							<SfTextBox @bind-Value="Model.Address1" HtmlAttributes="_textBoxAttributes" ID="textAddress1" Placeholder="Address"/>
+							<SfTextBox @bind-Value="Model.Address1" HtmlAttributes="_textBoxAttributes" ID="textAddress1" MaxLength="255" Placeholder="Address"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Address2)" ID="textAddress2">
 						<Template>
 							<label class="e-form-label" for="textAddress2">Address 2:</label>
-							<SfTextBox @bind-Value="Model.Address2" HtmlAttributes="_textBoxAttributes" ID="textAddress2" Placeholder="Address 2"/>
+							<SfTextBox @bind-Value="Model.Address2" HtmlAttributes="_textBoxAttributes" ID="textAddress2" MaxLength="255" Placeholder="Address 2"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.City)" LabelText="City:" ID="textCity">
 						<Template>
 							<label class="e-form-label" for="textCity">City:</label>
-							<SfTextBox @bind-Value="Model.City" HtmlAttributes="_textBoxAttributes" ID="textCity" Placeholder="City"/>
+							<SfTextBox @bind-Value="Model.City" HtmlAttributes="_textBoxAttributes" ID="textCity" MaxLength="50" Placeholder="City"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)" LabelText="State:" ID="dropState">
 						<Template>
 							<label class="e-form-label" for="dropState">State:</label>
-							@* <SfDropDownList @bind-Value="Model.StateID" DataSource="States" ID="dropState" TextField="Value" TValue="int" ValueField="Key"/> *@
+							<SfDropDownList @bind-Value="Model.StateID" DataSource="States" ID="dropState" TextField="Value" TItem="IntValues" TValue="int" ValueField="Key"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)" LabelText="Zip Code:" ID="textZip">
@@ -65,7 +65,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Email)" LabelText="Email:" ID="textEmail">
 						<Template>
 							<label class="e-form-label" for="textEmail">Email:</label>
-							<SfTextBox @bind-Value="Model.Email" HtmlAttributes="_textBoxAttributes" ID="textEmail" Placeholder="Email"/>
+							<SfTextBox @bind-Value="Model.Email" HtmlAttributes="_textBoxAttributes" ID="textEmail" MaxLength="255" Placeholder="Email"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone1)" LabelText="Cell Phone:" ID="textPhone1">
@@ -83,19 +83,31 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)" LabelText="Title:" ID="textTitle">
 						<Template>
 							<label class="e-form-label" for="textTitle">Title:</label>
-							<SfTextBox @bind-Value="Model.Title" HtmlAttributes="_textBoxAttributes" ID="textTitle" Placeholder="Title" />
+							<SfTextBox @bind-Value="Model.Title" HtmlAttributes="_textBoxAttributes" ID="textTitle" MaxLength="100" Placeholder="Title"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)" LabelText="Keywords:" ID="textKeywords">
 						<Template>
 							<label class="e-form-label" for="textKeywords">Keywords:</label>
-							<SfTextArea @bind-Value="Model.Keywords" ID="textKeywords" Placeholder="Keywords" Rows="5" ResizeMode="Resize.None" MaxLength="1000"/>
+							<SfTextArea @bind-Value="Model.Keywords" ID="textKeywords" MaxLength="1000" Placeholder="Keywords" Rows="5" ResizeMode="Resize.None"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)" LabelText="Summary:" ID="textSummary">
 						<Template>
 							<label class="e-form-label" for="textSummary">Summary:</label>
-							<SfTextArea @bind-Value="Model.Summary" ID="textSummary" Placeholder="Summary" Rows="5" ResizeMode="Resize.None" MaxLength="1000"/>
+							<SfTextArea @bind-Value="Model.Summary" ID="textSummary" MaxLength="1000" Placeholder="Summary" Rows="5" ResizeMode="Resize.None"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRate)" LabelText="Hourly Rate Min. ($):" ID="numericHourlyLow">
+						<Template>
+							<label class="e-form-label" for="numericHourlyLow">Hourly Rate Min. ($):</label>
+							<SfNumericTextBox @bind-Value="Model.HourlyRate" Decimals="2" Format="c2" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)" ShowSpinButton="false" TValue="decimal"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRateHigh)" LabelText="Hourly Rate Max. ($):" ID="numericHourlyHigh">
+						<Template>
+							<label class="e-form-label" for="numericHourlyHigh">Hourly Rate Max. ($):</label>
+							<SfNumericTextBox @bind-Value="Model.HourlyRateHigh" Decimals="2" Format="c2" ID="numericHourlyHigh" Max="2000" Placeholder="Hourly Rate (Max.)" ShowSpinButton="false" TValue="decimal"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
