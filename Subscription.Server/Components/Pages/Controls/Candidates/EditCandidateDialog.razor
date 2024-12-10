@@ -1,4 +1,5 @@
-﻿<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
+﻿@using FilterType = Syncfusion.Blazor.DropDowns.FilterType
+<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -23,31 +24,31 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.MiddleName)" ID="textMiddle">
 						<Template>
 							<label class="e-form-label" for="textMiddle">Middle Name:</label>
-							<SfTextBox @bind-Value="Model.MiddleName" HtmlAttributes="_textBoxAttributes" ID="textMiddle" MaxLength="10" Placeholder="Middle Name"/>
+							<SfTextBox @bind-Value="Model.MiddleName" ID="textMiddle" MaxLength="10" Placeholder="Middle Name"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.LastName)" ID="textLast">
 						<Template>
 							<label class="e-form-label" for="textLast">Last Name:</label>
-							<SfTextBox @bind-Value="Model.LastName" HtmlAttributes="_textBoxAttributes" ID="textLast" MaxLength="50" Placeholder="Last Name"/>
+							<SfTextBox @bind-Value="Model.LastName" ID="textLast" MaxLength="50" Placeholder="Last Name"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Address1)" ID="textAddress1">
 						<Template>
 							<label class="e-form-label" for="textAddress1">Address:</label>
-							<SfTextBox @bind-Value="Model.Address1" HtmlAttributes="_textBoxAttributes" ID="textAddress1" MaxLength="255" Placeholder="Address"/>
+							<SfTextBox @bind-Value="Model.Address1" ID="textAddress1" MaxLength="255" Placeholder="Address"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Address2)" ID="textAddress2">
 						<Template>
 							<label class="e-form-label" for="textAddress2">Address 2:</label>
-							<SfTextBox @bind-Value="Model.Address2" HtmlAttributes="_textBoxAttributes" ID="textAddress2" MaxLength="255" Placeholder="Address 2"/>
+							<SfTextBox @bind-Value="Model.Address2" ID="textAddress2" MaxLength="255" Placeholder="Address 2"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.City)" LabelText="City:" ID="textCity">
 						<Template>
 							<label class="e-form-label" for="textCity">City:</label>
-							<SfTextBox @bind-Value="Model.City" HtmlAttributes="_textBoxAttributes" ID="textCity" MaxLength="50" Placeholder="City"/>
+							<SfTextBox @bind-Value="Model.City" ID="textCity" MaxLength="50" Placeholder="City"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)" LabelText="State:" ID="dropState">
@@ -65,7 +66,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Email)" LabelText="Email:" ID="textEmail">
 						<Template>
 							<label class="e-form-label" for="textEmail">Email:</label>
-							<SfTextBox @bind-Value="Model.Email" HtmlAttributes="_textBoxAttributes" ID="textEmail" MaxLength="255" Placeholder="Email"/>
+							<SfTextBox @bind-Value="Model.Email" ID="textEmail" MaxLength="255" Placeholder="Email"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone1)" LabelText="Cell Phone:" ID="textPhone1">
@@ -83,7 +84,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)" LabelText="Title:" ID="textTitle">
 						<Template>
 							<label class="e-form-label" for="textTitle">Title:</label>
-							<SfTextBox @bind-Value="Model.Title" HtmlAttributes="_textBoxAttributes" ID="textTitle" MaxLength="100" Placeholder="Title"/>
+							<SfTextBox @bind-Value="Model.Title" ID="textTitle" MaxLength="100" Placeholder="Title"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)" LabelText="Keywords:" ID="textKeywords">
@@ -108,6 +109,75 @@
 						<Template>
 							<label class="e-form-label" for="numericHourlyHigh">Hourly Rate Max. ($):</label>
 							<SfNumericTextBox @bind-Value="Model.HourlyRateHigh" Decimals="2" Format="c2" ID="numericHourlyHigh" Max="2000" Placeholder="Hourly Rate (Max.)" ShowSpinButton="false" TValue="decimal"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SalaryLow)" LabelText="Salary Min. ($):" ID="numericSalaryLow">
+						<Template>
+							<label class="e-form-label" for="numericSalaryLow">Salary Min. ($):</label>
+							<SfNumericTextBox @bind-Value="Model.SalaryLow" Decimals="2" Format="c2" ID="numericSalaryLow" Max="10000000" Placeholder="Salary (Min.)" ShowSpinButton="false" TValue="decimal"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SalaryHigh)" LabelText="Salary Max. ($):" ID="numericSalaryHigh">
+						<Template>
+							<label class="e-form-label" for="numericSalaryHigh">Salary Max. ($):</label>
+							<SfNumericTextBox @bind-Value="Model.SalaryHigh" Decimals="2" Format="c2" ID="numericSalaryHigh" Max="10000000" Placeholder="Salary (Max.)" ShowSpinButton="false" TValue="decimal"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)" LabelText="Eligibility:" ID="dropEligibility">
+						<Template>
+							<label class="e-form-label" for="dropEligibility">Eligibility:</label>
+							<SfDropDownList @bind-Value="Model.EligibilityID" DataSource="Eligibility" ID="dropEligibility" TextField="Value" TItem="IntValues" TValue="int" ValueField="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)" LabelText="Experience:" ID="dropExperience">
+						<Template>
+							<label class="e-form-label" for="dropExperience">Experience:</label>
+							<SfDropDownList @bind-Value="Model.ExperienceID" DataSource="Experience" ID="dropExperience" TextField="Value" TItem="IntValues" TValue="int" ValueField="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Communication)" LabelText="Communication:" ID="dropCommunication">
+						<Template>
+							<label class="e-form-label" for="dropCommunication">Communication:</label>
+							<SfDropDownList @bind-Value="Model.Communication" DataSource="Communication" ID="dropCommunication" TextField="Value" TItem="KeyValues" TValue="string" ValueField="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.TaxTerm)" LabelText="Tax Terms:" ID="multiTaxTerms">
+						<Template>
+							<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms" KeyField="Key"
+							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string" ValueField="Value">
+							</SfMultiSelect>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.JobOptions)" LabelText="Job Options:" ID="multiJobOptions">
+						<Template>
+							<label class="e-form-label" for="multiJobOptions">Job Options:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptions" DataSource="JobOptions" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiJobOptions" 
+							               KeyField="Key" Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string" ValueField="Value"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LinkedIn)" LabelText="LinkedIn:" ID="textLinkedIn">
+						<Template>
+							<label class="e-form-label" for="textLinkedIn">LinkedIn:</label>
+							<SfTextBox @bind-Value="Model.LinkedIn" ID="textLinkedIn" MaxLength="100" Placeholder="LinkedIn Profile"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Facebook)" LabelText="Facebook:" ID="textFacebook">
+						<Template>
+							<label class="e-form-label" for="textFacebook">Facebook:</label>
+							<SfTextBox @bind-Value="Model.Facebook" ID="textFacebook" MaxLength="100" Placeholder="Facebook Profile"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Twitter)" LabelText="Twitter:" ID="textTwitter">
+						<Template>
+							<label class="e-form-label" for="textTwitter">X Profile:</label>
+							<SfTextBox @bind-Value="Model.Twitter" ID="textTwitter" MaxLength="100" Placeholder="Twitter Profile"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.GooglePlus)" LabelText="Google:" ID="textGoogle">
+						<Template>
+							<label class="e-form-label" for="textGoogle">Bluesky:</label>
+							<SfTextBox @bind-Value="Model.GooglePlus" ID="textGoogle" MaxLength="100" Placeholder="Google Plus Profile"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
