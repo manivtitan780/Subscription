@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           EditCandidateDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          11-23-2023 19:53
-// Last Updated On:     12-27-2023 21:19
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          12-07-2024 19:12
+// Last Updated On:     12-10-2024 21:12
 // *****************************************/
 
 #endregion
@@ -26,6 +26,14 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditCandidateDialog
 {
+    private readonly CandidateDetailsValidator _candidateDetailsValidator = new();
+
+    private readonly Dictionary<string, object> _textBoxAttributes = new()
+                                                                     {
+                                                                         {"MaxLength", "100"},
+                                                                         {"MinLength", "1"}
+                                                                     };
+
 	/// <summary>
 	///     A list of toolbar items for the rich text editor in the candidate edit dialog.
 	/// </summary>
@@ -34,21 +42,21 @@ public partial class EditCandidateDialog
 	///     case, superscript, subscript, and clear format. It also includes commands for undo and redo actions.
 	/// </remarks>
 	private readonly List<ToolbarItemModel> _tools =
-	[
-		new() {Command = ToolbarCommand.Bold},
-		new() {Command = ToolbarCommand.Italic},
-		new() {Command = ToolbarCommand.Underline},
-		new() {Command = ToolbarCommand.StrikeThrough},
-		new() {Command = ToolbarCommand.LowerCase},
-		new() {Command = ToolbarCommand.UpperCase},
-		new() {Command = ToolbarCommand.SuperScript},
-		new() {Command = ToolbarCommand.SubScript},
-		new() {Command = ToolbarCommand.Separator},
-		new() {Command = ToolbarCommand.ClearFormat},
-		new() {Command = ToolbarCommand.Separator},
-		new() {Command = ToolbarCommand.Undo},
-		new() {Command = ToolbarCommand.Redo}
-	];
+    [
+        new() {Command = ToolbarCommand.Bold},
+        new() {Command = ToolbarCommand.Italic},
+        new() {Command = ToolbarCommand.Underline},
+        new() {Command = ToolbarCommand.StrikeThrough},
+        new() {Command = ToolbarCommand.LowerCase},
+        new() {Command = ToolbarCommand.UpperCase},
+        new() {Command = ToolbarCommand.SuperScript},
+        new() {Command = ToolbarCommand.SubScript},
+        new() {Command = ToolbarCommand.Separator},
+        new() {Command = ToolbarCommand.ClearFormat},
+        new() {Command = ToolbarCommand.Separator},
+        new() {Command = ToolbarCommand.Undo},
+        new() {Command = ToolbarCommand.Redo}
+    ];
 
 	/// <summary>
 	///     Gets or sets the event to be triggered when the cancel action is performed in the dialog.
@@ -58,11 +66,11 @@ public partial class EditCandidateDialog
 	///     dialog, hide the spinner, and enable the dialog buttons.
 	/// </remarks>
 	[Parameter]
-	public EventCallback<MouseEventArgs> Cancel
-	{
-		get;
-		set;
-	}
+    public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the collection of communication details for the candidate.
@@ -75,11 +83,17 @@ public partial class EditCandidateDialog
 	///     collection represents a specific communication detail.
 	/// </remarks>
 	[Parameter]
-	public IEnumerable<KeyValues> Communication
-	{
-		get;
-		set;
-	}
+    public IEnumerable<KeyValues> Communication
+    {
+        get;
+        set;
+    }
+
+    private EditContext Context
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion Blazor Dialog component used in the EditCandidateDialog.
@@ -90,10 +104,10 @@ public partial class EditCandidateDialog
 	///     methods are called.
 	/// </remarks>
 	private SfDialog Dialog
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the form used for editing candidate details.
@@ -105,10 +119,10 @@ public partial class EditCandidateDialog
 	///     This property is used to manage the data and actions related to the form for editing candidate details.
 	/// </remarks>
 	private SfDataForm EditCandidateForm
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the eligibility of the candidate.
@@ -117,11 +131,11 @@ public partial class EditCandidateDialog
 	///     The eligibility of the candidate, represented as a collection of <see cref="ProfSvc_Classes.IntValues" />.
 	/// </value>
 	[Parameter]
-	public IEnumerable<IntValues> Eligibility
-	{
-		get;
-		set;
-	}
+    public IEnumerable<IntValues> Eligibility
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the collection of experience values for the candidate.
@@ -133,11 +147,11 @@ public partial class EditCandidateDialog
 	///     This property is used to populate the experience field in the edit candidate dialog.
 	/// </remarks>
 	[Parameter]
-	public IEnumerable<IntValues> Experience
-	{
-		get;
-		set;
-	}
+    public IEnumerable<IntValues> Experience
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the DialogFooter instance associated with the EditCandidateDialog.
@@ -148,10 +162,10 @@ public partial class EditCandidateDialog
 	///     Razor markup.
 	/// </remarks>
 	private DialogFooter FooterDialog
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the job options for the candidate.
@@ -161,11 +175,11 @@ public partial class EditCandidateDialog
 	///     Each `KeyValues` instance represents a single job option.
 	/// </value>
 	[Parameter]
-	public IEnumerable<KeyValues> JobOptions
-	{
-		get;
-		set;
-	}
+    public IEnumerable<KeyValues> JobOptions
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the model representing the details of a candidate.
@@ -178,11 +192,11 @@ public partial class EditCandidateDialog
 	///     It is populated when the dialog is opened and updated when changes are saved.
 	/// </remarks>
 	[Parameter]
-	public CandidateDetails Model
-	{
-		get;
-		set;
-	}
+    public CandidateDetails Model
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the event to be triggered when the save action is performed in the dialog.
@@ -192,11 +206,11 @@ public partial class EditCandidateDialog
 	///     save the changes made to the candidate details, hide the dialog, hide the spinner, and enable the dialog buttons.
 	/// </remarks>
 	[Parameter]
-	public EventCallback<EditContext> Save
-	{
-		get;
-		set;
-	}
+    public EventCallback<EditContext> Save
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion spinner control used in the dialog.
@@ -209,10 +223,10 @@ public partial class EditCandidateDialog
 	///     cancelling the edit operation.
 	/// </remarks>
 	private SfSpinner Spinner
-	{
-		get;
-		set;
-	}
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the event callback that is triggered when the State ID changes.
@@ -224,11 +238,11 @@ public partial class EditCandidateDialog
 	///     This event callback is used to handle the changes in the State ID during the candidate editing process.
 	/// </remarks>
 	[Parameter]
-	public EventCallback<ChangeEventArgs<int, IntValues>> StateIDChanged
-	{
-		get;
-		set;
-	}
+    public EventCallback<ChangeEventArgs<int, IntValues>> StateIDChanged
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the list of states associated with the candidate.
@@ -241,11 +255,11 @@ public partial class EditCandidateDialog
 	///     state.
 	/// </remarks>
 	[Parameter]
-	public List<IntValues> States
-	{
-		get;
-		set;
-	}
+    public List<IntValues> States
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Gets or sets the collection of tax terms associated with the candidate.
@@ -257,23 +271,11 @@ public partial class EditCandidateDialog
 	///     This property is used to populate the tax terms section in the candidate editing dialog.
 	/// </remarks>
 	[Parameter]
-	public IEnumerable<KeyValues> TaxTerms
-	{
-		get;
-		set;
-	}
-
-	private readonly Dictionary<string, object> _textBoxAttributes = new()
-																	 {
-																		 {"MaxLength", "100"},
-																		 {"MinLength", "1"}
-																	 };
-
-	private EditContext Context
-	{
-		get;
-		set;
-	}
+    public IEnumerable<KeyValues> TaxTerms
+    {
+        get;
+        set;
+    }
 
 	/// <summary>
 	///     Cancels the candidate editing operation and closes the dialog.

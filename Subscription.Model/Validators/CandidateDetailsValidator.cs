@@ -19,6 +19,8 @@ public class CandidateDetailsValidator : AbstractValidator<CandidateDetails>
 {
     public CandidateDetailsValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(candidate => candidate.FirstName).NotEmpty().WithMessage("First Name is required.")
                                                  .Length(1, 50).WithMessage("First Name must be between 1 and 50 characters.");
 
@@ -44,7 +46,7 @@ public class CandidateDetailsValidator : AbstractValidator<CandidateDetails>
 
         RuleFor(candidate => candidate.Phone1).NotEmpty().WithMessage("Primary Phone is required.")
                                               .Matches(@"^\(\d{3}\) \d{3}-\d{4}$").WithMessage("Primary Phone must be in the format (000) 000-0000.");
-        
+
         RuleFor(candidate => candidate.Phone2).Matches(@"^\(\d{3}\) \d{3}-\d{4}$").WithMessage("Secondary Phone must be in the format (000) 000-0000.");
 
         RuleFor(candidate => candidate.ZipCode).NotEmpty().WithMessage("Zip Code is required.")
@@ -58,20 +60,29 @@ public class CandidateDetailsValidator : AbstractValidator<CandidateDetails>
 
         RuleFor(candidate => candidate.SalaryHigh).InclusiveBetween(0, 10_000_000).WithMessage("Maximum Salary must be less than or equal to $10,000,000.");
 
-        RuleFor(candidate => candidate.Keywords)
-           .NotEmpty().WithMessage("Keywords are required.")
-           .Length(3, 500).WithMessage("Keywords must be between 3 and 500 characters.");
+        RuleFor(candidate => candidate.Keywords).NotEmpty().WithMessage("Keywords are required.")
+                                                .Length(3, 500).WithMessage("Keywords must be between 3 and 500 characters.");
 
-        RuleFor(candidate => candidate.Summary)
-           .MaximumLength(32767).WithMessage("Summary must be less than 32767 characters.");
+        RuleFor(candidate => candidate.Summary).MaximumLength(8000)
+                                               .WithMessage("Summary must be less than or equal to 8000 characters.");
 
-        RuleFor(candidate => candidate.TextResume)
-           .MaximumLength(262136).WithMessage("Text Resume must be less than 262136 characters.");
+        RuleFor(candidate => candidate.TextResume).MaximumLength(2_50_000)
+                                                  .WithMessage("Text Resume must be less than or equal to 2,50,000 characters.");
 
-        RuleFor(candidate => candidate.RelocationNotes)
-           .MaximumLength(2000).WithMessage("Relocation Notes must be less than 2000 characters.");
+        RuleFor(candidate => candidate.RelocationNotes).MaximumLength(2000).WithMessage("Relocation Notes must be less than or equal to 2000 characters.");
 
-        RuleFor(candidate => candidate.SecurityNotes)
-           .MaximumLength(2000).WithMessage("Security Notes must be less than 2000 characters.");
+        RuleFor(candidate => candidate.SecurityNotes).MaximumLength(2000).WithMessage("Security Notes must be less than or equal to 2000 characters.");
+
+        RuleFor(candidate => candidate.LinkedIn).MaximumLength(255).WithMessage("LinkedIn must be less than or equal to 255 characters.");
+
+        RuleFor(candidate => candidate.Facebook).MaximumLength(255).WithMessage("Facebook must be less than or equal to 255 characters.");
+
+        RuleFor(candidate => candidate.Twitter).MaximumLength(255).WithMessage("X Profile Name must be less than or equal to 255 characters.");
+
+        RuleFor(candidate => candidate.GooglePlus).MaximumLength(255).WithMessage("Bluesky Profile Name must be less than or equal to 255 characters.");
+        
+        RuleFor(candidate => candidate.MPCNotes).MaximumLength(2000).WithMessage("MPC Notes must be less than or equal to 2000 characters.");
+        
+        RuleFor(candidate => candidate.RateNotes).MaximumLength(2000).WithMessage("Rating Notes must be less than or equal to 2000 characters.");
     }
 }
