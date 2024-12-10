@@ -53,13 +53,49 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)" LabelText="State:" ID="dropState">
 						<Template>
 							<label class="e-form-label" for="dropState">State:</label>
-							<SfDropDownList @bind-Value="Model.StateID" DataSource="States" ID="dropState" TextField="Value" TValue="int" ValueField="Key"/>
+							@* <SfDropDownList @bind-Value="Model.StateID" DataSource="States" ID="dropState" TextField="Value" TValue="int" ValueField="Key"/> *@
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)" LabelText="Zip Code:" ID="textZip">
 						<Template>
 							<label class="e-form-label" for="textZip">Zip Code:</label>
 							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Email)" LabelText="Email:" ID="textEmail">
+						<Template>
+							<label class="e-form-label" for="textEmail">Email:</label>
+							<SfTextBox @bind-Value="Model.Email" HtmlAttributes="_textBoxAttributes" ID="textEmail" Placeholder="Email"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone1)" LabelText="Cell Phone:" ID="textPhone1">
+						<Template>
+							<label class="e-form-label" for="textPhone1">Cell Phone:</label>
+							<SfMaskedTextBox @bind-Value="Model.Phone1" ID="textPhone1" Mask="(000) 000-0000" Placeholder="Cell Phone"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone2)" LabelText="Alternate Phone:" ID="textPhone2">
+						<Template>
+							<label class="e-form-label" for="textPhone2">Alternate Phone:</label>
+							<SfMaskedTextBox @bind-Value="Model.Phone2" ID="textPhone2" Mask="(000) 000-0000" Placeholder="Alternate Phone"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)" LabelText="Title:" ID="textTitle">
+						<Template>
+							<label class="e-form-label" for="textTitle">Title:</label>
+							<SfTextBox @bind-Value="Model.Title" HtmlAttributes="_textBoxAttributes" ID="textTitle" Placeholder="Title" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)" LabelText="Keywords:" ID="textKeywords">
+						<Template>
+							<label class="e-form-label" for="textKeywords">Keywords:</label>
+							<SfTextArea @bind-Value="Model.Keywords" ID="textKeywords" Placeholder="Keywords" Rows="5" ResizeMode="Resize.None" MaxLength="1000"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)" LabelText="Summary:" ID="textSummary">
+						<Template>
+							<label class="e-form-label" for="textSummary">Summary:</label>
+							<SfTextArea @bind-Value="Model.Summary" ID="textSummary" Placeholder="Summary" Rows="5" ResizeMode="Resize.None" MaxLength="1000"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
