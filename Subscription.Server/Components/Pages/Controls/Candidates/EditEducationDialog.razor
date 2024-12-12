@@ -14,7 +14,7 @@
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Education</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelEducationDialog" type="button">Cancel</SfButton>
@@ -26,32 +26,35 @@
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Education Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.College)" LabelText="School / College:" ID="textCollege">
 						<Template>
-							<label class="e-form-label" for="textCollege">School / College:</label>
-							<SfTextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College"/>
+							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)" LabelText="Degree:" ID="textDegree">
 						<Template>
+							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College" />
 							<label class="e-form-label" for="textDegree">Degree:</label>
-							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' ID="textDegree" MaxLength="100" Placeholder="Degree"/>
+							<SfTextBox @bind-Value="Model.Degree" Created='() => TextOnly("textDegree", false)' ID="textDegree" MaxLength="100" Placeholder="Degree" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.State)" LabelText="State:" ID="textState">
 						<Template>
+							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College" />
 							<label class="e-form-label" for="textState">State:</label>
-							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' ID="textState" MaxLength="100" Placeholder="State"/>
+							<SfTextBox @bind-Value="Model.State" Created='() => TextOnly("textState", false)' ID="textState" MaxLength="100" Placeholder="State" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)" LabelText="Country:" ID="textCountry">
 						<Template>
+							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College" />
 							<label class="e-form-label" for="textCountry">Country:</label>
-							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' ID="textCountry" MaxLength="100" Placeholder="Country"/>
+							<SfTextBox @bind-Value="Model.Country" Created='() => TextOnly("textCountry", false)' ID="textCountry" MaxLength="100" Placeholder="Country" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)" LabelText="Graduation Year:" ID="textYear">
 						<Template>
+							<TextBox @bind-Value="Model.Year" ID="textYear" MaxLength="4" Placeholder="Graduation Year" />
 							<label class="e-form-label" for="textYear">Graduation Year:</label>
-							<SfTextBox @bind-Value="Model.Year" ID="textYear" MaxLength="100" Placeholder="Graduation Year"/>
+							<SfTextBox @bind-Value="Model.Year" ID="textYear" MaxLength="100" Placeholder="Graduation Year" />
 						</Template>
 					</FormItem>
 				</FormGroup>

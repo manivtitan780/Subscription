@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Program.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          4-22-2024 15:4
-// Last Updated On:     4-22-2024 15:46
+// Created On:          04-22-2024 15:04
+// Last Updated On:     12-12-2024 19:12
 // *****************************************/
 
 #endregion
@@ -42,7 +42,7 @@ _builder.Services.AddResponseCompression(options =>
                                              options.Providers.Add<BrotliCompressionProvider>();
                                              options.Providers.Add<GzipCompressionProvider>();
                                              options.MimeTypes =
-                                                 ResponseCompressionDefaults.MimeTypes.Concat(new[] {"image/svg+xml"});
+                                                 ResponseCompressionDefaults.MimeTypes.Concat(["image/svg+xml"]);
                                          });
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
@@ -58,15 +58,15 @@ if (!_app.Environment.IsDevelopment())
     _app.UseHsts();
 }
 
-SyncfusionLicenseProvider.RegisterLicense("MzU1ODExM0AzMjM3MmUzMDJlMzBtNU84aGQ5RDhlYXNPZ0tpZ2U3bkloRnI4YThTb1hVUVFnOEpHTVdCYlRnPQ==");
+/*SyncfusionLicenseProvider.RegisterLicense("MzU1ODExM0AzMjM3MmUzMDJlMzBtNU84aGQ5RDhlYXNPZ0tpZ2U3bkloRnI4YThTb1hVUVFnOEpHTVdCYlRnPQ==");*/
+SyncfusionLicenseProvider.RegisterLicense("MzYyMDc2MUAzMjM4MmUzMDJlMzBldVNkeUdtdkk5ZC91Y0VZVXd2dU1uNU0rK1gxT0VrenBuNFc2cGRLVWJBPQ==");
 
 _app.UseHttpsRedirection();
 
 _app.UseStaticFiles();
 _app.UseAntiforgery();
 
-_app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+_app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 ConfigurationManager _config = _builder.Configuration;
 bool _isLocal = false;

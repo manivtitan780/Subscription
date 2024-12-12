@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subscription.API", "Subscri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Subscription.Server", "Subscription.Server\Subscription.Server.csproj", "{3485F85D-DBD2-436A-95E6-7DFCC95BBE06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Components", "Components\Components.csproj", "{04DCB936-EA5A-4374-9913-27DC2A3CEBFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedComponents", "ExtendedComponents\ExtendedComponents.csproj", "{04DCB936-EA5A-4374-9913-27DC2A3CEBFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
