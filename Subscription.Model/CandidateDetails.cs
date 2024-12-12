@@ -13,10 +13,6 @@
 
 #endregion
 
-#region Using
-
-#endregion
-
 namespace Subscription.Model;
 
 /// <summary>

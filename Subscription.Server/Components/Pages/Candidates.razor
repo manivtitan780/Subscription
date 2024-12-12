@@ -226,7 +226,7 @@
 											<TabHeader Text="Documents"/>
 										</ChildContent>
 										<ContentTemplate>
-											 <DownloadsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candidateDocumentsObject" @ref="DownloadsPanel" /> 
+											<DownloadsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candidateDocumentsObject" @ref="DownloadsPanel" /> 
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -247,6 +247,8 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
+	<EditCandidateDialog Model="_candidateDetailsObjectClone" Communication="_communication" Eligibility="_eligibility" Experience="_experience" Save="SaveCandidate" States="_states" JobOptions="_jobOptions"
+	                     TaxTerms="_taxTerms" @ref="CandidateDialog"/>
 	<EditSkillDialog Model="SelectedSkill" @ref="CandidateSkillDialog" Save="SaveSkill"/>
 	<EditEducationDialog Model="SelectedEducation" @ref="CandidateEducationDialog" Save="SaveEducation"/>
 	<EditExperienceDialog Model="SelectedExperience" @ref="CandidateExperienceDialog" Save="SaveExperience"/>

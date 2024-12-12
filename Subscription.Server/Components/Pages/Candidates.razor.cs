@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-05-2024 20:12
+// Last Updated On:     12-11-2024 16:12
 // *****************************************/
 
 #endregion
@@ -20,7 +20,7 @@ public partial class Candidates
     //private const string StorageName = "CandidatesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CandidateActivity> _candidateActivityObject = [];
-    private CandidateDetails _candidateDetailsObject = new();
+    private CandidateDetails _candidateDetailsObject = new(), _candidateDetailsObjectClone = new();
     private List<CandidateDocument> _candidateDocumentsObject = [];
     private List<CandidateEducation> _candidateEducationObject = [];
     private List<CandidateExperience> _candidateExperienceObject = [];
@@ -71,6 +71,12 @@ public partial class Candidates
     ///     - Any other value => "Fair"
     /// </remarks>
     private MarkupString CandidateCommunication
+    {
+        get;
+        set;
+    }
+
+    private EditCandidateDialog CandidateDialog
     {
         get;
         set;
@@ -214,6 +220,12 @@ public partial class Candidates
     }
 
     private bool DownloadOriginal
+    {
+        get;
+        set;
+    }
+
+    private DownloadsPanel DownloadsPanel
     {
         get;
         set;
@@ -441,6 +453,19 @@ public partial class Candidates
     } = new();
 
     /// <summary>
+    ///     Gets or sets the selected document for download associated with a candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the document selected by the user for download.
+    ///     The document is selected in the DownloadsPanel and used in the `DownloadDocument` method.
+    /// </remarks>
+    private CandidateDocument SelectedDownload
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
     ///     Gets or sets the selected education for the candidate. This property is of type
     ///     <see cref="Subscription.Model.CandidateEducation" />.
     /// </summary>
@@ -531,74 +556,6 @@ public partial class Candidates
         set;
     }
 
-    private DownloadsPanel DownloadsPanel
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the selected document for download associated with a candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the document selected by the user for download.
-    ///     The document is selected in the DownloadsPanel and used in the `DownloadDocument` method.
-    /// </remarks>
-    private CandidateDocument SelectedDownload
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Asynchronously deletes a document associated with a candidate.
-    /// </summary>
-    /// <param name="arg">The ID of the document to be deleted.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method sends a POST request to the Candidates/DeleteCandidateDocument endpoint with the document ID and user
-    ///     ID as parameters.
-    ///     If the action is successful, the candidate's documents are updated.
-    /// </remarks>
-    private Task DeleteDocument(int arg) => ExecuteMethod(async () =>
-                                                          {
-                                                              Dictionary<string, string> _parameters = new()
-                                                                                                       {
-                                                                                                           {"documentID", arg.ToString()},
-                                                                                                           {"user", User}
-                                                                                                       };
-
-                                                              Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteCandidateDocument", _parameters);
-                                                              if (_response == null)
-                                                              {
-                                                                  return;
-                                                              }
-
-                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
-                                                          });
-
-
-    /// <summary>
-    ///     Initiates the download of a document associated with a candidate.
-    /// </summary>
-    /// <param name="arg">The identifier of the document to be downloaded.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if another download operation is in progress. If not, it sets the SelectedDownload
-    ///     property to the document selected in the DownloadsPanel.
-    ///     It then constructs a query string by concatenating the internal file name of the document, the ID of the target
-    ///     candidate, the location of the document, and a zero, separated by "^" characters.
-    ///     The query string is then Base64 encoded. The method then invokes a JavaScript function to open a new browser tab
-    ///     with a URL constructed from the BaseUri of the NavigationManager, the string "Download/", and the encoded query
-    ///     string.
-    /// </remarks>
-    private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
-                                                            {
-                                                                SelectedDownload = DownloadsPanel.SelectedRow;
-                                                                string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.Location}^0".ToBase64String();
-                                                                await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
-                                                            });
-
     private static async Task AllAlphabets()
     {
         SearchModel.Name = "";
@@ -648,6 +605,33 @@ public partial class Candidates
                                                         await Grid.SelectRowAsync(0);
                                                     }
                                                 });
+
+    /// <summary>
+    ///     Asynchronously deletes a document associated with a candidate.
+    /// </summary>
+    /// <param name="arg">The ID of the document to be deleted.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method sends a POST request to the Candidates/DeleteCandidateDocument endpoint with the document ID and user
+    ///     ID as parameters.
+    ///     If the action is successful, the candidate's documents are updated.
+    /// </remarks>
+    private Task DeleteDocument(int arg) => ExecuteMethod(async () =>
+                                                          {
+                                                              Dictionary<string, string> _parameters = new()
+                                                                                                       {
+                                                                                                           {"documentID", arg.ToString()},
+                                                                                                           {"user", User}
+                                                                                                       };
+
+                                                              Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteCandidateDocument", _parameters);
+                                                              if (_response == null)
+                                                              {
+                                                                  return;
+                                                              }
+
+                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
+                                                          });
 
     /// <summary>
     ///     Asynchronously deletes the education record of a candidate.
@@ -825,6 +809,91 @@ public partial class Candidates
     {
         _target = null;
     }
+
+    /// <summary>
+    ///     Initiates the download of a document associated with a candidate.
+    /// </summary>
+    /// <param name="arg">The identifier of the document to be downloaded.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method first checks if another download operation is in progress. If not, it sets the SelectedDownload
+    ///     property to the document selected in the DownloadsPanel.
+    ///     It then constructs a query string by concatenating the internal file name of the document, the ID of the target
+    ///     candidate, the location of the document, and a zero, separated by "^" characters.
+    ///     The query string is then Base64 encoded. The method then invokes a JavaScript function to open a new browser tab
+    ///     with a URL constructed from the BaseUri of the NavigationManager, the string "Download/", and the encoded query
+    ///     string.
+    /// </remarks>
+    private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
+                                                            {
+                                                                SelectedDownload = DownloadsPanel.SelectedRow;
+                                                                string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.Location}^0".ToBase64String();
+                                                                await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
+                                                            });
+
+    /// <summary>
+    ///     Asynchronously edits the details of a candidate. If the candidate is not selected or is new,
+    ///     it prepares the system to add a new candidate. Otherwise, it prepares the system to edit the existing candidate's
+    ///     details.
+    /// </summary>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
+    ///     immediately.
+    ///     Then it shows a spinner indicating the action is in progress.
+    ///     If the target candidate is null or new, it prepares the system to add a new candidate.
+    ///     Otherwise, it prepares the system to edit the existing candidate's details.
+    ///     Finally, it hides the spinner and shows the dialog to edit the candidate.
+    /// </remarks>
+    private Task EditCandidate() => ExecuteMethod(async () =>
+                                                  {
+                                                      if (Spinner != null)
+                                                      {
+                                                          try
+                                                          {
+                                                              await Spinner.ShowAsync();
+                                                          }
+                                                          catch
+                                                          {
+                                                              //Ignore the exception.
+                                                          }
+                                                      }
+
+                                                      if (_target == null || _target.ID == 0)
+                                                      {
+                                                          if (_candidateDetailsObjectClone == null)
+                                                          {
+                                                              _candidateDetailsObjectClone = new();
+                                                          }
+                                                          else
+                                                          {
+                                                              _candidateDetailsObjectClone.Clear();
+                                                          }
+
+                                                          _candidateDetailsObjectClone.IsAdd = true;
+                                                      }
+                                                      else
+                                                      {
+                                                          _candidateDetailsObjectClone = _candidateDetailsObject.Copy();
+
+                                                          _candidateDetailsObjectClone.IsAdd = false;
+                                                      }
+
+                                                      if (Spinner != null)
+                                                      {
+                                                          try
+                                                          {
+                                                              await Spinner.HideAsync();
+                                                          }
+                                                          catch
+                                                          {
+                                                              //Ignore the exception.
+                                                          }
+                                                      }
+
+                                                      await CandidateDialog.ShowDialog();
+                                                      StateHasChanged();
+                                                  });
 
     /// <summary>
     ///     Asynchronously edits the education details of a candidate. If the education record is not selected or is new,
@@ -1119,6 +1188,13 @@ public partial class Candidates
                                                                           await Task.CompletedTask;
                                                                       });
 
+    /// <summary>
+    ///     Retrieves the state name associated with the given id.
+    /// </summary>
+    /// <param name="id">The id of the state.</param>
+    /// <returns>The name of the state associated with the given id. If no state is found, returns null.</returns>
+    private string GetState(int id) => _states.FirstOrDefault(state => state.Value == id)?.Text.Split('-')[1].Replace("[", "").Replace("]", "").Trim();
+
     private async Task GridPageChanging(GridPageChangingEventArgs page)
     {
         await ExecuteMethod(async () =>
@@ -1209,6 +1285,53 @@ public partial class Candidates
     ///     "Candidates/DownloadResume" endpoint to retrieve the original resume.
     /// </remarks>
     private Task OriginalClick(MouseEventArgs arg) => GetResumeOnClick("Original");
+
+    /// <summary>
+    ///     Asynchronously saves the candidate details.
+    /// </summary>
+    /// <remarks>
+    ///     This method performs the following steps:
+    ///     - Yields the current thread of execution.
+    ///     - Creates a new RestClient instance with the API host URL.
+    ///     - Creates a new RestRequest instance for the "Candidates/SaveCandidate" endpoint, using the POST method and JSON
+    ///     request format.
+    ///     - Adds the cloned candidate details object to the request body as JSON.
+    ///     - Adds the JSON file path, username, and email address as query parameters to the request. If the username or
+    ///     email address is null or whitespace, default values are used.
+    ///     - Sends the request asynchronously and awaits the response.
+    ///     - Updates the candidate details object with the cloned object.
+    ///     - Updates the target candidate's name, phone, email, location, updated date, and status based on the candidate
+    ///     details object.
+    ///     - Calls methods to set up the address, communication, eligibility, job option, tax term, and experience.
+    ///     - Yields the current thread of execution again.
+    ///     - Triggers a UI refresh by calling StateHasChanged.
+    /// </remarks>
+    private Task SaveCandidate() => ExecuteMethod(async () =>
+                                                  {
+                                                      Dictionary<string, string> _parameters = new()
+                                                                                               {
+                                                                                                   {"jsonPath", ""},
+                                                                                                   {"userName", User},
+                                                                                                   {"emailAddress", "maniv@titan-techs.com"}
+                                                                                               };
+
+                                                      await General.PostRest("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
+
+                                                      _candidateDetailsObject = _candidateDetailsObjectClone.Copy();
+                                                      _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";
+                                                      _target.Phone = _candidateDetailsObject.Phone1.FormatPhoneNumber();
+                                                      _target.Email = _candidateDetailsObject.Email;
+                                                      _target.Location = $"{_candidateDetailsObject.City}, {GetState(_candidateDetailsObject.StateID)}, {_candidateDetailsObject.ZipCode}";
+                                                      _target.Updated = DateTime.Today.CultureDate() + "[ADMIN]";
+                                                      _target.Status = "Available";
+                                                      SetupAddress();
+                                                      SetCommunication();
+                                                      SetEligibility();
+                                                      SetJobOption();
+                                                      SetTaxTerm();
+                                                      SetExperience();
+                                                      StateHasChanged();
+                                                  });
 
     /// <summary>
     ///     Asynchronously saves the education details of a candidate.
@@ -1538,7 +1661,63 @@ public partial class Candidates
         Address = _generateAddress.ToMarkupString();
     }
 
-    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg) => null;
+    /// <summary>
+    ///     Handles the event when a speed dial item is clicked.
+    /// </summary>
+    /// <param name="args">The arguments related to the speed dial item event.</param>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method first checks if an action is already in progress. If not, it sets the action in progress and the speed
+    ///     dial to active.
+    ///     Depending on the ID of the clicked speed dial item, it performs different actions such as editing a candidate,
+    ///     rating, adding a skill, education, experience, notes, attachment, or resume.
+    ///     After the action is performed, it sets the speed dial to inactive and ends the action in progress.
+    /// </remarks>
+    private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
+    {
+        switch (args.Item.ID)
+        {
+            case "itemEditCandidate":
+                _selectedTab = 0;
+                return EditCandidate();
+            case "itemEditRating":
+                _selectedTab = 0;
+                StateHasChanged();
+                return Task.CompletedTask;
+            //return DialogRating.ShowDialog();
+            case "itemEditMPC":
+                _selectedTab = 0;
+                StateHasChanged();
+                return Task.CompletedTask;
+            //return DialogMPC.ShowDialog();
+            case "itemAddSkill":
+                _selectedTab = 1;
+                return EditSkill(0);
+            case "itemAddEducation":
+                _selectedTab = 2;
+                return EditEducation(0);
+            case "itemAddExperience":
+                _selectedTab = 3;
+                return EditExperience(0);
+            case "itemAddNotes":
+                _selectedTab = 4;
+                return EditNotes(0);
+            case "itemAddAttachment":
+                _selectedTab = 6;
+                return Task.CompletedTask;
+            //return AddDocument();
+            case "itemOriginalResume":
+                _selectedTab = 5;
+                return Task.CompletedTask;
+            //return AddResume(0);
+            case "itemFormattedResume":
+                _selectedTab = 5;
+                return Task.CompletedTask;
+            //return AddResume(1);
+        }
+
+        return Task.CompletedTask;
+    }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 

@@ -8,7 +8,7 @@
 // File Name:           EditCandidateDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-07-2024 19:12
-// Last Updated On:     12-10-2024 21:12
+// Last Updated On:     12-11-2024 20:12
 // *****************************************/
 
 #endregion
@@ -27,12 +27,6 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 public partial class EditCandidateDialog
 {
     private readonly CandidateDetailsValidator _candidateDetailsValidator = new();
-
-    private readonly Dictionary<string, object> _textBoxAttributes = new()
-                                                                     {
-                                                                         {"MaxLength", "100"},
-                                                                         {"MinLength", "1"}
-                                                                     };
 
 	/// <summary>
 	///     A list of toolbar items for the rich text editor in the candidate edit dialog.
@@ -148,20 +142,6 @@ public partial class EditCandidateDialog
 	/// </remarks>
 	[Parameter]
     public IEnumerable<IntValues> Experience
-    {
-        get;
-        set;
-    }
-
-	/// <summary>
-	///     Gets or sets the DialogFooter instance associated with the EditCandidateDialog.
-	/// </summary>
-	/// <remarks>
-	///     The DialogFooter instance is used to manage the footer section of the EditCandidateDialog,
-	///     which includes the Cancel and Save buttons. The FooterDialog property is bound to the DialogFooter component in the
-	///     Razor markup.
-	/// </remarks>
-	private DialogFooter FooterDialog
     {
         get;
         set;
@@ -286,7 +266,15 @@ public partial class EditCandidateDialog
 	///     This method is triggered when the user clicks on the cancel button in the dialog.
 	///     It calls the `General.CallCancelMethod` to handle the cancellation and closing of the dialog.
 	/// </remarks>
-	private async Task CancelDialog(MouseEventArgs args) => await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+	private async Task CancelDialog(MouseEventArgs args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
 	/// <summary>
 	///     Opens the dialog for editing candidate details.
@@ -295,6 +283,15 @@ public partial class EditCandidateDialog
 	///     This method is called when the dialog is opened. It validates the form context of the dialog.
 	/// </remarks>
 	private void DialogOpen() => EditCandidateForm.EditContext?.Validate();
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
+
+    private void OpenDialog() => Context.Validate();
 
 	/// <summary>
 	///     Asynchronously saves the changes made in the candidate dialog.
@@ -310,7 +307,13 @@ public partial class EditCandidateDialog
 	///     The spinner is shown and the dialog buttons are disabled when the save operation starts, and hidden and enabled
 	///     respectively when the save operation completes.
 	/// </remarks>
-	private async Task SaveCandidateDialog(EditContext editContext) => await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+	private async Task SaveCandidateDialog(EditContext editContext)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
 
 	/// <summary>
 	///     Displays the dialog for editing candidate details.

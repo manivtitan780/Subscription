@@ -1,11 +1,11 @@
 ﻿@using FilterType = Syncfusion.Blazor.DropDowns.FilterType
-<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="90vw">
+<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="70vw">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
-		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogAnimationSettings Duration="1000" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="DialogOpen"/>
-		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="SaveCandidateDialog" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="SaveCandidateDialog" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Candidate</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
@@ -14,7 +14,7 @@
 				<FluentValidationValidator Validator="_candidateDetailsValidator"/>
 			</FormValidator>
 			<FormItems>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Candidate Information">
+				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)" ID="textFirst">
 						<Template>
 							<label class="e-form-label" for="textFirst">First Name:</label>
@@ -63,7 +63,9 @@
 							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Email)" LabelText="Email:" ID="textEmail">
+				</FormGroup>
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupContactInfo" LabelText="Contact Information">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Email)" LabelText="Email:" ID="textEmail">
 						<Template>
 							<label class="e-form-label" for="textEmail">Email:</label>
 							<SfTextBox @bind-Value="Model.Email" ID="textEmail" MaxLength="255" Placeholder="Email"/>
@@ -82,7 +84,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Additional Information">
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)" LabelText="Title:" ID="textTitle">
 						<Template>
 							<label class="e-form-label" for="textTitle">Title:</label>
@@ -102,7 +104,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Financial Information">
+				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRate)" LabelText="Hourly Rate Min. ($):" ID="numericHourlyLow">
 						<Template>
 							<label class="e-form-label" for="numericHourlyLow">Hourly Rate Min. ($):</label>
@@ -128,7 +130,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Additional Information">
+				<FormGroup ColumnCount="5" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)" LabelText="Eligibility:" ID="dropEligibility">
 						<Template>
 							<label class="e-form-label" for="dropEligibility">Eligibility:</label>
@@ -163,7 +165,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Social Links">
+				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupSocialInfo" LabelText="Social Links">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.LinkedIn)" LabelText="LinkedIn:" ID="textLinkedIn">
 						<Template>
 							<label class="e-form-label" for="textLinkedIn">LinkedIn:</label>
@@ -189,7 +191,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Preferences/Clearances">
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupPreferencesInfo" LabelText="Preferences/Clearances">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Relocate)" LabelText="Willing to Relocate:" ID="checkedRelocate" EditorType="FormEditorType.Switch">
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.RelocationNotes)" LabelText="Relocation Notes:" ID="textRelocationNotes">
@@ -206,7 +208,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Resume">
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupResumeInfo" LabelText="Resume">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.TextResume)" LabelText="Text Resume:" ID="richTextResume">
 						<Template>
 							<label class="e-form-label" for="richTextResume">Text Resume:</label>
