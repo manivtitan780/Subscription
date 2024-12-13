@@ -124,7 +124,7 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="5" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
+				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)" LabelText="Eligibility:" ID="dropEligibility">
 						<Template>
 							<label class="e-form-label" for="dropEligibility">Eligibility:</label>
@@ -145,23 +145,26 @@
 						<Template>
 							<label class="e-form-label" for="dropCommunication">Communication:</label>
 							<SfDropDownList @bind-Value="Model.Communication" DataSource="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string">
-								<DropDownListFieldSettings Text="Text" Value="Value"/>
+								<DropDownListFieldSettings Text="Value" Value="Key"/>
 							</SfDropDownList>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.TaxTerm)" LabelText="Tax Terms:" ID="multiTaxTerms">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerm)" LabelText="Tax Terms:" ID="multiTaxTerms">
 						<Template>
 							<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
-							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms" KeyField="Key"
-							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string" ValueField="Value">
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms"
+							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
+								<MultiSelectFieldSettings Text="Value" Value="Key"/>
 							</SfMultiSelect>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.JobOptions)" LabelText="Job Options:" ID="multiJobOptions">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.JobOptions)" LabelText="Job Options:" ID="multiJobOptions">
 						<Template>
 							<label class="e-form-label" for="multiJobOptions">Job Options:</label>
 							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptions" DataSource="JobOptions" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiJobOptions"
-							               KeyField="Key" Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string" ValueField="Value"/>
+							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
+								<MultiSelectFieldSettings Text="Value" Value="Key"/>
+							</SfMultiSelect>
 						</Template>
 					</FormItem>
 				</FormGroup>

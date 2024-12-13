@@ -1266,7 +1266,7 @@ public partial class Candidates
                                 [
                                     CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(),
                                     CacheObjects.TaxTerms.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.StatusCodes.ToString(), CacheObjects.Workflow.ToString(),
-                                    CacheObjects.Communication.ToString(), CacheObjects.DocumentTypes.ToString()
+                                    CacheObjects.Communications.ToString(), CacheObjects.DocumentTypes.ToString()
                                 ];
 
                                 RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
@@ -1282,7 +1282,7 @@ public partial class Candidates
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
                                 _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
                                 _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()]);
-                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communication.ToString()]);
+                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
 
                                 SearchModel.Clear();

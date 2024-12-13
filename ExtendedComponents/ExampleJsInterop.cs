@@ -1,5 +1,3 @@
-using Microsoft.JSInterop;
-
 namespace ExtendedComponents
 {
     // This class provides an example of how JavaScript functionality can be wrapped

@@ -13,18 +13,6 @@
 
 #endregion
 
-#region Using
-
-using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-
-using Syncfusion.Blazor.Inputs;
-
-#endregion
-
 namespace ExtendedComponents;
 
 public partial class TextBox : ComponentBase
@@ -100,8 +88,17 @@ public partial class TextBox : ComponentBase
     [Parameter]
     public string Value
     {
-        get;
-        set;
+        get => _value;
+        set
+        {
+            if (EqualityComparer<string>.Default.Equals(value, _value))
+            {
+                return;
+            }
+
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
     }
 
     /// <summary>
