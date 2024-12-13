@@ -15,86 +15,78 @@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)" ID="textFirst">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)">
 						<Template>
 							<TextBox @bind-Value="Model.FirstName" ID="textFirst" MaxLength="50" Placeholder="First Name"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.MiddleName)" ID="textMiddle">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.MiddleName)">
 						<Template>
 							<TextBox @bind-Value="Model.MiddleName" ID="textMiddle" MaxLength="10" Placeholder="Middle Name"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.LastName)" ID="textLast">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LastName)">
 						<Template>
 							<TextBox @bind-Value="Model.LastName" ID="textLast" MaxLength="50" Placeholder="Last Name"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="3" Field="@nameof(Model.Address1)" ID="textAddress1">
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Address1)">
 						<Template>
 							<TextBox @bind-Value="Model.Address1" ID="textAddress1" MaxLength="255" Placeholder="Address"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="3" Field="@nameof(Model.Address2)" ID="textAddress2">
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Address2)">
 						<Template>
 							<TextBox @bind-Value="Model.Address2" ID="textAddress2" MaxLength="255" Placeholder="Address 2"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.City)" LabelText="City:" ID="textCity">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.City)">
 						<Template>
 							<TextBox @bind-Value="Model.City" ID="textCity" MaxLength="50" Placeholder="City"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)" LabelText="State:" ID="dropState">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
 						<Template>
-							<label class="e-form-label" for="dropState">State:</label>
-							<SfDropDownList @bind-Value="Model.StateID" DataSource="States" ID="dropState" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="Value"/>
-							</SfDropDownList>
+							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="Value" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)" LabelText="Zip Code:" ID="textZip">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)">
 						<Template>
-							<label class="e-form-label" for="textZip">Zip Code:</label>
-							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"/>
+							<MaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupContactInfo" LabelText="Contact Information">
-					<FormItem ColumnSpan="2" Field="@nameof(Model.Email)" LabelText="Email:" ID="textEmail">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Email)">
 						<Template>
-							<TextBox @bind-Value="Model.Email" ID="textEmail" MaxLength="255" Placeholder="Email"/>
+							<TextBox @bind-Value="Model.Email" ID="textEmail" MaxLength="255" Placeholder="Email" TextBoxType="InputType.Email"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone1)" LabelText="Cell Phone:" ID="textPhone1">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone1)">
 						<Template>
-							<label class="e-form-label" for="textPhone1">Cell Phone:</label>
-							<SfMaskedTextBox @bind-Value="Model.Phone1" ID="textPhone1" Mask="(000) 000-0000" Placeholder="Cell Phone"/>
+							<MaskedTextBox @bind-Value="Model.Phone1" ID="textPhone1" Mask="(000) 000-0000" Placeholder="Cell Phone"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone2)" LabelText="Alternate Phone:" ID="textPhone2">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone2)">
 						<Template>
-							<label class="e-form-label" for="textPhone2">Alternate Phone:</label>
-							<SfMaskedTextBox @bind-Value="Model.Phone2" ID="textPhone2" Mask="(000) 000-0000" Placeholder="Alternate Phone"/>
+							<MaskedTextBox @bind-Value="Model.Phone2" ID="textPhone2" Mask="(000) 000-0000" Placeholder="Alternate Phone"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)" LabelText="Title:" ID="textTitle">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)">
 						<Template>
 							<TextBox @bind-Value="Model.Title" ID="textTitle" MaxLength="100" Placeholder="Title"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)" LabelText="Keywords:" ID="textKeywords">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)">
 						<Template>
-							<label class="e-form-label" for="textKeywords">Keywords:</label>
-							<SfTextArea @bind-Value="Model.Keywords" ID="textKeywords" MaxLength="1000" Placeholder="Keywords" Rows="5" ResizeMode="Resize.None"/>
+							<TextArea @bind-Value="Model.Keywords" ID="textKeywords" Placeholder="Keywords"></TextArea>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)" LabelText="Summary:" ID="textSummary">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)">
 						<Template>
-							<label class="e-form-label" for="textSummary">Summary:</label>
-							<SfTextArea @bind-Value="Model.Summary" ID="textSummary" MaxLength="1000" Placeholder="Summary" Rows="5" ResizeMode="Resize.None"/>
+							<TextArea @bind-Value="Model.Summary" ID="textSummary" Placeholder="Summary"></TextArea>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -102,7 +94,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRate)" LabelText="Hourly Rate Min. ($):" ID="numericHourlyLow">
 						<Template>
 							<label class="e-form-label" for="numericHourlyLow">Hourly Rate Min. ($):</label>
-							<SfNumericTextBox @bind-Value="Model.HourlyRate" Decimals="2" Format="c2" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)" ShowSpinButton="false" TValue="decimal"/>
+							<SfNumericTextBox @bind-Value="Model.HourlyRate" Decimals="2" Format="c2" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)	" ShowSpinButton="false" TValue="decimal"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRateHigh)" LabelText="Hourly Rate Max. ($):" ID="numericHourlyHigh">
@@ -127,26 +119,17 @@
 				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)" LabelText="Eligibility:" ID="dropEligibility">
 						<Template>
-							<label class="e-form-label" for="dropEligibility">Eligibility:</label>
-							<SfDropDownList @bind-Value="Model.EligibilityID" DataSource="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="Value"/>
-							</SfDropDownList>
+							<DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="Value" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)" LabelText="Experience:" ID="dropExperience">
 						<Template>
-							<label class="e-form-label" for="dropExperience">Experience:</label>
-							<SfDropDownList @bind-Value="Model.ExperienceID" DataSource="Experience" ID="dropExperience" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="Value"/>
-							</SfDropDownList>
+							<DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="Value" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Communication)" LabelText="Communication:" ID="dropCommunication">
 						<Template>
-							<label class="e-form-label" for="dropCommunication">Communication:</label>
-							<SfDropDownList @bind-Value="Model.Communication" DataSource="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string">
-								<DropDownListFieldSettings Text="Value" Value="Key"/>
-							</SfDropDownList>
+							<DropDown @bind-Value="Model.Communication" Model="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string" Placeholder="Communication" Text="Value" Key="Key" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerm)" LabelText="Tax Terms:" ID="multiTaxTerms">

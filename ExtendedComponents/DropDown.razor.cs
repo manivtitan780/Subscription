@@ -8,7 +8,7 @@
 // File Name:           DropDown.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-13-2024 19:12
-// Last Updated On:     12-13-2024 19:12
+// Last Updated On:     12-13-2024 21:12
 // *****************************************/
 
 #endregion
@@ -51,6 +51,24 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the field in the data source that provides the values for the DropDown.
+    /// </summary>
+    /// <value>
+    ///     The name of the field that provides the values for the DropDown.
+    /// </value>
+    /// <remarks>
+    ///     This property is used to bind a field in the data source to the value of the DropDown items.
+    ///     The value of this field is used as the value for each item in the DropDown.
+    ///     When an item is selected in the DropDown, the value of this field is used as the selected value.
+    /// </remarks>
+    [Parameter]
+    public string Key
+    {
+        get;
+        set;
+    }
+
     [Parameter]
     public IEnumerable<TItem> Model
     {
@@ -84,7 +102,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     The display text is shown in the DropDown's input field and in the dropdown list.
     /// </remarks>
     [Parameter]
-    public string TextField
+    public string Text
     {
         get;
         set;
@@ -148,24 +166,6 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     /// </remarks>
     [Parameter]
     public Expression<Func<TValue>> ValueExpression
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the field in the data source that provides the values for the DropDown.
-    /// </summary>
-    /// <value>
-    ///     The name of the field that provides the values for the DropDown.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to bind a field in the data source to the value of the DropDown items.
-    ///     The value of this field is used as the value for each item in the DropDown.
-    ///     When an item is selected in the DropDown, the value of this field is used as the selected value.
-    /// </remarks>
-    [Parameter]
-    public string ValueField
     {
         get;
         set;
