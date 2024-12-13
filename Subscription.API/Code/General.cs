@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-20-2024 20:04
-// Last Updated On:     12-05-2024 20:12
+// Last Updated On:     12-13-2024 19:12
 // *****************************************/
 
 #endregion
@@ -193,6 +193,14 @@ public static class General
                                                                      StateID = zip.GetInt32(3)
                                                                  }).ToListAsync();
 
+            List<KeyValues> _communications =
+            [
+                new() {Key = "A", Value = "Average"},
+                new() {Key = "X", Value = "Excellent"},
+                new() {Key = "F", Value = "Fair"},
+                new() {Key = "G", Value = "Good"}
+            ];
+
             await _reader.CloseAsync();
 
             await _connection.CloseAsync();
@@ -203,13 +211,13 @@ public static class General
                 CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.LeadIndustries.ToString(),
                 CacheObjects.LeadSources.ToString(), CacheObjects.LeadStatus.ToString(), CacheObjects.NAICS.ToString(), CacheObjects.Roles.ToString(), CacheObjects.Skills.ToString(),
                 CacheObjects.States.ToString(), CacheObjects.StatusCodes.ToString(), CacheObjects.TaxTerms.ToString(), CacheObjects.Users.ToString(), CacheObjects.Workflow.ToString(),
-                CacheObjects.Zips.ToString()
+                CacheObjects.Zips.ToString(), CacheObjects.Communications.ToString()
             ];
 
             List<object> _values =
             [
                 _companies, _companyContacts, _titles, _documentTypes, _educations, _eligibilities, _experiences, _jobOptions, _leadIndustries, _leadSources, _leadStatuses, _naics, _roles, _skills,
-                _states, _statusCodes, _taxTerms, _users, _workflows, _zips
+                _states, _statusCodes, _taxTerms, _users, _workflows, _zips, _communications
             ];
 
             await _service.CreateBatchSet(_keys, _values);

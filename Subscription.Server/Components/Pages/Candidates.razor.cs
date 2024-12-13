@@ -1213,12 +1213,27 @@ public partial class Candidates
                             });
     }
 
+    /// <summary>
+    /// Handles the asynchronous initialization of the Candidates component.
+    /// </summary>
+    /// <remarks>
+    /// This method performs the following steps:
+    /// <list type="number">
+    /// <item>Initializes the task completion source.</item>
+    /// <item>Retrieves user claims and sets user permissions.</item>
+    /// <item>Fetches configuration data from the cache server.</item>
+    /// <item>Clears the search model.</item>
+    /// </list>
+    /// If the user is not authenticated, they are redirected to the login page.
+    /// </remarks>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
         _initializationTaskSource = new();
 
         await ExecuteMethod(async () =>
                             {
+                                // Get user claims
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
 
                                 if (_claims == null)
@@ -1234,6 +1249,7 @@ public partial class Candidates
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
                                     }
 
+                                    // Set user permissions
                                     HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCandidates");
                                     HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditCandidate");
                                     DownloadOriginal = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "DownloadOriginal");
@@ -1245,6 +1261,7 @@ public partial class Candidates
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
                                 }
 
+                                // Get configuration data from cache server
                                 List<string> _keys =
                                 [
                                     CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(),
@@ -1256,6 +1273,7 @@ public partial class Candidates
 
                                 Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
 
+                                // Deserialize configuration data into master objects
                                 _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]);
                                 _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);

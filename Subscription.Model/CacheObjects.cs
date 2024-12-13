@@ -19,5 +19,6 @@ public enum CacheObjects
 {
 	Companies, CompanyContacts, Titles, DocumentTypes, Education, Eligibility, Experience, JobOptions,
 	LeadIndustries, LeadSources, LeadStatus, Roles, Skills, States, StatusCodes, TaxTerms,
-	Templates, Users, Workflow, Zips, CommissionConfigurators, VariableCommissions, Preferences, Communication, NAICS
+	Templates, Users, Workflow, Zips, CommissionConfigurators, VariableCommissions, Preferences, Communication, NAICS,
+	Communications
 }

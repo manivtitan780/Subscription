@@ -4,11 +4,11 @@
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
-// Project:             Components
+// Project:             ExtendedComponents
 // File Name:           TextBox.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-12-2024 19:12
-// Last Updated On:     12-12-2024 19:12
+// Last Updated On:     12-12-2024 20:12
 // *****************************************/
 
 #endregion
@@ -31,7 +31,7 @@ public partial class TextBox : ComponentBase
 {
     private string _value;
 
-    public SfTextBox Box
+    private SfTextBox Box
     {
         get;
         set;
@@ -100,17 +100,6 @@ public partial class TextBox : ComponentBase
     [Parameter]
     public string Value
     {
-        /*get => _value;
-        set
-        {
-            if (EqualityComparer<string>.Default.Equals(value, _value))
-            {
-                return;
-            }
-
-            _value = value;
-            ValueChanged.InvokeAsync(value);
-        }*/
         get;
         set;
     }
