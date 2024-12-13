@@ -19,47 +19,54 @@ public partial class NumericTextBox<TValue> : ComponentBase
 {
     private TValue _value;
 
+    [Parameter]
     public int? Decimals
     {
         get;
         set;
-    }
+    } = 2;
 
+    [Parameter]
     public string Format
     {
         get;
         set;
-    }
+    } = "c2";
 
+    [Parameter]
     public string ID
     {
         get;
         set;
     }
 
+    [Parameter]
     public TValue Max
     {
         get;
         set;
     }
 
+    [Parameter]
     public TValue Min
     {
         get;
         set;
     }
 
+    [Parameter]
     public string Placeholder
     {
         get;
         set;
     }
 
+    [Parameter]
     public bool ShowSpinButton
     {
         get;
         set;
-    }
+    } = false;
 
     /// <summary>
     ///     Gets or sets the selected value in the NumericTextBox.
@@ -124,4 +131,11 @@ public partial class NumericTextBox<TValue> : ComponentBase
         get;
         set;
     }
+
+    [Parameter]
+    public string Currency
+    {
+        get;
+        set;
+    } = "USD";
 }

@@ -93,26 +93,22 @@
 				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRate)" LabelText="Hourly Rate Min. ($):" ID="numericHourlyLow">
 						<Template>
-							<label class="e-form-label" for="numericHourlyLow">Hourly Rate Min. ($):</label>
-							<SfNumericTextBox @bind-Value="Model.HourlyRate" Decimals="2" Format="c2" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)	" ShowSpinButton="false" TValue="decimal"/>
+							<NumericTextBox @bind-Value="Model.HourlyRate" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)	" TValue="decimal" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRateHigh)" LabelText="Hourly Rate Max. ($):" ID="numericHourlyHigh">
 						<Template>
-							<label class="e-form-label" for="numericHourlyHigh">Hourly Rate Max. ($):</label>
-							<SfNumericTextBox @bind-Value="Model.HourlyRateHigh" Decimals="2" Format="c2" ID="numericHourlyHigh" Max="2000" Placeholder="Hourly Rate (Max.)" ShowSpinButton="false" TValue="decimal"/>
+							<NumericTextBox @bind-Value="Model.HourlyRateHigh" ID="numericHourlyHigh" Max="2000" Placeholder="Hourly Rate (Max.)" TValue="decimal"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.SalaryLow)" LabelText="Salary Min. ($):" ID="numericSalaryLow">
 						<Template>
-							<label class="e-form-label" for="numericSalaryLow">Salary Min. ($):</label>
-							<SfNumericTextBox @bind-Value="Model.SalaryLow" Decimals="2" Format="c2" ID="numericSalaryLow" Max="10000000" Placeholder="Salary (Min.)" ShowSpinButton="false" TValue="decimal"/>
+							<NumericTextBox @bind-Value="Model.SalaryLow" ID="numericSalaryLow" Max="10000000" Placeholder="Salary (Min.)" TValue="decimal"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.SalaryHigh)" LabelText="Salary Max. ($):" ID="numericSalaryHigh">
 						<Template>
-							<label class="e-form-label" for="numericSalaryHigh">Salary Max. ($):</label>
-							<SfNumericTextBox @bind-Value="Model.SalaryHigh" Decimals="2" Format="c2" ID="numericSalaryHigh" Max="10000000" Placeholder="Salary (Max.)" ShowSpinButton="false" TValue="decimal"/>
+							<NumericTextBox @bind-Value="Model.SalaryHigh" ID="numericSalaryHigh" Max="10000000" Placeholder="Salary (Max.)" TValue="decimal"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
