@@ -14,7 +14,7 @@
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Skill</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelSkillDialog" type="button">Cancel</SfButton>
@@ -24,33 +24,23 @@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Skill Information">
-					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Skill)" LabelText="Skill Name:" Placeholder="Skill Name" ID="textSkillName"/>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.LastUsed)" LabelText="First Name:" Placeholder="First Name" ID="numericLastUsed">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Skill)">
 						<Template>
-							<label class="e-form-label" for="numericLastUsed">Last Used:</label>
-							<SfNumericTextBox @bind-Value="Model.LastUsed" ID="numericLastUsed" Placeholder="Last Used (Year)" TValue="short" Decimals="0" Format="g" Max="2100" ShowSpinButton="false"/>
+							<TextBox @bind-Value="Model.Skill" ID="textSkillName" Placeholder="Skill Name" MaxLength="100"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.ExpMonth)" LabelText="Experience (Months):" Placeholder="Experience">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LastUsed)">
 						<Template>
-							<label class="e-form-label" for="numericExpMonth">Experience (Months):</label>
-							<SfNumericTextBox @bind-Value="Model.ExpMonth" ID="numericExpMonth" Placeholder="Experience (Months)" TValue="short" Decimals="0" Format="g" Max="1000" Min="0" ShowSpinButton="false"/>
+							<NumericTextBox @bind-Value="Model.LastUsed" ID="numericLastUsed" Placeholder="Last Used (Year)" TValue="short" Decimals="0" Format="g" Max="2100" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ExpMonth)">
+						<Template>
+							<NumericTextBox @bind-Value="Model.ExpMonth" ID="numericExpMonth" Placeholder="Experience (Months)" TValue="short" Decimals="0" Format="g" Max="1000" Min="0" />
 						</Template>
 					</FormItem>
 				</FormGroup>
 			</FormItems>
 		</SfDataForm>
-		@* 	<EditForm Model="Model" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm"> 
-		 	<FluentValidationValidator /> 
-		 	<div class="divContainerTable"> 
-		 		<TextBoxControl @bind-Value="@(Model.Skill)" @bind-Value:event="ValueChanged" CreateTooltip="true" ID="textSkill" MaxLength="100" MinLength="1" Multiline="false" Placeholder="Skill" 
-		 						ValidationMessage="@(() => Model.Skill)" /> 
-		 		<NumericControl @bind-Value="@(Model.LastUsed)" @bind-Value:event="ValueChanged" CreateTooltip="true" Decimals="0" Format="g" ID="numericLastUsed" Max="2100" Placeholder="Last Used (Year)" 
-		 						TValue="short" ValidationMessage="@(() => Model.LastUsed)" /> 
-		 		<NumericControl @bind-Value="@(Model.ExpMonth)" @bind-Value:event="ValueChanged" CreateTooltip="true" Decimals="0" Format="g" ID="numericExpMonth" Max="1000" 
-		 						Placeholder="Experience (Months)" TValue="short" ValidationMessage="@(() => Model.ExpMonth)" /> 
-		 	</div> 
-		 	<DialogFooter CancelMethod="CancelSkillDialog" @ref="FooterDialog" /> 
-		 </EditForm> *@
 	</ChildContent>
 </SfDialog>

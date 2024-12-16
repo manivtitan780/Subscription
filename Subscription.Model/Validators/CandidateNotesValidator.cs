@@ -39,6 +39,6 @@ public class CandidateNotesValidator : AbstractValidator<CandidateNotes>
         RuleLevelCascadeMode = CascadeMode.Stop;
 
         RuleFor(x => x.Notes).NotEmpty().WithMessage("Notes cannot be empty")
-                             .Length(5, 1000).WithMessage("Notes should be between {MinLength} and {MaxLength} characters.");
+                             .Length(5, 1000).WithMessage("Notes should be between 5 and 1000 characters.");
     }
 }

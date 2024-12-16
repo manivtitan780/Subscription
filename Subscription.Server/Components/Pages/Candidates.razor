@@ -1,4 +1,18 @@
-﻿@page "/candidate"
+﻿@* 
+    Copyright:           Titan-Techs.
+    Location:            Newtown, PA, USA
+    Solution:            Subscription
+    Project:             Subscription.Server
+    File Name:           Candidates.razor.cs
+    Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+    
+    Summary:
+		This page displays a list of candidates with various details such as name, phone, email, location, status, and updated date.
+		It includes a grid with sorting, paging, and selection capabilities.
+		The page also provides a speed dial for quick actions like editing candidate details, adding skills, education, experience, notes, attachments, and resumes.
+		Detailed information about a candidate can be viewed and edited in a tabbed interface.
+*@
+@page "/candidate"
 @using AnimationEffect = AnimationEffect
 @layout SubscriptionLayout
 @attribute [StreamRendering]
@@ -202,7 +216,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<div class="resumeContainerBox">
-												<SfRichTextEditor Height="280px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
+												<SfRichTextEditor Height="278px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
 													<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">

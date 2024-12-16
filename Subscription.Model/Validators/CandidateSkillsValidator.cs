@@ -44,39 +44,11 @@ public class CandidateSkillsValidator : AbstractValidator<CandidateSkills>
 
         When(x => x.ExpMonth > 0, () =>
                                   {
-                                      RuleFor(x => x.LastUsed).Must(CheckYear)
+                                      RuleFor(x => x.LastUsed).Must(lastUsed => lastUsed <= DateTime.Today.Year)
                                                               .WithMessage("Last Used should not be beyond current year. If currently being used or unknown enter Zero.");
                                   });
 
-        RuleFor(x => x.ExpMonth).Must(CheckMonths).WithMessage("Experience in months should not be more than 1000.");
+        RuleFor(x => x.ExpMonth).Must(month => month <= 1000).WithMessage("Experience in months should not be more than 1000.");
     }
 
-    /// <summary>
-    ///     Checks if the candidate's experience in months with the skill is not more than 1000.
-    /// </summary>
-    /// <param name="expMonths">
-    ///     The number of months of experience the candidate has with the skill.
-    /// </param>
-    /// <returns>
-    ///     True if the candidate's experience in months with the skill is less than or equal to 1000, otherwise false.
-    /// </returns>
-    private static bool CheckMonths(short expMonths)
-	{
-		return expMonths <= 1000;
-	}
-
-	/// <summary>
-    ///     Checks if the year the skill was last used is not beyond the current year.
-    /// </summary>
-    /// <param name="lastUsed">
-    ///     The year the skill was last used. If the skill is currently being used or the last used year is unknown, this value
-    ///     should be zero.
-    /// </param>
-    /// <returns>
-    ///     True if the year the skill was last used is less than or equal to the current year, otherwise false.
-    /// </returns>
-    private static bool CheckYear(short lastUsed)
-	{
-		return lastUsed <= DateTime.Today.Year;
-	}
 }

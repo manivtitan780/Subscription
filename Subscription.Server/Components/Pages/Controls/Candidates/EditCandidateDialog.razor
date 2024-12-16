@@ -1,5 +1,4 @@
-﻿@using FilterType = Syncfusion.Blazor.DropDowns.FilterType
-<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="70vw">
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="70vw">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -130,20 +129,22 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerm)" LabelText="Tax Terms:" ID="multiTaxTerms">
 						<Template>
-							<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
+							<MultiSelect @bind-Value="Model.TaxTerm" Model="TaxTerms" ID="multiTaxTerms" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+							@*<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
 							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms"
 							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
-								<MultiSelectFieldSettings Text="Value" Value="Key"/>
-							</SfMultiSelect>
+								<MultiSelectFieldSettings Text="Value" Value="Key" />
+							</SfMultiSelect>*@
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.JobOptions)" LabelText="Job Options:" ID="multiJobOptions">
 						<Template>
-							<label class="e-form-label" for="multiJobOptions">Job Options:</label>
+							<MultiSelect @bind-Value="Model.JobOptions" Model="JobOptions" ID="multiJobOptions" Placeholder="Select Job Option(s)" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+							@*<label class="e-form-label" for="multiJobOptions">Job Options:</label>
 							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptions" DataSource="JobOptions" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiJobOptions"
 							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
-								<MultiSelectFieldSettings Text="Value" Value="Key"/>
-							</SfMultiSelect>
+								<MultiSelectFieldSettings Text="Value" Value="Key" />
+							</SfMultiSelect>*@
 						</Template>
 					</FormItem>
 				</FormGroup>

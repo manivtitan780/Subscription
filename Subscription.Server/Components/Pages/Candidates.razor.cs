@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-11-2024 16:12
+// Last Updated On:     12-14-2024 19:12
 // *****************************************/
 
 #endregion
@@ -261,7 +261,7 @@ public partial class Candidates
         set;
     }
 
-    public ExperiencePanel ExperiencePanel
+    private ExperiencePanel ExperiencePanel
     {
         get;
         set;
@@ -1214,19 +1214,19 @@ public partial class Candidates
     }
 
     /// <summary>
-    /// Handles the asynchronous initialization of the Candidates component.
+    ///     Handles the asynchronous initialization of the Candidates component.
     /// </summary>
     /// <remarks>
-    /// This method performs the following steps:
-    /// <list type="number">
-    /// <item>Initializes the task completion source.</item>
-    /// <item>Retrieves user claims and sets user permissions.</item>
-    /// <item>Fetches configuration data from the cache server.</item>
-    /// <item>Clears the search model.</item>
-    /// </list>
-    /// If the user is not authenticated, they are redirected to the login page.
+    ///     This method performs the following steps:
+    ///     <list type="number">
+    ///         <item>Initializes the task completion source.</item>
+    ///         <item>Retrieves user claims and sets user permissions.</item>
+    ///         <item>Fetches configuration data from the cache server.</item>
+    ///         <item>Clears the search model.</item>
+    ///     </list>
+    ///     If the user is not authenticated, they are redirected to the login page.
     /// </remarks>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
         _initializationTaskSource = new();
@@ -1372,14 +1372,14 @@ public partial class Candidates
                                                                                                                             {"candidateID", _target.ID.ToString()},
                                                                                                                             {"user", User}
                                                                                                                         };
-                                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/SaveEducation", _parameters,
-                                                                                                                                             _candidateEducation);
+                                                                               List<CandidateEducation> _response = await General.PostRest<List<CandidateEducation>>("Candidate/SaveEducation", _parameters,
+                                                                                                                                                                     _candidateEducation);
                                                                                if (_response == null)
                                                                                {
                                                                                    return;
                                                                                }
 
-                                                                               _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
+                                                                               _candidateEducationObject = _response;
                                                                            }
                                                                        });
 
@@ -1403,14 +1403,12 @@ public partial class Candidates
                                                                                                                               {"candidateID", _target.ID.ToString()},
                                                                                                                               {"user", User}
                                                                                                                           };
-                                                                                 Dictionary<string, object> _response =
-                                                                                     await General.PostRest("Candidate/SaveExperience", _parameters, _candidateExperience);
-                                                                                 if (_response == null)
+                                                                                 List<CandidateExperience> _response = await General.PostRest<List<CandidateExperience>>("Candidate/SaveExperience",
+                                                                                                                                                                         _parameters, _candidateExperience);
+                                                                                 if (_response != null)
                                                                                  {
-                                                                                     return;
+                                                                                     _candidateExperienceObject = _response;
                                                                                  }
-
-                                                                                 _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
                                                                              }
                                                                          });
 
@@ -1423,13 +1421,14 @@ public partial class Candidates
                                                                                                                   {"candidateID", _target.ID.ToString()},
                                                                                                                   {"user", User}
                                                                                                               };
-                                                                     Dictionary<string, object> _response = await General.PostRest("Candidate/SaveNotes", _parameters, _candidateNotes);
+                                                                     List<CandidateNotes> _response = await General.PostRest<List<CandidateNotes>>("Candidate/SaveNotes", _parameters, 
+                                                                                                                                                   _candidateNotes);
                                                                      if (_response == null)
                                                                      {
                                                                          return;
                                                                      }
 
-                                                                     _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
+                                                                     _candidateNotesObject = _response;
                                                                  }
                                                              });
 
@@ -1456,13 +1455,13 @@ public partial class Candidates
                                                                                                                     {"user", User}
                                                                                                                 };
 
-                                                                       Dictionary<string, object> _response = await General.PostRest("Candidate/SaveSkill", _parameters, _skill);
+                                                                       List<CandidateSkills> _response = await General.PostRest<List<CandidateSkills>>("Candidate/SaveSkill", _parameters, _skill);
                                                                        if (_response == null)
                                                                        {
                                                                            return;
                                                                        }
 
-                                                                       _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
+                                                                       _candidateSkillsObject = _response;
                                                                    }
                                                                });
 

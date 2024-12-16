@@ -24,29 +24,29 @@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Education Information">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.College)" LabelText="School / College:" ID="textCollege">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.College)">
 						<Template>
-							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="100" Placeholder="School / College" />
+							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="255" Placeholder="School / College" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)" LabelText="Degree:" ID="textDegree">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)">
 						<Template>
-							<TextBox @bind-Value="Model.Degree" ID="textDegree" MaxLength="50" Placeholder="Degree" />
+							<TextBox @bind-Value="Model.Degree" ID="textDegree" MaxLength="100" Placeholder="Degree" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.State)" LabelText="State:" ID="textState">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.State)">
 						<Template>
-							<TextBox @bind-Value="Model.State" ID="textState" MaxLength="50" Placeholder="State" />
+							<TextBox @bind-Value="Model.State" ID="textState" MaxLength="100" Placeholder="State" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)" LabelText="Country:" ID="textCountry">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)">
 						<Template>
-							<TextBox @bind-Value="Model.Country" ID="textCountry" MaxLength="50" Placeholder="Country" />
+							<TextBox @bind-Value="Model.Country" ID="textCountry" MaxLength="100" Placeholder="Country" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)" LabelText="Graduation Year:" ID="textYear">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)">
 						<Template>
-							<TextBox @bind-Value="Model.Year" ID="textYear" MaxLength="4" Placeholder="Graduation Year" />
+							<TextBox @bind-Value="Model.Year" ID="textYear" MaxLength="20" Placeholder="Graduation Year" />
 						</Template>
 					</FormItem>
 				</FormGroup>

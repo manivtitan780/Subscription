@@ -1,0 +1,44 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Add New Document" Height="640px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center"></DialogPositionData>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"></DialogAnimationSettings>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="addDocumentForm" OnValidSubmit="SaveDocumentDialog" @ref="EditDocumentForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Document</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Document Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Name)">
+						<Template>
+							<TextBox @bind-Value="Model.Name" ID="textName" Placeholder="Name" MaxLength="255" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)">
+						<Template>
+							<TextArea @bind-Value="Model.Notes" ID="textNotes" Placeholder="Notes" MaxLength="2000"></TextArea>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.DocumentTypeID)">
+						<Template>
+							<DropDown @bind-Value="Model.DocumentTypeID" Model="DocumentTypes" ID="dropDocumentTypes" Placeholder="Document Type" Text="Text" 
+							          TItem="IntValues" TValue="int" Key="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
+						<Template>
+							<UploaderControl AfterUpload="AfterUpload" BeforeUpload="BeforeUpload" FileSelected="OnFileSelected" ID="uploadDocument" OnFileUpload="OnFileUpload" OnRemove="OnFileRemoved" Placeholder="Select a Document to upload" SetFlex="false">
+								<ValidationMessage For="() => Model.Files"/>
+							</UploaderControl>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

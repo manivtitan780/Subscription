@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-06-2024 20:05
-// Last Updated On:     12-12-2024 15:12
+// Last Updated On:     12-14-2024 19:12
 // *****************************************/
 
 #endregion
@@ -611,17 +611,13 @@ public class CandidateController : ControllerBase
     ///     If the operation is successful, the dictionary will contain a list of the candidate's education records.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveEducation(CandidateEducation education, int candidateID, string user)
+    /*public async Task<Dictionary<string, object>> SaveEducation(CandidateEducation education, int candidateID, string user)*/
+    public async Task<List<CandidateEducation>> SaveEducation(CandidateEducation education, int candidateID, string user)
     {
         List<CandidateEducation> _education = [];
         if (education == null)
         {
-            return new()
-                   {
-                       {
-                           "Education", _education
-                       }
-                   };
+            return _education;
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -643,8 +639,16 @@ public class CandidateController : ControllerBase
             {
                 while (_reader.Read())
                 {
-                    _education.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetString(2), _reader.GetString(3), _reader.GetString(4),
-                                       _reader.GetString(5), _reader.GetString(6)));
+                    _education.Add(new()
+                                   {
+                                       ID = _reader.GetInt32(0),
+                                       Degree = _reader.GetString(1),
+                                       College = _reader.GetString(2),
+                                       State = _reader.GetString(3),
+                                       Country = _reader.GetString(4),
+                                       Year = _reader.GetString(5),
+                                       UpdatedBy = _reader.GetString(6)
+                                   });
                 }
             }
 
@@ -657,12 +661,7 @@ public class CandidateController : ControllerBase
 
         await _connection.CloseAsync();
 
-        return new()
-               {
-                   {
-                       "Education", _education
-                   }
-               };
+        return _education;
     }
 
     /// <summary>
@@ -679,17 +678,12 @@ public class CandidateController : ControllerBase
     ///     candidate.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveExperience(CandidateExperience experience, int candidateID, string user)
+    public async Task<List<CandidateExperience>> SaveExperience(CandidateExperience experience, int candidateID, string user)
     {
         List<CandidateExperience> _experiences = [];
         if (experience == null)
         {
-            return new()
-                   {
-                       {
-                           "Experience", _experiences
-                       }
-                   };
+            return _experiences;
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -712,8 +706,17 @@ public class CandidateController : ControllerBase
             {
                 while (_reader.Read())
                 {
-                    _experiences.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetString(2), _reader.GetString(3), _reader.GetString(4),
-                                         _reader.GetString(5), _reader.GetString(6), _reader.GetString(7)));
+                    _experiences.Add(new()
+                                     {
+                                         ID = _reader.GetInt32(0),
+                                         Employer = _reader.GetString(1),
+                                         Start = _reader.GetString(2),
+                                         End = _reader.GetString(3),
+                                         Location = _reader.GetString(4),
+                                         Description = _reader.GetString(5),
+                                         UpdatedBy = _reader.GetString(6),
+                                         Title = _reader.GetString(7)
+                                     });
                 }
             }
 
@@ -726,12 +729,7 @@ public class CandidateController : ControllerBase
 
         await _connection.CloseAsync();
 
-        return new()
-               {
-                   {
-                       "Experience", _experiences
-                   }
-               };
+        return _experiences;
     }
 
     /// <summary>
@@ -748,18 +746,12 @@ public class CandidateController : ControllerBase
     ///     If the candidateNote parameter is null, an empty list of notes is returned.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveNotes(CandidateNotes candidateNote, int candidateID, string user)
+    public async Task<List<CandidateNotes>> SaveNotes(CandidateNotes candidateNote, int candidateID, string user)
     {
-        await Task.Delay(1);
         List<CandidateNotes> _notes = [];
         if (candidateNote == null)
         {
-            return new()
-                   {
-                       {
-                           "Notes", _notes
-                       }
-                   };
+            return _notes;
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -779,7 +771,13 @@ public class CandidateController : ControllerBase
             {
                 while (_reader.Read())
                 {
-                    _notes.Add(new(_reader.GetInt32(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetString(3)));
+                    _notes.Add(new()
+                               {
+                                   ID = _reader.GetInt32(0),
+                                   UpdatedDate = _reader.GetDateTime(1),
+                                   UpdatedBy = _reader.GetString(2),
+                                   Notes = _reader.GetString(3)
+                               });
                 }
             }
 
@@ -792,12 +790,7 @@ public class CandidateController : ControllerBase
 
         await _connection.CloseAsync();
 
-        return new()
-               {
-                   {
-                       "Notes", _notes
-                   }
-               };
+        return _notes;
     }
 
     /// <summary>
@@ -814,18 +807,12 @@ public class CandidateController : ControllerBase
     ///     candidate.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveSkill(CandidateSkills skill, int candidateID, string user)
+    public async Task<List<CandidateSkills>> SaveSkill(CandidateSkills skill, int candidateID, string user)
     {
-        await Task.Delay(1);
         List<CandidateSkills> _skills = [];
         if (skill == null)
         {
-            return new()
-                   {
-                       {
-                           "Skills", _skills
-                       }
-                   };
+            return _skills;
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -845,7 +832,14 @@ public class CandidateController : ControllerBase
             {
                 while (_reader.Read())
                 {
-                    _skills.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetInt16(2), _reader.GetInt16(3), _reader.GetString(4)));
+                    _skills.Add(new()
+                                {
+                                    ID = _reader.GetInt32(0),
+                                    Skill = _reader.GetString(1),
+                                    LastUsed = _reader.GetInt16(2),
+                                    ExpMonth = _reader.GetInt16(3),
+                                    UpdatedBy = _reader.GetString(4)
+                                });
                 }
             }
 
@@ -858,12 +852,7 @@ public class CandidateController : ControllerBase
 
         await _connection.CloseAsync();
 
-        return new()
-               {
-                   {
-                       "Skills", _skills
-                   }
-               };
+        return _skills;
     }
 
     /// <summary>

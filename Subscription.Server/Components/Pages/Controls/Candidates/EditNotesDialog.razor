@@ -13,7 +13,7 @@
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveNotesDialog" @ref="EditNotesForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveNotesDialog" @ref="EditNotesForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Save Note</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelNotesDialog" type="button">Cancel</SfButton>
@@ -23,10 +23,9 @@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="@($"{Title} Notes")">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)" LabelText="Notes:" ID="textNotes">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)">
 						<Template>
-							<label class="e-form-label" for="textNotes">Notes:</label>
-							<SfTextArea @bind-Value="Model.Notes" ID="textNotes" Placeholder="Notes" Rows="5" ResizeMode="Resize.None" MaxLength="1000" />
+							<TextArea @bind-Value="Model.Notes" ID="textNotes" Placeholder="Notes" MaxLength="1000"></TextArea>
 						</Template>
 					</FormItem>
 				</FormGroup>

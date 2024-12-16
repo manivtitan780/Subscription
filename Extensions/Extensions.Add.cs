@@ -249,7 +249,7 @@ public static partial class Extensions
     public static void Varchar(this SqlCommand t, string name, int size, object value, bool isNType = true, bool output = false) =>
         t.Parameters.Add(new(name.AppendAtRateChar(), isNType ? SqlDbType.NVarChar : SqlDbType.VarChar, size)
                          {
-                             Value = value, Direction = output ? ParameterDirection.InputOutput : ParameterDirection.Input
+                             Value = value.NullOrWhiteSpace() ? "" : value, Direction = output ? ParameterDirection.InputOutput : ParameterDirection.Input
                          });
 
     /// <summary>
