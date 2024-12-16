@@ -32,9 +32,14 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
 						<Template>
-							<UploaderControl AfterUpload="AfterUpload" BeforeUpload="BeforeUpload" FileSelected="OnFileSelected" ID="uploadDocument" OnFileUpload="OnFileUpload" OnRemove="OnFileRemoved" Placeholder="Select a Document to upload" SetFlex="false">
+							<Upload AfterUpload="AfterUpload" BeforeUpload="BeforeUpload" FileSelected="OnFileSelected" ID="uploadDocument" OnFileUpload="OnFileUpload" 
+							        OnRemove="OnFileRemoved" Placeholder="Select a Document to upload">
 								<ValidationMessage For="() => Model.Files"/>
-							</UploaderControl>
+							</Upload>
+							@*<UploaderControl AfterUpload="AfterUpload" BeforeUpload="BeforeUpload" FileSelected="OnFileSelected" ID="uploadDocument" OnFileUpload="OnFileUpload" OnRemove="OnFileRemoved" 
+							                 Placeholder="Select a Document to upload" SetFlex="false">
+								<ValidationMessage For="() => Model.Files" />
+							</UploaderControl>*@
 						</Template>
 					</FormItem>
 				</FormGroup>
