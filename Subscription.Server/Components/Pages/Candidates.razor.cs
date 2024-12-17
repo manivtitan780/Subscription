@@ -13,6 +13,8 @@
 
 #endregion
 
+using ActionCompleteEventArgs = Syncfusion.Blazor.Inputs.ActionCompleteEventArgs;
+
 namespace Subscription.Server.Components.Pages;
 
 public partial class Candidates
@@ -28,9 +30,9 @@ public partial class Candidates
     private List<CandidateNotes> _candidateNotesObject = [];
     private List<CandidateRating> _candidateRatingObject = [];
     private List<CandidateSkills> _candidateSkillsObject = [];
-    private List<IntValues> _eligibility = [], _experience = [], _states;
+    private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
-    private List<KeyValues> _jobOptions = [], _taxTerms = [], _statusCodes = [], _workflow = [], _communication = [], _documentTypes = [];
+    private List<KeyValues> _jobOptions = [], _taxTerms = [], _statusCodes = [], _workflow = [], _communication = [];
     private CandidateRatingMPC _ratingMPC = new();
     private List<Role> _roles;
     private int _selectedTab;
@@ -75,6 +77,35 @@ public partial class Candidates
         get;
         set;
     }
+
+    /// <summary>
+    ///     Gets or sets the dialog for adding a candidate document.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to manage the dialog for adding a candidate document in the Candidate page.
+    ///     It is an instance of the `AddCandidateDocument` component, which allows the user to upload a document to a
+    ///     company.
+    ///     The dialog is shown when the `AddDocument` method is called.
+    /// </remarks>
+    private AddDocumentDialog DialogDocument
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     This method is invoked before a document is uploaded in the Candidate page.
+    ///     It disables the buttons in the document dialog to prevent further actions during the upload process.
+    /// </summary>
+    /// <param name="args">Event arguments for the BeforeUpload event.</param>
+    private void BeforeDocument(BeforeUploadEventArgs args) => DialogDocument.DisableButtons();
+
+    /// <summary>
+    ///     This method is called after a document action is completed in the Candidate page.
+    ///     It enables the buttons in the AddDocumentDialog component.
+    /// </summary>
+    /// <param name="actionCompleteEventArgs">The arguments associated with the action completion event.</param>
+    private void AfterDocument(ActionCompleteEventArgs actionCompleteEventArgs) => DialogDocument.EnableButtons();
 
     private EditCandidateDialog CandidateDialog
     {
@@ -1283,7 +1314,7 @@ public partial class Candidates
                                 _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
                                 _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
-                                _documentTypes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
+                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
 
                                 SearchModel.Clear();
                             });
@@ -1292,6 +1323,114 @@ public partial class Candidates
 
         await base.OnInitializedAsync();
     }
+
+    /// <summary>
+    ///     Gets or sets a new instance of the CandidateDocuments class.
+    /// </summary>
+    private CandidateDocument NewDocument
+    {
+        get;
+    } = new();
+
+    /// <summary>
+    ///     Gets the MemoryStream instance that temporarily holds the uploaded document data.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the data of a document uploaded by the user.
+    ///     The data is then used in various operations such as parsing the resume, saving the document,
+    ///     uploading the resume, and uploading the document.
+    /// </remarks>
+    private MemoryStream AddedDocument
+    {
+        get;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the name of the file being uploaded.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the name of the file that is being uploaded in the `Candidate.UploadDocument()`
+    ///     method.
+    ///     It is then used in the `Candidate.SaveDocument()` method to add the file to the request for the API call.
+    /// </remarks>
+    private string FileName
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the MIME type of the file being uploaded.
+    /// </summary>
+    /// <remarks>
+    ///     This property is used to store the MIME type of the file being uploaded in the `Candidate.UploadDocument()` method.
+    ///     The MIME type is retrieved from the FileInfo of the uploaded file.
+    ///     It is then used as a parameter in the API request in the `Candidate.SaveDocument()` method.
+    /// </remarks>
+    private string Mime
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Handles the upload of a document for a candidate. It reads the file from the upload event,
+    ///     copies it into a memory stream, and stores the file name and MIME type for later use.
+    /// </summary>
+    /// <param name="file">The file upload event arguments which contain the file to be uploaded.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    private async Task UploadDocument(UploadChangeEventArgs file)
+    {
+        foreach (UploadFiles _file in file.Files)
+        {
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            await _str.CopyToAsync(AddedDocument);
+            FileName = _file.FileInfo.Name;
+            Mime = _file.FileInfo.MimeContentType;
+            AddedDocument.Position = 0;
+            _str.Close();
+        }
+    }
+
+    /// <summary>
+    ///     Asynchronously saves the document related to a candidate.
+    /// </summary>
+    /// <param name="document">The edit context of the document to be saved.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method attempts to save a document related to a candidate. The document is represented by an EditContext.
+    ///     If the model of the EditContext is a CandidateDocument, it will be uploaded to a specified API endpoint.
+    ///     The method uses RestSharp to send a POST request to the API, including the document and additional parameters.
+    ///     If the upload is successful, the response is deserialized into a list of CandidateDocument objects.
+    /// </remarks>
+    private Task SaveDocument(EditContext document) => ExecuteMethod(async () =>
+                                                                     {
+                                                                         if (document.Model is CandidateDocument _document)
+                                                                         {
+                                                                             Dictionary<string, string> _parameters = new()
+                                                                                                                      {
+                                                                                                                          {"filename", FileName},
+                                                                                                                          {"mime", Mime},
+                                                                                                                          {"name", _document.Name},
+                                                                                                                          {"notes", _document.Notes},
+                                                                                                                          {"candidateID", _target.ID.ToString()},
+                                                                                                                          {"user", User},
+                                                                                                                          {"path", Start.UploadsPath},
+                                                                                                                          {"type", _document.DocumentTypeID.ToString()}
+                                                                                                                      };
+
+                                                                             Dictionary<string, object> _response = await General.PostRestParameter<Dictionary<string, object>>("Candidates/UploadDocument",
+                                                                                                                                                                                _parameters, null,
+                                                                                                                                                                                AddedDocument.ToStreamByteArray(),
+                                                                                                                                                                                FileName);
+                                                                             if (_response == null)
+                                                                             {
+                                                                                 return;
+                                                                             }
+
+                                                                             _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
+                                                                         }
+                                                                     });
 
     /// <summary>
     ///     Handles the click event for retrieving the original resume of a candidate.
@@ -1421,7 +1560,7 @@ public partial class Candidates
                                                                                                                   {"candidateID", _target.ID.ToString()},
                                                                                                                   {"user", User}
                                                                                                               };
-                                                                     List<CandidateNotes> _response = await General.PostRest<List<CandidateNotes>>("Candidate/SaveNotes", _parameters, 
+                                                                     List<CandidateNotes> _response = await General.PostRest<List<CandidateNotes>>("Candidate/SaveNotes", _parameters,
                                                                                                                                                    _candidateNotes);
                                                                      if (_response == null)
                                                                      {

@@ -95,6 +95,7 @@ _app.Use(async (context, next) =>
                      Start.Access = _config["GarnetServer:Access"];
                  }
 
+                 Start.UploadsPath = _builder.Environment.WebRootPath;
                  Start.UploadPath = _config["RootPath"];
              }
 
