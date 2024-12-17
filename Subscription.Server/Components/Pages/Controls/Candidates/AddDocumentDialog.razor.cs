@@ -13,6 +13,8 @@
 
 #endregion
 
+using FluentValidation;
+
 using ActionCompleteEventArgs = Syncfusion.Blazor.Inputs.ActionCompleteEventArgs;
 
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
@@ -29,6 +31,7 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 public partial class AddDocumentDialog
 {
     private EditContext _editContext;
+    private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked after a document upload is completed.
