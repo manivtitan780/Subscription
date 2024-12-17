@@ -8,14 +8,16 @@
 // File Name:           AddDocumentDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-16-2024 19:12
-// Last Updated On:     12-16-2024 19:12
+// Last Updated On:     12-17-2024 15:12
 // *****************************************/
 
 #endregion
 
-using FluentValidation;
+#region Using
 
 using ActionCompleteEventArgs = Syncfusion.Blazor.Inputs.ActionCompleteEventArgs;
+
+#endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
@@ -30,7 +32,6 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class AddDocumentDialog
 {
-    private EditContext _editContext;
     private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
 
     /// <summary>
@@ -84,6 +85,12 @@ public partial class AddDocumentDialog
         set;
     }
 
+    private EditContext Context
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the Syncfusion Blazor Dialog component used in the AddDocumentDialog.
     /// </summary>
@@ -95,22 +102,6 @@ public partial class AddDocumentDialog
     ///     It provides methods to show or hide the dialog programmatically.
     /// </remarks>
     private SfDialog Dialog
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the DialogFooter instance used in the AddDocumentDialog.
-    /// </summary>
-    /// <value>
-    ///     The DialogFooter instance.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to manage the Cancel and Save buttons in the AddDocumentDialog.
-    ///     It provides methods to enable or disable these buttons.
-    /// </remarks>
-    private DialogFooter DialogFooter
     {
         get;
         set;
@@ -234,12 +225,6 @@ public partial class AddDocumentDialog
         set;
     }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
-
     /// <summary>
     ///     Asynchronously executes the cancellation process for the document dialog.
     /// </summary>
@@ -252,8 +237,13 @@ public partial class AddDocumentDialog
     /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task CancelDocumentDialog(MouseEventArgs args)
     {
-        await General.CallCancelMethod(args, Spinner, DialogFooter, Dialog, Cancel);
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
     }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     /// <summary>
     ///     Disables the buttons in the AddDocumentDialog.
@@ -266,7 +256,7 @@ public partial class AddDocumentDialog
     /// </remarks>
     internal void DisableButtons()
     {
-        DialogFooter.DisableButtons();
+        //DialogFooter.DisableButtons();
     }
 
     /// <summary>
@@ -279,7 +269,7 @@ public partial class AddDocumentDialog
     /// </remarks>
     internal void EnableButtons()
     {
-        DialogFooter.EnableButtons();
+        //DialogFooter.EnableButtons();
     }
 
     /// <summary>
@@ -296,7 +286,7 @@ public partial class AddDocumentDialog
     {
         await Task.Yield();
         Model.Files = null;
-        _editContext?.NotifyFieldChanged(_editContext.Field(nameof(Model.Files)));
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
     }
 
     /// <summary>
@@ -325,7 +315,14 @@ public partial class AddDocumentDialog
             Model.Files.Add(file.FilesData[0].Name);
         }
 
-        _editContext?.NotifyFieldChanged(_editContext.Field(nameof(Model.Files)));
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+    }
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
     }
 
     /// <summary>
@@ -336,11 +333,7 @@ public partial class AddDocumentDialog
     ///     This method is invoked before the dialog is opened. It initializes the edit context for the workflow form and
     ///     validates it.
     /// </remarks>
-    private void OpenDialog()
-    {
-        _editContext = EditDocumentForm.EditContext;
-        _editContext?.Validate();
-    }
+    private void OpenDialog() => Context.Validate();
 
     /// <summary>
     ///     Asynchronously saves the document changes made in the dialog.
@@ -353,7 +346,10 @@ public partial class AddDocumentDialog
     /// </remarks>
     private async Task SaveDocumentDialog(EditContext editContext)
     {
-        await General.CallSaveMethod(editContext, Spinner, DialogFooter, Dialog, Save);
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
     }
 
     /// <summary>
@@ -366,8 +362,5 @@ public partial class AddDocumentDialog
     ///     This method is used to programmatically display the dialog for adding a document to a candidate.
     ///     It uses the ShowAsync method of the Syncfusion Blazor Dialog component.
     /// </remarks>
-    public async Task ShowDialog()
-    {
-        await Dialog.ShowAsync();
-    }
+    public async Task ShowDialog() => await Dialog.ShowAsync();
 }

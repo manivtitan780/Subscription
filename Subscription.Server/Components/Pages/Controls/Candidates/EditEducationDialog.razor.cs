@@ -29,12 +29,6 @@ public partial class EditEducationDialog
 {
     private readonly CandidateEducationValidator _candidateEducationValidator = new();
 
-    private readonly Dictionary<string, object> _textBoxAttributes = new()
-                                                                     {
-                                                                         {"MaxLength", "100"},
-                                                                         {"MinLength", "1"}
-                                                                     };
-
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the cancel action is triggered in the dialog.
 	/// </summary>
