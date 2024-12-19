@@ -30,6 +30,7 @@ columnOptions.Store.Remove(StandardColumn.MessageTemplate);
 columnOptions.Store.Add(StandardColumn.LogEvent);
 
 Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Warning()
             .WriteTo.Console()
             .WriteTo.MSSqlServer(_config.GetConnectionString("DBConnect"),
                                  new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true},

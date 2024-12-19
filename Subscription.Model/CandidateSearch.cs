@@ -190,7 +190,7 @@ public class CandidateSearch
 	{
 		get;
 		set;
-	}
+	} = 25;
 
 	/// <summary>
 	///     Gets or sets the job options for the candidate search.
