@@ -1433,7 +1433,7 @@ public partial class Candidates
                                                                                                    {"emailAddress", "maniv@titan-techs.com"}
                                                                                                };
 
-                                                      await General.PostRest("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
+                                                      _ = await General.PostRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
 
                                                       _candidateDetailsObject = _candidateDetailsObjectClone.Copy();
                                                       _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";

@@ -420,7 +420,7 @@ public class CandidateController : ControllerBase
             await using SqlConnection _connection = new(Start.ConnectionString);
             List<Candidate> _candidates = [];
 
-            await using SqlCommand _command = new("GetCandidatesa", _connection);
+            await using SqlCommand _command = new("GetCandidates", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("RecordsPerPage", searchModel!.ItemCount);
             _command.Int("PageNumber", searchModel.Page);
@@ -516,23 +516,17 @@ public class CandidateController : ControllerBase
     ///     - Returns the result of the operation.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, int>> SaveCandidate(CandidateDetails candidateDetails, string jsonPath, string userName = "", string emailAddress = "maniv@titan-techs.com")
+    public async Task<int> SaveCandidate(CandidateDetails candidateDetails, string jsonPath, string userName = "", string emailAddress = "maniv@titan-techs.com")
     {
         try
         {
             if (candidateDetails == null)
             {
-                return new()
-                       {
-                           {
-                               "returnCode", -1
-                           }
-                       };
+                return -1;
             }
 
             await using SqlConnection _connection = new(Start.ConnectionString);
             await _connection.OpenAsync();
-            int _returnCode = 0;
             try
             {
                 await using SqlCommand _command = new("SaveCandidate", _connection);
@@ -648,12 +642,12 @@ public class CandidateController : ControllerBase
 
             await _connection.CloseAsync();
 
-            return new() {{"returnCode", _returnCode}};
+            return 0;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving candidate. {ExceptionMessage}", ex.Message);
-            return new() {{"returnCode", -1}};
+            return -1;
         }
     }
 
