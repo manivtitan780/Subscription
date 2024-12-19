@@ -597,6 +597,85 @@ public class CandidateController : ControllerBase
 
         return new() {{"returnCode", _returnCode}};
     }
+	/// <summary>
+	///     Uploads a document for a candidate.
+	/// </summary>
+	/// <param name="file">The file to be uploaded.</param>
+	/// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
+	/// <remarks>
+	///     This method creates a directory for the candidate's documents if it doesn't exist,
+	///     saves the uploaded file to the server, and then saves the document details to the database
+	///     using a stored procedure. If the operation is successful, the dictionary will contain a list
+	///     of documents for the candidate.
+	/// </remarks>
+	[HttpPost, RequestSizeLimit(62_914_560)]
+	public async Task<List<CandidateDocument>> UploadDocument(IFormFile file)
+	{
+		await Task.Yield();
+		string _fileName = file.FileName;
+		string _candidateID = Request.Form["candidateID"].ToString();
+		//string _mime = Request.Form["mime"];
+		string _internalFileName = Guid.NewGuid().ToString("N");
+		Directory.CreateDirectory(Path.Combine(Request.Form["path"].ToString(), "Uploads", "Candidate", _candidateID));
+		string _destinationFileName = Path.Combine(Request.Form["path"].ToString(), "Uploads", "Candidate", _candidateID, _internalFileName);
+
+		//using MemoryStream _stream = new();
+		await using (FileStream _fs = System.IO.File.Open(_destinationFileName, FileMode.OpenOrCreate, FileAccess.Write))
+		{
+			try
+			{
+				await file.CopyToAsync(_fs);
+				_fs.Flush();
+				_fs.Close();
+			}
+			catch
+			{
+				_fs.Close();
+			}
+		}
+
+		await using SqlConnection _connection = new(Start.ConnectionString);
+		await _connection.OpenAsync();
+		List<CandidateDocument> _documents = [];
+		try
+		{
+			await using SqlCommand _command = new("SaveCandidateDocuments", _connection);
+			_command.CommandType = CommandType.StoredProcedure;
+			_command.Int("CandidateId", _candidateID.ToInt32());
+			_command.Varchar("DocumentName", 255, Request.Form["name"].ToString());
+			_command.Varchar("DocumentLocation", 255, _fileName);
+			_command.Varchar("DocumentNotes", 2000, Request.Form["notes"].ToString());
+			_command.Varchar("InternalFileName", 50, _internalFileName);
+			_command.Int("DocumentType", Request.Form["type"].ToInt32());
+			_command.Varchar("DocsUser", 10, Request.Form["user"].ToString());
+			await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+			if (_reader.HasRows)
+			{
+				while (_reader.Read())
+				{
+                    _documents.Add(new()
+                                   {
+                                       ID = _reader.GetInt32(0),
+                                       Name = _reader.GetString(1),
+                                       Location = _reader.GetString(2),
+                                       Notes = _reader.GetString(3),
+                                       UpdatedBy = $"{_reader.NDateTime(4)} [{_reader.NString(5)}]",
+                                       DocumentType = _reader.GetString(6),
+                                       InternalFileName = _reader.GetString(7),
+                                       DocumentTypeID = _reader.GetInt32(8)
+                                   });
+				}
+			}
+
+			await _reader.CloseAsync();
+		}
+		catch
+		{
+			//
+		}
+
+		return _documents;
+	}
 
     /// <summary>
     ///     Saves a candidate's education record to the database.

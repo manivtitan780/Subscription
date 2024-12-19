@@ -33,6 +33,8 @@ public class CandidateDocumentValidator : AbstractValidator<CandidateDocument>
     /// </remarks>
     public CandidateDocumentValidator()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.Name).NotEmpty().WithMessage("Document Name should not be empty.")
                             .Length(2, 255).WithMessage("Document should be between 2 and 255 characters.");
 

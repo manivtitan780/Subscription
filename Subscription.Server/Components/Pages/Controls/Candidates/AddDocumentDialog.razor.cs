@@ -174,6 +174,37 @@ public partial class AddDocumentDialog
         set;
     }
 
+    internal MemoryStream AddedDocument
+    {
+        get;
+        set;
+    } = new();
+    
+    internal string FileName
+    {
+        get;
+        set;
+    }
+    
+    internal string Mime
+    {
+        get;
+        set;
+    }
+    
+    private async Task UploadDocument(UploadChangeEventArgs file)
+    {
+        foreach (UploadFiles _file in file.Files)
+        {
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            await _str.CopyToAsync(AddedDocument);
+            FileName = _file.FileInfo.Name;
+            Mime = _file.FileInfo.MimeContentType;
+            AddedDocument.Position = 0;
+            _str.Close();
+        }
+    }
+
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document details are saved.
     /// </summary>
@@ -207,7 +238,7 @@ public partial class AddDocumentDialog
     {
         get;
         set;
-    }
+    } = true;
 
     /// <summary>
     ///     Gets or sets the instance of the Syncfusion Blazor Spinner component used in the dialog.
