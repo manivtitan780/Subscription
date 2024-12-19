@@ -25,8 +25,6 @@ using Newtonsoft.Json;
 
 using StackExchange.Redis;
 
-using Subscription.API.Code;
-
 using Role = Subscription.Model.Role;
 
 #endregion

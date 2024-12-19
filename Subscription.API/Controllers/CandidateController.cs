@@ -669,9 +669,9 @@ public class CandidateController : ControllerBase
 
 			await _reader.CloseAsync();
 		}
-		catch
+		catch (Exception ex) 
 		{
-			//
+            Log.Error(ex, "Error saving candidate document. {ExceptionMessage}", ex.Message);
 		}
 
 		return _documents;

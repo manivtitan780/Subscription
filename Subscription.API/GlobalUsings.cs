@@ -8,7 +8,7 @@
 // File Name:           GlobalUsings.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-08-2024 15:02
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     12-19-2024 15:12
 // *****************************************/
 
 #endregion
@@ -24,5 +24,11 @@ global using Microsoft.Data.SqlClient;
 global using Extensions;
 
 global using Subscription.Model;
+
+global using Serilog;
+global using Serilog.Sinks.MSSqlServer;
+
+global using Subscription.API;
+global using Subscription.API.Code;
 
 #endregion
