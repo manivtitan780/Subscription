@@ -15,6 +15,7 @@
 
 #region Using
 
+global using System.IdentityModel.Tokens.Jwt;
 global using System.IO.Compression;
 global using System.Security.Claims;
 global using Blazored.LocalStorage;
@@ -32,6 +33,7 @@ global using RestSharp;
 global using Subscription.Model;
 global using Subscription.Model.Validators;
 global using Subscription.Server.Code;
+global using Subscription.Server.Components.Pages;
 global using Subscription.Server.Components.Pages.Controls.Candidates;
 global using Subscription.Server.Components.Pages.Controls.Common;
 global using Subscription.Server.Components.Pages.Controls.Companies;

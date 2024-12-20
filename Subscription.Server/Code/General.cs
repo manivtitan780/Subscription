@@ -13,12 +13,6 @@
 
 #endregion
 
-#region Using
-
-using System.IdentityModel.Tokens.Jwt;
-
-#endregion
-
 namespace Subscription.Server.Code;
 
 public class General
@@ -39,6 +33,121 @@ public class General
         footer.EnableButtons();
         await spinner.HideAsync();
         await dialog.HideAsync();
+    }
+
+    private static Dictionary<string, object> _restResponse;
+
+    /// <summary>
+    ///     Asynchronously retrieves a list of requisitions based on the provided search model and data manager request.
+    ///     This method also has the ability to fetch additional company information if required.
+    /// </summary>
+    /// <param name="searchModel">The model containing the search parameters for the requisitions.</param>
+    /// <param name="dm">The data manager request object.</param>
+    /// <param name="getInformation">
+    ///     Optional parameter. If set to true, the method will fetch additional company information.
+    ///     Default is false.
+    /// </param>
+    /// <param name="optionalRequisitionID">
+    ///     Optional parameter. If provided, the method will fetch a specific requisition by
+    ///     its ID. Default is 0.
+    /// </param>
+    /// <param name="thenProceed">
+    ///     Optional parameter. If set to true, the method will continue processing even after
+    ///     encountering an error. Default is false.
+    /// </param>
+    /// <param name="user">
+    ///     A string value containing the logged-in user whose role should be a recruiter to fetch additional
+    ///     information from the companies list.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of requisitions or a data result
+    ///     object if counts are required.
+    /// </returns>
+    internal static async Task<object> GetRequisitionReadAdaptor(RequisitionSearch searchModel, DataManagerRequest dm, bool getInformation = false, int optionalRequisitionID = 0,
+                                                                 bool thenProceed = false, string user = "")
+    {
+        List<Requisition> _dataSource = [];
+
+        int _itemCount = searchModel.ItemCount;
+        int _page = searchModel.Page;
+        try
+        {
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"getCompanyInformation", getInformation.ToString()},
+                                                         {"requisitionID", optionalRequisitionID.ToString()},
+                                                         {"thenProceed", thenProceed.ToString()},
+                                                         {"user", user}
+                                                     };
+            _restResponse = await GetRest<Dictionary<string, object>>("Requisition/GetGridRequisitions", _parameters, searchModel);
+
+            if (_restResponse == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = 0 /*_count*/
+                                           } : _dataSource;
+            }
+
+            _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_restResponse["Requisitions"].ToString() ?? string.Empty);
+            int _count = _restResponse["Count"].ToInt32();
+            searchModel.Page = _restResponse["Page"].ToInt32();
+            _page = searchModel.Page;
+            Requisitions.Count = _count;
+            Requisitions.PageCount = Math.Ceiling(_count / _itemCount.ToDecimal()).ToInt32();
+            Requisitions.StartRecord = ((_page - 1) * _itemCount + 1).ToInt32();
+
+            if (_dataSource == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = null,
+                                               Count = 0 /*_count*/
+                                           } : null;
+            }
+
+            Requisitions.EndRecord = ((_page - 1) * _itemCount).ToInt32() + _dataSource.Count;
+
+            if (!getInformation)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = _count /*_count*/
+                                           } : _dataSource;
+            }
+
+            Requisitions.Companies = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
+            Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"].ToString() ?? string.Empty);
+            Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
+            Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_restResponse["StatusCount"].ToString() ?? string.Empty);
+
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = _count /*_count*/
+                                       } : _dataSource;
+        }
+        catch
+        {
+            if (_dataSource == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = null,
+                                               Count = 1
+                                           } : null;
+            }
+
+            _dataSource.Add(new());
+
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = 1
+                                       } : _dataSource;
+        }
     }
 
     /// <summary>
