@@ -401,4 +401,14 @@ public partial class Requisitions
             }
         }
     }
+
+    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> arg)
+    {
+        return Task.CompletedTask;
+    }
+
+    private Task GridPageChanging(GridPageChangingEventArgs arg)
+    {
+        return Task.CompletedTask;
+    }
 }
