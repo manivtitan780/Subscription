@@ -167,7 +167,7 @@ public partial class Requisitions
         set;
     } = [];
 
-    private string User
+    private static string User
     {
         get;
         set;
@@ -323,7 +323,7 @@ public partial class Requisitions
     /// <returns>
     ///     A task that represents the asynchronous operation.
     /// </returns>
-    private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task, Logger);
+    private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
     private async Task GetAlphabets(char alphabet)
     {
