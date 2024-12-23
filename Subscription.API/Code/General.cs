@@ -131,12 +131,13 @@ public static class General
                                                                          ViewAllCompanies = role.GetBoolean(5),
                                                                          ViewMyCompanyProfile = role.GetBoolean(6),
                                                                          EditMyCompanyProfile = role.GetBoolean(7),
-                                                                         CreateOrEditEditRequisition = role.GetBoolean(8),
+                                                                         CreateOrEditRequisition = role.GetBoolean(8),
                                                                          ViewOnlyMyCandidates = role.GetBoolean(9),
                                                                          ViewAllCandidates = role.GetBoolean(10),
                                                                          ManageSubmittedCandidates = role.GetBoolean(11),
                                                                          DownloadOriginal = role.GetBoolean(12),
-                                                                         DownloadFormatted = role.GetBoolean(13)
+                                                                         DownloadFormatted = role.GetBoolean(13),
+                                                                         ViewRequisitions = role.GetBoolean(14)
                                                                      }).ToListAsync();
 
             await _reader.NextResultAsync();

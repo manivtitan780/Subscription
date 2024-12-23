@@ -8,7 +8,7 @@
 // File Name:           Role.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-17-2024 19:04
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     12-21-2024 15:12
 // *****************************************/
 
 #endregion
@@ -63,7 +63,7 @@ public class Role
     /// <value>
     ///     true if the role can edit requisitions; otherwise, false.
     /// </value>
-    public bool CreateOrEditEditRequisition
+    public bool CreateOrEditRequisition
     {
         get;
         set;
@@ -76,6 +76,18 @@ public class Role
     ///     The description of the role.
     /// </value>
     public string Description
+    {
+        get;
+        set;
+    }
+
+    public bool DownloadFormatted
+    {
+        get;
+        set;
+    }
+
+    public bool DownloadOriginal
     {
         get;
         set;
@@ -128,6 +140,18 @@ public class Role
     }
 
     /// <summary>
+    ///     Gets or sets a value indicating whether the role has permission to forward resumes.
+    /// </summary>
+    /// <value>
+    ///     true if the role can forward resumes; otherwise, false.
+    /// </value>
+    public bool ViewAllCandidates
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     ///     Gets or sets a value indicating whether the role has permission to download resumes.
     /// </summary>
     /// <value>
@@ -163,30 +187,12 @@ public class Role
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets a value indicating whether the role has permission to forward resumes.
-    /// </summary>
-    /// <value>
-    ///     true if the role can forward resumes; otherwise, false.
-    /// </value>
-    public bool ViewAllCandidates
+    public bool ViewRequisitions
     {
         get;
         set;
     }
 
-    public bool DownloadOriginal
-    {
-        get;
-        set;
-    }
-
-    public bool DownloadFormatted
-    {
-        get;
-        set;
-    }
-    
     /// <summary>
     ///     Resets all properties of the Role instance to their default values.
     /// </summary>
@@ -200,14 +206,18 @@ public class Role
         ID = 0;
         Description = "";
         RoleName = "";
-        CreateOrEditCompany = false;
         CreateOrEditCandidate = false;
+        CreateOrEditCompany = false;
+        CreateOrEditRequisition = false;
+        DownloadFormatted = false;
+        DownloadOriginal = false;
+        EditMyCompanyProfile = false;
+        ManageSubmittedCandidates = false;
+        ViewAllCandidates = false;
         ViewAllCompanies = false;
         ViewMyCompanyProfile = false;
-        EditMyCompanyProfile = false;
-        CreateOrEditEditRequisition = false;
         ViewOnlyMyCandidates = false;
-        ManageSubmittedCandidates = false;
+        ViewRequisitions = false;
     }
 
     /// <summary>

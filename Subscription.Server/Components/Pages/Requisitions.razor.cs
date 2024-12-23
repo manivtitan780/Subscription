@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-20-2024 20:12
+// Last Updated On:     12-21-2024 15:12
 // *****************************************/
 
 #endregion
@@ -21,7 +21,21 @@ public partial class Requisitions
     private static int _currentPage = 1;
 
     private static TaskCompletionSource<bool> _initializationTaskSource;
+    private List<KeyValues> _companies;
+    private List<IntValues> _education;
+    private List<IntValues> _eligibility;
+    private List<IntValues> _experience;
+    private List<KeyValues> _jobOptions;
+    private Preferences _preference;
+
+    private List<Role> _roles;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+    private List<IntValues> _skills;
+    private List<IntValues> _states;
+    private List<StatusCode> _statusCodes;
+
+    private readonly List<KeyValues> _statusSearch = [];
+    private List<AppWorkflow> _workflows;
 
     /// <summary>
     ///     Gets or sets the AutocompleteValue property of the Requisition.
@@ -65,6 +79,16 @@ public partial class Requisitions
     } = [];
 
     /// <summary>
+    ///     Represents the configuration for the application.
+    /// </summary>
+    [Inject]
+    private IConfiguration Configuration
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     ///     Gets or sets the count of items.
     /// </summary>
     /// <remarks>
@@ -94,7 +118,66 @@ public partial class Requisitions
         set;
     }
 
+    public bool HasEditRights
+    {
+        get;
+        set;
+    }
+
+    public bool HasViewRights
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the JavaScript runtime instance. This instance is used to invoke JavaScript functions from C# code.
+    ///     For example, it is used in the DownloadDocument method to open a new browser tab for document download.
+    /// </summary>
+    [Inject]
+    private IJSRuntime JsRuntime
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the instance of the ILocalStorageService used in the application.
+    /// </summary>
+    /// <remarks>
+    ///     This service is used to manage local storage in the browser.
+    ///     It is used to store and retrieve data such as user preferences and application state.
+    /// </remarks>
+    [Inject]
+    private ILocalStorageService LocalStorage
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the instance of the NavigationManager service used in the Companies page.
+    ///     This service provides methods and properties to manage and interact with the URI of the application.
+    ///     It is used for tasks such as navigating to different pages and constructing URIs for use within the application.
+    ///     For example, it is used in the `DownloadDocument` method to construct a URI for downloading a document.
+    /// </summary>
+    [Inject]
+    private NavigationManager NavManager
+    {
+        get;
+        set;
+    }
+
     internal static int PageCount
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the ID of the requisition. This ID is used to uniquely identify a requisition in the system.
+    /// </summary>
+    private static int RequisitionID
     {
         get;
         set;
@@ -108,8 +191,8 @@ public partial class Requisitions
     {
         get;
     } = new();
-    
-   /// <summary>
+
+    /// <summary>
     ///     Gets or sets the search model for the requisition. This model is used to store the search parameters for finding
     ///     requisitions.
     /// </summary>
@@ -139,6 +222,30 @@ public partial class Requisitions
     ///     This is a list of <see cref="IntValues" /> where each value represents a unique skill.
     /// </summary>
     internal static List<IntValues> Skills
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the sort direction for the requisition grid. This property is used to determine the order in which
+    ///     requisitions are displayed in the grid.
+    ///     The sort direction can be either ascending or descending.
+    /// </summary>
+    private SortDirection SortDirectionProperty
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the field by which the requisition data is sorted.
+    /// </summary>
+    /// <value>
+    ///     The field name used for sorting. Possible values include "Code", "Title", "Company", "Option", "Status", "DueEnd",
+    ///     and "Updated".
+    /// </value>
+    private string SortField
     {
         get;
         set;
@@ -188,26 +295,6 @@ public partial class Requisitions
                                                                       });
 
     /// <summary>
-    ///     Asynchronously changes the item count of the requisition.
-    /// </summary>
-    /// <param name="item">The change event arguments containing the new item count.</param>
-    /// <remarks>
-    ///     This method updates the item count of the requisition and refreshes the grid.
-    ///     It also saves the updated search model to the session storage.
-    ///     This method is not executed if an action is already in progress.
-    /// </remarks>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    private Task ChangeItemCount(ChangeEventArgs<int, IntValues> item) => ExecuteMethod(async () =>
-                                                                                        {
-                                                                                            SearchModel.Page = 1;
-                                                                                            SearchModel.ItemCount = item.Value;
-
-                                                                                            await SessionStorage.SetItemAsync(StorageName, SearchModel);
-                                                                                            await Grid.Refresh();
-                                                                                            StateHasChanged();
-                                                                                        });
-
-    /// <summary>
     ///     Handles the click event for the "All Alphabet" button in the requisition grid.
     /// </summary>
     /// <remarks>
@@ -234,6 +321,26 @@ public partial class Requisitions
     }
 
     /// <summary>
+    ///     Asynchronously changes the item count of the requisition.
+    /// </summary>
+    /// <param name="item">The change event arguments containing the new item count.</param>
+    /// <remarks>
+    ///     This method updates the item count of the requisition and refreshes the grid.
+    ///     It also saves the updated search model to the session storage.
+    ///     This method is not executed if an action is already in progress.
+    /// </remarks>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    private Task ChangeItemCount(ChangeEventArgs<int, IntValues> item) => ExecuteMethod(async () =>
+                                                                                        {
+                                                                                            SearchModel.Page = 1;
+                                                                                            SearchModel.ItemCount = item.Value;
+
+                                                                                            await SessionStorage.SetItemAsync(StorageName, SearchModel);
+                                                                                            await Grid.Refresh();
+                                                                                            StateHasChanged();
+                                                                                        });
+
+    /// <summary>
     ///     Clears the filter applied to the requisitions.
     /// </summary>
     /// <remarks>
@@ -245,26 +352,6 @@ public partial class Requisitions
         SearchModel.Clear();
         SearchModel.User = User;
         await Grid.Refresh();
-    }
-
-    /// <summary>
-    ///     Gets or sets the JavaScript runtime instance. This instance is used to invoke JavaScript functions from C# code.
-    ///     For example, it is used in the DownloadDocument method to open a new browser tab for document download.
-    /// </summary>
-    [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ID of the requisition. This ID is used to uniquely identify a requisition in the system.
-    /// </summary>
-    private static int RequisitionID
-    {
-        get;
-        set;
     }
 
     /// <summary>
@@ -293,7 +380,7 @@ public partial class Requisitions
                                                                       {
                                                                           await Grid.SelectRowAsync(_index);
                                                                           foreach (Requisition _requisition in Grid.CurrentViewData.OfType<Requisition>()
-                                                                                                                    .Where(requisitions => requisitions.ID == RequisitionID))
+                                                                                                                   .Where(requisitions => requisitions.ID == RequisitionID))
                                                                           {
                                                                               await Grid.ExpandCollapseDetailRowAsync(_requisition);
                                                                               break;
@@ -311,6 +398,8 @@ public partial class Requisitions
 
                                                               RequisitionID = 0;
                                                           });
+
+    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> arg) => Task.CompletedTask;
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -333,6 +422,194 @@ public partial class Requisitions
                                 SearchModel.Page = 1;
                                 await Grid.Refresh();
                             });
+    }
+
+    private Task GridPageChanging(GridPageChangingEventArgs arg) => Task.CompletedTask;
+
+    /// <summary>
+    ///     Asynchronously initializes the Requisition component.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         This method is invoked when the component is first initialized. It performs several operations:
+    ///     </para>
+    ///     <para>
+    ///         - Checks if all required objects are not null, otherwise throws an ArgumentNullException.
+    ///     </para>
+    ///     <para>
+    ///         - Retrieves and sets the LoginCookyUser from the NavigationManager.
+    ///     </para>
+    ///     <para>
+    ///         - Retrieves the RequisitionGrid and RequisitionIDFromDashboard from the SessionStorage.
+    ///     </para>
+    ///     <para>
+    ///         - If the RequisitionID is not set, it deserializes the RequisitionSearch from the RequisitionGrid.
+    ///     </para>
+    ///     <para>
+    ///         - If the RequisitionID is set, it initializes a new RequisitionSearch with default values.
+    ///     </para>
+    ///     <para>
+    ///         - Retrieves various data from the MemoryCache, such as States, Eligibility, Education, Experience, JobOptions,
+    ///         Recruiters, Skills, StatusCodes, Preferences, Companies,
+    ///         and Workflow.
+    ///     </para>
+    ///     <para>
+    ///         - Sets the SortDirectionProperty and SortField based on the SearchModel.
+    ///     </para>
+    ///     <para>
+    ///         - Sets the AutocompleteValue to the Title of the SearchModel.
+    ///     </para>
+    ///     <para>
+    ///         - Marks the component as loaded and refreshes the Grid.
+    ///     </para>
+    /// </remarks>
+    /// <returns>A Task that represents the asynchronous operation.</returns>
+    protected override async Task OnInitializedAsync()
+    {
+        _initializationTaskSource = new();
+        await ExecuteMethod(async () =>
+                            {
+                                // Get user claims
+                                IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
+
+                                if (_claims == null)
+                                {
+                                    NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
+                                }
+                                else
+                                {
+                                    IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
+                                    User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    if (User.NullOrWhiteSpace())
+                                    {
+                                        NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
+                                    }
+
+                                    // Set user permissions
+                                    HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewRequisitions");
+                                    HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditRequisitions");
+                                }
+
+                                if (Start.APIHost.NullOrWhiteSpace())
+                                {
+                                    Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
+                                }
+
+                                //General.CheckStart(NavManager, Configuration);
+                                //LoginCookyUser = await NavManager.RedirectInner(LocalStorage, Crypto);
+
+                                List<string> _keys =
+                                [
+                                    CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Education.ToString(),
+                                    CacheObjects.Experience.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.Users.ToString(), CacheObjects.Skills.ToString(),
+                                    CacheObjects.StatusCodes.ToString(), CacheObjects.Preferences.ToString(), CacheObjects.Companies.ToString(), CacheObjects.Workflow.ToString()
+                                ];
+
+                                Dictionary<string, string> _parameters = new()
+                                                                         {
+                                                                             {"value", JsonConvert.SerializeObject(_keys)}
+                                                                         };
+                                Dictionary<string, object> _cacheValues = await General.PostRest("Redis/BatchGet", _parameters);
+                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
+
+                                while (_states == null)
+                                {
+                                    _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
+                                }
+
+                                while (_eligibility == null)
+                                {
+                                    _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
+                                }
+
+                                while (_education == null)
+                                {
+                                    _education = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Education.ToString()]);
+                                }
+
+                                while (_experience == null)
+                                {
+                                    _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
+                                }
+
+                                while (_jobOptions == null)
+                                {
+                                    _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
+                                }
+
+                                /*while (_recruiters == null)
+                                {
+                                    List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[CacheObjects.Users.ToString()]);
+                                    if (_users == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    _recruiters = [];
+                                    foreach (User _user in _users.Where(user => user.Role is "Recruiter" or "Recruiter & Sales Manager"))
+                                    {
+                                        _recruiters?.Add(new(_user.UserName, _user.UserName));
+                                    }
+                                }*/
+
+                                while (_skills == null)
+                                {
+                                    _skills = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Skills.ToString()]);
+                                }
+
+                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
+                                _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
+
+                                if (_statusCodes is {Count: > 0})
+                                {
+                                    foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
+                                    {
+                                        _statusSearch.Add(new()
+                                                          {
+                                                              Key = _statusCode.Status,
+                                                              Value = _statusCode.Code
+                                                          });
+                                    }
+                                }
+
+                                List<Company> _companyList = General.DeserializeObject<List<Company>>(_cacheValues[CacheObjects.Companies.ToString()]);
+                                _companies.Add(new()
+                                               {
+                                                   Key = "All Companies",
+                                                   Value = "%"
+                                               });
+                                if (_companyList != null)
+                                {
+                                    foreach (Company _company in _companyList.Where(company => company.UpdatedBy == User || company.UpdatedBy == "ADMIN"))
+                                    {
+                                        _companies.Add(new()
+                                                       {
+                                                           Key = _company.CompanyName,
+                                                           Value = _company.CompanyName
+                                                       });
+                                    }
+                                }
+
+                                _workflows = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
+
+                                SortDirectionProperty = SearchModel.SortDirection == 1 ? SortDirection.Ascending : SortDirection.Descending;
+                                SortField = SearchModel.SortField switch
+                                            {
+                                                2 => "Code",
+                                                3 => "Title",
+                                                4 => "Company",
+                                                5 => "Option",
+                                                6 => "Status",
+                                                8 => "DueEnd",
+                                                _ => "Updated"
+                                            };
+                                AutocompleteValue = SearchModel.Title;
+
+                                await Grid.Refresh();
+                            });
+
+        _initializationTaskSource.SetResult(true);
+        await base.OnInitializedAsync();
     }
 
     /// <summary>
@@ -400,15 +677,5 @@ public partial class Requisitions
                 _semaphoreSlim.Release();
             }
         }
-    }
-
-    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> arg)
-    {
-        return Task.CompletedTask;
-    }
-
-    private Task GridPageChanging(GridPageChangingEventArgs arg)
-    {
-        return Task.CompletedTask;
     }
 }

@@ -114,9 +114,9 @@ public class LoginController(IConfiguration configuration) : ControllerBase
                 _permissions.Add(nameof(_userRole.EditMyCompanyProfile));
             }
 
-            if (_userRole is {CreateOrEditEditRequisition: true})
+            if (_userRole is {CreateOrEditRequisition: true})
             {
-                _permissions.Add(nameof(_userRole.CreateOrEditEditRequisition));
+                _permissions.Add(nameof(_userRole.CreateOrEditRequisition));
             }
 
             if (_userRole is {ViewOnlyMyCandidates: true})
