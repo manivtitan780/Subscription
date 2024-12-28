@@ -1,0 +1,61 @@
+﻿@*
+<summary>
+	Represents the dialog for editing a candidate's experience details.
+</summary>
+<remarks>
+	This component displays a modal dialog that allows users to edit the details of a candidate's experience.
+	It includes a form with fields for employer, description, location, job title, start date, and end date.
+	The form uses validation and displays a spinner during long-running operations.
+</remarks>
+*@
+<SfDialog CssClass="dialogPopup" Header="Edit Experience" Height="747px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"/>
+		<SfDataForm EditContext="Context" ID="experienceEditForm" OnValidSubmit="SaveExperienceDialog" @ref="EditExperienceForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Experience</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelExperienceDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateExperienceValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Experience Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Employer)">
+						<Template>
+							<TextBox @bind-Value="Model.Employer" ID="textEmployer" MaxLength="100" Placeholder="Employer Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Description)">
+						<Template>
+							<TextArea @bind-Value="Model.Description" MaxLength="1000" ID="textDescription" Placeholder="Description"></TextArea>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Location)">
+						<Template>
+							<TextBox @bind-Value="Model.Location" ID="textLocation" MaxLength="100" Placeholder="Location"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)">
+						<Template>
+							<TextBox @bind-Value="Model.Title" ID="textTitle" MaxLength="255" Placeholder="Job Title"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Start)">
+						<Template>
+							<TextBox @bind-Value="Model.Start" ID="textStart" MaxLength="10" Placeholder="Experience Start Date"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.End)">
+						<Template>
+							<TextBox @bind-Value="Model.End" ID="textEnd" MaxLength="10" Placeholder="Experience Ending Date"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

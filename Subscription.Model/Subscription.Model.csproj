@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Globals">
+        <SccProjectName>SAK</SccProjectName>
+        <SccProvider>SAK</SccProvider>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccLocalPath>SAK</SccLocalPath>
+        <LangVersion>13</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="Subscription.Model.csproj.vspscc" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
+        <PackageReference Include="FluentStorage.Azure.Blobs" Version="5.3.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
+        <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="RestSharp" Version="112.1.0" />
+        <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
+        <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.1.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Extensions\Extensions.csproj" />
+    </ItemGroup>
+
+</Project>

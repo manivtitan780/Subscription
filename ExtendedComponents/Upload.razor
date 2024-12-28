@@ -1,0 +1,4 @@
+<label class="e-form-label" for="@ID">@($"{Placeholder}:")</label>
+<SfUploader AllowedExtensions="@AllowedExtensions" AllowMultiple="true" AutoUpload="@AutoUpload" ID="@ID" MaxFileSize="10485760" SequentialUpload="@SequentialUpload" ShowFileList="true">
+    <UploaderEvents BeforeUpload="BeforeUpload" FileSelected="FileSelected" OnActionComplete="AfterUpload" OnRemove="OnRemove" ValueChange="OnFileUpload"></UploaderEvents> @*MaxFileSize = 10MB*@
+</SfUploader>

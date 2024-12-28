@@ -1,0 +1,47 @@
+﻿@*
+    <summary>
+        Represents the ExperiencePanel component that displays a grid of candidate experience entries.
+    </summary>
+    <remarks>
+        This component uses the Syncfusion SfGrid to display a list of candidate experience entries.
+        It includes columns for Employer, Duration, Location, Title, and Updated By.
+        The component allows for editing and deleting experience entries through buttons in the grid.
+    </remarks>
+*@
+<div>
+	<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" Height="230px" ID="gridExperience" @ref="GridExperience" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateExperience" Width="100%">
+		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+		<GridEvents RowSelected="RowSelected" TValue="CandidateExperience"/>
+		<GridColumns>
+			<GridColumn Field="@nameof(CandidateExperience.Employer)" HeaderText="Degree" Width="20%"/>
+			<GridColumn Field="@nameof(CandidateExperience.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false"/>
+			<GridColumn HeaderText="Duration" Width="12%">
+				<Template Context="aCon">
+					@{
+						if (aCon is CandidateExperience _con)
+						{
+							<span>@($"{_con.Start} - {(_con.End == "" ? "Present" : _con.End)}")</span>
+						}
+					}
+				</Template>
+			</GridColumn>
+			<GridColumn Field="@nameof(CandidateExperience.Location)" HeaderText="Location" Width="30%"/>
+			<GridColumn Field="@nameof(CandidateExperience.Title)" HeaderText="Title" Width="15%"/>
+			<GridColumn Field="@nameof(CandidateExperience.UpdatedBy)" HeaderText="Updated By" Width="13%"/>
+			<GridColumn Width="10%">
+				<Template Context="bCon">
+					@{
+						if (bCon is CandidateExperience _con && _con.UpdatedBy == UserName && !IsRequisition && EditRights)
+						{
+							<div class="buttonContain">
+								<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditExperienceDialog(_con.ID)"/>
+								<SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteExperienceMethod(_con.ID)"/>
+							</div>
+						}
+					}
+				</Template>
+			</GridColumn>
+		</GridColumns>
+	</SfGrid>
+</div>
+@* <ConfirmDialog Delete="() => DeleteExperience.InvokeAsync(_selectedID)" Entity="Experience" Height="160px" @ref="DialogConfirm" Width="385px"></ConfirmDialog> *@

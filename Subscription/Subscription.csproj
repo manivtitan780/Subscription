@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="H\**" />
+    <Content Remove="H\**" />
+    <EmbeddedResource Remove="H\**" />
+    <None Remove="H\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Components\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Subscription.csproj.vspscc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Subscription.Client\Subscription.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Stop-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
+  </Target>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Login.razor" />
+  </ItemGroup>
+
+</Project>

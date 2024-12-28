@@ -1,0 +1,42 @@
+﻿<div class="skillContainerBox">
+	<div class="leftContent">
+		<div style="font-weight: bold; height: 23px;">Primary Skills:</div>
+		<div style="height: 100px; overflow-y: auto;">
+			@Model.Keywords
+		</div>
+		<div style="font-weight: bold; height: 23px; margin-top: 15px;">Summary:</div>
+		<div style="height: 100px; overflow-y: auto;">
+			@Model.Summary
+		</div>
+	</div>
+	<div class="rightContent">
+		<div>
+			<SfGrid AllowPaging="false" DataSource="@ModelSkill" EnableHover="true" Height="210px" ID="gridSkill" @ref="GridSkill" RowHeight="@RowHeight" SelectedRowIndex="0"
+			        TValue="CandidateSkills" Width="99%">
+				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+				<GridEvents RowSelected="RowSelected" TValue="CandidateSkills"/>
+				<GridColumns>
+					<GridColumn Field="@nameof(CandidateSkills.Skill)" HeaderText="Skill" Width="36%"/>
+					<GridColumn Field="@nameof(CandidateSkills.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+					<GridColumn Field="@nameof(CandidateSkills.LastUsed)" HeaderText="Last Used" Width="17%"/>
+					<GridColumn Field="@nameof(CandidateSkills.ExpMonth)" HeaderText="Exp. (month)" Width="17%"/>
+					<GridColumn Field="@nameof(CandidateSkills.UpdatedBy)" HeaderText="Updated By" Width="15%"/>
+					<GridColumn Width="15%">
+						<Template Context="bCon">
+							@{
+								if (bCon is CandidateSkills _con && _con.UpdatedBy == UserName && !IsRequisition && EditRights)
+								{
+									<div class="buttonContain">
+										<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditSkillDialog(_con.ID)"/>
+										<SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteSkillMethod(_con.ID)"/>
+									</div>
+								}
+							}
+						</Template>
+					</GridColumn>
+				</GridColumns>
+			</SfGrid>
+		</div>
+	</div>
+</div>
+@*<ConfirmDialog Delete="() => DeleteSkill.InvokeAsync(_selectedID)" Entity="Skill" Height="160px" @ref="DialogConfirm" Width="336px"/>*@

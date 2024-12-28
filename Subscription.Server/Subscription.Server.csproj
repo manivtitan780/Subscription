@@ -1,0 +1,175 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>a46b8d81-ea73-47ed-9a5e-50fe3dc31541</UserSecretsId>
+        <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+        <LangVersion>13</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Components\Layout\BlankLayout.razor" />
+        <_ContentIncludedByDefault Remove="Components\Layout\LoadingScreen.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Companies.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Common\GridHeader.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Common\PageHeader.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Common\PanelDisplayText.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Companies\ContactPanel.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Companies\DocumentPanel.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Companies\EditCompany.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Companies\EditContact.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Companies\EditLocation.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Controls\Companies\LocationPanel.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Login.razor" />
+        <_ContentIncludedByDefault Remove="wwwroot\fonts\icofont.eot" />
+        <_ContentIncludedByDefault Remove="wwwroot\fonts\icofont.svg" />
+        <_ContentIncludedByDefault Remove="wwwroot\fonts\icofont.ttf" />
+        <_ContentIncludedByDefault Remove="wwwroot\fonts\icofont.woff" />
+        <_ContentIncludedByDefault Remove="wwwroot\fonts\icofont.woff2" />
+        <_ContentIncludedByDefault Remove="wwwroot\images\logo.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\FONT-LICENSE" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\font\css\open-iconic-bootstrap.min.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\font\fonts\open-iconic.eot" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\font\fonts\open-iconic.otf" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\font\fonts\open-iconic.svg" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\font\fonts\open-iconic.ttf" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\font\fonts\open-iconic.woff" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\ICON-LICENSE" />
+        <_ContentIncludedByDefault Remove="wwwroot\open-iconic\README.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+        <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+        <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+        <PackageReference Include="Syncfusion.Blazor.Buttons" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Charts" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Data" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.DataForm" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Grid" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Inputs" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Layouts" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Navigations" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Schedule" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Spinner" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.Themes" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="28.1.36" />
+        <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="28.1.36" />
+        <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ExtendedComponents\ExtendedComponents.csproj" />
+        <ProjectReference Include="..\Extensions\Extensions.csproj" />
+        <ProjectReference Include="..\Subscription.Model\Subscription.Model.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Update="Components\Layout\MainLayout.razor">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </Content>
+        <Content Update="Components\Layout\NavMenu.razor">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </Content>
+        <Content Update="Components\Layout\SubscriptionLayout.razor">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </Content>
+        <Content Update="Components\Layout\SubscriptionLayoutAdmin.razor">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </Content>
+        <Content Update="Components\_Imports.razor">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        </Content>
+        <Content Update="wwwroot\app.css">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Update="wwwroot\favicon.png">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Update="wwwroot\scroll.js">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Update="wwwroot\styles.css">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Layout\BlankLayout.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Layout\LoadingScreen.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Login.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Common\GridHeader.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Common\PageHeader.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Common\PanelDisplayText.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Companies\ContactPanel.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Companies\DocumentPanel.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Companies\EditCompany.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Companies\EditContact.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Companies\EditLocation.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Controls\Companies\LocationPanel.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Components\Pages\Companies.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Components\Pages\Controls\Candidates\" />
+        <Folder Include="Components\Pages\Controls\Requisitions\" />
+    </ItemGroup>
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+        <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Stop-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
+    </Target>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscription AppPool 2'&quot;&#xD;&#xA;EXIT 0" />
+    </Target>
+
+</Project>

@@ -1,0 +1,36 @@
+﻿@page "/login"
+@using LabelPosition = Syncfusion.Blazor.Buttons.LabelPosition
+@layout SubscriptionLayout
+
+<PageHeader />
+
+<EditForm Model="@LoginModel" OnValidSubmit="LoginToApplication" @ref="LoginForm">
+	<div class="grid-container">
+		<div class="header">Login</div>
+		<div class="left">
+			&nbsp;
+		</div>
+		<div class="right">
+			&nbsp;
+		</div>
+        <div class="left">
+            <label for="textUserName">User Name:</label>
+        </div>
+        <div class="right">
+            <SfTextBox Autocomplete="AutoComplete.On" @bind-Value="LoginModel.UserName" ID="textUserName" Placeholder="Enter User Name" Type="InputType.Text" Width="90%" style="text-transform: uppercase"></SfTextBox>
+        </div>
+        <div class="left">
+			<label for="textPassword">Password:</label>
+		</div>
+		<div class="right">
+			<SfTextBox Autocomplete="AutoComplete.Off" @bind-Value="LoginModel.Password" ID="textPassword" Placeholder="Enter Password" Type="InputType.Password" Width="90%"></SfTextBox>
+		</div>
+		<div class="left">&nbsp;</div>
+		<div class="right">
+			<SfCheckBox @bind-Checked="LoginModel.RememberMe" Indeterminate="false" Label="Remember me for 14 days?" LabelPosition="LabelPosition.After"></SfCheckBox>
+		</div>
+		<div class="footer">
+			<SfButton CssClass="e-primary" type="submit" Width="120">Login</SfButton>
+		</div>
+	</div>
+</EditForm>

@@ -1,0 +1,93 @@
+﻿<div class="containerBox">
+	<div>
+		<div>
+			<div>Address:</div>
+			<div>@SetupAddress</div>
+		</div>
+		<div>
+			<div>Email Address:</div>
+			<div>@Model.Email</div>
+		</div>
+		<div>
+			<div>Cell Phone #:</div>
+			<div>@($"{Model.Phone1.FormatPhoneNumber()}")</div>
+		</div>
+		<div>
+			<div>Alternate Phone #:</div>
+			<div>@(Model.Phone2 == "" ? "-" : $"{Model.Phone2.FormatPhoneNumber()}")</div>
+		</div>
+		<div>
+			<div>Title:</div>
+			<div>@(Model.Title)</div>
+		</div>
+		<div>
+			<div>Hourly Pay Rate:</div>
+			<div>@($"{Model.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {Model.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")</div>
+			@* <div>@string.Format(new CultureInfo("en-US"), "{0:C} - {1:C}", Model.HourlyRate, Model.HourlyRateHigh)</div> *@
+		</div>
+		<div>
+			<div>Salary Expected:</div>
+			<div>@($"{Model.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {Model.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")</div>
+			@* <div>@string.Format(new CultureInfo("en-US"), "{0:C} - {1:C}", Model.SalaryLow, Model.SalaryHigh)</div> *@
+		</div>
+	</div>
+	<div>
+		<div>
+			<div>Authorization:</div>
+			<div>@SetEligibility</div>
+		</div>
+		<div>
+			<div>Experience:</div>
+			<div>@SetExperience</div>
+		</div>
+		<div>
+			<div>Tax Terms:</div>
+			<div>@SetTaxTerm</div>
+		</div>
+		<div>
+			<div>Job Options:</div>
+			<div>@SetJobOption</div>
+		</div>
+		<div>
+			<div>Communication:</div>
+			<div>@SetCommunication</div>
+		</div>
+		<div>
+			<div>Security Clearance:</div>
+			<div>@(Model.Background ? "Yes" : "No")</div>
+		</div>
+		<div>
+			<div>Willing to Relocate?:</div>
+			<div>@(Model.Relocate ? "Yes" : "No")</div>
+		</div>
+	</div>
+	<div>
+		<div>
+			<div>Rating:</div>
+			<div style="padding-left: 0">
+				<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@Model.RateCandidate"></SfRating>
+			</div>
+		</div>
+		<div>
+			<div>Last Rating Date:</div>
+			<div>@GetRatingDate</div>
+		</div>
+		<div>
+			<div>Rating Notes:</div>
+			<div>@GetRatingNote</div>
+		</div>
+		<hr style="width: 80%; color: var(--c-888); margin-top: 17px; margin-bottom: 18px;" />
+		<div>
+			<div>M.P.C?:</div>
+			<div>@(Model.MPC ? "Yes" : "No")</div>
+		</div>
+		<div>
+			<div>M.P.C. Date:</div>
+			<div>@GetMPCDate</div>
+		</div>
+		<div>
+			<div>M.P.C. Notes:</div>
+			<div>@GetMPCNote</div>
+		</div>
+	</div>
+</div>

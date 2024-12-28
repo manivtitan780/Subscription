@@ -1,0 +1,47 @@
+﻿@*
+    <summary>
+        Represents the EducationPanel component that displays a grid of candidate education entries.
+    </summary>
+    <remarks>
+        This component uses the Syncfusion SfGrid to display a list of candidate education entries.
+        It includes columns for Degree, College, Location, Year, and Updated By.
+        The component allows for editing and deleting education entries through buttons in the grid.
+    </remarks>
+*@
+<div>
+	<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" Height="230px" ID="gridEducation" @ref="GridEducation" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateEducation" Width="100%">
+		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+		<GridEvents RowSelected="RowSelected" TValue="CandidateEducation"/>
+		<GridColumns>
+			<GridColumn Field="@nameof(CandidateEducation.Degree)" HeaderText="Degree" Width="20%"/>
+			<GridColumn Field="@nameof(CandidateEducation.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false"/>
+			<GridColumn Field="@nameof(CandidateEducation.College)" HeaderText="College" Width="20%"/>
+			<GridColumn HeaderText="Location" Width="20%">
+				<Template Context="aCon">
+					@{
+						if (aCon is CandidateEducation _con)
+						{
+							<span>@(_con.State + ", " + _con.Country)</span>
+						}
+					}
+				</Template>
+			</GridColumn>
+			<GridColumn Field="@nameof(CandidateEducation.Year)" HeaderText="Year" Width="20%/"></GridColumn>
+			<GridColumn Field="@nameof(CandidateEducation.UpdatedBy)" HeaderText="Updated By" Width="20%"/>
+			<GridColumn Width="10%">
+				<Template Context="bCon">
+					@{
+						if (bCon is CandidateEducation _con && _con.UpdatedBy == UserName && !IsRequisition && EditRights)
+						{
+							<div class="buttonContain">
+								<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditEducationDialog(_con.ID)"/>
+								<SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteEducationMethod(_con.ID)"/>
+							</div>
+						}
+					}
+				</Template>
+			</GridColumn>
+		</GridColumns>
+	</SfGrid>
+</div>
+@* <ConfirmDialog Delete="() => DeleteEducation.InvokeAsync(_selectedID)" Entity="Education" Height="160px" @ref="DialogConfirm" Width="378px"/>$1$ #1# *@

@@ -1,0 +1,101 @@
+﻿#region Header
+
+// /*****************************************
+// Copyright:           Titan-Techs.
+// Location:            Newtown, PA, USA
+// Solution:            Subscription
+// Project:             Subscription.Client
+// File Name:           EditLocation.razor.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          3-19-2024 16:15
+// Last Updated On:     3-21-2024 15:50
+// *****************************************/
+
+#endregion
+
+namespace Subscription.Client.Pages.Controls.Companies;
+
+public partial class EditLocation
+{
+    [Parameter]
+    public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private SfDataForm CompanyLocationEditForm
+    {
+        get;
+        set;
+    }
+
+    private SfDialog Dialog
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public CompanyLocations Model
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<EditContext> Save
+    {
+        get;
+        set;
+    }
+
+    private SfSpinner Spinner
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public List<IntValues> State
+    {
+        get;
+        set;
+    } = [];
+
+    private async Task CancelForm(MouseEventArgs args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
+
+    private EditContext Context
+    {
+        get;
+        set;
+    }
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        base.OnParametersSet();
+    }
+
+    private void DialogOpen(BeforeOpenEventArgs args)
+    {
+        CompanyLocationEditForm.EditContext.Validate();
+        StateHasChanged();
+    }
+
+    private async Task SaveCompanyLocation(EditContext args)
+    {
+        await General.DisplaySpinner(Spinner);
+        await Save.InvokeAsync(args);
+        await Dialog.HideAsync();
+        await General.DisplaySpinner(Spinner, false);
+    }
+
+    internal async Task ShowDialog() => await Dialog.ShowAsync();
+}

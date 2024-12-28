@@ -1,0 +1,46 @@
+﻿@*
+<summary>
+	Represents the dialog for editing a candidate's skill.
+</summary>
+<remarks>
+	This component displays a modal dialog that allows users to edit the details of a candidate's skill.
+	It includes a form with fields for skill name, last used year, and experience in months.
+	The form uses validation and displays a spinner during long-running operations.
+</remarks>
+*@
+<SfDialog CssClass="dialogPopup" Header="Edit Skill" Height="435px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveSkillDialog" @ref="EditSkillForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Skill</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelSkillDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateSkillsValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Skill Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Skill)">
+						<Template>
+							<TextBox @bind-Value="Model.Skill" ID="textSkillName" Placeholder="Skill Name" MaxLength="100"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LastUsed)">
+						<Template>
+							<NumericTextBox @bind-Value="Model.LastUsed" ID="numericLastUsed" Placeholder="Last Used (Year)" TValue="int" Decimals="0" Format="g" Max="2100" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ExpMonth)">
+						<Template>
+							<NumericTextBox @bind-Value="Model.ExpMonth" ID="numericExpMonth" Placeholder="Experience (Months)" TValue="int" Decimals="0" Format="g" Max="1000" Min="0" />
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

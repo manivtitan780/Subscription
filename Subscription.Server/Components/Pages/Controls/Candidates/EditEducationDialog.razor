@@ -1,0 +1,56 @@
+﻿@*
+<summary>
+    Represents the dialog for editing a candidate's education details.
+</summary>
+<remarks>
+    This component displays a modal dialog that allows users to edit the details of a candidate's education.
+    It includes a form with fields for school/college, degree, state, country, and graduation year.
+    The form uses validation and displays a spinner during long-running operations.
+</remarks>
+*@
+<SfDialog CssClass="dialogPopup" Header="Edit Education" Height="585px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Education</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelEducationDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateEducationValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Education Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.College)">
+						<Template>
+							<TextBox @bind-Value="Model.College" ID="textCollege" MaxLength="255" Placeholder="School / College" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Degree)">
+						<Template>
+							<TextBox @bind-Value="Model.Degree" ID="textDegree" MaxLength="100" Placeholder="Degree" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.State)">
+						<Template>
+							<TextBox @bind-Value="Model.State" ID="textState" MaxLength="100" Placeholder="State" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Country)">
+						<Template>
+							<TextBox @bind-Value="Model.Country" ID="textCountry" MaxLength="100" Placeholder="Country" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Year)">
+						<Template>
+							<TextBox @bind-Value="Model.Year" ID="textYear" MaxLength="20" Placeholder="Graduation Year" />
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

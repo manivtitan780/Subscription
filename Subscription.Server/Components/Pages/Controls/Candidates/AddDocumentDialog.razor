@@ -1,0 +1,62 @@
+﻿@* 
+    Copyright:           Titan-Techs.
+    Location:            Newtown, PA, USA
+    Solution:            Subscription
+    Project:             Subscription.Server
+    File Name:           Candidates.razor.cs
+    Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+
+    Summary:
+    The AddDocumentDialog component is used to display a dialog for adding a new document. It includes form fields for entering the document name, notes, selecting the document type, and uploading a file.
+
+    Remarks:
+    This component uses Syncfusion Blazor components such as SfDialog, SfDataForm, SfButton, and SfUploader to create the dialog and form. The form is validated using FluentValidationValidator.
+*@
+<SfDialog CssClass="dialogPopup" Header="Add New Document" Height="640px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"></DialogPositionData>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"></DialogAnimationSettings>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="addDocumentForm" OnValidSubmit="SaveDocumentDialog" @ref="EditDocumentForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Document</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateDocumentValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Document Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Name)">
+						<Template>
+							<TextBox @bind-Value="Model.Name" ID="textName" Placeholder="Name" MaxLength="255"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)">
+						<Template>
+							<TextArea @bind-Value="Model.Notes" ID="textNotes" Placeholder="Notes" MaxLength="2000"></TextArea>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.DocumentTypeID)">
+						<Template>
+							<DropDown @bind-Value="Model.DocumentTypeID" Model="DocumentTypes" ID="dropDocumentTypes" Placeholder="Document Type" Text="Text"
+							          TItem="IntValues" TValue="int" Key="Value"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
+						<Template>
+							@*<Upload AutoUpload="true" AfterUpload="AfterUpload" BeforeUpload="BeforeUpload" FileSelected="OnFileSelected" ID="uploadDocument" OnFileUpload="OnFileUpload"
+							        SequentialUpload="@SequentialUpload" OnRemove="OnFileRemoved" Placeholder="Select a Document to upload">
+							</Upload>*@
+							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760" 
+							            SequentialUpload="true" ShowFileList="true">
+								<UploaderEvents FileSelected="OnFileSelected" ValueChange="UploadDocument"></UploaderEvents> @*MaxFileSize = 10MB*@
+							</SfUploader>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

@@ -1,0 +1,62 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Company Contact" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="720px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center" />
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
+		<DialogEvents OnOpen="DialogOpen" />
+		<SfDataForm EditContext="@Context" ID="notesEditForm" OnValidSubmit="SaveCompanyContact" @ref="CompanyContactEditForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_companyContactValidator" />
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="9" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Contact Information">
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Prefix)" LabelText="Prefix:" Placeholder="Prefix" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.FirstName)" LabelText="First Name:" Placeholder="First Name" />
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.MiddleInitial)" LabelText="Initial:" Placeholder="Initial" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.LastName)" LabelText="Last Name:" Placeholder="First Name" />
+					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Suffix)" LabelText="Suffix:" Placeholder="Suffix" />
+					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Title)" LabelText="Title:" />
+					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Department)" LabelText="Department:" />
+					<FormItem ColumnSpan="9" Field="@nameof(Model.LocationID)" ID="LocationID">
+						<Template>
+							<label class="e-form-label">Location:</label>
+							<SfDropDownList @bind-Value="Model.LocationID" DataSource="Location" ID="LocationID" TItem="LocationDrop" TValue="int">
+								<DropDownListFieldSettings Text="Location" Value="ID"></DropDownListFieldSettings>
+								<DropDownListEvents TItem="LocationDrop" TValue="int" ValueChange="LocationChanged" />
+							</SfDropDownList>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.StreetName)" IsEnabled="false" LabelText="Address:" />
+					<FormItem ColumnSpan="4" EditorType="FormEditorType.TextBox" Field="@nameof(Model.City)" IsEnabled="false" LabelText="City:" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.State)" IsEnabled="false" LabelText="State:" />
+					<FormItem ColumnSpan="2" EditorType="FormEditorType.TextBox" Field="@nameof(Model.ZipCode)" IsEnabled="false" LabelText="Zip Code:" />
+					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.EmailAddress)" LabelText="Email Address:" />
+					<FormItem ColumnSpan="6" Field="@nameof(Model.Phone)">
+						<Template>
+							<label class="e-form-label" for="maskedPhone">Primary Phone Number:</label>
+							<SfMaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Extension)">
+						<Template>
+							<label class="e-form-label" for="maskedExt">Extension:</label>
+							<SfMaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="6" Field="@nameof(Model.Fax)">
+						<Template>
+							<label class="e-form-label" for="maskedFax">Fax:</label>
+							<SfMaskedTextBox @bind-Value="Model.Fax" ID="maskedFax" Mask="(000) 000-0000" Placeholder="Fax" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="9" EditorType="FormEditorType.Switch" Field="@nameof(Model.PrimaryContact)" LabelText="Primary Contact" />
+					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Contact Notes:" Placeholder="Contact Notes" />
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

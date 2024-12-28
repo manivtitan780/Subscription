@@ -1,0 +1,58 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Company Location" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="640px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center" />
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight" />
+		<DialogEvents OnOpen="DialogOpen" />
+		<SfDataForm EditContext="@Context" ID="locationEditForm" OnValidSubmit="SaveCompanyLocation" @ref="CompanyLocationEditForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Location</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator />
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupLocation" LabelText="Company Location">
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.StreetName)" LabelText="Address:" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.City)" LabelText="City:" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.EmailAddress)" LabelText="Email Address:" Placeholder="Email Address" />
+					<FormItem ColumnSpan="3" Field="@nameof(Model.StateID)">
+						<Template>
+							<label class="e-form-label">State:</label>
+							<SfDropDownList @bind-Value="Model.StateID" DataSource="State" TItem="IntValues" TValue="int">
+								<DropDownListFieldSettings Text="Text" Value="Value" />
+							</SfDropDownList>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.ZipCode)">
+						<Template>
+							<label class="e-form-label" for="maskedZip">Zip Code:</label>
+							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="maskedZip" Mask="00000" Placeholder="Zip Code" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Phone)">
+						<Template>
+							<label class="e-form-label" for="maskedPhone">Primary Phone Number:</label>
+							<SfMaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Extension)">
+						<Template>
+							<label class="e-form-label" for="maskedExt">Extension:</label>
+							<SfMaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Fax)">
+						<Template>
+							<label class="e-form-label" for="maskedFax">Fax:</label>
+							<SfMaskedTextBox @bind-Value="Model.Fax" ID="maskedFax" Mask="(000) 000-0000" Placeholder="Fax" />
+						</Template>
+					</FormItem>
+					<FormItem EditorType="FormEditorType.Switch" Field="@nameof(Model.PrimaryLocation)" LabelText="Primary Location" />
+					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Location Notes:" Placeholder="Location Notes" />
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

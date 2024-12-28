@@ -1,0 +1,30 @@
+﻿<div id="divMainGrid">
+    <div id="divHeader" style="display: flex; align-items: center">
+        @if (ShowAlphabet)
+        {
+            <div style="flex: 1; padding-left: 15px; text-align: left" class="e-pagerContainer">
+                @{
+                    for (char _alphabet = 'A'; _alphabet <= 'Z'; _alphabet++)
+                    {
+                        char _localAlpha = _alphabet;
+                        string _additionalClass = _localAlpha.ToString() == Name ? "buttonAlphabet selectedAlphabet" : "buttonAlphabet";
+                        <SfButton CssClass="@("e-pager-default e-navigationStyle " + _additionalClass)" @onclick="() => AlphabetMethod.InvokeAsync(_localAlpha)">
+                            @_localAlpha
+                        </SfButton>
+                    }
+                }
+                <SfButton CssClass="buttonAlphabetClear" @onclick="AllAlphabet" style="width: 30px">All</SfButton>
+                <SfButton CssClass="buttonAlphabetClear" @onclick="ClearFilter">Clear</SfButton>
+            </div>
+        }
+        <SfAutoComplete CssClass="rightMargin" AllowCustom="true" EnablePersistence="false" Highlight="true" HtmlAttributes="@_htmlAttribute" ID="autoFilter" MinLength="3" Placeholder="Select&hellip;"
+                        @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="200px" @bind-Value="@Name">
+            <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(DropDownAdaptor)" Key="Key"></SfDataManager>
+            <AutoCompleteFieldSettings Text="Key" Value="Value"></AutoCompleteFieldSettings>
+            <AutoCompleteEvents Created="Created" TItem="KeyValues" TValue="string" ValueChange="ValueChange" />
+        </SfAutoComplete>
+    </div>
+    <div id="divGrid">
+        @GridContent
+    </div>
+</div>

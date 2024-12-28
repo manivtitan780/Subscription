@@ -1,0 +1,203 @@
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="70vw">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="1000" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="DialogOpen"/>
+		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="SaveCandidateDialog" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Candidate</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateDetailsValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)">
+						<Template>
+							<TextBox @bind-Value="Model.FirstName" ID="textFirst" MaxLength="50" Placeholder="First Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.MiddleName)">
+						<Template>
+							<TextBox @bind-Value="Model.MiddleName" ID="textMiddle" MaxLength="10" Placeholder="Middle Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LastName)">
+						<Template>
+							<TextBox @bind-Value="Model.LastName" ID="textLast" MaxLength="50" Placeholder="Last Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Address1)">
+						<Template>
+							<TextBox @bind-Value="Model.Address1" ID="textAddress1" MaxLength="255" Placeholder="Address"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.Address2)">
+						<Template>
+							<TextBox @bind-Value="Model.Address2" ID="textAddress2" MaxLength="255" Placeholder="Address 2"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.City)">
+						<Template>
+							<TextBox @bind-Value="Model.City" ID="textCity" MaxLength="50" Placeholder="City"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
+						<Template>
+							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="Value" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)">
+						<Template>
+							<MaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000-0000" Placeholder="Zip Code"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupContactInfo" LabelText="Contact Information">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Email)">
+						<Template>
+							<TextBox @bind-Value="Model.Email" ID="textEmail" MaxLength="255" Placeholder="Email" TextBoxType="InputType.Email"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone1)">
+						<Template>
+							<MaskedTextBox @bind-Value="Model.Phone1" ID="textPhone1" Mask="(000) 000-0000" Placeholder="Cell Phone"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Phone2)">
+						<Template>
+							<MaskedTextBox @bind-Value="Model.Phone2" ID="textPhone2" Mask="(000) 000-0000" Placeholder="Alternate Phone"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)">
+						<Template>
+							<TextBox @bind-Value="Model.Title" ID="textTitle" MaxLength="100" Placeholder="Title"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)">
+						<Template>
+							<TextArea @bind-Value="Model.Keywords" ID="textKeywords" Placeholder="Keywords"></TextArea>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)">
+						<Template>
+							<TextArea @bind-Value="Model.Summary" ID="textSummary" Placeholder="Summary"></TextArea>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRate)" LabelText="Hourly Rate Min. ($):" ID="numericHourlyLow">
+						<Template>
+							<NumericTextBox @bind-Value="Model.HourlyRate" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)	" TValue="decimal" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRateHigh)" LabelText="Hourly Rate Max. ($):" ID="numericHourlyHigh">
+						<Template>
+							<NumericTextBox @bind-Value="Model.HourlyRateHigh" ID="numericHourlyHigh" Max="2000" Placeholder="Hourly Rate (Max.)" TValue="decimal"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SalaryLow)" LabelText="Salary Min. ($):" ID="numericSalaryLow">
+						<Template>
+							<NumericTextBox @bind-Value="Model.SalaryLow" ID="numericSalaryLow" Max="10000000" Placeholder="Salary (Min.)" TValue="decimal"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SalaryHigh)" LabelText="Salary Max. ($):" ID="numericSalaryHigh">
+						<Template>
+							<NumericTextBox @bind-Value="Model.SalaryHigh" ID="numericSalaryHigh" Max="10000000" Placeholder="Salary (Max.)" TValue="decimal"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)" LabelText="Eligibility:" ID="dropEligibility">
+						<Template>
+							<DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="Value" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)" LabelText="Experience:" ID="dropExperience">
+						<Template>
+							<DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="Value" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Communication)" LabelText="Communication:" ID="dropCommunication">
+						<Template>
+							<DropDown @bind-Value="Model.Communication" Model="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string" Placeholder="Communication" Text="Value" Key="Key" />
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerm)" LabelText="Tax Terms:" ID="multiTaxTerms">
+						<Template>
+							<MultiSelect @bind-Value="Model.TaxTerm" Model="TaxTerms" ID="multiTaxTerms" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+							@*<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms"
+							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
+								<MultiSelectFieldSettings Text="Value" Value="Key" />
+							</SfMultiSelect>*@
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.JobOptions)" LabelText="Job Options:" ID="multiJobOptions">
+						<Template>
+							<MultiSelect @bind-Value="Model.JobOptions" Model="JobOptions" ID="multiJobOptions" Placeholder="Select Job Option(s)" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+							@*<label class="e-form-label" for="multiJobOptions">Job Options:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptions" DataSource="JobOptions" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiJobOptions"
+							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
+								<MultiSelectFieldSettings Text="Value" Value="Key" />
+							</SfMultiSelect>*@
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupSocialInfo" LabelText="Social Links">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.LinkedIn)" LabelText="LinkedIn:" ID="textLinkedIn">
+						<Template>
+							<TextBox @bind-Value="Model.LinkedIn" ID="textLinkedIn" MaxLength="100" Placeholder="LinkedIn Profile"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Facebook)" LabelText="Facebook:" ID="textFacebook">
+						<Template>
+							<TextBox @bind-Value="Model.Facebook" ID="textFacebook" MaxLength="100" Placeholder="Facebook Profile"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Twitter)" LabelText="Twitter:" ID="textTwitter">
+						<Template>
+							<TextBox @bind-Value="Model.Twitter" ID="textTwitter" MaxLength="100" Placeholder="X Profile"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.GooglePlus)" LabelText="Google:" ID="textGoogle">
+						<Template>
+							<TextBox @bind-Value="Model.GooglePlus" ID="textGoogle" MaxLength="100" Placeholder="Bluesky Profile"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupPreferencesInfo" LabelText="Preferences/Clearances">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Relocate)" LabelText="Willing to Relocate:" ID="checkedRelocate" EditorType="FormEditorType.Switch">
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.RelocationNotes)" LabelText="Relocation Notes:" ID="textRelocationNotes">
+						<Template>
+							<TextBox @bind-Value="Model.RelocationNotes" ID="textRelocationNotes" MaxLength="255" Placeholder="Relocation Notes" Readonly="@(!Model.Relocate)"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Background)" LabelText="Security Clearance:" ID="checkedEnabled" EditorType="FormEditorType.Switch"/>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SecurityNotes)" LabelText="Security Clearance Notes:" ID="textSecurityNotes">
+						<Template>
+							<TextBox @bind-Value="Model.SecurityNotes" ID="textSecurityNotes" MaxLength="255" Placeholder="Security Clearance Notes" Readonly="@(!Model.Background)"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupResumeInfo" LabelText="Resume">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.TextResume)" LabelText="Text Resume:" ID="richTextResume">
+						<Template>
+							<label class="e-form-label" for="richTextResume">Text Resume:</label>
+							<SfRichTextEditor @bind-Value="Model.TextResume" Height="400px" ID="richTextResume">
+								<RichTextEditorToolbarSettings Items="_tools"/>
+							</SfRichTextEditor>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>
+
+@**@

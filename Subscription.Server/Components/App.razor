@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<base href="/subscription/" />
+		<link href="app.css" rel="stylesheet" />
+		<link href="https://cdn.syncfusion.com/blazor/28.1.33/styles/fluent-lite.css" rel="stylesheet" />
+		<link href="styles.css" rel="stylesheet" />
+		<link href="favicon.png" rel="icon" type="image/png" />
+		@* <script src="_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js" type="text/javascript"></script> *@
+		<script src="https://cdn.syncfusion.com/blazor/28.1.33/syncfusion-blazor.min.js" type="text/javascript"></script>
+		<script src="https://cdn.syncfusion.com/blazor/28.1.33/syncfusion-blazor-documenteditor.min.js" type="text/javascript"></script>
+		<script src="https://cdn.syncfusion.com/blazor/28.1.33/syncfusion-blazor-sfpdfviewer.min.js" type="text/javascript"></script>
+		<script src="scroll.js" type="text/javascript"></script>
+		<HeadOutlet @rendermode="new InteractiveServerRenderMode(false)" />
+	</head>
+
+	<body>
+		<Routes @rendermode="new InteractiveServerRenderMode(false)" />
+		<script src="_framework/blazor.web.js"></script>
+	</body>
+
+</html>

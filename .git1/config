@@ -1,0 +1,42 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = git@github.com:manivenkit/Subscription.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "additional"]
+	url = git@github.com-work:maniv-outlook/Subscription.git
+	fetch = +refs/heads/*:refs/remotes/additional/*
+[remote "third"]
+	url = git@github.com-third:shahc-4/Subscription.git
+	fetch = +refs/heads/*:refs/remotes/third/*
+[remote "fourth"]
+	url = git@github.com-fourth:manivtitan780/Subscription.git
+	fetch = +refs/heads/*:refs/remotes/fourth/*
+[remote "fifth"]
+	url = git@github.com-fifth:mani-webpronto/Subscription.git
+	fetch = +refs/heads/*:refs/remotes/fifth/*
+[remote "all"]
+	url = git@github.com:manivenkit/Subscription.git
+	url = git@github.com-work:maniv-outlook/Subscription.git
+	url = git@github.com-third:shahc-4/Subscription.git
+	url = git@github.com-fourth:manivtitan780/Subscription.git
+	url = git@github.com-fifth:mani-webpronto/Subscription.git
+[lfs "https://github.com/manivenkit/Subscription.git/info/lfs"]
+	locksverify = true
+[lfs "https://github.com-work/maniv-outlook/Subscription.git/info/lfs"]
+	locksverify = true
+[lfs "https://github.com-third/shahc-4/Subscription.git/info/lfs"]
+	locksverify = true
+[lfs "https://github.com-fourth/manivtitan780/Subscription.git/info/lfs"]
+	locksverify = true
+[lfs "https://github.com-fifth/mani-webpronto/Subscription.git/info/lfs"]
+	locksverify = true
+[auto]
+    crlf = true
+[lfs]
+	repositoryformatversion = 0

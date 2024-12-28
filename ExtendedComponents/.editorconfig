@@ -1,0 +1,3 @@
+# Suppress BL0007 warnings 
+[*.cs] 
+dotnet_diagnostic.BL0007.severity = none
