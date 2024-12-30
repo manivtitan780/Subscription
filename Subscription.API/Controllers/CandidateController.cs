@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          05-06-2024 20:05
-// Last Updated On:     12-27-2024 15:12
+// Created On:          12-28-2024 19:12
+// Last Updated On:     12-30-2024 20:12
 // *****************************************/
 
 #endregion
@@ -176,32 +176,56 @@ public class CandidateController : ControllerBase
             }
 
             _reader.NextResult(); //Notes
-            List<CandidateNotes> _notes = await _reader.FillList<CandidateNotes>(note => new()
+            string _notes = "[]";
+            while (_reader.Read())
+            {
+                _notes = _reader.NString(0);
+            }
+
+            /*List<CandidateNotes> _notes = await _reader.FillList<CandidateNotes>(note => new()
                                                                                          {
                                                                                              ID = note.GetInt32(0), UpdatedDate = note.GetDateTime(1), UpdatedBy = note.GetString(2),
                                                                                              Notes = note.GetString(3)
-                                                                                         }).ToListAsync();
+                                                                                         }).ToListAsync();*/
             _reader.NextResult(); //Skills
-            List<CandidateSkills> _skills = await _reader.FillList<CandidateSkills>(skill => new()
+            string _skills = "[]";
+            while (_reader.Read())
+            {
+                _skills = _reader.NString(0);
+            }
+
+            /*List<CandidateSkills> _skills = await _reader.FillList<CandidateSkills>(skill => new()
                                                                                              {
                                                                                                  ID = skill.GetInt32(0), Skill = skill.GetString(1), LastUsed = skill.GetInt16(2),
                                                                                                  ExpMonth = skill.GetInt16(3), UpdatedBy = skill.GetString(4)
-                                                                                             }).ToListAsync();
+                                                                                             }).ToListAsync();*/
             _reader.NextResult(); //Education
-            List<CandidateEducation> _education = await _reader.FillList<CandidateEducation>(education => new()
+            string _education = "[]";
+            while (_reader.Read())
+            {
+                _education = _reader.NString(0);
+            }
+
+            /*List<CandidateEducation> _education = await _reader.FillList<CandidateEducation>(education => new()
                                                                                                           {
                                                                                                               ID = education.GetInt32(0), Degree = education.GetString(1), College = education.GetString(2),
                                                                                                               State = education.GetString(3), Country = education.GetString(4),
                                                                                                               Year = education.GetString(5), UpdatedBy = education.GetString(6)
-                                                                                                          }).ToListAsync();
+                                                                                                          }).ToListAsync();*/
             _reader.NextResult(); //Experience
-            List<CandidateExperience> _experience = await _reader.FillList<CandidateExperience>(experience => new()
+            string _experience = "[]";
+            while (_reader.Read())
+            {
+                _experience = _reader.NString(0);
+            }
+
+            /*List<CandidateExperience> _experience = await _reader.FillList<CandidateExperience>(experience => new()
                                                                                                               {
                                                                                                                   ID = experience.GetInt32(0), Employer = experience.GetString(1),
                                                                                                                   Start = experience.GetString(2), End = experience.GetString(3),
                                                                                                                   Location = experience.GetString(4), Description = experience.GetString(5),
                                                                                                                   UpdatedBy = experience.GetString(6), Title = experience.GetString(7)
-                                                                                                              }).ToListAsync();
+                                                                                                              }).ToListAsync();*/
             _reader.NextResult(); //Activity
             List<CandidateActivity> _activity = await _reader.FillList<CandidateActivity>(activity => new()
                                                                                                       {
@@ -220,13 +244,19 @@ public class CandidateController : ControllerBase
             _reader.NextResult(); //Managers
 
             _reader.NextResult(); //Documents
-            List<CandidateDocument> _documents = await _reader.FillList<CandidateDocument>(document => new()
+            string _documents = "[]";
+            while (_reader.Read())
+            {
+                _documents = _reader.NString(0);
+            }
+
+            /*List<CandidateDocument> _documents = await _reader.FillList<CandidateDocument>(document => new()
                                                                                                        {
                                                                                                            ID = document.GetInt32(0), Name = document.GetString(1), Location = document.GetString(2),
                                                                                                            Notes = document.GetString(3), UpdatedBy = $"{document.NDateTime(4)} [{document.NString(5)}]",
                                                                                                            DocumentType = document.GetString(6), InternalFileName = document.GetString(7),
                                                                                                            DocumentTypeID = document.GetInt32(8)
-                                                                                                       }).ToListAsync();
+                                                                                                       }).ToListAsync();*/
             await _reader.CloseAsync();
 
             await _connection.CloseAsync();
@@ -982,39 +1012,21 @@ public class CandidateController : ControllerBase
     {
         string _fileName = file.FileName;
         string _candidateID = Request.Form["candidateID"].ToString();
-        //string _mime = Request.Form["mime"];
         string _internalFileName = Guid.NewGuid().ToString("N");
-        //Directory.CreateDirectory(Path.Combine(Request.Form["path"].ToString(), "Uploads", "Candidate", _candidateID));
-        //string _destinationFileName = Path.Combine(Request.Form["path"].ToString(), "Uploads", "Candidate", _candidateID, _internalFileName);
 
         // Create a BlobStorage instance
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
-        
+
         // Create the folder path
         string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
 
-        await using(Stream stream = file.OpenReadStream())
+        await using (Stream stream = file.OpenReadStream())
         {
             await _storage.WriteAsync(_blobPath, stream);
         }
-        
-        /*await using (FileStream _fs = System.IO.File.Open(_destinationFileName, FileMode.OpenOrCreate, FileAccess.Write))
-        {
-            try
-            {
-                await file.CopyToAsync(_fs);
-                _fs.Flush();
-                _fs.Close();
-            }
-            catch
-            {
-                _fs.Close();
-            }
-        }*/
 
         await using SqlConnection _connection = new(Start.ConnectionString);
         await _connection.OpenAsync();
-        //List<CandidateDocument> _documents = [];
         string _returnVal = "[]";
         try
         {

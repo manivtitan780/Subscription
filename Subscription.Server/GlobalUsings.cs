@@ -56,5 +56,9 @@ global using Syncfusion.Blazor.DocumentEditor;
 global using Syncfusion.Blazor.Inputs;
 global using Syncfusion.DocIORenderer;
 
+global using FluentStorage;
+global using FluentStorage.Blobs;
+global using FluentStorage.Azure.Blobs;
+
 //global using Syncfusion.Blazor.SfPdfViewer;
 #endregion

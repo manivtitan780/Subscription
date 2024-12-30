@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           Start.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-16-2024 20:04
-// Last Updated On:     10-29-2024 15:10
+// Created On:          12-28-2024 19:12
+// Last Updated On:     12-30-2024 20:12
 // *****************************************/
 
 #endregion
@@ -23,7 +23,31 @@ public static class Start
         set;
     }
 
+    public static string AccountName
+    {
+        get;
+        set;
+    }
+
     public static string APIHost
+    {
+        get;
+        set;
+    }
+
+    public static string AzureBlob
+    {
+        get;
+        set;
+    }
+
+    public static string AzureBlobContainer
+    {
+        get;
+        set;
+    } = "sub";
+
+    public static string AzureKey
     {
         get;
         set;
@@ -41,33 +65,9 @@ public static class Start
         set;
     }
 
-    public static string AzureKey
-    {
-        get;
-        set;
-    }
-
-    public static string AccountName
-    {
-        get;
-        set;
-    }
-    
     public static string ConnectionString
     {
         get;
         set;
     }
-
-    public static string AzureBlob
-    {
-        get;
-        set;
-    }
-
-    public static string AzureBlobContainer
-    {
-        get;
-        set;
-    } = "sub";
 }

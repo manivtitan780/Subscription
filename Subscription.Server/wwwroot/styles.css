@@ -420,6 +420,10 @@ body, form, html {
     height : 45px;
 }
 
+.e-grid .e-gridcontent {
+    overflow-y : auto;    
+}
+
 .e-rowcell:focus {
     outline : none !important;
 }

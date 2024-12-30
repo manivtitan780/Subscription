@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-27-2024 15:12
+// Last Updated On:     12-30-2024 20:12
 // *****************************************/
 
 #endregion
@@ -862,14 +862,34 @@ public partial class Candidates
                                  if (_response != null)
                                  {
                                      _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response["Candidate"]);
-                                     _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
-                                     _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
-                                     _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
+                                     if (_response["Skills"].ToString().NotNullOrWhiteSpace() && _response["Skills"].ToString() != "[]")
+                                     {
+                                         _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"].ToString());
+                                     }
+
+                                     if (_response["Education"].ToString().NotNullOrWhiteSpace() && _response["Education"].ToString() != "[]")
+                                     {
+                                         _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"].ToString());
+                                     }
+
+                                     if (_response["Experience"].ToString().NotNullOrWhiteSpace() && _response["Experience"].ToString() != "[]")
+                                     {
+                                         _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"].ToString());
+                                     }
+
+                                     if (_response["Notes"].ToString().NotNullOrWhiteSpace() && _response["Notes"].ToString() != "[]")
+                                     {
+                                         _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"].ToString());
+                                     }
+
+                                     if (_response["Document"].ToString().NotNullOrWhiteSpace() && _response["Document"].ToString() != "[]")
+                                     {
+                                         _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"].ToString());
+                                     }
+
                                      _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
-                                     _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
                                      _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["Rating"]);
                                      _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPC"]);
-                                     _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
                                      _ratingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"]) ?? new();
                                      GetMPCDate();
                                      GetMPCNote();

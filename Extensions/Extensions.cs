@@ -8,7 +8,7 @@
 // File Name:           Extensions.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-07-2024 15:02
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     12-30-2024 20:12
 // *****************************************/
 
 #endregion
@@ -177,6 +177,16 @@ public static partial class Extensions
 
         return Uri.TryCreate(_url, UriKind.Absolute, out Uri _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
     }
+
+    /// <summary>
+    ///     Checks if the given string is NOT null, empty, or consists only of white-space characters.
+    /// </summary>
+    /// <param name="s">The string to be checked.</param>
+    /// <returns>
+    ///     True if the string contains characters other than null, empty, or consists only of white-space characters;
+    ///     otherwise, false.
+    /// </returns>
+    public static bool NotNullOrWhiteSpace(this string s) => !string.IsNullOrWhiteSpace(s);
 
     /// <summary>
     ///     Checks if the given string is null, empty, or consists only of white-space characters.

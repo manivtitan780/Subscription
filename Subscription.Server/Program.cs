@@ -95,6 +95,10 @@ _app.Use(async (context, next) =>
                      Start.Access = _config["GarnetServer:Access"];
                  }
 
+                 Start.AzureBlob = _config.GetConnectionString("AzureBlob");
+                 Start.AzureBlobContainer = _config["AzureBlobContainer"];
+                 Start.AzureKey = _config["AzureKey"];
+                 Start.AccountName = _config["AccountName"];
                  Start.UploadsPath = _builder.Environment.WebRootPath;
                  Start.UploadPath = _config["RootPath"];
              }

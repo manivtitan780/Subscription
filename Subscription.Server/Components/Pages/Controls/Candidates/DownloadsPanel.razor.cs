@@ -203,12 +203,6 @@ public partial class DownloadsPanel
         set;
     }
 
-    /*private ViewWordDocument DocumentViewWord
-    {
-        get;
-        set;
-    }*/
-
     private ViewPDFDocument DocumentViewPDF
     {
         get;
@@ -294,14 +288,7 @@ public partial class DownloadsPanel
             _documentName = documentName;
             _documentLocation = documentLocation;
             _internalFileName = internalFileName;
-            //await DocumentViewPDF.ShowDialog();
-            //if (documentLocation.EndsWith(".pdf"))
-            //{
-                await DocumentViewPDF.ShowDialog();
-            //}
-
-            //await DocumentViewWord.ShowDialog();
-            //await Task.CompletedTask;
+            await DocumentViewPDF.ShowDialog();
         }
     }
 
@@ -319,14 +306,6 @@ public partial class DownloadsPanel
     private async Task ViewDocumentDialog(int documentID)
     {
         await Spinner.ShowAsync();
-        //RestClient _restClient = new($"{Start.ApiHost}");
-        //RestRequest _request = new("Candidates/DownloadFile")
-        //                       {
-        //                           RequestFormat = DataFormat.Json
-        //                       };
-        //_request.AddQueryParameter("documentID", documentID);
-
-        //DocumentDetails _restResponse = await _restClient.GetAsync<DocumentDetails>(_request);
 
         Dictionary<string, string> _parameters = new()
                                                  {
@@ -344,15 +323,7 @@ public partial class DownloadsPanel
                 _documentName = _restResponse.DocumentName;
                 _documentLocation = _location;
                 _internalFileName = _restResponse.InternalFileName;
-                //await DocumentViewPDF.ShowDialog();
-                //if (_location.EndsWith(".pdf"))
-                //{
-                    await DocumentViewPDF.ShowDialog();
-                //}
-                //else
-                //{
-                //    await DocumentViewWord.ShowDialog();
-                //}
+                await DocumentViewPDF.ShowDialog();
             }
         }
 
