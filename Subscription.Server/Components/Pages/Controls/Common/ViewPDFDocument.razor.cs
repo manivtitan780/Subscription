@@ -8,7 +8,7 @@
 // File Name:           ViewPDFDocument.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-06-2024 15:12
-// Last Updated On:     12-30-2024 20:12
+// Last Updated On:     12-31-2024 15:12
 // *****************************************/
 
 #endregion
@@ -144,6 +144,17 @@ public partial class ViewPDFDocument
         set;
     }
 
+    /// <summary>
+    ///     Closes the dialog containing the PDF viewer.
+    ///     This method is called when the dialog is closed.
+    ///     It unloads the PDF viewer and hides the loading spinner.
+    /// </summary>
+    /// <param name="arg">
+    ///     The argument passed to the method when the dialog is closed.
+    /// </param>
+    /// <returns>
+    ///     A Task representing the asynchronous operation.
+    /// </returns>
     private async Task CloseDialog(CloseEventArgs arg)
     {
         await PdfViewer.UnloadAsync();
@@ -193,11 +204,13 @@ public partial class ViewPDFDocument
                              _ => "Candidate"
                          };
 
+        //Connect to the Azure Blob Storage
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        //Create the Path to the File in Azure Blob Storage
         string _blobPath = $"{Start.AzureBlobContainer}/{_entity}/{EntityID}/{InternalFileName}";
 
-        /*string _fileName = Path.Combine(Start.UploadPath, "Uploads", _entity, EntityID.ToString(), InternalFileName); //TODO: Include Uploads Path*/
-
+        //Read the file into a Bytes Array
         byte[] _memBytes = await _storage.ReadBytesAsync(_blobPath);
         if (DocumentLocation.EndsWith(".pdf"))
         {
@@ -226,7 +239,6 @@ public partial class ViewPDFDocument
         DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : DocumentLocation + ".pdf";
         await PdfViewer.LoadAsync("data:application/pdf;base64," + _base64String);
         await Spinner.HideAsync();
-        //IsOpening = false;
         StateHasChanged();
     }
 
