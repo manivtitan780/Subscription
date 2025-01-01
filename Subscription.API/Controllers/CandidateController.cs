@@ -448,8 +448,9 @@ public class CandidateController : ControllerBase
         try
         {
             await using SqlConnection _connection = new(Start.ConnectionString);
-            List<Candidate> _candidates = [];
-
+            //List<Candidate> _candidates = [];
+            string _candidates = "[]";
+ 
             await using SqlCommand _command = new("GetCandidates", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("RecordsPerPage", searchModel!.ItemCount);
@@ -487,17 +488,14 @@ public class CandidateController : ControllerBase
             await _reader.NextResultAsync();
             while (await _reader.ReadAsync())
             {
-                string _location = _reader.GetString(4);
-                if (_location.StartsWith(","))
+                if (_candidates == "[]")
                 {
-                    _location = _location[1..].Trim();
+                    _candidates = _reader.NString(0);
                 }
-
-                _candidates.Add(new()
-                                {
-                                    ID = _reader.GetInt32(0), Name = _reader.GetString(1), Phone = _reader.GetString(2), Email = _reader.GetString(3), Location = _location, Updated = _reader.GetString(5),
-                                    Status = _reader.GetString(6), MPC = _reader.GetBoolean(7), Rating = _reader.GetByte(8), OriginalResume = false, FormattedResume = false
-                                });
+                else
+                {
+                    _candidates += _reader.NString(0);
+                }
             }
 
             await _reader.CloseAsync();

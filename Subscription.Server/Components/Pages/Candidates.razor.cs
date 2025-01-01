@@ -1990,24 +1990,14 @@ public partial class Candidates
                     else
                     {
                         _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_restResponse["Candidates"].ToString() ?? string.Empty);
+
                         int _count = _restResponse["Count"].ToInt32();
                         Count = _count;
-                        if (_dataSource == null)
-                        {
-                            _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                                   {
-                                                                       Result = null,
-                                                                       Count = 1
-                                                                   } : null;
-                        }
-                        else
-                        {
-                            _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                                   {
-                                                                       Result = _dataSource,
-                                                                       Count = _count /*_count*/
-                                                                   } : _dataSource;
-                        }
+                        _candidateReturn = dm.RequiresCounts ? new DataResult
+                                                               {
+                                                                   Result = _dataSource,
+                                                                   Count = _count /*_count*/
+                                                               } : _dataSource;
                     }
                 }
                 catch

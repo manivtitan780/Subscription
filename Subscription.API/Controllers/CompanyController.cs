@@ -264,8 +264,8 @@ public class CompanyController : ControllerBase
 	[HttpGet]
     public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
         List<Company> _companies = [];
+        await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("GetCompanies", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("RecordsPerPage", searchModel.ItemCount);
