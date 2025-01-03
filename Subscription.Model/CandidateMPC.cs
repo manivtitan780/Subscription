@@ -39,13 +39,13 @@ public class CandidateMPC
 	///     Initializes a new instance of the <see cref="CandidateMPC" /> class.
 	/// </summary>
 	/// <param name="date">The date when the MPC was created or updated.</param>
-	/// <param name="user">The user who created or updated the MPC.</param>
+	/// <param name="name">The user who created or updated the MPC.</param>
 	/// <param name="mpc">A boolean value indicating whether the candidate is an MPC.</param>
 	/// <param name="comments">Any comments related to the candidate's MPC status.</param>
-	public CandidateMPC(DateTime date, string user, bool mpc, string comments)
+	public CandidateMPC(DateTime date, string name, bool mpc, string comments)
 	{
 		Date = date;
-		User = user;
+		Name = name;
 		MPC = mpc;
 		Comments = comments;
 	}
@@ -92,7 +92,7 @@ public class CandidateMPC
 	/// <value>
 	///     The user as a string.
 	/// </value>
-	public string User
+	public string Name
 	{
 		get;
 		set;
@@ -104,7 +104,7 @@ public class CandidateMPC
 	public void Clear()
 	{
 		Date = DateTime.Today;
-		User = "";
+		Name = "";
 		MPC = false;
 		Comments = "";
 	}

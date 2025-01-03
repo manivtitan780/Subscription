@@ -8,7 +8,7 @@
 // File Name:           Extensions.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-07-2024 15:02
-// Last Updated On:     12-30-2024 20:12
+// Last Updated On:     01-01-2025 21:01
 // *****************************************/
 
 #endregion
@@ -149,6 +149,13 @@ public static partial class Extensions
     /// </returns>
     public static string HtmlEncode(this string s) => HttpUtility.HtmlEncode(s);
 
+    /// <summary>
+    ///     Determines if the provided string is a valid email address.
+    /// </summary>
+    /// <param name="email">The string to be validated as an email address.</param>
+    /// <returns>
+    ///     True if the string is a valid email address; otherwise, false.
+    /// </returns>
     public static bool IsValidEmail(this string email)
     {
         try
@@ -162,21 +169,37 @@ public static partial class Extensions
         }
     }
 
+    /// <summary>
+    ///     Determines if a given string is a valid URL.
+    /// </summary>
+    /// <param name="url">The string to be checked.</param>
+    /// <returns>
+    ///     True if the string is a valid URL; otherwise, false.
+    /// </returns>
     public static bool IsValidUrl(this string url)
     {
         string _url = url.ToLowerInvariant();
+
+        // Check if the string is null, empty, or consists only of white-space characters
         if (_url.NullOrWhiteSpace())
         {
             return false;
         }
 
+        // Check if the string does not start with the HTTP/HTTPS protocols
         if (!_url.StartsWith("http://") || !_url.StartsWith("https://"))
         {
+            // Add the HTTPS protocol to the string
             _url = $"https://{_url}";
         }
 
+        // Attempt to create a Uri object from the string
+        // Check if the Uri object's Scheme property is HTTP or HTTPS
         return Uri.TryCreate(_url, UriKind.Absolute, out Uri _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
     }
+
+    [GeneratedRegex("[^0-9]")]
+    private static partial Regex MyRegex();
 
     /// <summary>
     ///     Checks if the given string is NOT null, empty, or consists only of white-space characters.
@@ -218,18 +241,32 @@ public static partial class Extensions
     public static bool NullOrWhiteSpace(this object o) => o == null || o.ToString().NullOrWhiteSpace();
 
     /// <summary>
-    ///     Generates a random integer number. The range of the generated number can be controlled by the 'negative' parameter.
+    ///     Generates a random integer number within a specified range.
     /// </summary>
-    /// <param name="p">The object this extension method applies to.</param>
+    /// <param name="p">
+    ///     The object this extension method applies to.
+    /// </param>
     /// <param name="negative">
     ///     A boolean value indicating whether the generated number can be negative.
-    ///     If set to true, the method generates a number between -5000 and 5000.
-    ///     If set to false, the method generates a number between 0 and 5000.
+    ///     If <c>true</c>, the method generates a number between -5000 and 5000.
+    ///     If <c>false</c>, the method generates a number between 0 and 5000.
+    /// </param>
+    /// <param name="lowerBound">
+    ///     The lower bound of the range from which to generate the number. Defaults to 0.
+    /// </param>
+    /// <param name="negativeLowerBound">
+    ///     The lower bound of the range from which to generate the number if <paramref name="negative" />
+    ///     is <c>true</c>. Defaults to -5000.
+    /// </param>
+    /// <param name="upperBound">
+    ///     The upper bound of the range from which to generate the number. Defaults to 5000.
     /// </param>
     /// <returns>
-    ///     A random integer number. The range of the number depends on the 'negative' parameter.
+    ///     A random integer number within the specified range.
     /// </returns>
-    public static int RandomNumber(this object p, bool negative = true) => !negative ? RandomNumberGenerator.GetInt32(0, 5000) : RandomNumberGenerator.GetInt32(-5000, 5000);
+    public static int RandomNumber(this object p, bool negative = true, int lowerBound = 0, int negativeLowerBound = -5000, int upperBound = 5000) => !negative ?
+                                                                                                                                                          RandomNumberGenerator.GetInt32(lowerBound, upperBound) :
+                                                                                                                                                          RandomNumberGenerator.GetInt32(negativeLowerBound, upperBound);
 
     /// <summary>
     ///     Removes the leading comma from the given string.
@@ -256,7 +293,7 @@ public static partial class Extensions
     /// <returns>
     ///     A string containing only the numeric characters from the input string.
     /// </returns>
-    public static string StripPhoneNumber(this string s) => Regex.Replace(s, "[^0-9]", string.Empty);
+    public static string StripPhoneNumber(this string s) => MyRegex().Replace(s, string.Empty);
 
     /// <summary>
     ///     Converts a regular string to a Base64 encoded string.

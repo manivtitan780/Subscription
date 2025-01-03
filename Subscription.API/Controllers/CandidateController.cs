@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-28-2024 19:12
-// Last Updated On:     12-30-2024 20:12
+// Last Updated On:     01-01-2025 21:01
 // *****************************************/
 
 #endregion
@@ -182,11 +182,6 @@ public class CandidateController : ControllerBase
                 _notes = _reader.NString(0);
             }
 
-            /*List<CandidateNotes> _notes = await _reader.FillList<CandidateNotes>(note => new()
-                                                                                         {
-                                                                                             ID = note.GetInt32(0), UpdatedDate = note.GetDateTime(1), UpdatedBy = note.GetString(2),
-                                                                                             Notes = note.GetString(3)
-                                                                                         }).ToListAsync();*/
             _reader.NextResult(); //Skills
             string _skills = "[]";
             while (_reader.Read())
@@ -194,11 +189,6 @@ public class CandidateController : ControllerBase
                 _skills = _reader.NString(0);
             }
 
-            /*List<CandidateSkills> _skills = await _reader.FillList<CandidateSkills>(skill => new()
-                                                                                             {
-                                                                                                 ID = skill.GetInt32(0), Skill = skill.GetString(1), LastUsed = skill.GetInt16(2),
-                                                                                                 ExpMonth = skill.GetInt16(3), UpdatedBy = skill.GetString(4)
-                                                                                             }).ToListAsync();*/
             _reader.NextResult(); //Education
             string _education = "[]";
             while (_reader.Read())
@@ -206,12 +196,6 @@ public class CandidateController : ControllerBase
                 _education = _reader.NString(0);
             }
 
-            /*List<CandidateEducation> _education = await _reader.FillList<CandidateEducation>(education => new()
-                                                                                                          {
-                                                                                                              ID = education.GetInt32(0), Degree = education.GetString(1), College = education.GetString(2),
-                                                                                                              State = education.GetString(3), Country = education.GetString(4),
-                                                                                                              Year = education.GetString(5), UpdatedBy = education.GetString(6)
-                                                                                                          }).ToListAsync();*/
             _reader.NextResult(); //Experience
             string _experience = "[]";
             while (_reader.Read())
@@ -219,13 +203,6 @@ public class CandidateController : ControllerBase
                 _experience = _reader.NString(0);
             }
 
-            /*List<CandidateExperience> _experience = await _reader.FillList<CandidateExperience>(experience => new()
-                                                                                                              {
-                                                                                                                  ID = experience.GetInt32(0), Employer = experience.GetString(1),
-                                                                                                                  Start = experience.GetString(2), End = experience.GetString(3),
-                                                                                                                  Location = experience.GetString(4), Description = experience.GetString(5),
-                                                                                                                  UpdatedBy = experience.GetString(6), Title = experience.GetString(7)
-                                                                                                              }).ToListAsync();*/
             _reader.NextResult(); //Activity
             List<CandidateActivity> _activity = await _reader.FillList<CandidateActivity>(activity => new()
                                                                                                       {
@@ -250,13 +227,6 @@ public class CandidateController : ControllerBase
                 _documents = _reader.NString(0);
             }
 
-            /*List<CandidateDocument> _documents = await _reader.FillList<CandidateDocument>(document => new()
-                                                                                                       {
-                                                                                                           ID = document.GetInt32(0), Name = document.GetString(1), Location = document.GetString(2),
-                                                                                                           Notes = document.GetString(3), UpdatedBy = $"{document.NDateTime(4)} [{document.NString(5)}]",
-                                                                                                           DocumentType = document.GetString(6), InternalFileName = document.GetString(7),
-                                                                                                           DocumentTypeID = document.GetInt32(8)
-                                                                                                       }).ToListAsync();*/
             await _reader.CloseAsync();
 
             await _connection.CloseAsync();
@@ -265,9 +235,11 @@ public class CandidateController : ControllerBase
             List<CandidateRating> _rating = [];
             if (!_candRating.NullOrWhiteSpace())
             {
-                string[] _ratingArray = _candRating.Split('?');
+                _rating = General.DeserializeObject<List<CandidateRating>>(_candRating).OrderByDescending(x => x.Date).ToList();
+                /*string[] _ratingArray = _candRating.Split('?');
                 _rating.AddRange(_ratingArray
                                 .Select(str => new
+                                
                                                {
                                                    _str = str,
                                                    _innerArray = str.Split('^')
@@ -276,7 +248,7 @@ public class CandidateController : ControllerBase
                                 .Select(t => new CandidateRating(t._innerArray[0].Replace("  ", " ").ToDateTime("M/d/yy h:mm:ss tt"), t._innerArray[1],
                                                                  t._innerArray[2].ToByte(), t._innerArray[3])));
 
-                _rating = _rating.OrderByDescending(x => x.Date).ToList();
+                _rating = _rating.OrderByDescending(x => x.Date).ToList();*/
             }
 
             //Candidate MPC
@@ -318,7 +290,8 @@ public class CandidateController : ControllerBase
                        };
             }
 
-            string[] _mpcArray = _candMPC.Split('?');
+            _mpc = General.DeserializeObject<List<CandidateMPC>>(_candMPC).OrderByDescending(x => x.Date).ToList();
+            /*string[] _mpcArray = _candMPC.Split('?');
             _mpc.AddRange(_mpcArray
                          .Select(str => new
                                         {
@@ -329,7 +302,7 @@ public class CandidateController : ControllerBase
                          .Select(t => new CandidateMPC(t._innerArray[0].Replace("  ", " ").ToDateTime("M/d/yy h:mm:ss tt"), t._innerArray[1], t._innerArray[2].ToBoolean(),
                                                        t._innerArray[3])));
 
-            _mpc = _mpc.OrderByDescending(x => x.Date).ToList();
+            _mpc = _mpc.OrderByDescending(x => x.Date).ToList();*/
 
             int _ratingFirst = 0;
             bool _mpcFirst = false;
@@ -397,6 +370,19 @@ public class CandidateController : ControllerBase
         }
     }
 
+    /// <summary>
+    ///     Creates a location string based on the provided candidate details and state name.
+    /// </summary>
+    /// <param name="candidateDetails">
+    ///     An instance of <see cref="CandidateDetails" /> containing the city and zip code details of the candidate.
+    /// </param>
+    /// <param name="stateName">
+    ///     The name of the state.
+    /// </param>
+    /// <returns>
+    ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
+    ///     will be omitted from the string.
+    /// </returns>
     private static string GetCandidateLocation(CandidateDetails candidateDetails, string stateName)
     {
         string _location = "";
@@ -448,9 +434,8 @@ public class CandidateController : ControllerBase
         try
         {
             await using SqlConnection _connection = new(Start.ConnectionString);
-            //List<Candidate> _candidates = [];
             string _candidates = "[]";
- 
+
             await using SqlCommand _command = new("GetCandidates", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("RecordsPerPage", searchModel!.ItemCount);
@@ -522,9 +507,15 @@ public class CandidateController : ControllerBase
     /// <summary>
     ///     Asynchronously saves the details of a candidate to the database.
     /// </summary>
-    /// <param name="candidateDetails">The details of the candidate to be saved.</param>
-    /// <param name="jsonPath">The path to the JSON file containing the email template.</param>
-    /// <param name="userName">The username of the user performing the operation. Default is an empty string.</param>
+    /// <param name="candidateDetails">
+    ///     The details of the candidate to be saved.
+    /// </param>
+    /// <param name="jsonPath">
+    ///     The path to the JSON file containing the email template.
+    /// </param>
+    /// <param name="userName">
+    ///     The username of the user performing the operation. Default is an empty string.
+    /// </param>
     /// <param name="emailAddress">
     ///     The email address to which the operation result should be sent. Default is
     ///     "maniv@titan-techs.com".
@@ -792,17 +783,6 @@ public class CandidateController : ControllerBase
 
             while (_reader.Read())
             {
-                /*_experiences.Add(new()
-                                 {
-                                     ID = _reader.GetInt32(0),
-                                     Employer = _reader.GetString(1),
-                                     Start = _reader.GetString(2),
-                                     End = _reader.GetString(3),
-                                     Location = _reader.GetString(4),
-                                     Description = _reader.GetString(5),
-                                     UpdatedBy = _reader.GetString(6),
-                                     Title = _reader.GetString(7)
-                                 });*/
                 _returnVal = _reader.NString(0);
             }
 

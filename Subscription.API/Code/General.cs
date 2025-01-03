@@ -18,6 +18,8 @@
 using System.Security.Cryptography;
 using System.Text;
 
+using Newtonsoft.Json;
+
 #endregion
 
 namespace Subscription.API.Code;
@@ -33,6 +35,14 @@ public static class General
 
         return SHA512PasswordHash(inputWithSalt);
     }
+
+    /// <summary>
+    ///     Deserializes a JSON string to an object of a specified type.
+    /// </summary>
+    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
+    /// <param name="array">The JSON string representing the object to be deserialized.</param>
+    /// <returns>The deserialized object of type T.</returns>
+    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
 
     public static async Task SetCache()
     {

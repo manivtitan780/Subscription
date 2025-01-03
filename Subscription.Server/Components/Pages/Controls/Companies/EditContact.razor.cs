@@ -15,8 +15,6 @@
 
 #region Using
 
-using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
-
 #endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Companies;

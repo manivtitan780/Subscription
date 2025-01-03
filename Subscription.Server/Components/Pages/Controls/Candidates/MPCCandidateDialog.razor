@@ -1,0 +1,38 @@
+﻿<SfDialog Header="Edit M.P.C." Height="600px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<div style="width: 100%">
+			<SfGrid AllowPaging="false" DataSource="@MPCGrid" EnableHover="true" Height="170px" ID="gridMPC" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateMPC" Width="100%">
+				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
+				<GridColumns>
+					<GridColumn Field="@nameof(CandidateMPC.Date)" HeaderText="Date" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateMPC.Name)" HeaderText="User" IsPrimaryKey="true" Visible="false" Width="0"/>
+					<GridColumn Field="@nameof(CandidateMPC.MPC)" HeaderText="M.P.C." Width="20%"/>
+					<GridColumn Field="@nameof(CandidateMPC.Comments)" HeaderText="Comments" Width="20%"/>
+				</GridColumns>
+			</SfGrid>
+		</div>
+		<SfDataForm EditContext="Context" ID="mpcEditForm" OnValidSubmit="SaveMPCDialog" @ref="EditMPCForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save MPC</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelMPCDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateMPCValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="M.P.C. Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.MPC)" LabelText="M.P.C?:" ID="checkedMPC" EditorType="FormEditorType.Switch"/>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.MPCComments)">
+						<Template>
+							<TextBox @bind-Value="Model.MPCComments" ID="textComments" Placeholder="Comments" MaxLength="255"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

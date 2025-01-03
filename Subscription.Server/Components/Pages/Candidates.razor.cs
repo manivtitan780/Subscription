@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-30-2024 20:12
+// Last Updated On:     01-02-2025 19:01
 // *****************************************/
 
 #endregion
@@ -428,6 +428,12 @@ public partial class Candidates
         set;
     }
 
+    private MPCCandidateDialog MPCDialog
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Represents the note of the candidate's MPC.
     /// </summary>
@@ -486,6 +492,22 @@ public partial class Candidates
         get;
         set;
     }
+
+    private RatingCandidateDialog RatingDialog
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the RatingMPC property of the Candidate class. This property represents an instance of the
+    ///     CandidateRatingMPC class.
+    /// </summary>
+    private CandidateRatingMPC RatingMPC
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Represents the note of the candidate's rating.
@@ -1197,7 +1219,7 @@ public partial class Candidates
         CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.Date);
         if (_candidateMPCObjectFirst != null)
         {
-            _mpcDate = $"{_candidateMPCObjectFirst.Date.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.User.Where(char.IsLetter))}]";
+            _mpcDate = $"{_candidateMPCObjectFirst.Date.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.Name.Where(char.IsLetter))}]";
         }
 
         MPCDate = _mpcDate.ToMarkupString();
@@ -1248,7 +1270,7 @@ public partial class Candidates
         if (_candidateRatingObjectFirst != null)
         {
             _ratingDate =
-                $"{_candidateRatingObjectFirst.Date.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.User.Where(char.IsLetter))}]";
+                $"{_candidateRatingObjectFirst.Date.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.Name.Where(char.IsLetter))}]";
         }
 
         RatingDate = _ratingDate.ToMarkupString();
@@ -1580,6 +1602,35 @@ public partial class Candidates
                                                                          });
 
     /// <summary>
+    ///     This method is used to save the CandidateMPC object. It makes a POST request to the "Candidates/SaveMPC" endpoint.
+    ///     The method takes an EditContext object as a parameter, which is used to form the body of the POST request.
+    ///     The user ID from the LoginCookyUser object is added as a query parameter to the request.
+    ///     If the request is successful, the response is deserialized into a dictionary and used to update the
+    ///     _candidateMPCObject and RatingMPC properties.
+    ///     The GetMPCDate and GetMPCNote methods are then called to update the MPC date and note.
+    /// </summary>
+    /// <param name="editContext">The EditContext object that contains the data to be saved.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    private Task SaveMPC(EditContext editContext) => ExecuteMethod(async () =>
+                                                                   {
+                                                                       if (editContext.Model is CandidateRatingMPC _mpc)
+                                                                       {
+                                                                           Dictionary<string, string> _parameters = new()
+                                                                                                                    {
+                                                                                                                        {"user", User}
+                                                                                                                    };
+                                                                           Dictionary<string, object> _response = await General.PostRest("Candidates/SaveMPC", _parameters, _mpc);
+                                                                           if (_response != null)
+                                                                           {
+                                                                               _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
+                                                                               RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstMPC"]?.ToString() ?? string.Empty);
+                                                                               GetMPCDate();
+                                                                               GetMPCNote();
+                                                                           }
+                                                                       }
+                                                                   });
+
+    /// <summary>
     ///     Asynchronously saves a note for a candidate.
     /// </summary>
     /// <param name="note">
@@ -1611,6 +1662,33 @@ public partial class Candidates
                                                                      _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
                                                                  }
                                                              });
+
+    /// <summary>
+    ///     This method is responsible for saving the rating of a candidate.
+    ///     It sends a POST request to the "Candidates/SaveRating" endpoint with the rating information.
+    ///     If the operation is successful, it updates the candidate's rating information in the application.
+    /// </summary>
+    /// <param name="editContext">The context for the form that contains the rating information to be saved.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    private Task SaveRating(EditContext editContext) => ExecuteMethod(async () =>
+                                                                      {
+                                                                          if (editContext.Model is CandidateRatingMPC _rating)
+                                                                          {
+                                                                              Dictionary<string, string> _parameters = new()
+                                                                                                                       {
+                                                                                                                           {"user", User}
+                                                                                                                       };
+                                                                              Dictionary<string, object> _response = await General.PostRest("Candidates/SaveRating", _parameters, _rating);
+                                                                              if (_response != null)
+                                                                              {
+                                                                                  _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
+                                                                                  RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? string.Empty);
+                                                                                  _candidateDetailsObject.RateCandidate = RatingMPC.Rating.ToInt32();
+                                                                                  GetRatingDate();
+                                                                                  GetRatingNote();
+                                                                              }
+                                                                          }
+                                                                      });
 
     /// <summary>
     ///     Asynchronously saves the skill of a candidate.
@@ -1884,13 +1962,13 @@ public partial class Candidates
             case "itemEditRating":
                 _selectedTab = 0;
                 StateHasChanged();
-                return Task.CompletedTask;
-            //return DialogRating.ShowDialog();
+                //return Task.CompletedTask;
+                return RatingDialog.ShowDialog();
             case "itemEditMPC":
                 _selectedTab = 0;
                 StateHasChanged();
-                return Task.CompletedTask;
-            //return DialogMPC.ShowDialog();
+                //return Task.CompletedTask;
+                return MPCDialog.ShowDialog();
             case "itemAddSkill":
                 _selectedTab = 1;
                 return EditSkill(0);

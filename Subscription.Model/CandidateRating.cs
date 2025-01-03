@@ -38,13 +38,13 @@ public class CandidateRating
 	///     Initializes a new instance of the <see cref="CandidateRating" /> class.
 	/// </summary>
 	/// <param name="date">The date when the rating was given.</param>
-	/// <param name="user">The user who provided the rating.</param>
+	/// <param name="name">The user who provided the rating.</param>
 	/// <param name="rating">The rating of the candidate.</param>
 	/// <param name="comments">The comments for the candidate's rating.</param>
-	public CandidateRating(DateTime date, string user, byte rating, string comments)
+	public CandidateRating(DateTime date, string name, byte rating, string comments)
 	{
 		Date = date;
-		User = user;
+		Name = name;
 		Rating = rating;
 		Comments = comments;
 	}
@@ -91,7 +91,7 @@ public class CandidateRating
 	/// <value>
 	///     The user who provided the rating.
 	/// </value>
-	public string User
+	public string Name
 	{
 		get;
 		set;
@@ -103,7 +103,7 @@ public class CandidateRating
 	public void Clear()
 	{
 		Date = DateTime.Today;
-		User = "";
+		Name = "";
 		Rating = 0;
 		Comments = "";
 	}

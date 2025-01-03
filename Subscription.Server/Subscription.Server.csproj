@@ -160,7 +160,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Components\Pages\Controls\Candidates\" />
         <Folder Include="Components\Pages\Controls\Requisitions\" />
     </ItemGroup>
 

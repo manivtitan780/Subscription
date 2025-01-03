@@ -1,0 +1,43 @@
+﻿<SfDialog Header="Edit Rating" Height="600px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<div style="width: 100%">
+			<SfGrid AllowPaging="false" DataSource="@RatingGrid" EnableHover="true" Height="170px" ID="gridMPC" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateRating" Width="100%">
+				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
+				<GridColumns>
+					<GridColumn Field="@nameof(CandidateRating.Date)" HeaderText="Date" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateRating.Name)" HeaderText="User" IsPrimaryKey="true" Visible="false" Width="0"/>
+					<GridColumn Field="@nameof(CandidateRating.Rating)" HeaderText="Rating" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateRating.Comments)" HeaderText="Comments" Width="20%"/>
+				</GridColumns>
+			</SfGrid>
+		</div>
+		<SfDataForm EditContext="Context" ID="ratingEditForm" OnValidSubmit="SaveRatingDialog" @ref="EditRatingForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Rating</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelRatingDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateRatingValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Skill Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Rating)">
+						<Template>
+							<label class="e-form-label">Rating:</label>
+							<SfRating @bind-Value="@Model.Rating" CssClass="ratingBasicInfoCandidate" ID="candidateRating" ItemsCount="5" ShowTooltip="false"></SfRating>
+						</Template>
+					</FormItem> 
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Rating)">
+						<Template>
+							<TextBox @bind-Value="Model.MPCComments" ID="textRatingComments" Placeholder="Rating" MaxLength="255"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>
