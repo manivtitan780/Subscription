@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-02-2025 19:01
+// Last Updated On:     01-04-2025 16:01
 // *****************************************/
 
 #endregion
@@ -883,7 +883,15 @@ public partial class Candidates
 
                                  if (_response != null)
                                  {
-                                     _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response["Candidate"]);
+                                     try
+                                     {
+                                         _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response["Candidate"].ToString());
+                                     }
+                                     catch (Exception ex)
+                                     {
+                                         _candidateDetailsObject = null;
+                                     }
+
                                      if (_response["Skills"].ToString().NotNullOrWhiteSpace() && _response["Skills"].ToString() != "[]")
                                      {
                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"].ToString());
@@ -1216,10 +1224,10 @@ public partial class Candidates
             MPCDate = _mpcDate.ToMarkupString();
         }
 
-        CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.Date);
+        CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
         if (_candidateMPCObjectFirst != null)
         {
-            _mpcDate = $"{_candidateMPCObjectFirst.Date.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.Name.Where(char.IsLetter))}]";
+            _mpcDate = $"{_candidateMPCObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.Name.Where(char.IsLetter))}]";
         }
 
         MPCDate = _mpcDate.ToMarkupString();
@@ -1241,10 +1249,10 @@ public partial class Candidates
             MPCNote = _mpcNote.ToMarkupString();
         }
 
-        CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.Date);
+        CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
         if (_candidateMPCObjectFirst != null)
         {
-            _mpcNote = _candidateMPCObjectFirst.Comments;
+            _mpcNote = _candidateMPCObjectFirst.Comment;
         }
 
         MPCNote = _mpcNote.ToMarkupString();
@@ -1266,11 +1274,11 @@ public partial class Candidates
             RatingDate = _ratingDate.ToMarkupString();
         }
 
-        CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.Date);
+        CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
         if (_candidateRatingObjectFirst != null)
         {
             _ratingDate =
-                $"{_candidateRatingObjectFirst.Date.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.Name.Where(char.IsLetter))}]";
+                $"{_candidateRatingObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.Name.Where(char.IsLetter))}]";
         }
 
         RatingDate = _ratingDate.ToMarkupString();
@@ -1294,10 +1302,10 @@ public partial class Candidates
             RatingNote = _ratingNote.ToMarkupString();
         }
 
-        CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.Date);
+        CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
         if (_candidateRatingObjectFirst != null)
         {
-            _ratingNote = _candidateRatingObjectFirst.Comments;
+            _ratingNote = _candidateRatingObjectFirst.Comment;
         }
 
         RatingNote = _ratingNote.ToMarkupString();

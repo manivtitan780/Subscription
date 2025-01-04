@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     12-07-2024 16:12
+// Last Updated On:     01-03-2025 20:01
 // *****************************************/
 
 #endregion
@@ -17,6 +17,8 @@ namespace Subscription.Server.Code;
 
 public class General
 {
+    private static Dictionary<string, object> _restResponse;
+
     /// <summary>
     ///     Asynchronously executes the provided cancel method, hides the spinner and dialog, and enables the dialog buttons.
     ///     This method is designed to be used as a common cancellation routine for various dialogs in the application.
@@ -35,125 +37,9 @@ public class General
         await dialog.HideAsync();
     }
 
-    private static Dictionary<string, object> _restResponse;
-
     /// <summary>
-    ///     Asynchronously retrieves a list of requisitions based on the provided search model and data manager request.
-    ///     This method also has the ability to fetch additional company information if required.
-    /// </summary>
-    /// <param name="searchModel">The model containing the search parameters for the requisitions.</param>
-    /// <param name="dm">The data manager request object.</param>
-    /// <param name="getInformation">
-    ///     Optional parameter. If set to true, the method will fetch additional company information.
-    ///     Default is false.
-    /// </param>
-    /// <param name="optionalRequisitionID">
-    ///     Optional parameter. If provided, the method will fetch a specific requisition by
-    ///     its ID. Default is 0.
-    /// </param>
-    /// <param name="thenProceed">
-    ///     Optional parameter. If set to true, the method will continue processing even after
-    ///     encountering an error. Default is false.
-    /// </param>
-    /// <param name="user">
-    ///     A string value containing the logged-in user whose role should be a recruiter to fetch additional
-    ///     information from the companies list.
-    /// </param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation. The task result contains a list of requisitions or a data result
-    ///     object if counts are required.
-    /// </returns>
-    internal static async Task<object> GetRequisitionReadAdaptor(RequisitionSearch searchModel, DataManagerRequest dm, bool getInformation = false, int optionalRequisitionID = 0,
-                                                                 bool thenProceed = false, string user = "")
-    {
-        List<Requisition> _dataSource = [];
-
-        int _itemCount = searchModel.ItemCount;
-        int _page = searchModel.Page;
-        try
-        {
-            Dictionary<string, string> _parameters = new()
-                                                     {
-                                                         {"getCompanyInformation", getInformation.ToString()},
-                                                         {"requisitionID", optionalRequisitionID.ToString()},
-                                                         {"thenProceed", thenProceed.ToString()},
-                                                         {"user", user}
-                                                     };
-            _restResponse = await GetRest<Dictionary<string, object>>("Requisition/GetGridRequisitions", _parameters, searchModel);
-
-            if (_restResponse == null)
-            {
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _dataSource,
-                                               Count = 0 /*_count*/
-                                           } : _dataSource;
-            }
-
-            _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_restResponse["Requisitions"].ToString() ?? string.Empty);
-            int _count = _restResponse["Count"].ToInt32();
-            searchModel.Page = _restResponse["Page"].ToInt32();
-            _page = searchModel.Page;
-            Requisitions.Count = _count;
-            Requisitions.PageCount = Math.Ceiling(_count / _itemCount.ToDecimal()).ToInt32();
-            Requisitions.StartRecord = ((_page - 1) * _itemCount + 1).ToInt32();
-
-            if (_dataSource == null)
-            {
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = null,
-                                               Count = 0 /*_count*/
-                                           } : null;
-            }
-
-            Requisitions.EndRecord = ((_page - 1) * _itemCount).ToInt32() + _dataSource.Count;
-
-            if (!getInformation)
-            {
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _dataSource,
-                                               Count = _count /*_count*/
-                                           } : _dataSource;
-            }
-
-            Requisitions.Companies = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
-            Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"].ToString() ?? string.Empty);
-            Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
-            Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_restResponse["StatusCount"].ToString() ?? string.Empty);
-
-            return dm.RequiresCounts ? new DataResult
-                                       {
-                                           Result = _dataSource,
-                                           Count = _count /*_count*/
-                                       } : _dataSource;
-        }
-        catch
-        {
-            if (_dataSource == null)
-            {
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = null,
-                                               Count = 1
-                                           } : null;
-            }
-
-            _dataSource.Add(new());
-
-            return dm.RequiresCounts ? new DataResult
-                                       {
-                                           Result = _dataSource,
-                                           Count = 1
-                                       } : _dataSource;
-        }
-    }
-
-    /// <summary>
-    ///     Asynchronously executes the provided save method, shows the spinner, disables the dialog buttons, and then hides
-    ///     the spinner and dialog, and enables the dialog buttons.
-    ///     This method is designed to be used as a common save routine for various dialogs in the application.
+    ///     Asynchronously executes the provided save method, shows the spinner, disables the dialog buttons, and then hides the spinner and dialog, and enables the
+    ///     dialog buttons. This method is designed to be used as a common save routine for various dialogs in the application.
     /// </summary>
     /// <param name="editContext">The edit context associated with the save action.</param>
     /// <param name="spinner">
@@ -188,6 +74,11 @@ public class General
     /// <returns>The deserialized object of type T.</returns>
     internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
 
+    /// <summary>
+    ///     Creates and returns a DialogOptions object with the specified content text.
+    /// </summary>
+    /// <param name="contentText">The text content to be displayed in the dialog.</param>
+    /// <returns>A DialogOptions object configured with the provided content text.</returns>
     internal static DialogOptions DialogOptions(string contentText)
     {
         return new()
@@ -335,6 +226,119 @@ public class General
     }
 
     /// <summary>
+    ///     Asynchronously retrieves a list of requisitions based on the provided search model and data manager request.
+    ///     This method also has the ability to fetch additional company information if required.
+    /// </summary>
+    /// <param name="searchModel">The model containing the search parameters for the requisitions.</param>
+    /// <param name="dm">The data manager request object.</param>
+    /// <param name="getInformation">
+    ///     Optional parameter. If set to true, the method will fetch additional company information.
+    ///     Default is false.
+    /// </param>
+    /// <param name="optionalRequisitionID">
+    ///     Optional parameter. If provided, the method will fetch a specific requisition by
+    ///     its ID. Default is 0.
+    /// </param>
+    /// <param name="thenProceed">
+    ///     Optional parameter. If set to true, the method will continue processing even after
+    ///     encountering an error. Default is false.
+    /// </param>
+    /// <param name="user">
+    ///     A string value containing the logged-in user whose role should be a recruiter to fetch additional
+    ///     information from the companies list.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of requisitions or a data result
+    ///     object if counts are required.
+    /// </returns>
+    internal static async Task<object> GetRequisitionReadAdaptor(RequisitionSearch searchModel, DataManagerRequest dm, bool getInformation = false, int optionalRequisitionID = 0,
+                                                                 bool thenProceed = false, string user = "")
+    {
+        List<Requisition> _dataSource = [];
+
+        int _itemCount = searchModel.ItemCount;
+        int _page = searchModel.Page;
+        try
+        {
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"getCompanyInformation", getInformation.ToString()},
+                                                         {"requisitionID", optionalRequisitionID.ToString()},
+                                                         {"thenProceed", thenProceed.ToString()},
+                                                         {"user", user}
+                                                     };
+            _restResponse = await GetRest<Dictionary<string, object>>("Requisition/GetGridRequisitions", _parameters, searchModel);
+
+            if (_restResponse == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = 0 /*_count*/
+                                           } : _dataSource;
+            }
+
+            _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_restResponse["Requisitions"].ToString() ?? string.Empty);
+            int _count = _restResponse["Count"].ToInt32();
+            searchModel.Page = _restResponse["Page"].ToInt32();
+            _page = searchModel.Page;
+            Requisitions.Count = _count;
+            Requisitions.PageCount = Math.Ceiling(_count / _itemCount.ToDecimal()).ToInt32();
+            Requisitions.StartRecord = ((_page - 1) * _itemCount + 1).ToInt32();
+
+            if (_dataSource == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = null,
+                                               Count = 0 /*_count*/
+                                           } : null;
+            }
+
+            Requisitions.EndRecord = ((_page - 1) * _itemCount).ToInt32() + _dataSource.Count;
+
+            if (!getInformation)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = _count /*_count*/
+                                           } : _dataSource;
+            }
+
+            Requisitions.Companies = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
+            Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"].ToString() ?? string.Empty);
+            Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
+            Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_restResponse["StatusCount"].ToString() ?? string.Empty);
+
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = _count /*_count*/
+                                       } : _dataSource;
+        }
+        catch
+        {
+            if (_dataSource == null)
+            {
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = null,
+                                               Count = 1
+                                           } : null;
+            }
+
+            _dataSource.Add(new());
+
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = 1
+                                       } : _dataSource;
+        }
+    }
+
+    /// <summary>
     ///     Sends a REST request to the specified endpoint and returns the response as an object of type T.
     /// </summary>
     /// <param name="endpoint">The endpoint to which the REST request is sent.</param>
@@ -394,7 +398,8 @@ public class General
     ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
     /// </remarks>
     internal static Task<Dictionary<string, object>> PostRest(string endpoint, Dictionary<string, string> parameters, object jsonBody = null, byte[] fileArray = null, string fileName = "",
-                                                              string parameterName = "file") => PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
+                                                              string parameterName = "file") =>
+        PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
 
     /// <summary>
     ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.

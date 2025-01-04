@@ -8,10 +8,10 @@
 			<SfGrid AllowPaging="false" DataSource="@RatingGrid" EnableHover="true" Height="170px" ID="gridMPC" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateRating" Width="100%">
 				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
 				<GridColumns>
-					<GridColumn Field="@nameof(CandidateRating.Date)" HeaderText="Date" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateRating.DateTime)" HeaderText="Date" Width="20%"/>
 					<GridColumn Field="@nameof(CandidateRating.Name)" HeaderText="User" IsPrimaryKey="true" Visible="false" Width="0"/>
 					<GridColumn Field="@nameof(CandidateRating.Rating)" HeaderText="Rating" Width="20%"/>
-					<GridColumn Field="@nameof(CandidateRating.Comments)" HeaderText="Comments" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateRating.Comment)" HeaderText="Comments" Width="20%"/>
 				</GridColumns>
 			</SfGrid>
 		</div>

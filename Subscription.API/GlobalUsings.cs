@@ -27,6 +27,8 @@ global using FluentStorage;
 global using FluentStorage.Blobs;
 global using FluentStorage.Azure.Blobs;
 
+global using Newtonsoft.Json.Linq;
+
 global using Subscription.Model;
 
 global using Serilog;

@@ -8,10 +8,10 @@
 			<SfGrid AllowPaging="false" DataSource="@MPCGrid" EnableHover="true" Height="170px" ID="gridMPC" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateMPC" Width="100%">
 				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
 				<GridColumns>
-					<GridColumn Field="@nameof(CandidateMPC.Date)" HeaderText="Date" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateMPC.DateTime)" HeaderText="Date" Width="20%"/>
 					<GridColumn Field="@nameof(CandidateMPC.Name)" HeaderText="User" IsPrimaryKey="true" Visible="false" Width="0"/>
 					<GridColumn Field="@nameof(CandidateMPC.MPC)" HeaderText="M.P.C." Width="20%"/>
-					<GridColumn Field="@nameof(CandidateMPC.Comments)" HeaderText="Comments" Width="20%"/>
+					<GridColumn Field="@nameof(CandidateMPC.Comment)" HeaderText="Comments" Width="20%"/>
 				</GridColumns>
 			</SfGrid>
 		</div>

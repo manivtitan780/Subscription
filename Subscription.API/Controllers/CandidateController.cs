@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-28-2024 19:12
-// Last Updated On:     01-01-2025 21:01
+// Last Updated On:     01-04-2025 16:01
 // *****************************************/
 
 #endregion
@@ -144,7 +144,8 @@ public class CandidateController : ControllerBase
         try
         {
             await using SqlConnection _connection = new(Start.ConnectionString);
-            CandidateDetails _candidate = null;
+            //CandidateDetails _candidate = null;
+            string _candidate = "";
             string _candRating = "", _candMPC = "";
 
             await using SqlCommand _command = new("GetDetailCandidate", _connection);
@@ -154,25 +155,14 @@ public class CandidateController : ControllerBase
 
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            if (_reader.HasRows) //Candidate Details
+
+            while (_reader.Read()) //Candidate Details
             {
-                _reader.Read();
-                _candidate = new()
-                             {
-                                 FirstName = _reader.NString(0), MiddleName = _reader.NString(1), LastName = _reader.NString(2), Address1 = _reader.NString(3), Address2 = _reader.NString(4),
-                                 City = _reader.NString(5), StateID = _reader.GetInt32(6), ZipCode = _reader.NString(7), Email = _reader.NString(8), Phone1 = _reader.NString(9),
-                                 Phone2 = _reader.NString(10), Phone3 = _reader.NString(11), PhoneExt = _reader.NInt16(12).ToString(), LinkedIn = _reader.NString(13), Facebook = _reader.NString(14),
-                                 Twitter = _reader.NString(15), Title = _reader.NString(16), EligibilityID = _reader.GetInt32(17), Relocate = _reader.GetBoolean(18),
-                                 Background = _reader.GetBoolean(19), JobOptions = _reader.NString(20), TaxTerm = _reader.NString(21), OriginalResume = _reader.NString(22),
-                                 FormattedResume = _reader.NString(23), TextResume = _reader.NString(24), Keywords = _reader.NString(25), Communication = _reader.NString(26),
-                                 RateCandidate = _reader.GetByte(27), RateNotes = _reader.NString(28), MPC = _reader.GetBoolean(29), MPCNotes = _reader.NString(30),
-                                 ExperienceID = _reader.GetInt32(31), HourlyRate = _reader.GetDecimal(32), HourlyRateHigh = _reader.GetDecimal(33), SalaryHigh = _reader.GetDecimal(34),
-                                 SalaryLow = _reader.GetDecimal(35), RelocationNotes = _reader.NString(36), SecurityNotes = _reader.NString(37), Refer = _reader.GetBoolean(38),
-                                 ReferAccountManager = _reader.NString(39), EEO = _reader.GetBoolean(40), EEOFile = _reader.NString(41), Summary = _reader.NString(42),
-                                 GooglePlus = _reader.NString(43), Created = _reader.NString(44), Updated = _reader.NString(45), CandidateID = candidateID, Status = _reader.NString(46)
-                             };
-                _candRating = _reader.NString(28);
-                _candMPC = _reader.NString(30);
+                _candidate = _reader.NString(0);
+                JObject _candidateJson = JObject.Parse(_candidate);
+
+                _candRating = _candidateJson["RateNotes"]?.ToString(); // _reader.NString(28);
+                _candMPC = _candidateJson["MPCNotes"]?.ToString();     //_reader.NString(30);
             }
 
             _reader.NextResult(); //Notes
@@ -206,17 +196,30 @@ public class CandidateController : ControllerBase
             _reader.NextResult(); //Activity
             List<CandidateActivity> _activity = await _reader.FillList<CandidateActivity>(activity => new()
                                                                                                       {
-                                                                                                          Requisition = activity.GetString(0), UpdatedDate = activity.GetDateTime(1),
-                                                                                                          UpdatedBy = activity.GetString(2), Positions = activity.GetInt32(3),
-                                                                                                          PositionFilled = activity.GetInt32(4), Status = activity.GetString(5),
-                                                                                                          Notes = activity.GetString(6), ID = activity.GetInt32(7), Schedule = activity.GetBoolean(8),
-                                                                                                          AppliesTo = activity.GetString(9), Color = activity.GetString(10), Icon = activity.GetString(11),
-                                                                                                          DoRoleHaveRight = activity.GetBoolean(12), LastActionBy = activity.GetString(13),
-                                                                                                          RequisitionID = activity.GetInt32(14), CandidateUpdatedBy = activity.GetString(15),
-                                                                                                          CountSubmitted = activity.GetInt32(16), StatusCode = activity.GetString(17),
-                                                                                                          ShowCalendar = activity.GetBoolean(18), DateTimeInterview = activity.NDateTime(19),
-                                                                                                          TypeOfInterview = activity.GetString(20), PhoneNumber = activity.NString(21),
-                                                                                                          InterviewDetails = activity.NString(22), Undone = activity.GetBoolean(23)
+                                                                                                          Requisition = activity.GetString(0),
+                                                                                                          UpdatedDate = activity.GetDateTime(1),
+                                                                                                          UpdatedBy = activity.GetString(2),
+                                                                                                          Positions = activity.GetInt32(3),
+                                                                                                          PositionFilled = activity.GetInt32(4),
+                                                                                                          Status = activity.GetString(5),
+                                                                                                          Notes = activity.GetString(6),
+                                                                                                          ID = activity.GetInt32(7),
+                                                                                                          Schedule = activity.GetBoolean(8),
+                                                                                                          AppliesTo = activity.GetString(9),
+                                                                                                          Color = activity.GetString(10),
+                                                                                                          Icon = activity.GetString(11),
+                                                                                                          DoRoleHaveRight = activity.GetBoolean(12),
+                                                                                                          LastActionBy = activity.GetString(13),
+                                                                                                          RequisitionID = activity.GetInt32(14),
+                                                                                                          CandidateUpdatedBy = activity.GetString(15),
+                                                                                                          CountSubmitted = activity.GetInt32(16),
+                                                                                                          StatusCode = activity.GetString(17),
+                                                                                                          ShowCalendar = activity.GetBoolean(18),
+                                                                                                          DateTimeInterview = activity.NDateTime(19),
+                                                                                                          TypeOfInterview = activity.GetString(20),
+                                                                                                          PhoneNumber = activity.NString(21),
+                                                                                                          InterviewDetails = activity.NString(22),
+                                                                                                          Undone = activity.GetBoolean(23)
                                                                                                       }).ToListAsync();
             _reader.NextResult(); //Managers
 
@@ -235,20 +238,7 @@ public class CandidateController : ControllerBase
             List<CandidateRating> _rating = [];
             if (!_candRating.NullOrWhiteSpace())
             {
-                _rating = General.DeserializeObject<List<CandidateRating>>(_candRating).OrderByDescending(x => x.Date).ToList();
-                /*string[] _ratingArray = _candRating.Split('?');
-                _rating.AddRange(_ratingArray
-                                .Select(str => new
-                                
-                                               {
-                                                   _str = str,
-                                                   _innerArray = str.Split('^')
-                                               })
-                                .Where(t => t._innerArray.Length == 4)
-                                .Select(t => new CandidateRating(t._innerArray[0].Replace("  ", " ").ToDateTime("M/d/yy h:mm:ss tt"), t._innerArray[1],
-                                                                 t._innerArray[2].ToByte(), t._innerArray[3])));
-
-                _rating = _rating.OrderByDescending(x => x.Date).ToList();*/
+                _rating = General.DeserializeObject<List<CandidateRating>>(_candRating).OrderByDescending(x => x.DateTime).ToList();
             }
 
             //Candidate MPC
@@ -290,19 +280,7 @@ public class CandidateController : ControllerBase
                        };
             }
 
-            _mpc = General.DeserializeObject<List<CandidateMPC>>(_candMPC).OrderByDescending(x => x.Date).ToList();
-            /*string[] _mpcArray = _candMPC.Split('?');
-            _mpc.AddRange(_mpcArray
-                         .Select(str => new
-                                        {
-                                            _str = str,
-                                            _innerArray = str.Split('^')
-                                        })
-                         .Where(t => t._innerArray.Length == 4)
-                         .Select(t => new CandidateMPC(t._innerArray[0].Replace("  ", " ").ToDateTime("M/d/yy h:mm:ss tt"), t._innerArray[1], t._innerArray[2].ToBoolean(),
-                                                       t._innerArray[3])));
-
-            _mpc = _mpc.OrderByDescending(x => x.Date).ToList();*/
+            _mpc = General.DeserializeObject<List<CandidateMPC>>(_candMPC).OrderByDescending(x => x.DateTime).ToList();
 
             int _ratingFirst = 0;
             bool _mpcFirst = false;
@@ -310,21 +288,15 @@ public class CandidateController : ControllerBase
             if (!_candRating.NullOrWhiteSpace())
             {
                 CandidateRating _ratingFirstCandidate = _rating.FirstOrDefault();
-                if (_ratingFirstCandidate != null)
-                {
-                    _ratingFirst = _ratingFirstCandidate.Rating;
-                    _ratingComments = _ratingFirstCandidate.Comments;
-                }
+                _ratingFirst = _ratingFirstCandidate.Rating;
+                _ratingComments = _ratingFirstCandidate.Comment;
             }
 
             if (!_candMPC.NullOrWhiteSpace())
             {
                 CandidateMPC _mpcFirstCandidate = _mpc.FirstOrDefault();
-                if (_mpcFirstCandidate != null)
-                {
-                    _mpcFirst = _mpcFirstCandidate.MPC;
-                    _mpcComments = _mpcFirstCandidate.Comments;
-                }
+                _mpcFirst = _mpcFirstCandidate.MPC;
+                _mpcComments = _mpcFirstCandidate.Comment;
             }
 
             CandidateRatingMPC _ratingMPC = new(candidateID, _ratingFirst, _ratingComments, _mpcFirst, _mpcComments);
