@@ -834,6 +834,99 @@ public class CandidateController : ControllerBase
     }
 
     /// <summary>
+    ///     Asynchronously saves the rating of a candidate.
+    /// </summary>
+    /// <param name="rating">An instance of <see cref="CandidateRatingMPC" /> representing the rating to be saved.</param>
+    /// <param name="user">A string representing the user who is saving the rating.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a dictionary with two keys:
+    ///     "RatingList" - a list of <see cref="CandidateRating" /> objects representing the rating history of the candidate,
+    ///     and "FirstRating" - an instance of <see cref="CandidateRatingMPC" /> representing the first rating in the rating
+    ///     history.
+    /// </returns>
+    /// <remarks>
+    ///     This method performs a database operation using a stored procedure named "ChangeRating".
+    ///     If the rating parameter is null, the method returns a dictionary with "RatingList" key set to an empty list and
+    ///     "FirstRating" key set to null.
+    ///     If the rating parameter is not null, the method executes the stored procedure with the provided rating and user
+    ///     parameters,
+    ///     then parses the result to create a list of <see cref="CandidateRating" /> objects and an instance of
+    ///     <see cref="CandidateRatingMPC" />.
+    ///     These are then returned in a dictionary.
+    /// </remarks>
+    [HttpPost]
+    public async Task<Dictionary<string, object>> SaveRating(CandidateRatingMPC rating, string user)
+    {
+        string _ratingNotes = "";
+        List<CandidateRating> _rating = [];
+        if (rating == null)
+        {
+            return new()
+                   {
+                       {
+                           "RatingList", _rating
+                       },
+                       {
+                           "FirstRating", null
+                       }
+                   };
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        try
+        {
+            await using SqlCommand _command = new("ChangeRating", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("@CandidateId", rating.ID);
+            _command.TinyInt("@Rating", rating.Rating);
+            _command.Varchar("@Notes", -1, rating.RatingComments);
+            _command.Varchar("@From", 10, user);
+            _ratingNotes = _command.ExecuteScalar()?.ToString();
+        }
+        catch
+        {
+            //
+        }
+
+        await _connection.CloseAsync();
+
+        string[] _ratingArray = _ratingNotes?.Split('?');
+        _rating.AddRange((_ratingArray ?? [])
+                        .Select(str => new
+                                       {
+                                           _str = str,
+                                           _innerArray = str.Split('^')
+                                       })
+                        .Where(t => t._innerArray.Length == 4)
+                        .Select(t => new CandidateRating(t._innerArray[0].ToDateTime(), t._innerArray[1], t._innerArray[2].ToByte(), t._innerArray[3])));
+
+        _rating = _rating.OrderByDescending(x => x.DateTime).ToList();
+        int _ratingFirst = 0;
+        string _ratingComments = "";
+
+        if (!_ratingNotes.NullOrWhiteSpace())
+        {
+            CandidateRating _ratingFirstCandidate = _rating.FirstOrDefault();
+            _ratingFirst = _ratingFirstCandidate.Rating;
+            _ratingComments = _ratingFirstCandidate.Comment;
+        }
+
+        rating.Rating = _ratingFirst;
+        rating.RatingComments = _ratingComments;
+
+        return new()
+               {
+                   {
+                       "RatingList", _rating
+                   },
+                   {
+                       "FirstRating", rating
+                   }
+               };
+    }
+
+    /// <summary>
     ///     Saves a candidate's skill to the database.
     /// </summary>
     /// <param name="skill">

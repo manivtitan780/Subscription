@@ -883,13 +883,9 @@ public partial class Candidates
 
                                  if (_response != null)
                                  {
-                                     try
+                                     if (_response["Candidate"].ToString().NotNullOrWhiteSpace() && _response["Candidate"].ToString() != "[]")
                                      {
                                          _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response["Candidate"].ToString());
-                                     }
-                                     catch (Exception ex)
-                                     {
-                                         _candidateDetailsObject = null;
                                      }
 
                                      if (_response["Skills"].ToString().NotNullOrWhiteSpace() && _response["Skills"].ToString() != "[]")
@@ -917,10 +913,10 @@ public partial class Candidates
                                          _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"].ToString());
                                      }
 
-                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
-                                     _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["Rating"]);
-                                     _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPC"]);
-                                     _ratingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"]) ?? new();
+                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"].ToString());
+                                     _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["Rating"].ToString());
+                                     _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPC"].ToString());
+                                     RatingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"].ToString()) ?? new();
                                      GetMPCDate();
                                      GetMPCNote();
                                      GetRatingDate();
@@ -1225,10 +1221,7 @@ public partial class Candidates
         }
 
         CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
-        if (_candidateMPCObjectFirst != null)
-        {
-            _mpcDate = $"{_candidateMPCObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.Name.Where(char.IsLetter))}]";
-        }
+        _mpcDate = $"{_candidateMPCObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.Name.Where(char.IsLetter))}]";
 
         MPCDate = _mpcDate.ToMarkupString();
     }
@@ -1250,10 +1243,7 @@ public partial class Candidates
         }
 
         CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
-        if (_candidateMPCObjectFirst != null)
-        {
-            _mpcNote = _candidateMPCObjectFirst.Comment;
-        }
+        _mpcNote = _candidateMPCObjectFirst.Comment;
 
         MPCNote = _mpcNote.ToMarkupString();
     }
@@ -1275,11 +1265,7 @@ public partial class Candidates
         }
 
         CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
-        if (_candidateRatingObjectFirst != null)
-        {
-            _ratingDate =
-                $"{_candidateRatingObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.Name.Where(char.IsLetter))}]";
-        }
+        _ratingDate = $"{_candidateRatingObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.Name.Where(char.IsLetter))}]";
 
         RatingDate = _ratingDate.ToMarkupString();
     }
@@ -1303,10 +1289,7 @@ public partial class Candidates
         }
 
         CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
-        if (_candidateRatingObjectFirst != null)
-        {
-            _ratingNote = _candidateRatingObjectFirst.Comment;
-        }
+        _ratingNote = _candidateRatingObjectFirst.Comment;
 
         RatingNote = _ratingNote.ToMarkupString();
     }
@@ -1627,7 +1610,7 @@ public partial class Candidates
                                                                                                                     {
                                                                                                                         {"user", User}
                                                                                                                     };
-                                                                           Dictionary<string, object> _response = await General.PostRest("Candidates/SaveMPC", _parameters, _mpc);
+                                                                           Dictionary<string, object> _response = await General.PostRest("Candidate/SaveMPC", _parameters, _mpc);
                                                                            if (_response != null)
                                                                            {
                                                                                _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
@@ -1686,7 +1669,7 @@ public partial class Candidates
                                                                                                                        {
                                                                                                                            {"user", User}
                                                                                                                        };
-                                                                              Dictionary<string, object> _response = await General.PostRest("Candidates/SaveRating", _parameters, _rating);
+                                                                              Dictionary<string, object> _response = await General.PostRest("Candidate/SaveRating", _parameters, _rating);
                                                                               if (_response != null)
                                                                               {
                                                                                   _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);

@@ -1,4 +1,17 @@
-﻿<SfDialog Header="Edit M.P.C." Height="600px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
+﻿@* 
+    Copyright:           Titan-Techs.
+    Location:            Newtown, PA, USA
+    Solution:            Subscription
+    Project:             Subscription.Server
+    File Name:           Candidates.razor.cs
+    Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+
+    Summary:
+        This component represents the dialog for editing M.P.C. (Most Placeable Candidate) information.
+        The dialog includes a grid to display existing M.P.C. entries and a form to edit the selected M.P.C. details.
+        It uses Syncfusion components such as SfDialog, SfGrid, and SfDataForm for the UI.
+*@
+<SfDialog Header="Edit M.P.C." Height="560px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>

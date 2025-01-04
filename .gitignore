@@ -18,6 +18,8 @@ errorlog*.txt
 *.zip
 ShowMe.txt
 appsettings.json
+Database/*
+Database/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
