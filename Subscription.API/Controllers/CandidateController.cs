@@ -826,29 +826,36 @@ public class CandidateController : ControllerBase
 
         await _connection.CloseAsync();
 
-        string[] _mpcArray = _mpcNotes?.Split('?');
-        if (_mpcArray != null)
-        {
-            _mpc.AddRange(_mpcArray.Select(str => str.Split('^'))
-                                   .Where(innerArray => innerArray.Length == 4)
-                                   .Select(innerArray => new CandidateMPC
-                                                         {
-                                                             DateTime = innerArray[0].Replace(" ", " ").ToDateTime("m/d/yy h:mm:ss tt"),
-                                                             Name = innerArray[1],
-                                                             MPC = innerArray[2].ToBoolean(),
-                                                             Comment = innerArray[3]
-                                                         }));
-        }
-
-        _mpc = _mpc.OrderByDescending(x => x.DateTime).ToList();
+        // string[] _mpcArray = _mpcNotes?.Split('?');
+        // if (_mpcArray != null)
+        // {
+        //     _mpc.AddRange(_mpcArray.Select(str => str.Split('^'))
+        //                            .Where(innerArray => innerArray.Length == 4)
+        //                            .Select(innerArray => new CandidateMPC
+        //                                                  {
+        //                                                      DateTime = innerArray[0].Replace(" ", " ").ToDateTime("m/d/yy h:mm:ss tt"),
+        //                                                      Name = innerArray[1],
+        //                                                      MPC = innerArray[2].ToBoolean(),
+        //                                                      Comment = innerArray[3]
+        //                                                  }));
+        // }
         bool _mpcFirst = false;
         string _mpcComments = "";
-
-        if (!_mpcNotes.NullOrWhiteSpace())
+        if (_mpcNotes != null)
         {
-            CandidateMPC _mpcFirstCandidate = _mpc.FirstOrDefault();
-            _mpcFirst = _mpcFirstCandidate.MPC;
-            _mpcComments = _mpcFirstCandidate.Comment;
+            JArray _mpcNotesArray = JArray.Parse(_mpcNotes);
+
+            JArray _mpcSortedArray = new(_mpcNotesArray.OrderByDescending(obj => DateTime.Parse(obj["DateTime"].ToString())));
+
+            if (_mpcSortedArray.Any())
+            {
+                JToken _mpcFirstCandidate = _mpcSortedArray.FirstOrDefault();
+                if (_mpcFirstCandidate != null)
+                {
+                    _mpcFirst = _mpcFirstCandidate["MPC"].ToBoolean();
+                    _mpcComments = _mpcFirstCandidate["Comment"]?.ToString();
+                }
+            }
         }
 
         mpc.MPC = _mpcFirst;
