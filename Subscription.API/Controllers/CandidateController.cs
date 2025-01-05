@@ -772,6 +772,100 @@ public class CandidateController : ControllerBase
     }
 
     /// <summary>
+    ///     Saves the MPC (Most Placeable Candidate) rating for a candidate.
+    /// </summary>
+    /// <param name="mpc">
+    ///     An instance of <see cref="CandidateRatingMPC" /> representing the MPC rating and comments for a candidate.
+    /// </param>
+    /// <param name="user">
+    ///     A string representing the user who is saving the MPC rating.
+    /// </param>
+    /// <returns>
+    ///     A dictionary containing a list of all MPC ratings for the candidate and the first MPC rating.
+    /// </returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to save the MPC rating, and retrieves all MPC
+    ///     ratings for the candidate.
+    ///     If the provided MPC rating is null, it returns a dictionary with an empty list and null as the first MPC.
+    ///     The method handles any exceptions that occur during the database operations and continues execution.
+    /// </remarks>
+    [HttpPost]
+    public async Task<Dictionary<string, object>> SaveMPC(CandidateRatingMPC mpc, string user)
+    {
+        string _mpcNotes = "";
+        List<CandidateMPC> _mpc = [];
+        if (mpc == null)
+        {
+            return new()
+                   {
+                       {
+                           "MPCList", _mpc
+                       },
+                       {
+                           "FirstMPC", null
+                       }
+                   };
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        try
+        {
+            await using SqlCommand _command = new("ChangeMPC", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("@CandidateId", mpc.ID);
+            _command.Bit("@MPC", mpc.MPC);
+            _command.Varchar("@Notes", -1, mpc.MPCComments);
+            _command.Varchar("@From", 10, user);
+            _mpcNotes = _command.ExecuteScalar()?.ToString();
+        }
+        catch
+        {
+            //
+        }
+
+        await _connection.CloseAsync();
+
+        string[] _mpcArray = _mpcNotes?.Split('?');
+        if (_mpcArray != null)
+        {
+            _mpc.AddRange(_mpcArray.Select(str => str.Split('^'))
+                                   .Where(innerArray => innerArray.Length == 4)
+                                   .Select(innerArray => new CandidateMPC
+                                                         {
+                                                             DateTime = innerArray[0].Replace(" ", " ").ToDateTime("m/d/yy h:mm:ss tt"),
+                                                             Name = innerArray[1],
+                                                             MPC = innerArray[2].ToBoolean(),
+                                                             Comment = innerArray[3]
+                                                         }));
+        }
+
+        _mpc = _mpc.OrderByDescending(x => x.DateTime).ToList();
+        bool _mpcFirst = false;
+        string _mpcComments = "";
+
+        if (!_mpcNotes.NullOrWhiteSpace())
+        {
+            CandidateMPC _mpcFirstCandidate = _mpc.FirstOrDefault();
+            _mpcFirst = _mpcFirstCandidate.MPC;
+            _mpcComments = _mpcFirstCandidate.Comment;
+        }
+
+        mpc.MPC = _mpcFirst;
+        mpc.MPCComments = _mpcComments;
+
+        return new()
+               {
+                   {
+                       "MPCList", _mpc
+                   },
+                   {
+                       "FirstMPC", mpc
+                   }
+               };
+    }
+
+    /// <summary>
     ///     Saves the notes of a candidate in the database.
     /// </summary>
     /// <param name="candidateNote">
