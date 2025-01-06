@@ -93,8 +93,6 @@ public class CompanyController : ControllerBase
     public async Task<Dictionary<string, object>> GetCompanyDetails(int companyID, string user)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        CompanyDetails _company = null;
-        string _companyName = "";
 
         await using SqlCommand _command = new("GetCompanyDetails", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -102,102 +100,25 @@ public class CompanyController : ControllerBase
         _command.Varchar("User", 10, user);
 
         await _connection.OpenAsync();
-        List<CompanyLocations> _locations = [];
-        List<CompanyContacts> _contacts = [];
-        List<CompanyDocuments> _documents = [];
+		string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]";
         try
         {
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             while (await _reader.ReadAsync())
-            {
-               _company = new()
-                           {
-                               ID = _reader.GetInt32(0),
-                               Name = _reader.GetString(1),
-                               EmailAddress = _reader.GetString(2),
-                               EIN = _reader.GetString(3),
-                               Phone = _reader.GetString(4),
-                               Extension = _reader.GetString(5),
-                               Fax = _reader.GetString(6),
-                               StreetName = _reader.GetString(7),
-                               City = _reader.GetString(8),
-                               StateID = _reader.GetByte(9),
-                               State = _reader.GetString(10),
-                               ZipCode = _reader.GetString(11),
-                               Website = _reader.GetString(12),
-                               DUNS = _reader.GetString(13),
-                               NAICSCode = _reader.GetString(14).ToInt32(),
-                               Status = _reader.GetBoolean(15),
-                               Notes = _reader.GetString(16),
-                               LocationNotes = _reader.GetString(17),
-                               CreatedBy = _reader.GetString(18),
-                               CreatedDate = _reader.GetDateTime(19),
-                               UpdatedBy = _reader.GetString(20),
-                               UpdatedDate = _reader.GetDateTime(21)
-                           };
-                _companyName = _reader.GetString(1);
-            }
+			{
+				_company = _reader.NString(0);
+			}
 
             await _reader.NextResultAsync(); //Company Locations
 			while (await _reader.ReadAsync())
             {
-                _locations.Add(new()
-                               {
-                                   ID = _reader.GetInt32(0),
-                                   CompanyID = _reader.GetInt32(1),
-                                   CompanyName = _companyName,
-                                   StreetName = _reader.GetString(2),
-                                   City = _reader.GetString(3),
-                                   StateID = _reader.GetByte(4),
-                                   State = _reader.GetString(5),
-                                   ZipCode = _reader.GetString(6),
-                                   EmailAddress = _reader.GetString(7),
-                                   Phone = _reader.GetString(8),
-                                   Extension = _reader.GetString(9),
-                                   Fax = _reader.GetString(10),
-                                   PrimaryLocation = _reader.GetBoolean(11),
-                                   Notes = _reader.GetString(12),
-                                   CreatedBy = _reader.GetString(13),
-                                   CreatedDate = _reader.GetDateTime(14),
-                                   UpdatedBy = _reader.GetString(15),
-                                   UpdatedDate = _reader.GetDateTime(16)
-                               });
+				_locations = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Company Contacts
 			while (await _reader.ReadAsync())
             {
-                _contacts.Add(new()
-                              {
-                                  ID = _reader.GetInt32(0),
-                                  CompanyID = _reader.GetInt32(1),
-                                  CompanyName = _companyName,
-                                  Prefix = _reader.GetString(2),
-                                  FirstName = _reader.GetString(3),
-                                  MiddleInitial = _reader.GetString(4),
-                                  LastName = _reader.GetString(5),
-                                  Suffix = _reader.GetString(6),
-                                  LocationID = _reader.GetInt32(7),
-                                  StreetName = _reader.GetString(8),
-                                  City = _reader.GetString(9),
-                                  StateID = _reader.GetByte(10),
-                                  State = _reader.GetString(11),
-                                  ZipCode = _reader.GetString(12),
-                                  EmailAddress = _reader.GetString(13),
-                                  Phone = _reader.GetString(14),
-                                  Extension = _reader.GetString(15),
-                                  Fax = _reader.GetString(16),
-                                  Title = _reader.GetString(17),
-                                  Department = _reader.GetString(18),
-                                  RoleID = _reader.GetByte(19),
-                                  Role = _reader.GetString(20),
-                                  RoleName = _reader.GetString(21),
-                                  CreatedBy = _reader.GetString(22),
-                                  CreatedDate = _reader.GetDateTime(23),
-                                  UpdatedBy = _reader.GetString(24),
-                                  UpdatedDate = _reader.GetDateTime(25),
-                                  Notes = _reader.GetString(26)
-                              });
+				_contacts = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Company Documents
@@ -205,17 +126,7 @@ public class CompanyController : ControllerBase
             {
 				while (await _reader.ReadAsync())
                 {
-                    _documents.Add(new()
-                                   {
-                                       ID = _reader.GetInt32(0),
-                                       CompanyID = _reader.GetInt32(1),
-                                       CompanyName = _companyName,
-                                       DocumentName = _reader.GetString(2),
-                                       FileName = _reader.GetString(3),
-                                       Notes = _reader.GetString(4),
-                                       UpdatedBy = _reader.GetString(20),
-                                       UpdatedDate = _reader.GetDateTime(21)
-                                   });
+					_documents = _reader.NString(0);
                 }
             }
 
@@ -223,10 +134,10 @@ public class CompanyController : ControllerBase
 
             await _connection.CloseAsync();
         }
-        catch (Exception)
-        {
-            //
-        }
+        catch (Exception ex)
+		{
+			Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
+		}
 
         return new()
                {
@@ -263,47 +174,57 @@ public class CompanyController : ControllerBase
 	[HttpGet]
     public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
+		await using SqlConnection _connection = new(Start.ConnectionString);
+		await using SqlCommand _command = new("GetCompanies", _connection);
+		int _count = 0;
 		string _companies = "[]";
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("GetCompanies", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("RecordsPerPage", searchModel.ItemCount);
-        _command.Int("PageNumber", searchModel.Page);
-        _command.Int("SortColumn", searchModel.SortField);
-        _command.TinyInt("SortDirection", searchModel.SortDirection);
-        _command.Varchar("Name", 30, searchModel.CompanyName);
-        //_command.Varchar("Phone", 20, searchModel.Phone);
-        //_command.Varchar("Email", 255, searchModel.EmailAddress);
-        //_command.Varchar("State", 255, searchModel.State);
-        //_command.Bit("MyCompanies", searchModel.MyCompanies);
-        //_command.Varchar("Status", 50, searchModel.Status);
-        _command.Varchar("UserName", 10, ""); //searchModel.User);
-
-        await _connection.OpenAsync();
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-        await _reader.ReadAsync();
-        int _count = _reader.GetInt32(0);
-
-        await _reader.NextResultAsync();
-		while (await _reader.ReadAsync())
+		try
 		{
-			_companies = _reader.NString(0);
+			_command.CommandType = CommandType.StoredProcedure;
+			_command.Int("RecordsPerPage", searchModel.ItemCount);
+			_command.Int("PageNumber", searchModel.Page);
+			_command.Int("SortColumn", searchModel.SortField);
+			_command.TinyInt("SortDirection", searchModel.SortDirection);
+			_command.Varchar("Name", 30, searchModel.CompanyName);
+			//_command.Varchar("Phone", 20, searchModel.Phone);
+			//_command.Varchar("Email", 255, searchModel.EmailAddress);
+			//_command.Varchar("State", 255, searchModel.State);
+			//_command.Bit("MyCompanies", searchModel.MyCompanies);
+			//_command.Varchar("Status", 50, searchModel.Status);
+			_command.Varchar("UserName", 10, ""); //searchModel.User);
+
+			await _connection.OpenAsync();
+			await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+			await _reader.ReadAsync();
+			_count = _reader.GetInt32(0);
+
+			await _reader.NextResultAsync();
+			while (await _reader.ReadAsync())
+			{
+				_companies = _reader.NString(0);
+			}
+
+			await _reader.CloseAsync();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
+		}
+		finally
+		{
+			await _connection.CloseAsync();
 		}
 
-		await _reader.CloseAsync();
-
-        await _connection.CloseAsync();
-
-        return new()
-               {
-                   {
-                       "Companies", _companies
-                   },
-                   {
-                       "Count", _count
-                   }
-               };
+		return new()
+			   {
+				   {
+					   "Companies", _companies
+				   },
+				   {
+					   "Count", _count
+				   }
+			   };
     }
 
 	/// <summary>
