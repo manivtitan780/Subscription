@@ -52,7 +52,7 @@ global using Syncfusion.Blazor.RichTextEditor;
 global using Syncfusion.Licensing;
 global using Syncfusion.Pdf;
 global using Syncfusion.Blazor.SfPdfViewer;
-global using Syncfusion.Blazor.DocumentEditor;
+//global using Syncfusion.Blazor.DocumentEditor;
 global using Syncfusion.Blazor.Inputs;
 global using Syncfusion.DocIORenderer;
 

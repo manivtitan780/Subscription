@@ -108,10 +108,9 @@ public class CompanyController : ControllerBase
         try
         {
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            if (_reader.HasRows) //Company Details
+            while (await _reader.ReadAsync())
             {
-                _reader.Read();
-                _company = new()
+               _company = new()
                            {
                                ID = _reader.GetInt32(0),
                                Name = _reader.GetString(1),
@@ -139,8 +138,8 @@ public class CompanyController : ControllerBase
                 _companyName = _reader.GetString(1);
             }
 
-            _reader.NextResult(); //Company Locations
-            while (_reader.Read())
+            await _reader.NextResultAsync(); //Company Locations
+			while (await _reader.ReadAsync())
             {
                 _locations.Add(new()
                                {
@@ -165,8 +164,8 @@ public class CompanyController : ControllerBase
                                });
             }
 
-            _reader.NextResult(); //Company Contacts
-            while (_reader.Read())
+            await _reader.NextResultAsync(); //Company Contacts
+			while (await _reader.ReadAsync())
             {
                 _contacts.Add(new()
                               {
@@ -201,10 +200,10 @@ public class CompanyController : ControllerBase
                               });
             }
 
-            _reader.NextResult(); //Company Documents
+            await _reader.NextResultAsync(); //Company Documents
             if (_reader.HasRows)
             {
-                while (_reader.Read())
+				while (await _reader.ReadAsync())
                 {
                     _documents.Add(new()
                                    {
@@ -264,7 +263,7 @@ public class CompanyController : ControllerBase
 	[HttpGet]
     public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
-        List<Company> _companies = [];
+		string _companies = "[]";
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("GetCompanies", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -287,22 +286,12 @@ public class CompanyController : ControllerBase
         int _count = _reader.GetInt32(0);
 
         await _reader.NextResultAsync();
-        _companies = await _reader.FillList<Company>(company => new()
-                                                                {
-                                                                    ID = company.GetInt32(0),
-                                                                    CompanyName = company.GetString(1),
-                                                                    Email = company.GetString(2),
-                                                                    Phone = company.GetString(3),
-                                                                    Address = company.GetString(4),
-                                                                    Website = company.GetString(5),
-                                                                    Status = company.GetBoolean(6),
-                                                                    ContactsCount = company.GetInt32(7),
-                                                                    LocationsCount = company.GetInt32(8),
-                                                                    UpdatedBy = company.GetString(9).ToUpperInvariant(),
-                                                                    UpdatedDate = company.GetDateTime(10)
-                                                                }).ToListAsync();
+		while (await _reader.ReadAsync())
+		{
+			_companies = _reader.NString(0);
+		}
 
-        await _reader.CloseAsync();
+		await _reader.CloseAsync();
 
         await _connection.CloseAsync();
 
@@ -435,9 +424,8 @@ public class CompanyController : ControllerBase
 
         await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-        if (_reader.HasRows)
+		while (await _reader.ReadAsync())
         {
-            await _reader.ReadAsync();
             _returnCode = _reader.GetInt32(0);
         }
 
@@ -494,7 +482,7 @@ public class CompanyController : ControllerBase
 
         List<CompanyContacts> _contacts = [];
 
-        while (_reader.Read())
+		while (await _reader.ReadAsync())
         {
             _contacts.Add(new()
                           {
@@ -591,7 +579,7 @@ public class CompanyController : ControllerBase
 
         List<CompanyLocations> _locations = [];
 
-        while (_reader.Read())
+		while (await _reader.ReadAsync())
         {
             _locations.Add(new()
                            {

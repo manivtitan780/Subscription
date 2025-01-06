@@ -24,7 +24,7 @@ global using Microsoft.Data.SqlClient;
 global using Extensions;
 
 global using FluentStorage;
-global using FluentStorage.Blobs;
+//global using FluentStorage.Blobs;
 global using FluentStorage.Azure.Blobs;
 
 global using Newtonsoft.Json.Linq;

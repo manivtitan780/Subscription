@@ -46,7 +46,7 @@ public class CandidateController : ControllerBase
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
             DocumentDetails _documentDetails = null;
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _documentDetails = new(_reader.GetInt32(0), _reader.NString(1), _reader.NString(2), _reader.NString(3));
             }
@@ -96,7 +96,7 @@ public class CandidateController : ControllerBase
 
             DocumentDetails _documentDetails = null;
 
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _documentDetails = new()
                                    {
@@ -156,7 +156,7 @@ public class CandidateController : ControllerBase
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (_reader.Read()) //Candidate Details
+            while (await _reader.ReadAsync()) //Candidate Details
             {
                 _candidate = _reader.NString(0);
                 JObject _candidateJson = JObject.Parse(_candidate);
@@ -165,35 +165,35 @@ public class CandidateController : ControllerBase
                 _candMPC = _candidateJson["MPCNotes"]?.ToString();     //_reader.NString(30);
             }
 
-            _reader.NextResult(); //Notes
+            await _reader.NextResultAsync(); //Notes
             string _notes = "[]";
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _notes = _reader.NString(0);
             }
 
-            _reader.NextResult(); //Skills
+            await _reader.NextResultAsync(); //Skills
             string _skills = "[]";
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _skills = _reader.NString(0);
             }
 
-            _reader.NextResult(); //Education
+            await _reader.NextResultAsync(); //Education
             string _education = "[]";
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _education = _reader.NString(0);
             }
 
-            _reader.NextResult(); //Experience
+            await _reader.NextResultAsync(); //Experience
             string _experience = "[]";
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _experience = _reader.NString(0);
             }
 
-            _reader.NextResult(); //Activity
+            await _reader.NextResultAsync(); //Activity
             List<CandidateActivity> _activity = await _reader.FillList<CandidateActivity>(activity => new()
                                                                                                       {
                                                                                                           Requisition = activity.GetString(0),
@@ -221,11 +221,11 @@ public class CandidateController : ControllerBase
                                                                                                           InterviewDetails = activity.NString(22),
                                                                                                           Undone = activity.GetBoolean(23)
                                                                                                       }).ToListAsync();
-            _reader.NextResult(); //Managers
+            await _reader.NextResultAsync(); //Managers
 
-            _reader.NextResult(); //Documents
+            await _reader.NextResultAsync(); //Documents
             string _documents = "[]";
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _documents = _reader.NString(0);
             }
@@ -687,7 +687,7 @@ public class CandidateController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _returnVal = _reader.NString(0);
             }
@@ -753,7 +753,7 @@ public class CandidateController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _returnVal = _reader.NString(0);
             }
@@ -905,7 +905,7 @@ public class CandidateController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _returnVal = _reader.NString(0);
             }
@@ -1080,7 +1080,7 @@ public class CandidateController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _returnVal = _reader.NString(0);
             }
@@ -1194,7 +1194,7 @@ public class CandidateController : ControllerBase
             _command.Varchar("DocsUser", 10, Request.Form["user"].ToString());
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (_reader.Read())
+            while (await _reader.ReadAsync())
             {
                 _returnVal = _reader.NString(0);
             }

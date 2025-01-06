@@ -117,7 +117,7 @@ public partial class Upload : ComponentBase
     {
         get;
         set;
-    } = false;
+    }
 
     /// <summary>
     ///     Gets or sets the callback event that is triggered when the value of the file input changes in the UploaderControl.

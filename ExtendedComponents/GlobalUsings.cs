@@ -16,9 +16,9 @@ global using System.Linq.Expressions;
 
 global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Forms;
-global using Microsoft.AspNetCore.Components.Web;
+//global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.JSInterop;
 
-global using Syncfusion.Blazor.DataForm;
+//global using Syncfusion.Blazor.DataForm;
 global using Syncfusion.Blazor.DropDowns;
 global using Syncfusion.Blazor.Inputs;

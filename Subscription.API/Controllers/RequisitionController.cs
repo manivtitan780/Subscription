@@ -15,11 +15,11 @@
 
 namespace Subscription.API.Controllers;
 
-public class RequisitionController(IConfiguration configuration, IWebHostEnvironment env) : Controller
+public class RequisitionController() : Controller //IConfiguration configuration, IWebHostEnvironment env
 {
-    private readonly IConfiguration _configuration = configuration;
+    //private readonly IConfiguration _configuration = configuration;
 
-    private readonly IWebHostEnvironment _hostingEnvironment = env;
+    //private readonly IWebHostEnvironment _hostingEnvironment = env;
 
     /// <summary>
     ///     Generates a location string based on the provided requisition details and state name.
@@ -84,7 +84,7 @@ public class RequisitionController(IConfiguration configuration, IWebHostEnviron
     public async Task<Dictionary<string, object>> GetGridRequisitions([FromBody] RequisitionSearch reqSearch, bool getCompanyInformation = false, int requisitionID = 0, bool thenProceed = false,
                                                                       string user = "")
     {
-        await using SqlConnection _connection = new(_configuration.GetConnectionString("DBConnect"));
+        await using SqlConnection _connection = new(Start.ConnectionString);
         List<Requisition> _requisitions = [];
         try
         {

@@ -45,7 +45,7 @@ public partial class TextArea : ComponentBase
     {
         get;
         set;
-    } = false;
+    }
 
     [Parameter]
     public Resize ResizeMode

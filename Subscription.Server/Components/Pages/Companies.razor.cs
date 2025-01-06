@@ -945,12 +945,12 @@ public partial class Companies
                             List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
 
                             Dictionary<string, string> _values = await _service.BatchGet(_keys);
-                            NAICS = JsonConvert.DeserializeObject<List<IntValues>>(_values["NAICS"] ?? string.Empty);
-                            State = JsonConvert.DeserializeObject<List<IntValues>>(_values["States"] ?? string.Empty);
-                            Roles = JsonConvert.DeserializeObject<List<IntValues>>(_values["Roles"] ?? string.Empty);
+                            NAICS = General.DeserializeObject<List<IntValues>>(_values["NAICS"]);
+                            State = General.DeserializeObject<List<IntValues>>(_values["States"]);
+                            Roles = General.DeserializeObject<List<IntValues>>(_values["Roles"]);
                         }
 
-                        _dataSource = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
+                        _dataSource = General.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
                         int _count = _restResponse["Count"].ToInt32();
                         Count = _count;
                         if (_dataSource == null)

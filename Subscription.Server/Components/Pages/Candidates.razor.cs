@@ -36,8 +36,8 @@ public partial class Candidates
     private List<CandidateSkills> _candidateSkillsObject = [];
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
-    private List<KeyValues> _jobOptions = [], _taxTerms = [], _statusCodes = [], _workflow = [], _communication = [];
-    private CandidateRatingMPC _ratingMPC = new();
+    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [], _workflow = [];
+    //private CandidateRatingMPC _ratingMPC = new();
     private List<Role> _roles;
     private int _selectedTab;
 
@@ -661,12 +661,12 @@ public partial class Candidates
                                                     return DialogDocument.ShowDialog();
                                                 });
 
-    /// <summary>
+    /*/// <summary>
     ///     This method is called after a document action is completed in the Candidate page.
     ///     It enables the buttons in the AddDocumentDialog component.
     /// </summary>
     /// <param name="actionCompleteEventArgs">The arguments associated with the action completion event.</param>
-    private void AfterDocument(ActionCompleteEventArgs actionCompleteEventArgs) => DialogDocument.EnableButtons();
+    private void AfterDocument(ActionCompleteEventArgs actionCompleteEventArgs) => DialogDocument.EnableButtons();*/
 
     private static async Task AllAlphabets()
     {
@@ -682,7 +682,7 @@ public partial class Candidates
         await Grid.Refresh();
     }
 
-    /// <summary>
+    /*/// <summary>
     ///     This method is invoked before a document is uploaded in the Candidate page.
     ///     It disables the buttons in the document dialog to prevent further actions during the upload process.
     /// </summary>
@@ -690,7 +690,7 @@ public partial class Candidates
     private void BeforeDocument(BeforeUploadEventArgs args)
     {
         DialogDocument.DisableButtons();
-    }
+    }*/
 
     /// <summary>
     ///     Clears the filter applied to the candidates.
@@ -1991,7 +1991,7 @@ public partial class Candidates
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
-    /// <summary>
+    /*/// <summary>
     ///     Handles the upload of a document for a candidate. It reads the file from the upload event,
     ///     copies it into a memory stream, and stores the file name and MIME type for later use.
     /// </summary>
@@ -2008,7 +2008,7 @@ public partial class Candidates
             AddedDocument.Position = 0;
             _str.Close();
         }
-    }
+    }*/
 
     public class CandidateAdaptor : DataAdaptor
     {

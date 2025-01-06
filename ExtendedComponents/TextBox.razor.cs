@@ -63,7 +63,7 @@ public partial class TextBox : ComponentBase
     {
         get;
         set;
-    } = false;
+    }
 
     [Parameter]
     public InputType TextBoxType
@@ -77,7 +77,7 @@ public partial class TextBox : ComponentBase
     {
         get;
         set;
-    } = false;
+    }
 
     /// <summary>
     ///     Gets or sets the selected date in the TextBoxControl component.

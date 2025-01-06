@@ -122,7 +122,7 @@ public partial class EditCandidateDialog
 	///     Gets or sets the eligibility of the candidate.
 	/// </summary>
 	/// <value>
-	///     The eligibility of the candidate, represented as a collection of <see cref="ProfSvc_Classes.IntValues" />.
+	///     The eligibility of the candidate, represented as a collection of <see cref="IntValues" />.
 	/// </value>
 	[Parameter]
     public IEnumerable<IntValues> Eligibility

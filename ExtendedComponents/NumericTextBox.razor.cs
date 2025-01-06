@@ -66,7 +66,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     {
         get;
         set;
-    } = false;
+    }
 
     /// <summary>
     ///     Gets or sets the selected value in the NumericTextBox.

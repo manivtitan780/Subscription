@@ -54,8 +54,7 @@ public partial class NotesPanel
 	/// <remarks>
 	///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
 	///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-	///     This service is injected into the component and used in methods like <see cref="DeleteExperienceMethod" /> to
-	///     confirm actions before proceeding.
+	///     This service is injected into the component and used in methods to confirm actions before proceeding.
 	/// </remarks>
 	[Inject]
 	private SfDialogService DialogService

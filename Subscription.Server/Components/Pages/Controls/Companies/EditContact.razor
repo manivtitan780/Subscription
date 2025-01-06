@@ -21,7 +21,7 @@
 					<FormItem ColumnSpan="1" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Suffix)" LabelText="Suffix:" Placeholder="Suffix" />
 					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Title)" LabelText="Title:" />
 					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.Department)" LabelText="Department:" />
-					<FormItem ColumnSpan="9" Field="@nameof(Model.LocationID)" ID="LocationID">
+					<FormItem ColumnSpan="9" Field="@nameof(Model.LocationID)">
 						<Template>
 							<label class="e-form-label">Location:</label>
 							<SfDropDownList @bind-Value="Model.LocationID" DataSource="Location" ID="LocationID" TItem="LocationDrop" TValue="int">
