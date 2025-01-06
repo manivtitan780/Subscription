@@ -303,6 +303,28 @@ public static partial class Extensions
     }
 
 	/// <summary>
+	///     Converts the object representation of a byte value to its byte equivalent.
+	///     If the object is null or cannot be converted, the method will return the provided nullValue.
+	/// </summary>
+	/// <param name="o">The object to convert.</param>
+	/// <param name="nullValue">The value to return if the object is null or cannot be converted. Default is 0.</param>
+	/// <returns>
+	///     The byte representation of the object or nullValue if the object is null or cannot be converted.
+	/// </returns>
+	public static byte ToByte(this object o, byte nullValue = 0)
+    {
+        return o switch
+               {
+                   null => nullValue,
+                   byte _i => _i,
+                   decimal => (byte)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
+                   double => (byte)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
+                   float => (byte)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
+                   _ => byte.TryParse(o.ToString(), out byte _outInt) ? _outInt : nullValue
+               };
+    }
+
+	/// <summary>
 	///     Converts the string representation of a number to its 32-bit signed integer equivalent.
 	/// </summary>
 	/// <param name="s">A string containing a number to convert.</param>

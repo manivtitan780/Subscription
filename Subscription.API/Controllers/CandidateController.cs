@@ -792,74 +792,63 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<Dictionary<string, object>> SaveMPC(CandidateRatingMPC mpc, string user)
     {
-        string _mpcNotes = "";
-        List<CandidateMPC> _mpc = [];
-        if (mpc == null)
-        {
-            return new()
-                   {
-                       {
-                           "MPCList", _mpc
-                       },
-                       {
-                           "FirstMPC", null
-                       }
-                   };
-        }
-
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
+        string _mpc = "[]";
         try
         {
+            if (mpc == null)
+            {
+                return new()
+                       {
+                           {
+                               "MPCList", _mpc
+                           },
+                           {
+                               "FirstMPC", null
+                           }
+                       };
+            }
+
+            await using SqlConnection _connection = new(Start.ConnectionString);
+            await _connection.OpenAsync();
             await using SqlCommand _command = new("ChangeMPC", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("@CandidateId", mpc.ID);
             _command.Bit("@MPC", mpc.MPC);
             _command.Varchar("@Notes", -1, mpc.MPCComments);
             _command.Varchar("@From", 10, user);
-            _mpcNotes = _command.ExecuteScalar()?.ToString();
-        }
-        catch
-        {
-            //
-        }
+            string _mpcNotes = _command.ExecuteScalar()?.ToString();
 
-        await _connection.CloseAsync();
+            await _connection.CloseAsync();
 
-        // string[] _mpcArray = _mpcNotes?.Split('?');
-        // if (_mpcArray != null)
-        // {
-        //     _mpc.AddRange(_mpcArray.Select(str => str.Split('^'))
-        //                            .Where(innerArray => innerArray.Length == 4)
-        //                            .Select(innerArray => new CandidateMPC
-        //                                                  {
-        //                                                      DateTime = innerArray[0].Replace(" ", " ").ToDateTime("m/d/yy h:mm:ss tt"),
-        //                                                      Name = innerArray[1],
-        //                                                      MPC = innerArray[2].ToBoolean(),
-        //                                                      Comment = innerArray[3]
-        //                                                  }));
-        // }
-        bool _mpcFirst = false;
-        string _mpcComments = "";
-        if (_mpcNotes != null)
-        {
-            JArray _mpcNotesArray = JArray.Parse(_mpcNotes);
-
-            JArray _mpcSortedArray = new(_mpcNotesArray.OrderByDescending(obj => DateTime.Parse(obj["DateTime"].ToString())));
-
-            if (_mpcSortedArray.Any())
+            bool _mpcFirst = false;
+            string _mpcComments = "";
+            if (_mpcNotes != null)
             {
-                JToken _mpcFirstCandidate = _mpcSortedArray.FirstOrDefault();
-                if (_mpcFirstCandidate != null)
+                JArray _mpcNotesArray = JArray.Parse(_mpcNotes);
+
+                if (_mpcNotesArray.Any())
                 {
-                    _mpcFirst = _mpcFirstCandidate["MPC"].ToBoolean();
-                    _mpcComments = _mpcFirstCandidate["Comment"]?.ToString();
+                    JArray _mpcSortedArray = new(_mpcNotesArray.OrderByDescending(obj => DateTime.Parse(obj["DateTime"].ToString())));
+
+                    JToken _mpcFirstCandidate = _mpcSortedArray.FirstOrDefault();
+                    if (_mpcFirstCandidate != null)
+                    {
+                        _mpcFirst = _mpcFirstCandidate["MPC"].ToBoolean();
+                        _mpcComments = _mpcFirstCandidate["Comment"]?.ToString();
+                    }
+
+                    _mpc = _mpcSortedArray.ToString();
                 }
             }
-        }
 
-        mpc.MPC = _mpcFirst;
-        mpc.MPCComments = _mpcComments;
+            mpc.MPC = _mpcFirst;
+            mpc.MPCComments = _mpcComments;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving MPC. {ExceptionMessage}", ex.Message);
+            //
+        }
 
         return new()
                {
@@ -958,63 +947,83 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<Dictionary<string, object>> SaveRating(CandidateRatingMPC rating, string user)
     {
-        string _ratingNotes = "";
-        List<CandidateRating> _rating = [];
-        if (rating == null)
-        {
-            return new()
-                   {
-                       {
-                           "RatingList", _rating
-                       },
-                       {
-                           "FirstRating", null
-                       }
-                   };
-        }
-
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
+        string _rating = "[]";
         try
         {
+            if (rating == null)
+            {
+                return new()
+                       {
+                           {
+                               "RatingList", _rating
+                           },
+                           {
+                               "FirstRating", null
+                           }
+                       };
+            }
+
+            await using SqlConnection _connection = new(Start.ConnectionString);
+            await _connection.OpenAsync();
             await using SqlCommand _command = new("ChangeRating", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("@CandidateId", rating.ID);
             _command.TinyInt("@Rating", rating.Rating);
             _command.Varchar("@Notes", -1, rating.RatingComments);
             _command.Varchar("@From", 10, user);
-            _ratingNotes = _command.ExecuteScalar()?.ToString();
+            string _ratingNotes = _command.ExecuteScalar()?.ToString();
+
+            await _connection.CloseAsync();
+
+            /*string[] _ratingArray = _ratingNotes?.Split('?');
+            _rating.AddRange((_ratingArray ?? [])
+                            .Select(str => new
+                                           {
+                                               _str = str,
+                                               _innerArray = str.Split('^')
+                                           })
+                            .Where(t => t._innerArray.Length == 4)
+                            .Select(t => new CandidateRating(t._innerArray[0].ToDateTime(), t._innerArray[1], t._innerArray[2].ToByte(), t._innerArray[3])));
+
+            _rating = _rating.OrderByDescending(x => x.DateTime).ToList();
+            int _ratingFirst = 0;
+            string _ratingComments = "";
+
+            if (!_ratingNotes.NullOrWhiteSpace())
+            {
+                CandidateRating _ratingFirstCandidate = _rating.FirstOrDefault();
+                _ratingFirst = _ratingFirstCandidate.Rating;
+                _ratingComments = _ratingFirstCandidate.Comment;
+            }*/
+            byte _ratingFirst = 1;
+            string _ratingComments = "";
+            if (_ratingNotes != null)
+            {
+                JArray _ratingNotesArray = JArray.Parse(_ratingNotes);
+
+                if (_ratingNotesArray.Any())
+                {
+                    JArray _ratingSortedArray = new(_ratingNotesArray.OrderByDescending(obj => DateTime.Parse(obj["DateTime"].ToString())));
+
+                    JToken _ratingFirstCandidate = _ratingSortedArray.FirstOrDefault();
+                    if (_ratingFirstCandidate != null)
+                    {
+                        _ratingFirst = _ratingFirstCandidate["Rating"].ToByte();
+                        _ratingComments = _ratingFirstCandidate["Comment"]?.ToString();
+                    }
+
+                    _rating = _ratingSortedArray.ToString();
+                }
+            }
+
+            rating.Rating = _ratingFirst;
+            rating.RatingComments = _ratingComments;
         }
-        catch
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error saving rating. {ExceptionMessage}", ex.Message);
             //
         }
-
-        await _connection.CloseAsync();
-
-        string[] _ratingArray = _ratingNotes?.Split('?');
-        _rating.AddRange((_ratingArray ?? [])
-                        .Select(str => new
-                                       {
-                                           _str = str,
-                                           _innerArray = str.Split('^')
-                                       })
-                        .Where(t => t._innerArray.Length == 4)
-                        .Select(t => new CandidateRating(t._innerArray[0].ToDateTime(), t._innerArray[1], t._innerArray[2].ToByte(), t._innerArray[3])));
-
-        _rating = _rating.OrderByDescending(x => x.DateTime).ToList();
-        int _ratingFirst = 0;
-        string _ratingComments = "";
-
-        if (!_ratingNotes.NullOrWhiteSpace())
-        {
-            CandidateRating _ratingFirstCandidate = _rating.FirstOrDefault();
-            _ratingFirst = _ratingFirstCandidate.Rating;
-            _ratingComments = _ratingFirstCandidate.Comment;
-        }
-
-        rating.Rating = _ratingFirst;
-        rating.RatingComments = _ratingComments;
 
         return new()
                {
