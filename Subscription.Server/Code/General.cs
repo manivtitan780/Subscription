@@ -110,12 +110,12 @@ public class General
         }
     }
 
-    public static async Task<T> ExecuteGet<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null)
+    public static async Task<T> ExecuteRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, bool isPost = true)
     {
         using RestClient _client = new(Start.APIHost);
         RestRequest _request = new(endpoint)
                               {
-                                  Method = Method.Post,
+                                  Method = isPost ? Method.Post : Method.Get,
                                   RequestFormat = DataFormat.Json
                               };
         if (jsonBody != null)

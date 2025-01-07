@@ -8,7 +8,7 @@
 // File Name:           CompanyController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-08-2024 15:02
-// Last Updated On:     01-07-2025 15:01
+// Last Updated On:     01-07-2025 16:01
 // *****************************************/
 
 #endregion
@@ -24,27 +24,27 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class CompanyController : ControllerBase
 {
-	/// <summary>
-	///     Asynchronously checks if a company's Employer Identification Number (EIN) exists in the database.
-	///     <para>
-	///         <br />This method, Add, is designed to calculate the sum of two integers.
-	///         It takes two parameters, each representing an integer. The method
-	///         performs the addition operation on these two integers and returns
-	///         the result. This result is an integer representing the sum of the
-	///         input parameters.
-	///     </para>
-	/// </summary>
-	/// <param name="companyID">
-	///     The ID of the company to check.
-	/// </param>
-	/// <param name="ein">
-	///     The Employer Identification Number (EIN) to check.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains a boolean value indicating whether
-	///     the EIN exists (true) or not (false).
-	/// </returns>
-	[HttpGet]
+    /// <summary>
+    ///     Asynchronously checks if a company's Employer Identification Number (EIN) exists in the database.
+    ///     <para>
+    ///         <br />This method, Add, is designed to calculate the sum of two integers.
+    ///         It takes two parameters, each representing an integer. The method
+    ///         performs the addition operation on these two integers and returns
+    ///         the result. This result is an integer representing the sum of the
+    ///         input parameters.
+    ///     </para>
+    /// </summary>
+    /// <param name="companyID">
+    ///     The ID of the company to check.
+    /// </param>
+    /// <param name="ein">
+    ///     The Employer Identification Number (EIN) to check.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a boolean value indicating whether
+    ///     the EIN exists (true) or not (false).
+    /// </returns>
+    [HttpGet]
     public async Task<bool> CheckEIN(int companyID, string ein)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -68,28 +68,28 @@ public class CompanyController : ControllerBase
         return _returnValue;
     }
 
-	/// <summary>
-	///     Retrieves the details of a company based on the provided company ID and user.
-	///     <para>
-	///         <br />This asynchronous method, GetCompanyDetails, is designed to retrieve the details of a specific company
-	///         based on
-	///         the provided company ID and user. It interacts with the database to fetch the company's details, its contacts,
-	///         requisitions, and documents. The method returns a dictionary containing these details. If the company ID or
-	///         user is not found, the method will return an empty dictionary.
-	///     </para>
-	/// </summary>
-	/// <summary>
-	/// </summary>
-	/// <param name="companyID">
-	///     The ID of the company whose details are to be retrieved.
-	/// </param>
-	/// <param name="user">
-	///     The user requesting the company details.
-	/// </param>
-	/// <returns>
-	///     A dictionary containing the details of the company, its contacts, requisitions, and documents.
-	/// </returns>
-	[HttpPost]
+    /// <summary>
+    ///     Retrieves the details of a company based on the provided company ID and user.
+    ///     <para>
+    ///         <br />This asynchronous method, GetCompanyDetails, is designed to retrieve the details of a specific company
+    ///         based on
+    ///         the provided company ID and user. It interacts with the database to fetch the company's details, its contacts,
+    ///         requisitions, and documents. The method returns a dictionary containing these details. If the company ID or
+    ///         user is not found, the method will return an empty dictionary.
+    ///     </para>
+    /// </summary>
+    /// <summary>
+    /// </summary>
+    /// <param name="companyID">
+    ///     The ID of the company whose details are to be retrieved.
+    /// </param>
+    /// <param name="user">
+    ///     The user requesting the company details.
+    /// </param>
+    /// <returns>
+    ///     A dictionary containing the details of the company, its contacts, requisitions, and documents.
+    /// </returns>
+    [HttpGet]
     public async Task<ActionResult<ReturnCompanyDetails>> GetCompanyDetails(int companyID, string user)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -105,7 +105,7 @@ public class CompanyController : ControllerBase
         try
         {
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (await _reader.ReadAsync())
+            while (await _reader.ReadAsync()) //Company Details
             {
                 _company = _reader.NString(0);
             }
@@ -123,12 +123,9 @@ public class CompanyController : ControllerBase
             }
 
             await _reader.NextResultAsync(); //Company Documents
-            if (_reader.HasRows)
+            while (await _reader.ReadAsync())
             {
-                while (await _reader.ReadAsync())
-                {
-                    _documents = _reader.NString(0);
-                }
+                _documents = _reader.NString(0);
             }
 
             await _reader.CloseAsync();
@@ -141,47 +138,26 @@ public class CompanyController : ControllerBase
             return StatusCode(500, ex.Message);
         }
 
-        return Ok(new ReturnCompanyDetails
-                  {
-                      Company = _company,
-                      Locations = _locations,
-                      Contacts = _contacts,
-                      Documents = _documents
-                  });
-        /*return new()
-               {
-                   {
-                       "Company", _company
-                   },
-                   {
-                       "Contacts", _contacts
-                   },
-                   {
-                       "Locations", _locations
-                   },
-                   {
-                       "Documents", _documents
-                   }
-               };*/
+        return Ok(new ReturnCompanyDetails {Company = _company, Locations = _locations, Contacts = _contacts, Documents = _documents});
     }
 
-	/// <summary>
-	///     Asynchronously retrieves a paginated list of companies based on the provided search model.
-	/// </summary>
-	/// <param name="searchModel">
-	///     The search model containing the search parameters.
-	/// </param>
-	/// <param name="getMasterTables">
-	///     A boolean value indicating whether to retrieve related master table data (true) or not
-	///     (false). Default is true.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains a dictionary with the following keys:
-	///     - "Companies": A list of companies matching the search parameters.
-	///     - "Count": The total number of companies matching the search parameters.
-	/// </returns>
-	/*public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)*/
-    [HttpPost]
+    /// <summary>
+    ///     Asynchronously retrieves a paginated list of companies based on the provided search model.
+    /// </summary>
+    /// <param name="searchModel">
+    ///     The search model containing the search parameters.
+    /// </param>
+    /// <param name="getMasterTables">
+    ///     A boolean value indicating whether to retrieve related master table data (true) or not
+    ///     (false). Default is true.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a dictionary with the following keys:
+    ///     - "Companies": A list of companies matching the search parameters.
+    ///     - "Count": The total number of companies matching the search parameters.
+    /// </returns>
+    /*public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)*/
+    [HttpGet]
     public async Task<ActionResult<ReturnGrid>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -230,100 +206,71 @@ public class CompanyController : ControllerBase
         return Ok(new ReturnGrid {Data = _companies, Count = _count});
     }
 
-	/// <summary>
-	///     Asynchronously retrieves a list of locations for a specific company from the database.
-	/// </summary>
-	/// <param name="companyID">
-	///     The ID of the company for which to retrieve locations.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains a list of locations for the
-	///     specified company.
-	/// </returns>
-	[HttpGet]
-    public async Task<List<LocationDrop>> GetLocationList(int companyID)
+    /// <summary>
+    ///     Asynchronously retrieves a list of locations for a specific company from the database.
+    /// </summary>
+    /// <param name="companyID">
+    ///     The ID of the company for which to retrieve locations.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of locations for the
+    ///     specified company.
+    /// </returns>
+    [HttpGet]
+    public async Task<ActionResult<string>> GetLocationList(int companyID)
     {
-        // Create a new SQL connection using the connection string
         await using SqlConnection _connection = new(Start.ConnectionString);
-
-        // Create a new SQL command with the stored procedure name and the connection
-        await using SqlCommand _command = new("GetLocationList", _connection);
-
-        // Set the command type to stored procedure
-        _command.CommandType = CommandType.StoredProcedure;
-
-        // Add the company ID to the command parameters
-        _command.Int("CompanyID", companyID);
-
-        // Open the SQL connection asynchronously
-        await _connection.OpenAsync();
-
-        // Initialize the return value as an empty list of LocationDrop
-        List<LocationDrop> _returnValue = [];
-
-        // Execute the command asynchronously and get the data reader
-        SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-        //Add a default entry to the list LocationDrop
-        _returnValue.Add(new()
-                         {
-                             ID = 0,
-                             Location = "--Select--",
-                             StreetAddress = "",
-                             City = "",
-                             State = "",
-                             StateID = 0,
-                             Zip = ""
-                         });
-
-        // Read the returned rows asynchronously
-        while (await _reader.ReadAsync())
+        string _returnValue = "[]";
+        try
         {
-            // For each row, create a new LocationDrop object and add it to the return value
-            _returnValue.Add(new()
-                             {
-                                 ID = _reader.GetInt32(0),
-                                 Location = _reader.GetString(1),
-                                 StreetAddress = _reader.GetString(2),
-                                 City = _reader.GetString(3),
-                                 State = _reader.GetString(4),
-                                 StateID = _reader.GetByte(5),
-                                 Zip = _reader.GetString(6)
-                             });
+            await using SqlCommand _command = new("GetLocationList", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("CompanyID", companyID);
+
+            await _connection.OpenAsync();
+
+            // Execute the command asynchronously and get the data reader
+            object _result = _command.ExecuteScalar()?.ToString();
+            if (_result != null)
+            {
+                _returnValue = _result.ToString();
+            }
+
+            await _connection.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
         }
 
-        // Close the SQL connection asynchronously
-        await _connection.CloseAsync();
-
-        // Return the list of LocationDrop objects
-        return _returnValue;
+        return Ok(_returnValue);
     }
 
-	/// <summary>
-	///     Asynchronously saves the details of a company to the database.
-	/// </summary>
-	/// <param name="company">
-	///     The details of the company to save.
-	/// </param>
-	/// <param name="user">
-	///     The user performing the save operation.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains an integer value indicating the result
-	///     of the save operation.
-	///     A return value of -1 indicates that the company parameter was null. Any other value is the return code from the
-	///     database operation.
-	/// </returns>
-	[HttpPost]
-    public async Task<int> SaveCompany(CompanyDetails company, string user)
+    /// <summary>
+    ///     Asynchronously saves the details of a company to the database.
+    /// </summary>
+    /// <param name="company">
+    ///     The details of the company to save.
+    /// </param>
+    /// <param name="user">
+    ///     The user performing the save operation.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains an integer value indicating the result
+    ///     of the save operation.
+    ///     A return value of -1 indicates that the company parameter was null. Any other value is the return code from the
+    ///     database operation.
+    /// </returns>
+    [HttpPost]
+    public async Task<ActionResult<int>> SaveCompany(CompanyDetails company, string user)
     {
         if (company == null)
         {
-            return -1;
+            return StatusCode(500, "An internal error occurred while saving the company details.");
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
         int _returnCode = 0;
         await using SqlCommand _command = new("SaveCompany", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -345,41 +292,46 @@ public class CompanyController : ControllerBase
         _command.Varchar("Fax", 20, company.Fax);
         _command.Varchar("LocationNotes", 2000, company.LocationNotes);
         _command.Varchar("User", 10, user);
-
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-        while (await _reader.ReadAsync())
+        try
         {
-            _returnCode = _reader.GetInt32(0);
+            await _connection.OpenAsync();
+            _returnCode = (await _command.ExecuteScalarAsync()).ToInt32();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving company details. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
         }
 
-        await _connection.CloseAsync();
-        return _returnCode;
+        return Ok(_returnCode);
     }
 
-	/// <summary>
-	///     Asynchronously saves the details of a company's contact to the database.
-	/// </summary>
-	/// <param name="contact">
-	///     The details of the company's contact to save.
-	/// </param>
-	/// <param name="user">
-	///     The user performing the save operation.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains a list of company contacts.
-	///     If the contact parameter is null, the method returns null.
-	/// </returns>
-	[HttpPost]
-    public async Task<List<CompanyContacts>> SaveCompanyContact(CompanyContacts contact, string user)
+    /// <summary>
+    ///     Asynchronously saves the details of a company's contact to the database.
+    /// </summary>
+    /// <param name="contact">
+    ///     The details of the company's contact to save.
+    /// </param>
+    /// <param name="user">
+    ///     The user performing the save operation.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of company contacts.
+    ///     If the contact parameter is null, the method returns null.
+    /// </returns>
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveCompanyContact(CompanyContacts contact, string user)
     {
         if (contact == null)
         {
-            return null;
+            return Ok("[]");
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
 
         await using SqlCommand _command = new("SaveCompanyContact", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -402,86 +354,62 @@ public class CompanyController : ControllerBase
         _command.Bit("IsPrimaryContact", contact.PrimaryContact);
         _command.Varchar("User", 10, user);
 
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+        string _contacts = "[]";
 
-        List<CompanyContacts> _contacts = [];
-
-        while (await _reader.ReadAsync())
+        try
         {
-            _contacts.Add(new()
-                          {
-                              ID = _reader.GetInt32(0),
-                              CompanyID = _reader.GetInt32(1),
-                              CompanyName = _reader.GetString(2),
-                              Prefix = _reader.GetString(3),
-                              FirstName = _reader.GetString(4),
-                              MiddleInitial = _reader.GetString(5),
-                              LastName = _reader.GetString(6),
-                              Suffix = _reader.GetString(7),
-                              LocationID = _reader.GetInt32(8),
-                              StreetName = _reader.GetString(9),
-                              City = _reader.GetString(10),
-                              StateID = _reader.GetByte(11),
-                              State = _reader.GetString(12),
-                              ZipCode = _reader.GetString(13),
-                              EmailAddress = _reader.GetString(14),
-                              Phone = _reader.GetString(15),
-                              Extension = _reader.GetString(16),
-                              Fax = _reader.GetString(17),
-                              Title = _reader.GetString(18),
-                              Department = _reader.GetString(19),
-                              RoleID = _reader.GetByte(20),
-                              Role = _reader.GetString(21),
-                              RoleName = _reader.GetString(22),
-                              CreatedBy = _reader.GetString(23).ToUpperInvariant(),
-                              CreatedDate = _reader.GetDateTime(24),
-                              UpdatedBy = _reader.GetString(25).ToUpperInvariant(),
-                              UpdatedDate = _reader.GetDateTime(26),
-                              Notes = _reader.GetString(27)
-                          });
+            await _connection.OpenAsync();
+            _contacts = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving company contact. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
         }
 
-        await _connection.CloseAsync();
-        return _contacts;
+        return Ok(_contacts);
     }
 
-	/// <summary>
-	///     Asynchronously saves the details of a company's location to the database.
-	///     <para>
-	///         <br />This method is responsible for saving the details of a company's location to the database.
-	///         It takes as parameters a CompanyLocations object, which contains the details of the location to be saved,
-	///         and a string representing the user performing the operation.
-	///         The method first checks if the location parameter is null, and if it is, it returns null.
-	///         Otherwise, it creates a new SQL connection and opens it.
-	///         It then creates a new SQL command with the stored procedure name "SaveCompanyLocation" and adds the details of
-	///         the
-	///         location and user to the command parameters.
-	///         The method then executes the command asynchronously and reads the returned rows, adding each row to a list of
-	///         CompanyLocations objects.
-	///         Finally, it closes the SQL connection and returns the list of CompanyLocations objects.
-	///         This method is asynchronous and returns a Task that wraps a list of CompanyLocations objects.
-	///     </para>
-	/// </summary>
-	/// <param name="location">
-	///     The details of the company's location to save.
-	/// </param>
-	/// <param name="user">
-	///     The user performing the save operation.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains a list of company locations.
-	///     If the location parameter is null, the method returns null.
-	/// </returns>
-	[HttpPost]
-    public async Task<List<CompanyLocations>> SaveCompanyLocation(CompanyLocations location, string user)
+    /// <summary>
+    ///     Asynchronously saves the details of a company's location to the database.
+    ///     <para>
+    ///         <br />This method is responsible for saving the details of a company's location to the database.
+    ///         It takes as parameters a CompanyLocations object, which contains the details of the location to be saved,
+    ///         and a string representing the user performing the operation.
+    ///         The method first checks if the location parameter is null, and if it is, it returns null.
+    ///         Otherwise, it creates a new SQL connection and opens it.
+    ///         It then creates a new SQL command with the stored procedure name "SaveCompanyLocation" and adds the details of
+    ///         the
+    ///         location and user to the command parameters.
+    ///         The method then executes the command asynchronously and reads the returned rows, adding each row to a list of
+    ///         CompanyLocations objects.
+    ///         Finally, it closes the SQL connection and returns the list of CompanyLocations objects.
+    ///         This method is asynchronous and returns a Task that wraps a list of CompanyLocations objects.
+    ///     </para>
+    /// </summary>
+    /// <param name="location">
+    ///     The details of the company's location to save.
+    /// </param>
+    /// <param name="user">
+    ///     The user performing the save operation.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of company locations.
+    ///     If the location parameter is null, the method returns null.
+    /// </returns>
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveCompanyLocation(CompanyLocations location, string user)
     {
         if (location == null)
         {
-            return null;
+            return Ok("[]");
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
 
         await using SqlCommand _command = new("SaveCompanyLocation", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -499,57 +427,43 @@ public class CompanyController : ControllerBase
         _command.Bit("isPrimaryLocation", location.PrimaryLocation);
         _command.Varchar("User", 10, user);
 
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-        List<CompanyLocations> _locations = [];
-
-        while (await _reader.ReadAsync())
+        string _locations = "[]";
+        try
         {
-            _locations.Add(new()
-                           {
-                               ID = _reader.GetInt32(0),
-                               CompanyID = _reader.GetInt32(1),
-                               CompanyName = _reader.GetString(2),
-                               StreetName = _reader.GetString(3),
-                               City = _reader.GetString(4),
-                               StateID = _reader.GetByte(5),
-                               State = _reader.GetString(6),
-                               ZipCode = _reader.GetString(7),
-                               EmailAddress = _reader.GetString(8),
-                               Phone = _reader.GetString(9),
-                               Extension = _reader.GetString(10),
-                               Fax = _reader.GetString(11),
-                               PrimaryLocation = _reader.GetBoolean(12),
-                               Notes = _reader.GetString(13),
-                               CreatedBy = _reader.GetString(14).ToUpperInvariant(),
-                               CreatedDate = _reader.GetDateTime(15),
-                               UpdatedBy = _reader.GetString(16).ToUpperInvariant(),
-                               UpdatedDate = _reader.GetDateTime(17)
-                           });
+            await _connection.OpenAsync();
+            _locations = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving company location. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
         }
 
-        await _connection.CloseAsync();
         return _locations;
     }
 
-	/// <summary>
-	///     This asynchronous method, SearchCompanies, is designed to interact with the database to fetch a list of companies
-	///     based on a provided search string.
-	///     It accepts a single parameter, which is a string representing the company name or part of it.
-	///     The method calls a stored procedure named 'SearchCompanies' in the database, passing the search string as a
-	///     parameter.
-	///     The stored procedure is expected to return a list of company names that match the search string.
-	///     The method then reads these company names and returns them as a list of strings.
-	///     If no matches are found, the method will return an empty list.
-	/// </summary>
-	/// <param name="filter">
-	///     The company name or part of it to search for.
-	/// </param>
-	/// <returns>
-	///     A task that represents the asynchronous operation. The task result contains a list of company names matching the
-	///     search string.
-	/// </returns>
-	[HttpGet]
+    /// <summary>
+    ///     This asynchronous method, SearchCompanies, is designed to interact with the database to fetch a list of companies
+    ///     based on a provided search string.
+    ///     It accepts a single parameter, which is a string representing the company name or part of it.
+    ///     The method calls a stored procedure named 'SearchCompanies' in the database, passing the search string as a
+    ///     parameter.
+    ///     The stored procedure is expected to return a list of company names that match the search string.
+    ///     The method then reads these company names and returns them as a list of strings.
+    ///     If no matches are found, the method will return an empty list.
+    /// </summary>
+    /// <param name="filter">
+    ///     The company name or part of it to search for.
+    /// </param>
+    /// <returns>
+    ///     A task that represents the asynchronous operation. The task result contains a list of company names matching the
+    ///     search string.
+    /// </returns>
+    [HttpGet]
     public async Task<List<KeyValues>> SearchCompanies(string filter)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);

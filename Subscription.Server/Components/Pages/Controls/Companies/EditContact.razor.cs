@@ -93,7 +93,8 @@ public partial class EditContact
                                                  {
                                                      {"companyID", Model.CompanyID.ToString()}
                                                  };
-        Location = await General.GetRest<List<LocationDrop>>("Company/GetLocationList", _parameters);
+        string _returnValue = await General.ExecuteRest<string>("Company/GetLocationList", _parameters,null, false);
+        Location = General.DeserializeObject<List<LocationDrop>>(_returnValue);
         CompanyContactEditForm.EditContext?.Validate();
     }
 

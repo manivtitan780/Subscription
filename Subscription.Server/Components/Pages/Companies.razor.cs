@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     01-07-2025 15:01
+// Last Updated On:     01-07-2025 18:01
 // *****************************************/
 
 #endregion
@@ -318,18 +318,9 @@ public partial class Companies
                                                                                                                                              {"user", User}
                                                                                                                                          };
                                                                                                 ReturnCompanyDetails _restResponse =
-                                                                                                    await General.ExecuteGet<ReturnCompanyDetails>("Company/GetCompanyDetails",
-                                                                                                                                                   _parameters);
+                                                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
+                                                                                                                                                    false);
 
-                                                                                                /*_companyDetails =
-                                                                                                    General.DeserializeObject<CompanyDetails>(_restResponse["Company"]?.ToString() ?? string.Empty);
-                                                                                                EditConCompany = new(_companyDetails);
-                                                                                                _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"]);
-                                                                                                _companyDocuments =
-                                                                                                    General.DeserializeObject<List<CompanyDocuments>>(_restResponse["Documents"]);
-                                                                                                _companyLocations =
-                                                                                                    General.DeserializeObject<List<CompanyLocations>>(_restResponse["Locations"]);
-                                                                                                SetupAddress();*/
                                                                                                 EditConCompany = new(_companyDetails);
                                                                                                 try
                                                                                                 {
@@ -395,7 +386,6 @@ public partial class Companies
                                                     await General.DisplaySpinner(Spinner, false);
 
                                                     await CompanyEditDialog.ShowDialog();
-                                                    //StateHasChanged();
                                                 });
 
     private Task EditCompanyContact(int contact)
@@ -605,17 +595,17 @@ public partial class Companies
                                                                                                          {
                                                                                                              {"user", User}
                                                                                                          };
-                                                                List<CompanyContacts> _response =
-                                                                    await General.PostRest<List<CompanyContacts>>("Company/SaveCompanyContact", _parameters, SelectedContact);
+                                                                string _response = await General.ExecuteRest<string>("Company/SaveCompanyContact", _parameters, SelectedContact);
 
-                                                                _companyContacts = _response;
+                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                {
+                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_response);
+                                                                }
 
                                                                 if (_target == null)
                                                                 {
                                                                     await Grid.Refresh();
                                                                 }
-
-                                                                StateHasChanged();
                                                             });
 
     private async Task SaveLocation() => await ExecuteMethod(async () =>
@@ -624,10 +614,12 @@ public partial class Companies
                                                                                                           {
                                                                                                               {"user", User}
                                                                                                           };
-                                                                 List<CompanyLocations> _response =
-                                                                     await General.PostRest<List<CompanyLocations>>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
-
-                                                                 _companyLocations = _response;
+                                                                 string _response = await General.ExecuteRest<string>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
+                                                                 
+                                                                 if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                 {
+                                                                     _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_response);
+                                                                 }
 
                                                                  if (_target != null)
                                                                  {
@@ -647,8 +639,7 @@ public partial class Companies
                                                                      await Grid.Refresh();
                                                                  }
 
-                                                                 //await Grid.Refresh();
-                                                                 StateHasChanged();
+                                                                 // StateHasChanged();
                                                              });
 
     private void SetupAddress(bool useLocation = false)
@@ -950,7 +941,7 @@ public partial class Companies
                         Roles = General.DeserializeObject<List<IntValues>>(_values["Roles"]);
                     }
 
-                    ReturnGrid _return = await General.ExecuteGet<ReturnGrid>("Company/GetGridCompanies", null, SearchModel);
+                    ReturnGrid _return = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
                     _dataSource = General.DeserializeObject<List<Company>>(_return.Data);
                     Count = _return.Count;
                     if (_dataSource == null)
