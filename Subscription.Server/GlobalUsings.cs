@@ -60,6 +60,8 @@ global using FluentStorage;
 global using FluentStorage.Blobs;
 global using FluentStorage.Azure.Blobs;
 
+global using Subscription.Model.Return;
+
 global using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
 
 //global using Syncfusion.Blazor.SfPdfViewer;

@@ -8,7 +8,7 @@
 // File Name:           CompanyController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-08-2024 15:02
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     01-07-2025 15:01
 // *****************************************/
 
 #endregion
@@ -89,8 +89,8 @@ public class CompanyController : ControllerBase
 	/// <returns>
 	///     A dictionary containing the details of the company, its contacts, requisitions, and documents.
 	/// </returns>
-	[HttpGet]
-    public async Task<Dictionary<string, object>> GetCompanyDetails(int companyID, string user)
+	[HttpPost]
+    public async Task<ActionResult<ReturnCompanyDetails>> GetCompanyDetails(int companyID, string user)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
 
@@ -100,33 +100,34 @@ public class CompanyController : ControllerBase
         _command.Varchar("User", 10, user);
 
         await _connection.OpenAsync();
-		string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]";
+
+        string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]";
         try
         {
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             while (await _reader.ReadAsync())
-			{
-				_company = _reader.NString(0);
-			}
+            {
+                _company = _reader.NString(0);
+            }
 
             await _reader.NextResultAsync(); //Company Locations
-			while (await _reader.ReadAsync())
+            while (await _reader.ReadAsync())
             {
-				_locations = _reader.NString(0);
+                _locations = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Company Contacts
-			while (await _reader.ReadAsync())
+            while (await _reader.ReadAsync())
             {
-				_contacts = _reader.NString(0);
+                _contacts = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Company Documents
             if (_reader.HasRows)
             {
-				while (await _reader.ReadAsync())
+                while (await _reader.ReadAsync())
                 {
-					_documents = _reader.NString(0);
+                    _documents = _reader.NString(0);
                 }
             }
 
@@ -135,11 +136,19 @@ public class CompanyController : ControllerBase
             await _connection.CloseAsync();
         }
         catch (Exception ex)
-		{
-			Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
-		}
+        {
+            Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
 
-        return new()
+        return Ok(new ReturnCompanyDetails
+                  {
+                      Company = _company,
+                      Locations = _locations,
+                      Contacts = _contacts,
+                      Documents = _documents
+                  });
+        /*return new()
                {
                    {
                        "Company", _company
@@ -153,7 +162,7 @@ public class CompanyController : ControllerBase
                    {
                        "Documents", _documents
                    }
-               };
+               };*/
     }
 
 	/// <summary>
@@ -171,60 +180,54 @@ public class CompanyController : ControllerBase
 	///     - "Companies": A list of companies matching the search parameters.
 	///     - "Count": The total number of companies matching the search parameters.
 	/// </returns>
-	[HttpGet]
-    public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
+	/*public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)*/
+    [HttpPost]
+    public async Task<ActionResult<ReturnGrid>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
-		await using SqlConnection _connection = new(Start.ConnectionString);
-		await using SqlCommand _command = new("GetCompanies", _connection);
-		int _count = 0;
-		string _companies = "[]";
-		try
-		{
-			_command.CommandType = CommandType.StoredProcedure;
-			_command.Int("RecordsPerPage", searchModel.ItemCount);
-			_command.Int("PageNumber", searchModel.Page);
-			_command.Int("SortColumn", searchModel.SortField);
-			_command.TinyInt("SortDirection", searchModel.SortDirection);
-			_command.Varchar("Name", 30, searchModel.CompanyName);
-			//_command.Varchar("Phone", 20, searchModel.Phone);
-			//_command.Varchar("Email", 255, searchModel.EmailAddress);
-			//_command.Varchar("State", 255, searchModel.State);
-			//_command.Bit("MyCompanies", searchModel.MyCompanies);
-			//_command.Varchar("Status", 50, searchModel.Status);
-			_command.Varchar("UserName", 10, ""); //searchModel.User);
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("GetCompanies", _connection);
+        int _count = 0;
+        string _companies = "[]";
+        try
+        {
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("RecordsPerPage", searchModel.ItemCount);
+            _command.Int("PageNumber", searchModel.Page);
+            _command.Int("SortColumn", searchModel.SortField);
+            _command.TinyInt("SortDirection", searchModel.SortDirection);
+            _command.Varchar("Name", 30, searchModel.CompanyName);
+            //_command.Varchar("Phone", 20, searchModel.Phone);
+            //_command.Varchar("Email", 255, searchModel.EmailAddress);
+            //_command.Varchar("State", 255, searchModel.State);
+            //_command.Bit("MyCompanies", searchModel.MyCompanies);
+            //_command.Varchar("Status", 50, searchModel.Status);
+            _command.Varchar("UserName", 10, ""); //searchModel.User);
 
-			await _connection.OpenAsync();
-			await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-			await _reader.ReadAsync();
-			_count = _reader.GetInt32(0);
+            await _reader.ReadAsync();
+            _count = _reader.GetInt32(0);
 
-			await _reader.NextResultAsync();
-			while (await _reader.ReadAsync())
-			{
-				_companies = _reader.NString(0);
-			}
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _companies = _reader.NString(0);
+            }
 
-			await _reader.CloseAsync();
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
-		}
-		finally
-		{
-			await _connection.CloseAsync();
-		}
+            await _reader.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
 
-		return new()
-			   {
-				   {
-					   "Companies", _companies
-				   },
-				   {
-					   "Count", _count
-				   }
-			   };
+        return Ok(new ReturnGrid {Data = _companies, Count = _count});
     }
 
 	/// <summary>
@@ -345,7 +348,7 @@ public class CompanyController : ControllerBase
 
         await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-		while (await _reader.ReadAsync())
+        while (await _reader.ReadAsync())
         {
             _returnCode = _reader.GetInt32(0);
         }
@@ -403,7 +406,7 @@ public class CompanyController : ControllerBase
 
         List<CompanyContacts> _contacts = [];
 
-		while (await _reader.ReadAsync())
+        while (await _reader.ReadAsync())
         {
             _contacts.Add(new()
                           {
@@ -500,7 +503,7 @@ public class CompanyController : ControllerBase
 
         List<CompanyLocations> _locations = [];
 
-		while (await _reader.ReadAsync())
+        while (await _reader.ReadAsync())
         {
             _locations.Add(new()
                            {

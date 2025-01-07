@@ -36,5 +36,6 @@ global using Serilog.Sinks.MSSqlServer;
 
 global using Subscription.API;
 global using Subscription.API.Code;
+global using Subscription.Model.Return;
 
 #endregion

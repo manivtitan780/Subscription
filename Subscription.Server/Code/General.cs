@@ -110,6 +110,32 @@ public class General
         }
     }
 
+    public static async Task<T> ExecuteGet<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null)
+    {
+        using RestClient _client = new(Start.APIHost);
+        RestRequest _request = new(endpoint)
+                              {
+                                  Method = Method.Post,
+                                  RequestFormat = DataFormat.Json
+                              };
+        if (jsonBody != null)
+        {
+            _request.AddJsonBody(jsonBody);
+        }
+
+        if (parameters != null)
+        {
+            foreach (KeyValuePair<string, string> _parameter in parameters)
+            {
+                _request.AddQueryParameter(_parameter.Key, _parameter.Value);
+            }
+        }
+
+        RestResponse<T> response = await _client.ExecuteAsync<T>(_request);
+
+        return response.IsSuccessful ? response.Data : default;
+    }
+
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
     ///     immediately.
