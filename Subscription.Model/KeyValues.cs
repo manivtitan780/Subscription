@@ -13,6 +13,7 @@
 
 #endregion
 
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 namespace Subscription.Model;
 
 public class KeyValues

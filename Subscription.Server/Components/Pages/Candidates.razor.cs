@@ -8,14 +8,8 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-04-2025 16:01
+// Last Updated On:     01-08-2025 19:01
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using ActionCompleteEventArgs = Syncfusion.Blazor.Inputs.ActionCompleteEventArgs;
 
 #endregion
 
@@ -36,7 +30,9 @@ public partial class Candidates
     private List<CandidateSkills> _candidateSkillsObject = [];
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
+
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [], _workflow = [];
+
     //private CandidateRatingMPC _ratingMPC = new();
     private List<Role> _roles;
     private int _selectedTab;
@@ -879,55 +875,56 @@ public partial class Candidates
                                                                               {"candidateID", _target.ID.ToString()},
                                                                               {"roleID", "RS"}
                                                                           };
-                                 Dictionary<string, object> _response = await General.GetRest<Dictionary<string, object>>("Candidate/GetCandidateDetails", _parameters);
+                                 ReturnCandidateDetails _response = await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters, null, false);
 
-                                 if (_response != null)
+                                 if (_response.Candidate.NotNullOrWhiteSpace() && _response.Candidate != "[]")
                                  {
-                                     if (_response["Candidate"].ToString().NotNullOrWhiteSpace() && _response["Candidate"].ToString() != "[]")
-                                     {
-                                         _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response["Candidate"].ToString());
-                                     }
-
-                                     if (_response["Skills"].ToString().NotNullOrWhiteSpace() && _response["Skills"].ToString() != "[]")
-                                     {
-                                         _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"].ToString());
-                                     }
-
-                                     if (_response["Education"].ToString().NotNullOrWhiteSpace() && _response["Education"].ToString() != "[]")
-                                     {
-                                         _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"].ToString());
-                                     }
-
-                                     if (_response["Experience"].ToString().NotNullOrWhiteSpace() && _response["Experience"].ToString() != "[]")
-                                     {
-                                         _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"].ToString());
-                                     }
-
-                                     if (_response["Notes"].ToString().NotNullOrWhiteSpace() && _response["Notes"].ToString() != "[]")
-                                     {
-                                         _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"].ToString());
-                                     }
-
-                                     if (_response["Document"].ToString().NotNullOrWhiteSpace() && _response["Document"].ToString() != "[]")
-                                     {
-                                         _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"].ToString());
-                                     }
-
-                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"].ToString());
-                                     _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["Rating"].ToString());
-                                     _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPC"].ToString());
-                                     RatingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["RatingMPC"].ToString()) ?? new();
-                                     GetMPCDate();
-                                     GetMPCNote();
-                                     GetRatingDate();
-                                     GetRatingNote();
-                                     SetupAddress();
-                                     SetCommunication();
-                                     SetEligibility();
-                                     SetJobOption();
-                                     SetTaxTerm();
-                                     SetExperience();
+                                     _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate);
                                  }
+
+                                 if (_response.Skills.NotNullOrWhiteSpace() && _response.Skills != "[]")
+                                 {
+                                     _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills);
+                                 }
+
+                                 if (_response.Education.NotNullOrWhiteSpace() && _response.Education != "[]")
+                                 {
+                                     _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education);
+                                 }
+
+                                 if (_response.Experience.NotNullOrWhiteSpace() && _response.Experience != "[]")
+                                 {
+                                     _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience);
+                                 }
+
+                                 if (_response.Notes.NotNullOrWhiteSpace() && _response.Notes != "[]")
+                                 {
+                                     _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes);
+                                 }
+
+                                 if (_response.Documents.NotNullOrWhiteSpace() && _response.Documents != "[]")
+                                 {
+                                     _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents);
+                                 }
+
+                                 if (_response.Activity.NotNullOrWhiteSpace() && _response.Activity != "[]")
+                                 {
+                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity);
+                                 }
+
+                                 _candidateRatingObject = _response.Rating;
+                                 _candidateMPCObject = _response.MPC;
+                                 RatingMPC = _response.RatingMPC;
+                                 GetMPCDate();
+                                 GetMPCNote();
+                                 GetRatingDate();
+                                 GetRatingNote();
+                                 SetupAddress();
+                                 SetCommunication();
+                                 SetEligibility();
+                                 SetJobOption();
+                                 SetTaxTerm();
+                                 SetExperience();
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 7 : 0;
                                  _formattedExists = _target.FormattedResume;
@@ -1218,6 +1215,7 @@ public partial class Candidates
         if (_candidateDetailsObject.MPCNotes == "")
         {
             MPCDate = _mpcDate.ToMarkupString();
+            return;
         }
 
         CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
@@ -1240,6 +1238,7 @@ public partial class Candidates
         if (_candidateDetailsObject.MPCNotes == "")
         {
             MPCNote = _mpcNote.ToMarkupString();
+            return;
         }
 
         CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
@@ -1262,6 +1261,7 @@ public partial class Candidates
         if (_candidateDetailsObject.RateNotes == "")
         {
             RatingDate = _ratingDate.ToMarkupString();
+            return;
         }
 
         CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
@@ -1286,6 +1286,7 @@ public partial class Candidates
         if (_candidateDetailsObject.RateNotes == "")
         {
             RatingNote = _ratingNote.ToMarkupString();
+            return;
         }
 
         CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
@@ -1466,13 +1467,14 @@ public partial class Candidates
                                                                                                    {"emailAddress", "maniv@titan-techs.com"}
                                                                                                };
 
-                                                      _ = await General.PostRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
+                                                      _ = await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
 
                                                       _candidateDetailsObject = _candidateDetailsObjectClone.Copy();
                                                       _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";
                                                       _target.Phone = _candidateDetailsObject.Phone1.FormatPhoneNumber();
                                                       _target.Email = _candidateDetailsObject.Email;
                                                       _target.Location = $"{_candidateDetailsObject.City}, {GetState(_candidateDetailsObject.StateID)}, {_candidateDetailsObject.ZipCode}";
+                                                      //TODO: Set the State properly
                                                       _target.Updated = DateTime.Today.CultureDate() + "[ADMIN]";
                                                       _target.Status = "Available";
                                                       SetupAddress();
@@ -1548,7 +1550,7 @@ public partial class Candidates
                                                                                                                             {"candidateID", _target.ID.ToString()},
                                                                                                                             {"user", User}
                                                                                                                         };
-                                                                               string _response = await General.PostRest<string>("Candidate/SaveEducation", _parameters, _candidateEducation);
+                                                                               string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters, _candidateEducation);
                                                                                if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                {
                                                                                    return;
@@ -1582,7 +1584,7 @@ public partial class Candidates
                                                                                                                               {"candidateID", _target.ID.ToString()},
                                                                                                                               {"user", User}
                                                                                                                           };
-                                                                                 string _response = await General.PostRest<string>("Candidate/SaveExperience", _parameters, _candidateExperience);
+                                                                                 string _response = await General.ExecuteRest<string>("Candidate/SaveExperience", _parameters, _candidateExperience);
                                                                                  if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                  {
                                                                                      return;
@@ -1644,7 +1646,7 @@ public partial class Candidates
                                                                                                                   {"candidateID", _target.ID.ToString()},
                                                                                                                   {"user", User}
                                                                                                               };
-                                                                     string _response = await General.PostRest<string>("Candidate/SaveNotes", _parameters, _candidateNotes);
+                                                                     string _response = await General.ExecuteRest<string>("Candidate/SaveNotes", _parameters, _candidateNotes);
                                                                      if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                      {
                                                                          return;
@@ -1708,7 +1710,7 @@ public partial class Candidates
                                                                                                                     {"user", User}
                                                                                                                 };
 
-                                                                       string _response = await General.PostRest<string>("Candidate/SaveSkill", _parameters, _skill);
+                                                                       string _response = await General.ExecuteRest<string>("Candidate/SaveSkill", _parameters, _skill);
                                                                        if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                        {
                                                                            return;
@@ -2046,28 +2048,16 @@ public partial class Candidates
                 object _candidateReturn = null;
                 try
                 {
-                    Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Candidate/GetGridCandidates", null, SearchModel);
+                    (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
 
-                    if (_restResponse == null)
-                    {
-                        _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = _dataSource,
-                                                                   Count = 0 /*_count*/
-                                                               } : _dataSource;
-                    }
-                    else
-                    {
-                        _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_restResponse["Candidates"].ToString() ?? string.Empty);
+                    _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
 
-                        int _count = _restResponse["Count"].ToInt32();
-                        Count = _count;
-                        _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = _dataSource,
-                                                                   Count = _count /*_count*/
-                                                               } : _dataSource;
-                    }
+                    Count = _count;
+                    _candidateReturn = dm.RequiresCounts ? new DataResult
+                                                           {
+                                                               Result = _dataSource,
+                                                               Count = _count /*_count*/
+                                                           } : _dataSource;
                 }
                 catch
                 {

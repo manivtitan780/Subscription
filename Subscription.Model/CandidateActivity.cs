@@ -83,7 +83,7 @@ public class CandidateActivity
 		Color = color;
 		Icon = icon;
 		DoRoleHaveRight = doRoleHaveRight;
-		LastActionBy = lastActionBy;
+		LastActionBy = lastActionBy;	
 		RequisitionID = requisitionID;
 		CandidateUpdatedBy = candidateUpdatedBy;
 		CountSubmitted = countSubmitted;

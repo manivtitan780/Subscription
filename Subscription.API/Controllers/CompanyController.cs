@@ -464,29 +464,39 @@ public class CompanyController : ControllerBase
     ///     search string.
     /// </returns>
     [HttpGet]
-    public async Task<List<KeyValues>> SearchCompanies(string filter)
+    public async Task<ActionResult<string>> SearchCompanies(string filter)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SearchCompanies", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Company", 30, filter);
 
-        await _connection.OpenAsync();
-
-        List<KeyValues> companyNames = [];
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-        while (await _reader.ReadAsync())
+        string _companies = "[]";
+        try
         {
-            companyNames.Add(new()
-                             {
-                                 Key = _reader.GetString(0),
-                                 Value = _reader.GetString(0)
-                             });
+            await _connection.OpenAsync();
+
+            _companies = (await _command.ExecuteScalarAsync())?.ToString();
+
+            /*while (await _reader.ReadAsync())
+            {
+                companyNames.Add(new()
+                                 {
+                                     Key = _reader.GetString(0),
+                                     Value = _reader.GetString(0)
+                                 });
+            }*/
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error searching companies. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
         }
 
-        await _connection.CloseAsync();
-
-        return companyNames;
+        return _companies;
     }
 }

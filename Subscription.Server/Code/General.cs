@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     01-03-2025 20:01
+// Last Updated On:     01-08-2025 21:01
 // *****************************************/
 
 #endregion
@@ -110,32 +110,6 @@ public class General
         }
     }
 
-    public static async Task<T> ExecuteRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, bool isPost = true)
-    {
-        using RestClient _client = new(Start.APIHost);
-        RestRequest _request = new(endpoint)
-                              {
-                                  Method = isPost ? Method.Post : Method.Get,
-                                  RequestFormat = DataFormat.Json
-                              };
-        if (jsonBody != null)
-        {
-            _request.AddJsonBody(jsonBody);
-        }
-
-        if (parameters != null)
-        {
-            foreach (KeyValuePair<string, string> _parameter in parameters)
-            {
-                _request.AddQueryParameter(_parameter.Key, _parameter.Value);
-            }
-        }
-
-        RestResponse<T> response = await _client.ExecuteAsync<T>(_request);
-
-        return response.IsSuccessful ? response.Data : default;
-    }
-
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
     ///     immediately.
@@ -153,15 +127,51 @@ public class General
             {
                 await task();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //logger.LogError(_ex, $"Exception occurred at: [{DateTime.Today.ToString(CultureInfo.InvariantCulture)}]{Environment.NewLine}{new('-', 40)}{Environment.NewLine}");
+                //Log.Error(ex, "Error occurred. {ExceptionMessage}", ex.Message);
             }
             finally
             {
                 semaphore.Release();
             }
         }
+    }
+
+    public static async Task<T> ExecuteRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, bool isPost = true, byte[] fileArray = null, string fileName = "",
+                                               string parameterName = "file")
+    {
+        using RestClient _client = new(Start.APIHost);
+        RestRequest _request = new(endpoint, isPost ? Method.Post : Method.Get)
+                               {
+                                   RequestFormat = DataFormat.Json
+                               };
+        if (fileName.NotNullOrWhiteSpace())
+        {
+            _request.AlwaysMultipartFormData = true;
+        }
+
+        if (jsonBody != null)
+        {
+            _request.AddJsonBody(jsonBody);
+        }
+
+        if (parameters != null)
+        {
+            foreach (KeyValuePair<string, string> _parameter in parameters)
+            {
+                _request.AddQueryParameter(_parameter.Key, _parameter.Value);
+            }
+        }
+
+        if (fileArray != null)
+        {
+            _request.AddFile(parameterName, fileArray, fileName, "application/octet-stream");
+        }
+
+        RestResponse<T> response = await _client.ExecuteAsync<T>(_request);
+
+        return response.IsSuccessful ? response.Data : default;
     }
 
     /// <summary>
@@ -200,25 +210,20 @@ public class General
                                                      {
                                                          {"filter", dm.Where[0].value.ToString()}
                                                      };
-            List<KeyValues> _response = await GetRest<List<KeyValues>>(endpoint, _parameters);
+            string _response = await ExecuteRest<string>(endpoint, _parameters, null, false);
 
-            int _count = 0;
-            if (_response == null)
+            if (_response.NotNullOrWhiteSpace() && _response != "[]")
             {
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _dataSource,
-                                               Count = _count
-                                           } : _dataSource;
+                _dataSource = JsonConvert.DeserializeObject<List<KeyValues>>(_response);
             }
 
-            _count = _response.Count;
+            int _count = _dataSource.Count;
 
             return dm.RequiresCounts ? new DataResult
                                        {
-                                           Result = _response,
+                                           Result = _dataSource,
                                            Count = _count
-                                       } : _response;
+                                       } : _dataSource;
         }
         catch
         {

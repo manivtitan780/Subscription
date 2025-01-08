@@ -312,8 +312,9 @@ public partial class DownloadsPanel
                                                      {"documentID", documentID.ToString()}
                                                  };
 
-        DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidate/DownloadFile", _parameters);
-
+        string _response = await General.ExecuteRest<string>("Candidate/DownloadFile", _parameters, null, false);
+        DocumentDetails _restResponse = JsonConvert.DeserializeObject<DocumentDetails>(_response);
+        
         if (_restResponse != null)
         {
             string _location = _restResponse.DocumentLocation;

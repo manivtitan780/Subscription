@@ -17,6 +17,9 @@
 
 using Microsoft.AspNetCore.ResponseCompression;
 
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
+
 using Subscription.Server.Components;
 
 #endregion
@@ -47,6 +50,16 @@ _builder.Services.AddResponseCompression(options =>
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+
+/*
+Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Error()
+            .WriteTo.Console()
+            .WriteTo.MSSqlServer(_config.GetConnectionString("DBConnect"),
+                                 new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true},
+                                 columnOptions: columnOptions).CreateLogger();
+
+_builder.Host.UseSerilog();*/
 
 WebApplication _app = _builder.Build();
 
