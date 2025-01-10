@@ -5,81 +5,81 @@
 <GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Title)"
             NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 	<GridContent>
-	<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" @ref="Grid" 
-	        TValue="Requisition" Width="100%">
-		<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
-		<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
-		<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/>
-		<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>@* OnActionBegin="OnActionBegin"*@
-		<GridColumns>
-			<GridSortSettings AllowUnsort="false">
-				@*<GridSortColumns>
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" @ref="Grid"
+		        TValue="Requisition" Width="100%">
+			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+			<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/>
+			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>@* OnActionBegin="OnActionBegin"*@
+			<GridColumns>
+				<GridSortSettings AllowUnsort="false">
+					@*<GridSortColumns>
 					<GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
 				</GridSortColumns>*@
-			</GridSortSettings>
-			<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="12%">
-				<Template Context="aCon">
-					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Code</span>
+				</GridSortSettings>
+				<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="12%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Requisition _con)
+							{
+								<span style="color: @(_con.PriorityColor)">@_con.Code</span>
+							}
 						}
-					}
-				</Template>
-			</GridColumn>
-			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="24%">
-				<Template Context="aCon">
-					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Title</span>
+					</Template>
+				</GridColumn>
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="24%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Requisition _con)
+							{
+								<span style="color: @(_con.PriorityColor)">@_con.Title</span>
+							}
 						}
-					}
-				</Template>
-			</GridColumn>
-			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Company)" HeaderText="Company" Width="18%">
-				<Template Context="aCon">
-					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Company</span>
+					</Template>
+				</GridColumn>
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Company)" HeaderText="Company" Width="18%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Requisition _con)
+							{
+								<span style="color: @(_con.PriorityColor)">@_con.Company</span>
+							}
 						}
-					}
-				</Template>
-			</GridColumn>
-			<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="22%">
-				<Template Context="aCon">
-					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.JobOptions</span>
+					</Template>
+				</GridColumn>
+				<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="22%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Requisition _con)
+							{
+								<span style="color: @(_con.PriorityColor)">@_con.JobOptions</span>
+							}
 						}
-					}
-				</Template>
-			</GridColumn>
-			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="12%">
-				<Template Context="aCon">
-					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Updated</span>
+					</Template>
+				</GridColumn>
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="12%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Requisition _con)
+							{
+								<span style="color: @(_con.PriorityColor)">@_con.Updated</span>
+							}
 						}
-					}
-				</Template>
-			</GridColumn>
-			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Status)" HeaderText="Status" Width="12%">
-				<Template Context="aCon">
-					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Status</span>
+					</Template>
+				</GridColumn>
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Status)" HeaderText="Status" Width="12%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Requisition _con)
+							{
+								<span style="color: @(_con.PriorityColor)">@_con.Status</span>
+							}
 						}
-					}
-				</Template>
-			</GridColumn>
-		</GridColumns>
-		@*<GridTemplates Context="context">
+					</Template>
+				</GridColumn>
+			</GridColumns>
+			@*<GridTemplates Context="context">
 			<DetailTemplate>
 				<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
 				             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabRequisition" title="Action" Visible="@(UserRights.EditRequisition || UserRights.SubmitCandidate)">
@@ -137,7 +137,7 @@
 				</SfTab>
 			</DetailTemplate>
 		</GridTemplates>*@
-	</SfGrid>
+		</SfGrid>
 	</GridContent>
 </GridHeader>
 <SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fabric" ZIndex="12000"/>

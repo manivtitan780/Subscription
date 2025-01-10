@@ -8,19 +8,16 @@
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-21-2024 19:12
-// Last Updated On:     12-21-2024 20:12
+// Last Updated On:     01-09-2025 20:01
 // *****************************************/
 
 #endregion
 
 namespace Subscription.API.Controllers;
 
-public class RequisitionController() : Controller //IConfiguration configuration, IWebHostEnvironment env
+[ApiController, Route("api/[controller]/[action]")]
+public class RequisitionController : ControllerBase
 {
-    //private readonly IConfiguration _configuration = configuration;
-
-    //private readonly IWebHostEnvironment _hostingEnvironment = env;
-
     /// <summary>
     ///     Generates a location string based on the provided requisition details and state name.
     /// </summary>
@@ -186,15 +183,15 @@ public class RequisitionController() : Controller //IConfiguration configuration
                                          });
                 }
 
-                await _reader.NextResultAsync();
-                while (_reader.Read())
-                {
-                    _skills.Add(new()
-                                {
-                                    Value = _reader.GetInt32(0),
-                                    Text = _reader.GetString(1)
-                                });
-                }
+                // await _reader.NextResultAsync();
+                // while (_reader.Read())
+                // {
+                //     _skills.Add(new()
+                //                 {
+                //                     Value = _reader.GetInt32(0),
+                //                     Text = _reader.GetString(1)
+                //                 });
+                // }
 
                 await _reader.NextResultAsync();
                 while (_reader.Read())

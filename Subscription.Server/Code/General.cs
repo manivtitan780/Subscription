@@ -339,7 +339,8 @@ public class General
 
             Requisitions.Companies = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
             Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"].ToString() ?? string.Empty);
-            Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
+            //TODO: Use Cache
+            // Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
             Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_restResponse["StatusCount"].ToString() ?? string.Empty);
 
             return dm.RequiresCounts ? new DataResult
@@ -408,7 +409,14 @@ public class General
             _request.AddQueryParameter(_parameter.Key, _parameter.Value);
         }
 
-        return await _client.GetAsync<T>(_request);
+        try
+        {
+            return await _client.GetAsync<T>(_request);
+        }
+        catch (Exception ex)
+        {
+            return default;
+        }
     }
 
     /// <summary>
