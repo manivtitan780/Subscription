@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-08-2025 19:01
+// Last Updated On:     01-12-2025 18:01
 // *****************************************/
 
 #endregion
@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages;
 
 public partial class Candidates
 {
-    //private const string StorageName = "CandidatesGrid";
+    private const string StorageName = "CandidatesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CandidateActivity> _candidateActivityObject = [];
     private CandidateDetails _candidateDetailsObject = new(), _candidateDetailsObjectClone = new();
@@ -664,29 +664,21 @@ public partial class Candidates
     /// <param name="actionCompleteEventArgs">The arguments associated with the action completion event.</param>
     private void AfterDocument(ActionCompleteEventArgs actionCompleteEventArgs) => DialogDocument.EnableButtons();*/
 
-    private static async Task AllAlphabets()
+    private async Task AllAlphabets()
     {
         SearchModel.Name = "";
         SearchModel.Page = 1;
+        await SaveStorage();
         await Grid.Refresh();
     }
 
-    private static async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
+    private async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
     {
         SearchModel.Name = filter.Value;
         SearchModel.Page = 1;
+        await SaveStorage();
         await Grid.Refresh();
     }
-
-    /*/// <summary>
-    ///     This method is invoked before a document is uploaded in the Candidate page.
-    ///     It disables the buttons in the document dialog to prevent further actions during the upload process.
-    /// </summary>
-    /// <param name="args">Event arguments for the BeforeUpload event.</param>
-    private void BeforeDocument(BeforeUploadEventArgs args)
-    {
-        DialogDocument.DisableButtons();
-    }*/
 
     /// <summary>
     ///     Clears the filter applied to the candidates.
@@ -699,6 +691,7 @@ public partial class Candidates
     {
         SearchModel.Clear();
         SearchModel.User = User;
+        await SaveStorage();
         await Grid.Refresh();
     }
 
@@ -1198,6 +1191,7 @@ public partial class Candidates
                             {
                                 SearchModel.Name = alphabet.ToString();
                                 SearchModel.Page = 1;
+                                await SaveStorage();
                                 await Grid.Refresh();
                             });
     }
@@ -1344,6 +1338,8 @@ public partial class Candidates
                                     SearchModel.Page = page.CurrentPage;
                                     await Grid.Refresh();
                                 }
+
+                                await SaveStorage();
                             });
     }
 
@@ -1467,7 +1463,7 @@ public partial class Candidates
                                                                                                    {"emailAddress", "maniv@titan-techs.com"}
                                                                                                };
 
-                                                      _ = await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
+                                                      await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
 
                                                       _candidateDetailsObject = _candidateDetailsObjectClone.Copy();
                                                       _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";
@@ -1719,6 +1715,11 @@ public partial class Candidates
                                                                        _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
                                                                    }
                                                                });
+
+    private async Task SaveStorage()
+    {
+        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+    }
 
     /// <summary>
     ///     Sets the communication rating of the candidate.
@@ -1992,25 +1993,6 @@ public partial class Candidates
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
-
-    /*/// <summary>
-    ///     Handles the upload of a document for a candidate. It reads the file from the upload event,
-    ///     copies it into a memory stream, and stores the file name and MIME type for later use.
-    /// </summary>
-    /// <param name="file">The file upload event arguments which contain the file to be uploaded.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    private async Task UploadDocument(UploadChangeEventArgs file)
-    {
-        foreach (UploadFiles _file in file.Files)
-        {
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
-            await _str.CopyToAsync(AddedDocument);
-            FileName = _file.FileInfo.Name;
-            Mime = _file.FileInfo.MimeContentType;
-            AddedDocument.Position = 0;
-            _str.Close();
-        }
-    }*/
 
     public class CandidateAdaptor : DataAdaptor
     {

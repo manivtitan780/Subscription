@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     12-21-2024 15:12
+// Last Updated On:     01-11-2025 19:01
 // *****************************************/
 
 #endregion
@@ -420,11 +420,29 @@ public partial class Requisitions
                             {
                                 SearchModel.Title = alphabet.ToString();
                                 SearchModel.Page = 1;
+                                await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                 await Grid.Refresh();
                             });
     }
 
-    private Task GridPageChanging(GridPageChangingEventArgs arg) => Task.CompletedTask;
+    private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
+                                                                                   {
+
+                                                                                       if (page.CurrentPageSize != SearchModel.ItemCount)
+                                                                                       {
+                                                                                           SearchModel.ItemCount = page.CurrentPageSize;
+                                                                                           SearchModel.Page = 1;
+                                                                                           await Grid.GoToPageAsync(1);
+                                                                                       }
+                                                                                       else
+                                                                                       {
+                                                                                           SearchModel.Page = page.CurrentPage;
+                                                                                           await Grid.Refresh();
+                                                                                       }
+
+                                                                                       await SessionStorage.SetItemAsync(StorageName, SearchModel);
+
+                                                                                   });
 
     /// <summary>
     ///     Asynchronously initializes the Requisition component.

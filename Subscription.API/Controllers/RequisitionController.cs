@@ -8,7 +8,7 @@
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-21-2024 19:12
-// Last Updated On:     01-09-2025 20:01
+// Last Updated On:     01-11-2025 20:01
 // *****************************************/
 
 #endregion
@@ -78,134 +78,83 @@ public class RequisitionController : ControllerBase
     ///     count, and page.
     /// </returns>
     [HttpGet]
-    public async Task<Dictionary<string, object>> GetGridRequisitions([FromBody] RequisitionSearch reqSearch, bool getCompanyInformation = false, int requisitionID = 0, bool thenProceed = false,
-                                                                      string user = "")
+    public async Task<ActionResult<ReturnGridRequisition>> GetGridRequisitions([FromBody] RequisitionSearch reqSearch, bool getCompanyInformation = false, int requisitionID = 0,
+                                                                               bool thenProceed = false, string user = "")
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        List<Requisition> _requisitions = [];
+        await using SqlCommand _command = new("GetGridRequisitions", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Count", reqSearch.ItemCount);
+        _command.Int("Page", reqSearch.Page);
+        _command.Int("SortRow", reqSearch.SortField);
+        _command.TinyInt("SortOrder", reqSearch.SortDirection);
+        _command.Varchar("Code", 15, reqSearch.Code);
+        _command.Varchar("Title", 2000, reqSearch.Title);
+        _command.Varchar("Company", 2000, reqSearch.Company);
+        _command.Varchar("Option", 30, reqSearch.Option);
+        _command.Varchar("Status", 1000, reqSearch.Status);
+        _command.Varchar("CreatedBy", 10, reqSearch.CreatedBy);
+        _command.DateTime("CreatedOn", reqSearch.CreatedOn);
+        _command.DateTime("CreatedOnEnd", reqSearch.CreatedOnEnd);
+        _command.DateTime("Due", reqSearch.Due);
+        _command.DateTime("DueEnd", reqSearch.DueEnd);
+        _command.Bit("Recruiter", reqSearch.Recruiter);
+        _command.Bit("GetCompanyInformation", getCompanyInformation);
+        _command.Varchar("User", 10, reqSearch.User);
+        _command.Int("OptionalRequisitionID", requisitionID);
+        _command.Bit("ThenProceed", thenProceed);
+        _command.Varchar("LoggedUser", 10, user);
+
+        string _requisitions = "[]";
+        int _count = 0, _page = 0;
+        string _companies = "[]", _companyContacts = "[]", _statusCount = "[]";
         try
         {
-            await using SqlCommand _command = new("GetGridRequisitions", _connection);
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("Count", reqSearch.ItemCount);
-            _command.Int("Page", reqSearch.Page);
-            _command.Int("SortRow", reqSearch.SortField);
-            _command.TinyInt("SortOrder", reqSearch.SortDirection);
-            _command.Varchar("Code", 15, reqSearch.Code);
-            _command.Varchar("Title", 2000, reqSearch.Title);
-            _command.Varchar("Company", 2000, reqSearch.Company);
-            _command.Varchar("Option", 30, reqSearch.Option);
-            _command.Varchar("Status", 1000, reqSearch.Status);
-            _command.Varchar("CreatedBy", 10, reqSearch.CreatedBy);
-            _command.DateTime("CreatedOn", reqSearch.CreatedOn);
-            _command.DateTime("CreatedOnEnd", reqSearch.CreatedOnEnd);
-            _command.DateTime("Due", reqSearch.Due);
-            _command.DateTime("DueEnd", reqSearch.DueEnd);
-            _command.Bit("Recruiter", reqSearch.Recruiter);
-            _command.Bit("GetCompanyInformation", getCompanyInformation);
-            _command.Varchar("User", 10, reqSearch.User);
-            _command.Int("OptionalRequisitionID", requisitionID);
-            _command.Bit("ThenProceed", thenProceed);
-            _command.Varchar("LoggedUser", 10, user);
-
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-            int _count = 0, _page = 0;
 
             await _reader.ReadAsync();
             if (requisitionID > 0 && !thenProceed)
             {
-                try
-                {
-                    _page = _reader.GetInt32(0);
-                    await _reader.CloseAsync();
+                _page = _reader.GetInt32(0);
+                await _reader.CloseAsync();
 
-                    await _connection.CloseAsync();
-                }
-                catch (Exception)
-                {
-                    //
-                }
+                await _connection.CloseAsync();
 
-                return new()
-                       {
-                           {
-                               "Page", _page
-                           }
-                       };
+                return new ReturnGridRequisition {Page = _page};
             }
 
-            try
-            {
-                _count = _reader.GetInt32(0);
-            }
-            catch (Exception)
-            {
-                //
-            }
+            _count = _reader.GetInt32(0);
 
             await _reader.NextResultAsync();
 
             while (await _reader.ReadAsync())
             {
-                _requisitions.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetString(2), _reader.GetString(3), _reader.GetString(4), _reader.GetString(5),
-                                      $"{_reader.GetDateTime(6).CultureDate()} [{_reader.GetString(7)}]", _reader.GetDateTime(8).CultureDate(), _reader.GetString(9),
-                                      GetPriority(_reader.GetByte(10)), _reader.GetBoolean(11), _reader.GetBoolean(12), _reader.GetBoolean(13),
-                                      _reader.GetString(14), _reader.GetString(15), _reader.GetString(7)));
+                _requisitions = _reader.NString(0);
             }
-
-            List<Company> _companies = [];
-            List<CompanyContacts> _companyContacts = [];
-            List<IntValues> _skills = [];
-            List<KeyValues> _statusCount = [];
 
             await _reader.NextResultAsync();
             if (getCompanyInformation)
             {
-                while (_reader.Read())
+                while (await _reader.ReadAsync())
                 {
-                    _companies.Add(new()
-                                   {
-                                       ID = _reader.GetInt32(0),
-                                       CompanyName = _reader.GetString(1)
-                                   });
+                    _companies = _reader.NString(0);
                 }
 
                 await _reader.NextResultAsync();
-                while (_reader.Read())
+                while (await _reader.ReadAsync())
                 {
-                    _companyContacts.Add(new()
-                                         {
-                                             ID = _reader.GetInt32(0),
-                                             CompanyID = _reader.GetInt32(2),
-                                             FirstName = _reader.GetString(1)
-                                         });
+                    _companyContacts = _reader.NString(0);
                 }
 
-                // await _reader.NextResultAsync();
-                // while (_reader.Read())
-                // {
-                //     _skills.Add(new()
-                //                 {
-                //                     Value = _reader.GetInt32(0),
-                //                     Text = _reader.GetString(1)
-                //                 });
-                // }
-
                 await _reader.NextResultAsync();
-                while (_reader.Read())
+                while (await _reader.ReadAsync())
                 {
-                    _statusCount.Add(new()
-                                     {
-                                         Key = _reader.GetString(0),
-                                         Value = _reader.GetString(1)
-                                     });
+                    _statusCount = _reader.NString(0);
                 }
             }
             else
             {
-                await _reader.NextResultAsync();
                 await _reader.NextResultAsync();
                 await _reader.NextResultAsync();
             }
@@ -218,39 +167,26 @@ public class RequisitionController : ControllerBase
             }
 
             await _reader.CloseAsync();
-
-            await _connection.CloseAsync();
-
-            return new()
-                   {
-                       {
-                           "Requisitions", _requisitions
-                       },
-                       {
-                           "Companies", _companies
-                       },
-                       {
-                           "Contacts", _companyContacts
-                       },
-                       {
-                           "Skills", _skills
-                       },
-                       {
-                           "StatusCount", _statusCount
-                       },
-                       {
-                           "Count", _count
-                       },
-                       {
-                           "Page", _page
-                       }
-                   };
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error in GetGridRequisitions {ExceptionMessage}", ex.Message);
-            return null;
+            return StatusCode(500, ex.Message);
         }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(new
+                  {
+                      Count = _count,
+                      Requisitions = _requisitions,
+                      Companies = _companies,
+                      CompanyContacts = _companyContacts,
+                      Status = _statusCount,
+                      Page = _page
+                  });
     }
 
     /// <summary>
@@ -266,5 +202,33 @@ public class RequisitionController : ControllerBase
                    2 => "High",
                    _ => "Medium"
                };
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<string>> SearchRequisitions(string filter)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("SearchRequisitions", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Varchar("Requisition", 30, filter);
+
+        string _requisitions = "[]";
+        try
+        {
+            await _connection.OpenAsync();
+
+            _requisitions = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error searching requisitions. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_requisitions);
     }
 }

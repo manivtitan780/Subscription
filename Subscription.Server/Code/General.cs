@@ -17,7 +17,7 @@ namespace Subscription.Server.Code;
 
 public class General
 {
-    private static Dictionary<string, object> _restResponse;
+    // private static Dictionary<string, object> _restResponse;
 
     /// <summary>
     ///     Asynchronously executes the provided cancel method, hides the spinner and dialog, and enables the dialog buttons.
@@ -127,7 +127,7 @@ public class General
             {
                 await task();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Log.Error(ex, "Error occurred. {ExceptionMessage}", ex.Message);
             }
@@ -225,7 +225,7 @@ public class General
                                            Count = _count
                                        } : _dataSource;
         }
-        catch
+        catch (Exception ex)
         {
             return dm.RequiresCounts ? new DataResult
                                        {
@@ -298,20 +298,10 @@ public class General
                                                          {"thenProceed", thenProceed.ToString()},
                                                          {"user", user}
                                                      };
-            _restResponse = await GetRest<Dictionary<string, object>>("Requisition/GetGridRequisitions", _parameters, searchModel);
+            (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) = await ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, searchModel, false);
 
-            if (_restResponse == null)
-            {
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _dataSource,
-                                               Count = 0 /*_count*/
-                                           } : _dataSource;
-            }
-
-            _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_restResponse["Requisitions"].ToString() ?? string.Empty);
-            int _count = _restResponse["Count"].ToInt32();
-            searchModel.Page = _restResponse["Page"].ToInt32();
+            _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_requisitions);
+            searchModel.Page = _pageNumber;
             _page = searchModel.Page;
             Requisitions.Count = _count;
             Requisitions.PageCount = Math.Ceiling(_count / _itemCount.ToDecimal()).ToInt32();
@@ -337,11 +327,11 @@ public class General
                                            } : _dataSource;
             }
 
-            Requisitions.Companies = JsonConvert.DeserializeObject<List<Company>>(_restResponse["Companies"].ToString() ?? string.Empty);
-            Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_restResponse["Contacts"].ToString() ?? string.Empty);
+            Requisitions.Companies = JsonConvert.DeserializeObject<List<Company>>(_companies);
+            Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_companyContacts);
             //TODO: Use Cache
             // Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
-            Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_restResponse["StatusCount"].ToString() ?? string.Empty);
+            Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_status);
 
             return dm.RequiresCounts ? new DataResult
                                        {
@@ -349,7 +339,7 @@ public class General
                                            Count = _count /*_count*/
                                        } : _dataSource;
         }
-        catch
+        catch (Exception)
         {
             if (_dataSource == null)
             {
@@ -413,7 +403,7 @@ public class General
         {
             return await _client.GetAsync<T>(_request);
         }
-        catch (Exception ex)
+        catch
         {
             return default;
         }

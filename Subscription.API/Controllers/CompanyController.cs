@@ -8,7 +8,7 @@
 // File Name:           CompanyController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-08-2024 15:02
-// Last Updated On:     01-07-2025 16:01
+// Last Updated On:     01-11-2025 20:01
 // *****************************************/
 
 #endregion
@@ -138,7 +138,13 @@ public class CompanyController : ControllerBase
             return StatusCode(500, ex.Message);
         }
 
-        return Ok(new ReturnCompanyDetails {Company = _company, Locations = _locations, Contacts = _contacts, Documents = _documents});
+        return Ok(new
+                  {
+                      Company = _company,
+                      Locations = _locations,
+                      Contacts = _contacts,
+                      Documents = _documents
+                  });
     }
 
     /// <summary>
@@ -156,7 +162,6 @@ public class CompanyController : ControllerBase
     ///     - "Companies": A list of companies matching the search parameters.
     ///     - "Count": The total number of companies matching the search parameters.
     /// </returns>
-    /*public async Task<Dictionary<string, object>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)*/
     [HttpGet]
     public async Task<ActionResult<ReturnGrid>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
     {
@@ -203,7 +208,11 @@ public class CompanyController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(new ReturnGrid {Data = _companies, Count = _count});
+        return Ok(new
+                  {
+                      Data = _companies,
+                      Count = _count
+                  });
     }
 
     /// <summary>
@@ -443,7 +452,7 @@ public class CompanyController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return _locations;
+        return Ok(_locations);
     }
 
     /// <summary>
@@ -497,6 +506,6 @@ public class CompanyController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return _companies;
+        return Ok(_companies);
     }
 }

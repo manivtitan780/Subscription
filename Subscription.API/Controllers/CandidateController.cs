@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-28-2024 19:12
-// Last Updated On:     01-08-2025 19:01
+// Last Updated On:     01-11-2025 20:01
 // *****************************************/
 
 #endregion
@@ -106,7 +106,7 @@ public class CandidateController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return _documentDetails;
+        return Ok(_documentDetails);
     }
 
     /// <summary>
@@ -251,7 +251,7 @@ public class CandidateController : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error getting candidate details. {ExceptionMessage}", ex.Message);
-            return null;
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -374,7 +374,11 @@ public class CandidateController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(new ReturnGrid {Count = _count, Data = _candidates});
+        return Ok(new
+                  {
+                      Count = _count,
+                      Data = _candidates
+                  });
     }
 
     /// <summary>
@@ -586,13 +590,14 @@ public class CandidateController : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving education. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
         }
         finally
         {
             await _connection.CloseAsync();
         }
 
-        return _returnVal;
+        return Ok(_returnVal);
     }
 
     /// <summary>
@@ -645,13 +650,14 @@ public class CandidateController : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving experience. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
         }
         finally
         {
             await _connection.CloseAsync();
         }
 
-        return _returnVal;
+        return Ok(_returnVal);
     }
 
     /// <summary>
@@ -791,13 +797,14 @@ public class CandidateController : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving notes. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
         }
         finally
         {
             await _connection.CloseAsync();
         }
 
-        return _returnVal;
+        return Ok(_returnVal);
     }
 
     /// <summary>
@@ -852,26 +859,6 @@ public class CandidateController : ControllerBase
 
             await _connection.CloseAsync();
 
-            /*string[] _ratingArray = _ratingNotes?.Split('?');
-            _rating.AddRange((_ratingArray ?? [])
-                            .Select(str => new
-                                           {
-                                               _str = str,
-                                               _innerArray = str.Split('^')
-                                           })
-                            .Where(t => t._innerArray.Length == 4)
-                            .Select(t => new CandidateRating(t._innerArray[0].ToDateTime(), t._innerArray[1], t._innerArray[2].ToByte(), t._innerArray[3])));
-
-            _rating = _rating.OrderByDescending(x => x.DateTime).ToList();
-            int _ratingFirst = 0;
-            string _ratingComments = "";
-
-            if (!_ratingNotes.NullOrWhiteSpace())
-            {
-                CandidateRating _ratingFirstCandidate = _rating.FirstOrDefault();
-                _ratingFirst = _ratingFirstCandidate.Rating;
-                _ratingComments = _ratingFirstCandidate.Comment;
-            }*/
             byte _ratingFirst = 1;
             string _ratingComments = "";
             if (_ratingNotes != null)
@@ -1003,14 +990,15 @@ public class CandidateController : ControllerBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error searching companies. {ExceptionMessage}", ex.Message);
+            Log.Error(ex, "Error searching candidates. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
         }
         finally
         {
             await _connection.CloseAsync();
         }
 
-        return _candidates;
+        return Ok(_candidates);
     }
 
     /// <summary>
