@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-12-2025 18:01
+// Last Updated On:     01-12-2025 19:01
 // *****************************************/
 
 #endregion
@@ -46,19 +46,6 @@ public partial class Candidates
         new() {Name = "Original", TooltipText = "Show Original Resume"},
         new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
     ];
-
-    /// <summary>
-    ///     Gets the MemoryStream instance that temporarily holds the uploaded document data.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the data of a document uploaded by the user.
-    ///     The data is then used in various operations such as parsing the resume, saving the document,
-    ///     uploading the resume, and uploading the document.
-    /// </remarks>
-    private MemoryStream AddedDocument
-    {
-        get;
-    } = new();
 
     /// <summary>
     ///     Represents the address of the candidate.
@@ -316,18 +303,6 @@ public partial class Candidates
         get;
         set;
     }
-
-    /*
-    /// <summary>
-    ///     Gets or sets the EditSkillDialog instance associated with the Candidate page.
-    ///     This instance is used to display and manage the dialog for editing a candidate's skills.
-    /// </summary>
-    private EditSkillDialog DialogSkill
-    {
-        get;
-        private set;
-    }
-    */
 
     /// <summary>
     ///     Gets or sets the instance of the Syncfusion grid component used to display candidates.
@@ -657,13 +632,6 @@ public partial class Candidates
                                                     return DialogDocument.ShowDialog();
                                                 });
 
-    /*/// <summary>
-    ///     This method is called after a document action is completed in the Candidate page.
-    ///     It enables the buttons in the AddDocumentDialog component.
-    /// </summary>
-    /// <param name="actionCompleteEventArgs">The arguments associated with the action completion event.</param>
-    private void AfterDocument(ActionCompleteEventArgs actionCompleteEventArgs) => DialogDocument.EnableButtons();*/
-
     private async Task AllAlphabets()
     {
         SearchModel.Name = "";
@@ -735,13 +703,11 @@ public partial class Candidates
                                                                                                            {"user", User}
                                                                                                        };
 
-                                                              Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteCandidateDocument", _parameters);
-                                                              if (_response == null)
+                                                              string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
+                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                               {
-                                                                  return;
+                                                                  _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                               }
-
-                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response["Document"]);
                                                           });
 
     /// <summary>
@@ -761,14 +727,12 @@ public partial class Candidates
     private Task DeleteEducation(int id) => ExecuteMethod(async () =>
                                                           {
                                                               Dictionary<string, string> _parameters = CreateParameters(id);
-                                                              Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteEducation", _parameters);
+                                                              string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", _parameters);
 
-                                                              if (_response == null)
+                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                               {
-                                                                  return;
+                                                                  _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                               }
-
-                                                              _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response["Education"]);
                                                           });
 
     /// <summary>
@@ -788,27 +752,23 @@ public partial class Candidates
     private Task DeleteExperience(int id) => ExecuteMethod(async () =>
                                                            {
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
-                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteExperience", _parameters);
+                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", _parameters);
 
-                                                               if (_response == null)
+                                                               if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                {
-                                                                   return;
+                                                                   _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
                                                                }
-
-                                                               _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response["Experience"]);
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
                                                       {
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
-                                                          Dictionary<string, object> _response = await General.PostRest("Candidate/DeleteNotes", _parameters);
+                                                          string _response = await General.ExecuteRest<string>("Candidate/DeleteNotes", _parameters);
 
-                                                          if (_response == null)
+                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                           {
-                                                              return;
+                                                              _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
                                                           }
-
-                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response["Notes"]);
                                                       });
 
     /// <summary>
@@ -1990,6 +1950,21 @@ public partial class Candidates
         }
 
         return Task.CompletedTask;
+    }
+
+    private (string Code, string Name) SplitState(string state)
+    {
+        string[] parts = state.Split([" - "], StringSplitOptions.TrimEntries);
+        if (parts.Length == 2)
+        {
+            // Remove the brackets from the code
+            string _code = parts[0].Trim('[', ']');
+            string _state = parts[1];
+
+            return (_code, _state);
+        }
+
+        return ("", "");
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;

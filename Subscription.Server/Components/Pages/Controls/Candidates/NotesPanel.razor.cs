@@ -213,7 +213,7 @@ public partial class NotesPanel
         _selectedID = id;
         int _index = await GridNotes.GetRowIndexByPrimaryKeyAsync(id);
         await GridNotes.SelectRowAsync(_index);
-		if (await DialogService.ConfirmAsync(null, "Delete Notes", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Notes</i>?")))
+		if (await DialogService.ConfirmAsync(null, "Delete Notes", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Notes</i>?")))
 		{
 			await DeleteNotes.InvokeAsync(_selectedID);
 		}

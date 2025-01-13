@@ -8,7 +8,7 @@
 // File Name:           EducationPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          11-30-2024 19:11
-// Last Updated On:     11-30-2024 20:11
+// Last Updated On:     01-12-2025 20:01
 // *****************************************/
 
 #endregion
@@ -188,7 +188,7 @@ public partial class EducationPanel
         _selectedID = id;
         int _index = await GridEducation.GetRowIndexByPrimaryKeyAsync(id);
         await GridEducation.SelectRowAsync(_index);
-        if (await DialogService.ConfirmAsync(null, "Delete Education", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Education</i>?")))
+        if (await DialogService.ConfirmAsync(null, "Delete Education", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Education</i>?")))
         {
             await DeleteEducation.InvokeAsync(_selectedID);
         }

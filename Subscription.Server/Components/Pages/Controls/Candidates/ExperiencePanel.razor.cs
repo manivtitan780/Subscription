@@ -217,7 +217,7 @@ public partial class ExperiencePanel
         _selectedID = id;
         int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
         await GridExperience.SelectRowAsync(_index);
-		if (await DialogService.ConfirmAsync(null, "Delete Experience", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Experience</i>?")))
+		if (await DialogService.ConfirmAsync(null, "Delete Experience", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Experience</i>?")))
 		{
 			await DeleteExperience.InvokeAsync(_selectedID);
 		}

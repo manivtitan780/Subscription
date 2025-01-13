@@ -84,7 +84,8 @@ public class General
         return new()
                {
                    ChildContent = content => { content.AddContent(0, contentText.ToMarkupString()); },
-                   CloseOnEscape = true
+                   CloseOnEscape = true,
+                   AnimationSettings = new() {Effect = DialogEffect.Fade, Duration = 300}
                };
     }
 
@@ -298,7 +299,8 @@ public class General
                                                          {"thenProceed", thenProceed.ToString()},
                                                          {"user", user}
                                                      };
-            (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) = await ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, searchModel, false);
+            (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
+                await ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, searchModel, false);
 
             _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_requisitions);
             searchModel.Page = _pageNumber;

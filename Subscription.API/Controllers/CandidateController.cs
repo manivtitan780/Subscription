@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-28-2024 19:12
-// Last Updated On:     01-11-2025 20:01
+// Last Updated On:     01-12-2025 19:01
 // *****************************************/
 
 #endregion
@@ -24,6 +24,185 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class CandidateController : ControllerBase
 {
+    /// <summary>
+    ///     Deletes a candidate's document from the database.
+    /// </summary>
+    /// <param name="documentID">The ID of the document to be deleted.</param>
+    /// <param name="user">The user who is performing the delete operation.</param>
+    /// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to delete the document,
+    ///     and returns a dictionary containing the result of the operation.
+    ///     If the operation is successful, the dictionary will contain a list of remaining documents for the candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<string>> DeleteCandidateDocument(int documentID, string user)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        string _documents = "[]";
+        await using SqlCommand _command = new("DeleteCandidateDocument", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("CandidateDocumentId", documentID);
+        _command.Varchar("User", 10, user); //TODO: make sure you delete the associated document from Azure filesystem too.
+        try
+        {
+            await _connection.OpenAsync();
+            _documents = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error deleting candidate document. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_documents);
+    }
+
+    /// <summary>
+    ///     Deletes a candidate's education record from the database.
+    /// </summary>
+    /// <param name="id">The ID of the education record to be deleted.</param>
+    /// <param name="candidateID">The ID of the candidate whose education record is to be deleted.</param>
+    /// <param name="user">The user who is performing the delete operation.</param>
+    /// <returns>A dictionary containing the updated list of education records for the candidate.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to delete the education record,
+    ///     and returns a dictionary containing the updated list of education records.
+    ///     If the operation is successful, the dictionary will contain a list of remaining education records for the
+    ///     candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<string>> DeleteEducation(int id, int candidateID, string user)
+    {
+        await Task.Delay(1);
+        string _education = "[]";
+        if (id == 0)
+        {
+            return Ok("[]");
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+
+        await using SqlCommand _command = new("DeleteCandidateEducation", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Id", id);
+        _command.Int("candidateId", candidateID);
+        _command.Varchar("User", 10, user);
+        try
+        {
+            await _connection.OpenAsync();
+            _education = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error deleting education. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_education);
+    }
+
+    /// <summary>
+    ///     Deletes a candidate's experience record from the database.
+    /// </summary>
+    /// <param name="id">The ID of the experience record to be deleted.</param>
+    /// <param name="candidateID">The ID of the candidate whose experience record is to be deleted.</param>
+    /// <param name="user">The user who is performing the delete operation.</param>
+    /// <returns>A dictionary containing the updated list of experience records for the candidate.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to delete the experience record,
+    ///     and returns a dictionary containing the updated list of experience records.
+    ///     If the operation is successful, the dictionary will contain a list of remaining experience records for the
+    ///     candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<string>> DeleteExperience(int id, int candidateID, string user)
+    {
+        await Task.Delay(1);
+        string _experiences = "[]";
+        if (id == 0)
+        {
+            return Ok(_experiences);
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("DeleteCandidateExperience", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Id", id);
+        _command.Int("candidateId", candidateID);
+        _command.Varchar("User", 10, user);
+        try
+        {
+            await _connection.OpenAsync();
+            _experiences = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error deleting experience. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_experiences);
+    }
+
+    /// <summary>
+    ///     Deletes a candidate's note from the database.
+    /// </summary>
+    /// <param name="id">The ID of the note to be deleted.</param>
+    /// <param name="candidateID">The ID of the candidate whose note is to be deleted.</param>
+    /// <param name="user">The user who is performing the delete operation.</param>
+    /// <returns>A dictionary containing the updated list of notes for the candidate.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to delete the note,
+    ///     and returns a dictionary containing the updated list of notes.
+    ///     If the operation is successful, the dictionary will contain a list of remaining notes for the candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<string>> DeleteNotes(int id, int candidateID, string user)
+    {
+        await Task.Delay(1);
+        string _notes = "[]";
+        if (id == 0)
+        {
+            return Ok("[]");
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("DeleteCandidateNotes", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Id", id);
+        _command.Int("candidateId", candidateID);
+        _command.Varchar("User", 10, user);
+        try
+        {
+            await _connection.OpenAsync();
+            _notes = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error deleting notes. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_notes);
+    }
+
     /// <summary>
     ///     Downloads a file associated with a specific document ID.
     /// </summary>
