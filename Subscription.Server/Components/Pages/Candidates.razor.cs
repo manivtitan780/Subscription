@@ -785,13 +785,11 @@ public partial class Candidates
     private Task DeleteSkill(int id) => ExecuteMethod(async () =>
                                                       {
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
-                                                          Dictionary<string, object> _response = await General.PostRest("Candidates/DeleteSkill", _parameters);
-                                                          if (_response == null)
+                                                          string _response = await General.ExecuteRest<string>("Candidates/DeleteSkill", _parameters);
+                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                           {
-                                                              return;
+                                                              _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
                                                           }
-
-                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response["Skills"]);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)

@@ -226,7 +226,7 @@ public class General
                                            Count = _count
                                        } : _dataSource;
         }
-        catch (Exception ex)
+        catch
         {
             return dm.RequiresCounts ? new DataResult
                                        {

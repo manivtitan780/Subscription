@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-28-2024 19:12
-// Last Updated On:     01-12-2025 19:01
+// Last Updated On:     01-13-2025 15:01
 // *****************************************/
 
 #endregion
@@ -172,7 +172,6 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> DeleteNotes(int id, int candidateID, string user)
     {
-        await Task.Delay(1);
         string _notes = "[]";
         if (id == 0)
         {
@@ -201,6 +200,62 @@ public class CandidateController : ControllerBase
         }
 
         return Ok(_notes);
+    }
+
+    /// <summary>
+    ///     Deletes a candidate's skill record from the database.
+    /// </summary>
+    /// <param name="id">The ID of the skill record to be deleted.</param>
+    /// <param name="candidateID">The ID of the candidate whose skill record is to be deleted.</param>
+    /// <param name="user">The user who is performing the delete operation.</param>
+    /// <returns>A dictionary containing the updated list of skill records for the candidate.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to delete the skill record,
+    ///     and returns a dictionary containing the updated list of skill records.
+    ///     If the operation is successful, the dictionary will contain a list of remaining skill records for the candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<string>> DeleteSkill(int id, int candidateID, string user)
+    {
+        string _skills = "[]";
+        if (id == 0)
+        {
+            return Ok(_skills);
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("DeleteCandidateSkill", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Id", id);
+        _command.Int("candidateId", candidateID);
+        _command.Varchar("User", 10, user);
+        try
+        {
+            await _connection.OpenAsync();
+            _skills = (await _command.ExecuteScalarAsync())?.ToString();
+            /*
+            if (_reader.HasRows)
+            {
+                while (_reader.Read())
+                {
+                    _skills.Add(new(_reader.GetInt32(0), _reader.GetString(1), _reader.GetInt16(2), _reader.GetInt16(3), _reader.GetString(4)));
+                }
+            }
+
+            await _reader.CloseAsync();
+        */
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error deleting skill. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_skills);
     }
 
     /// <summary>
