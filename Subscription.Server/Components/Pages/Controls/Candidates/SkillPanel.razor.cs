@@ -227,7 +227,7 @@ public partial class SkillPanel
         _selectedID = id;
         int _index = await GridSkill.GetRowIndexByPrimaryKeyAsync(id);
         await GridSkill.SelectRowAsync(_index);
-        if (await DialogService.ConfirmAsync(null, "Delete Skill", General.DialogOptions("Are you sure you want to <strong>disable</strong> this <i>Candidate Skill</i>?")))
+        if (await DialogService.ConfirmAsync(null, "Delete Skill", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Skill</i>?")))
         {
             await DeleteSkill.InvokeAsync(_selectedID);
         }

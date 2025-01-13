@@ -16,7 +16,7 @@
 namespace Subscription.Model;
 
 /// <summary>
-///     Represents a requisition in the professional services domain.
+///     Represents a requisition in the professional services' domain.
 /// </summary>
 /// <remarks>
 ///     A requisition is a formal request or instruction from a business to obtain goods or services,
@@ -24,6 +24,8 @@ namespace Subscription.Model;
 ///     the details of a requisition, such as its ID, code, title, associated company, job options,
 ///     status, and other related information.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Requisition
 {
 	/// <summary>
@@ -54,8 +56,8 @@ public class Requisition
 	/// <param name="priorityColor">The color associated with the priority of the requisition.</param>
 	/// <param name="assignedRecruiter">The recruiter assigned to the requisition.</param>
 	/// <param name="updatedBy">The person who last updated the requisition.</param>
-	public Requisition(int id, string code, string title, string company, string jobOptions, string status, string updated, string due,
-						string icon, string priority, bool submitCandidate, bool canUpdate, bool changeStatus, string priorityColor, string assignedRecruiter, string updatedBy)
+	public Requisition(int id, string? code, string? title, string? company, string? jobOptions, string? status, string? updated, string? due,
+						string? icon, string? priority, bool submitCandidate, bool canUpdate, bool changeStatus, string? priorityColor, string? assignedRecruiter, string? updatedBy)
 	{
 		ID = id;
 		Code = code;
@@ -81,7 +83,7 @@ public class Requisition
 	/// <value>
 	///     The name of the assigned recruiter.
 	/// </value>
-	public string AssignedRecruiter
+	public string? AssignedRecruiter
 	{
 		get;
 		set;
@@ -120,7 +122,7 @@ public class Requisition
 	/// <remarks>
 	///     The code is used as a unique identifier for the requisition and is displayed in various parts of the application.
 	/// </remarks>
-	public string Code
+	public string? Code
 	{
 		get;
 		set;
@@ -132,7 +134,7 @@ public class Requisition
 	/// <value>
 	///     The name of the company.
 	/// </value>
-	public string Company
+	public string? Company
 	{
 		get;
 		set;
@@ -144,7 +146,7 @@ public class Requisition
 	/// <value>
 	///     The due date of the requisition.
 	/// </value>
-	public string Due
+	public string? Due
 	{
 		get;
 		set;
@@ -156,7 +158,7 @@ public class Requisition
 	/// <value>
 	///     The icon associated with the requisition.
 	/// </value>
-	public string Icon
+	public string? Icon
 	{
 		get;
 		set;
@@ -181,7 +183,7 @@ public class Requisition
 	///     The job options are a string representation of the various options available for a job in the requisition.
 	///     This can include details such as job type, job location, job duration, etc.
 	/// </value>
-	public string JobOptions
+	public string? JobOptions
 	{
 		get;
 		set;
@@ -193,7 +195,7 @@ public class Requisition
 	/// <value>
 	///     The priority of the requisition.
 	/// </value>
-	public string Priority
+	public string? Priority
 	{
 		get;
 		set;
@@ -205,7 +207,7 @@ public class Requisition
 	/// <value>
 	///     The color associated with the priority of the requisition.
 	/// </value>
-	public string PriorityColor
+	public string? PriorityColor
 	{
 		get;
 		set;
@@ -217,7 +219,7 @@ public class Requisition
 	/// <value>
 	///     The status of the requisition.
 	/// </value>
-	public string Status
+	public string? Status
 	{
 		get;
 		set;
@@ -241,7 +243,7 @@ public class Requisition
 	/// <value>
 	///     The title of the requisition.
 	/// </value>
-	public string Title
+	public string? Title
 	{
 		get;
 		set;
@@ -253,7 +255,7 @@ public class Requisition
 	/// <value>
 	///     The updated timestamp.
 	/// </value>
-	public string Updated
+	public string? Updated
 	{
 		get;
 		set;
@@ -265,7 +267,7 @@ public class Requisition
 	/// <value>
 	///     The name of the user who last updated the requisition.
 	/// </value>
-	public string UpdatedBy
+	public string? UpdatedBy
 	{
 		get;
 		set;
@@ -300,5 +302,5 @@ public class Requisition
 	/// <returns>
 	///     A new Requisitions object that is a copy of the current instance.
 	/// </returns>
-	public Requisition Copy() => MemberwiseClone() as Requisition;
+	public Requisition? Copy() => MemberwiseClone() as Requisition;
 }

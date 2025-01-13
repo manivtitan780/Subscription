@@ -17,15 +17,15 @@ namespace Subscription.Model;
 
 public class IntValues
 {
-    public string Text
+    public string? Text
     {
         get;
-        set;
+        init;
     }
 
     public int Value
     {
         get;
-        set;
+        init;
     }
 }

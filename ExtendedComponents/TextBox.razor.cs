@@ -17,9 +17,9 @@ namespace ExtendedComponents;
 
 public partial class TextBox : ComponentBase
 {
-    private string _value;
+    private string _value = "";
 
-    private SfTextBox Box
+    private SfTextBox? Box
     {
         get;
         set;
@@ -38,7 +38,7 @@ public partial class TextBox : ComponentBase
     } = default!;
 
     [Parameter]
-    public string ID
+    public string? ID
     {
         get;
         set;
@@ -52,7 +52,7 @@ public partial class TextBox : ComponentBase
     } = 50;
 
     [Parameter]
-    public string Placeholder
+    public string? Placeholder
     {
         get;
         set;
@@ -119,7 +119,7 @@ public partial class TextBox : ComponentBase
     ///     This expression is used to bind the date control's value to a specified property.
     /// </summary>
     [Parameter]
-    public Expression<Func<string>> ValueExpression
+    public Expression<Func<string>>? ValueExpression
     {
         get;
         set;

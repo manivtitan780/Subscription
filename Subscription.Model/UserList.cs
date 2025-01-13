@@ -15,6 +15,7 @@
 
 namespace Subscription.Model;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class UserList
 {
     public byte Role
@@ -23,7 +24,7 @@ public class UserList
         set;
     }
 
-    public string UserName
+    public string? UserName
     {
         get;
         set;

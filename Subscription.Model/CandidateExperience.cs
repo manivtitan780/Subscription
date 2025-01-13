@@ -42,7 +42,7 @@ public class CandidateExperience
 	/// <param name="description">The description of the candidate's experience.</param>
 	/// <param name="updatedBy">The identifier of the user who last updated the candidate's experience.</param>
 	/// <param name="title">The job title of the candidate's experience.</param>
-	public CandidateExperience(int id, string employer, string start, string end, string location, string description, string updatedBy, string title)
+	public CandidateExperience(int id, string? employer, string? start, string? end, string? location, string? description, string? updatedBy, string? title)
     {
         ID = id;
         Employer = employer;
@@ -64,7 +64,7 @@ public class CandidateExperience
 	///     This property provides detailed information about the candidate's experience. It can include roles,
 	///     responsibilities, achievements, etc.
 	/// </remarks>
-	public string Description
+	public string? Description
     {
         get;
         set;
@@ -74,7 +74,7 @@ public class CandidateExperience
 	///     Gets or sets the name of the employer for the candidate's experience.
 	///     This property is required.
 	/// </summary>
-	public string Employer
+	public string? Employer
     {
         get;
         set;
@@ -89,7 +89,7 @@ public class CandidateExperience
 	/// <remarks>
 	///     If the candidate is currently employed in the role, this property may be empty.
 	/// </remarks>
-	public string End
+	public string? End
     {
         get;
         set;
@@ -119,7 +119,7 @@ public class CandidateExperience
 	/// <remarks>
 	///     This property is required and must be provided when creating or updating a candidate's experience.
 	/// </remarks>
-	public string Location
+	public string? Location
     {
         get;
         set;
@@ -131,7 +131,7 @@ public class CandidateExperience
 	/// <value>
 	///     The start date of the candidate's experience.
 	/// </value>
-	public string Start
+	public string? Start
     {
         get;
         set;
@@ -141,13 +141,13 @@ public class CandidateExperience
 	///     Gets or sets the job title of the candidate's experience.
 	///     This property is required.
 	/// </summary>
-	public string Title
+	public string? Title
     {
         get;
         set;
     }
 
-    public string UpdatedBy
+    public string? UpdatedBy
     {
         get;
         set;
@@ -179,5 +179,5 @@ public class CandidateExperience
 	/// <returns>
 	///     A new CandidateExperience object that is a deep copy of this instance.
 	/// </returns>
-	public CandidateExperience Copy() => MemberwiseClone() as CandidateExperience;
+	public CandidateExperience? Copy() => MemberwiseClone() as CandidateExperience;
 }

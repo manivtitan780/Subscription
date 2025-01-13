@@ -16,12 +16,14 @@
 namespace Subscription.Model;
 
 /// <summary>
-///     Represents a candidate in the professional services context.
+///     Represents a candidate in the professional services' context.
 /// </summary>
 /// <remarks>
 ///     This class is used to manage and manipulate candidate data, including their personal information, status, and
 ///     resumes.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Candidate
 {
 	/// <summary>
@@ -39,9 +41,9 @@ public class Candidate
 	///     The email address of the candidate.
 	/// </value>
 	/// <remarks>
-	///     This property is used in the Candidate.razor page to display and sort the candidates by their email addresses.
+	///     This property is used in the "Candidate.Razor" page to display and sort the candidates by their email addresses.
 	/// </remarks>
-	public string Email
+	public string? Email
 	{
 		get;
 		set;
@@ -84,7 +86,7 @@ public class Candidate
 	/// <value>
 	///     The location of the candidate.
 	/// </value>
-	public string Location
+	public string? Location
 	{
 		get;
 		set;
@@ -111,7 +113,7 @@ public class Candidate
 	/// <value>
 	///     The name of the candidate.
 	/// </value>
-	public string Name
+	public string? Name
 	{
 		get;
 		set;
@@ -136,7 +138,7 @@ public class Candidate
 	/// <summary>
 	///     Gets or sets the phone number of the candidate.
 	/// </summary>
-	public string Phone
+	public string? Phone
 	{
 		get;
 		set;
@@ -166,7 +168,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used to store and retrieve the state of the candidate. It is a string value.
 	/// </remarks>
-	public string State
+	public string? State
 	{
 		get;
 		set;
@@ -178,7 +180,7 @@ public class Candidate
 	/// <value>
 	///     A string representing the status of the candidate.
 	/// </value>
-	public string Status
+	public string? Status
 	{
 		get;
 		set;
@@ -187,7 +189,7 @@ public class Candidate
 	/// <summary>
 	///     Gets or sets the date and time when the candidate's information was last updated.
 	/// </summary>
-	public string Updated
+	public string? Updated
 	{
 		get;
 		set;
@@ -202,7 +204,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used to store and retrieve the zip code of the candidate. It is a string value.
 	/// </remarks>
-	public string ZipCode
+	public string? ZipCode
 	{
 		get;
 		set;
@@ -218,6 +220,7 @@ public class Candidate
 	///     is zero.
 	///     For boolean properties, the default value is false. The Rating property is set to 3 by default.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public void Clear()
 	{
 		ID = 0;
@@ -237,5 +240,5 @@ public class Candidate
 	///     Creates a deep copy of the current Candidates object.
 	/// </summary>
 	/// <returns>A new Candidates object that is a deep copy of this instance.</returns>
-	public Candidate Copy() => MemberwiseClone() as Candidate;
+	public Candidate? Copy() => MemberwiseClone() as Candidate;
 }

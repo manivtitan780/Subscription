@@ -23,7 +23,7 @@ public class NAICS
         set;
     }
 
-    public string Title
+    public string? Title
     {
         get;
         set;

@@ -13,9 +13,12 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public class RequisitionController : ControllerBase
 {
     /// <summary>
@@ -27,9 +30,9 @@ public class RequisitionController : ControllerBase
     ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
     ///     will be omitted from the string.
     /// </returns>
-    private static string GenerateLocation(RequisitionDetails requisition, string stateName)
+    private static string? GenerateLocation(RequisitionDetails requisition, string? stateName)
     {
-        string _location = "";
+        string? _location = "";
         if (!requisition.City.NullOrWhiteSpace())
         {
             _location = requisition.City;
@@ -105,9 +108,11 @@ public class RequisitionController : ControllerBase
         _command.Bit("ThenProceed", thenProceed);
         _command.Varchar("LoggedUser", 10, user);
 
-        string _requisitions = "[]";
+        string? _requisitions = "[]";
         int _count = 0, _page = 0;
-        string _companies = "[]", _companyContacts = "[]", _statusCount = "[]";
+        string? _companies = "[]";
+        string? _companyContacts = "[]";
+        string? _statusCount = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -212,7 +217,7 @@ public class RequisitionController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Requisition", 30, filter);
 
-        string _requisitions = "[]";
+        string? _requisitions = "[]";
         try
         {
             await _connection.OpenAsync();

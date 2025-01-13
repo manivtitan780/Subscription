@@ -70,7 +70,7 @@ public class CompanyDetailsValidator : AbstractValidator<CompanyDetails>
 
     private static bool CheckEINExists(string ein, int companyID)
     {
-        using RestClient _client = new(GeneralModel.APIHost);
+        using RestClient _client = new(GeneralModel.APIHost ?? string.Empty);
         RestRequest _request = new("Company/CheckEIN")
                                {
                                    RequestFormat = DataFormat.Json

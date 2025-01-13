@@ -17,24 +17,24 @@ namespace ExtendedComponents;
 
 public partial class MaskedTextBox : ComponentBase
 {
-    private string _value;
+    private string _value = "";
 
     [Parameter]
-    public string ID
+    public string? ID
     {
         get;
         set;
     }
 
     [Parameter]
-    public string Mask
+    public string? Mask
     {
         get;
         set;
     }
 
     [Parameter]
-    public string Placeholder
+    public string? Placeholder
     {
         get;
         set;
@@ -88,7 +88,7 @@ public partial class MaskedTextBox : ComponentBase
     ///     This expression is used to bind the date control's value to a specified property.
     /// </summary>
     [Parameter]
-    public Expression<Func<string>> ValueExpression
+    public Expression<Func<string>>? ValueExpression
     {
         get;
         set;

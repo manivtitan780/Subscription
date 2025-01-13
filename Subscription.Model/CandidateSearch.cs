@@ -22,6 +22,7 @@ namespace Subscription.Model;
 ///     This class is used to encapsulate all the parameters needed for a candidate search. It includes parameters for
 ///     filtering by various attributes such as name, skills, location, and more.
 /// </remarks>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CandidateSearch
 {
 	/// <summary>
@@ -57,9 +58,9 @@ public class CandidateSearch
 	/// <param name="sortDirection">The direction to sort the candidate search results.</param>
 	/// <param name="user">The user performing the candidate search.</param>
 	/// <param name="activeRequisitionsOnly">If set to <c>true</c>, only active requisitions should be included in the search.</param>
-	public CandidateSearch(string name, bool allCandidates, bool myCandidates, bool includeAdmin, string keywords, string skills, bool state, bool cityZip,
-						   string stateID, string cityName, int proximity, byte proximityUnit, int eligibility, string relocate, string jobOptions, string securityClearance,
-						   int page, int itemCount, byte sortField, byte sortDirection, string user, bool activeRequisitionsOnly)
+	public CandidateSearch(string? name, bool allCandidates, bool myCandidates, bool includeAdmin, string? keywords, string? skills, bool state, bool cityZip,
+						   string? stateID, string? cityName, int proximity, byte proximityUnit, int eligibility, string? relocate, string? jobOptions, string? securityClearance,
+						   int page, int itemCount, byte sortField, byte sortDirection, string? user, bool activeRequisitionsOnly)
 	{
 		Name = name;
 		AllCandidates = allCandidates;
@@ -130,7 +131,7 @@ public class CandidateSearch
 	///     This property is used to filter the candidates based on their location. If the city name is provided, the search
 	///     will return only those candidates who are located in the specified city.
 	/// </remarks>
-	public string CityName
+	public string? CityName
 	{
 		get;
 		set;
@@ -202,7 +203,7 @@ public class CandidateSearch
 	///     This property is bound to the 'JobOptions' field in the 'AdvancedCandidateSearch' component. Any changes to this
 	///     property will reflect in the UI.
 	/// </remarks>
-	public string JobOptions
+	public string? JobOptions
 	{
 		get;
 		set;
@@ -218,7 +219,7 @@ public class CandidateSearch
 	///     This property is used to specify the keywords that will be used to filter the candidates in the search.
 	///     The search will return candidates that have these keywords in their profiles.
 	/// </remarks>
-	public string Keywords
+	public string? Keywords
 	{
 		get;
 		set;
@@ -246,7 +247,7 @@ public class CandidateSearch
 	/// <value>
 	///     The name used in the candidate search.
 	/// </value>
-	public string Name
+	public string? Name
 	{
 		get;
 		set;
@@ -312,7 +313,7 @@ public class CandidateSearch
 	/// <remarks>
 	///     This property is used in the candidate search process to filter candidates based on their relocation preferences.
 	/// </remarks>
-	public string Relocate
+	public string? Relocate
 	{
 		get;
 		set;
@@ -329,7 +330,7 @@ public class CandidateSearch
 	///     The value can be any string representing a security clearance level.
 	///     Use "%" for no filtering or to include all security clearance levels.
 	/// </remarks>
-	public string SecurityClearance
+	public string? SecurityClearance
 	{
 		get;
 		set;
@@ -346,7 +347,7 @@ public class CandidateSearch
 	///     This property is used in the advanced candidate search to filter candidates based on their skills.
 	///     The skills are specified as a string, where each skill is separated by a comma.
 	/// </remarks>
-	public string Skills
+	public string? Skills
 	{
 		get;
 		set;
@@ -407,7 +408,7 @@ public class CandidateSearch
 	///     This property is used to filter candidates based on their location.
 	///     The value corresponds to a specific state.
 	/// </remarks>
-	public string StateID
+	public string? StateID
 	{
 		get;
 		set;
@@ -419,7 +420,7 @@ public class CandidateSearch
 	/// <value>
 	///     The user is represented as a string. This property is used to identify the user performing the candidate search.
 	/// </value>
-	public string User
+	public string? User
 	{
 		get;
 		set;
@@ -464,5 +465,5 @@ public class CandidateSearch
 	/// <returns>
 	///     A new CandidateSearch object that is a deep copy of this instance.
 	/// </returns>
-	public CandidateSearch Copy() => MemberwiseClone() as CandidateSearch;
+	public CandidateSearch? Copy() => MemberwiseClone() as CandidateSearch;
 }

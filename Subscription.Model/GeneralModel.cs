@@ -47,7 +47,7 @@ internal static class GeneralModel
     /// <remarks>
     ///     This property is used to configure the base address for REST client instances in various parts of the application.
     /// </remarks>
-    public static string APIHost
+    public static string? APIHost
     {
         get;
     }

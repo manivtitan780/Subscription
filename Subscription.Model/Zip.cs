@@ -24,6 +24,8 @@ namespace Subscription.Model;
 ///     modifying the details,
 ///     and methods for operations such as clearing the details and creating a copy of the instance.
 /// </remarks>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class Zip
 {
 	/// <summary>
@@ -46,7 +48,7 @@ public class Zip
 	///     It is used in various operations such as creating a new Zip instance in the 'GetCache' method of the
 	///     'AdminController' class.
 	/// </remarks>
-	public Zip(string zip, string city)
+	public Zip(string? zip, string? city)
     {
         ZipCode = zip;
         City = city;
@@ -67,7 +69,7 @@ public class Zip
 	///     It is used in various operations such as creating a new Zip instance in the 'GetCache' method of the
 	///     'AdminController' class.
 	/// </remarks>
-	public Zip(string zip, string city, string state, int stateID)
+	public Zip(string? zip, string? city, string? state, int stateID)
     {
         ZipCode = zip;
         City = city;
@@ -88,7 +90,7 @@ public class Zip
 	///     It is used in various operations such as setting the City in the 'ZipChange' methods of the 'EditCompanyDialog',
 	///     'EditContactDialog', and 'RequisitionDetailsPanel' classes.
 	/// </remarks>
-	public string City
+	public string? City
     {
         get;
         set;
@@ -117,7 +119,7 @@ public class Zip
 	///     It is used in various operations such as setting the State in the 'ZipChange' methods of the 'EditCompanyDialog',
 	///     'EditContactDialog', and 'RequisitionDetailsPanel' classes.
 	/// </remarks>
-	public string State
+	public string? State
     {
         get;
         set;
@@ -152,7 +154,7 @@ public class Zip
 	///     properties to their default values, and handling the change of the Zip code in the EditCompanyDialog and
 	///     EditContactDialog.
 	/// </remarks>
-	public string ZipCode
+	public string? ZipCode
     {
         get;
         set;
@@ -177,5 +179,5 @@ public class Zip
 	/// <returns>
 	///     A new Zip object that is a copy of this instance.
 	/// </returns>
-	public Zip Copy() => MemberwiseClone() as Zip;
+	public Zip? Copy() => MemberwiseClone() as Zip;
 }

@@ -49,7 +49,7 @@ public static partial class Extensions
     ///     A string representation of the decimal value formatted as currency according to the specified format and
     ///     culture.
     /// </returns>
-    public static string CultureCurrency(this decimal d, string format = "c2", CultureInfo c = null)
+    public static string CultureCurrency(this decimal d, string format = "c2", CultureInfo? c = null)
     {
         c ??= new("en-us");
 
@@ -67,7 +67,7 @@ public static partial class Extensions
     ///     US culture is used.
     /// </param>
     /// <returns>A string representation of the DateTime object formatted according to the specified format and culture.</returns>
-    public static string CultureDate(this DateTime d, string format = "d", CultureInfo c = null)
+    public static string CultureDate(this DateTime d, string format = "d", CultureInfo? c = null)
     {
         c ??= new("en-us");
 
@@ -116,7 +116,7 @@ public static partial class Extensions
     ///     The method uses the ToInt64 extension method to convert the input string to a long.
     ///     The resulting long is then formatted to a phone number format.
     /// </remarks>
-    public static string FormatPhoneNumber(this string s) => s.ToInt64() > 0 ? $"{s.ToInt64():(###) ###-####}" : "";
+    public static string? FormatPhoneNumber(this string? s) => s.ToInt64() > 0 ? $"{s.ToInt64():(###) ###-####}" : "";
 
     /// <summary>
     ///     Converts a Base64 encoded string to a regular string.
@@ -195,7 +195,7 @@ public static partial class Extensions
 
         // Attempt to create a Uri object from the string
         // Check if the Uri object's Scheme property is HTTP or HTTPS
-        return Uri.TryCreate(_url, UriKind.Absolute, out Uri _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
+        return Uri.TryCreate(_url, UriKind.Absolute, out Uri? _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
     }
 
     [GeneratedRegex("[^0-9]")]
@@ -209,7 +209,7 @@ public static partial class Extensions
     ///     True if the string contains characters other than null, empty, or consists only of white-space characters;
     ///     otherwise, false.
     /// </returns>
-    public static bool NotNullOrWhiteSpace(this string s) => !string.IsNullOrWhiteSpace(s);
+    public static bool NotNullOrWhiteSpace(this string? s) => !string.IsNullOrWhiteSpace(s);
 
     /// <summary>
     ///     Checks if the given string is null, empty, or consists only of white-space characters.
@@ -218,7 +218,7 @@ public static partial class Extensions
     /// <returns>
     ///     True if the string is null, empty, or consists only of white-space characters; otherwise, false.
     /// </returns>
-    public static bool NullOrWhiteSpace(this string s) => string.IsNullOrWhiteSpace(s);
+    public static bool NullOrWhiteSpace(this string? s) => string.IsNullOrWhiteSpace(s);
 
     /// <summary>
     ///     Checks if the given integer is zero.
@@ -238,7 +238,7 @@ public static partial class Extensions
     ///     True if the object is null or its string representation is null, empty, or consists only of white-space characters;
     ///     otherwise, false.
     /// </returns>
-    public static bool NullOrWhiteSpace(this object o) => o == null || o.ToString().NullOrWhiteSpace();
+    public static bool NullOrWhiteSpace(this object? o) => o == null || o.ToString().NullOrWhiteSpace();
 
     /// <summary>
     ///     Generates a random integer number within a specified range.
@@ -275,7 +275,7 @@ public static partial class Extensions
     /// <returns>
     ///     A string without the leading comma. If the string does not start with a comma, the original string is returned.
     /// </returns>
-    public static string RemoveLeadingComma(this string s) => s.StartsWith(",") ? s[1..].Trim() : s;
+    public static string RemoveLeadingComma(this string s) => s.StartsWith(',') ? s[1..].Trim() : s;
 
     /// <summary>
     ///     Converts a string to a boolean value.
@@ -293,7 +293,7 @@ public static partial class Extensions
     /// <returns>
     ///     A string containing only the numeric characters from the input string.
     /// </returns>
-    public static string StripPhoneNumber(this string s) => MyRegex().Replace(s, string.Empty);
+    public static string StripPhoneNumber(this string? s) => MyRegex().Replace(s!, string.Empty);
 
     /// <summary>
     ///     Converts a regular string to a Base64 encoded string.

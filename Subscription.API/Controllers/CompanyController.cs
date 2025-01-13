@@ -13,6 +13,8 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Subscription.API.Controllers;
 
 /// <summary>
@@ -22,6 +24,7 @@ namespace Subscription.API.Controllers;
 ///     The application configuration, injected by the ASP.NET Core DI container.
 /// </param>*/
 [ApiController, Route("api/[controller]/[action]")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
 public class CompanyController : ControllerBase
 {
     /// <summary>
@@ -101,7 +104,10 @@ public class CompanyController : ControllerBase
 
         await _connection.OpenAsync();
 
-        string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]";
+        string? _company = "[]";
+        string? _locations = "[]";
+        string? _contacts = "[]";
+        string? _documents = "[]";
         try
         {
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
@@ -168,7 +174,7 @@ public class CompanyController : ControllerBase
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("GetCompanies", _connection);
         int _count = 0;
-        string _companies = "[]";
+        string? _companies = "[]";
         try
         {
             _command.CommandType = CommandType.StoredProcedure;
@@ -229,7 +235,7 @@ public class CompanyController : ControllerBase
     public async Task<ActionResult<string>> GetLocationList(int companyID)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string _returnValue = "[]";
+        string? _returnValue = "[]";
         try
         {
             await using SqlCommand _command = new("GetLocationList", _connection);
@@ -239,7 +245,7 @@ public class CompanyController : ControllerBase
             await _connection.OpenAsync();
 
             // Execute the command asynchronously and get the data reader
-            object _result = _command.ExecuteScalar()?.ToString();
+            object? _result = (await _command.ExecuteScalarAsync())?.ToString();
             if (_result != null)
             {
                 _returnValue = _result.ToString();
@@ -272,7 +278,7 @@ public class CompanyController : ControllerBase
     ///     database operation.
     /// </returns>
     [HttpPost]
-    public async Task<ActionResult<int>> SaveCompany(CompanyDetails company, string user)
+    public async Task<ActionResult<int>> SaveCompany(CompanyDetails? company, string user)
     {
         if (company == null)
         {
@@ -333,7 +339,7 @@ public class CompanyController : ControllerBase
     ///     If the contact parameter is null, the method returns null.
     /// </returns>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveCompanyContact(CompanyContacts contact, string user)
+    public async Task<ActionResult<string>> SaveCompanyContact(CompanyContacts? contact, string user)
     {
         if (contact == null)
         {
@@ -358,12 +364,12 @@ public class CompanyController : ControllerBase
         _command.Varchar("Fax", 20, contact.Fax);
         _command.Varchar("Designation", 255, contact.Title);
         _command.Varchar("Department", 255, contact.Department);
-        _command.TinyInt("Role", contact.RoleID);
+        _command.TinyInt("Role", contact.RoleID!);
         _command.Varchar("ContactNotes", 2000, contact.Notes);
         _command.Bit("IsPrimaryContact", contact.PrimaryContact);
         _command.Varchar("User", 10, user);
 
-        string _contacts = "[]";
+        string? _contacts = "[]";
 
         try
         {
@@ -411,7 +417,7 @@ public class CompanyController : ControllerBase
     ///     If the location parameter is null, the method returns null.
     /// </returns>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveCompanyLocation(CompanyLocations location, string user)
+    public async Task<ActionResult<string>> SaveCompanyLocation(CompanyLocations? location, string user)
     {
         if (location == null)
         {
@@ -436,7 +442,7 @@ public class CompanyController : ControllerBase
         _command.Bit("isPrimaryLocation", location.PrimaryLocation);
         _command.Varchar("User", 10, user);
 
-        string _locations = "[]";
+        string? _locations = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -480,7 +486,7 @@ public class CompanyController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Company", 30, filter);
 
-        string _companies = "[]";
+        string? _companies = "[]";
         try
         {
             await _connection.OpenAsync();

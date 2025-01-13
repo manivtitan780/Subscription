@@ -16,12 +16,14 @@
 namespace Subscription.Model;
 
 /// <summary>
-///     Represents a job option in the professional services domain.
+///     Represents a job option in the professional services' domain.
 /// </summary>
 /// <remarks>
 ///     A job option is a configurable aspect of a job, such as its benefits, duration, expenses, and more.
 ///     This class provides a way to encapsulate these aspects in a single object.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class JobOption
 {
 	/// <summary>
@@ -51,8 +53,8 @@ public class JobOption
 	/// <param name="percentText">The text for the percent of the job option. Default is "Percent".</param>
 	/// <param name="costPercent">The cost percent for the job option. Default is 0.</param>
 	/// <param name="showPercent">A value indicating whether to show percent for the job option. Default is false.</param>
-	public JobOption(string code, string option, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
-					 bool exp = false, bool placeFee = false, bool benefits = false, bool showHours = false, string rateText = "Rate", string percentText = "Percent", decimal costPercent = 0,
+	public JobOption(string? code, string? option, string? description = "", string? updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string? tax = "",
+					 bool exp = false, bool placeFee = false, bool benefits = false, bool showHours = false, string? rateText = "Rate", string? percentText = "Percent", decimal costPercent = 0,
 					 bool showPercent = false)
 	{
 		Code = code;
@@ -96,7 +98,7 @@ public class JobOption
 	/// <value>
 	///     The code for the job option.
 	/// </value>
-	public string Code
+	public string? Code
 	{
 		get;
 		set;
@@ -123,7 +125,7 @@ public class JobOption
 	/// <value>
 	///     The description of the job option.
 	/// </value>
-	public string Description
+	public string? Description
 	{
 		get;
 		set;
@@ -154,8 +156,8 @@ public class JobOption
 	/// </value>
 	/// <remarks>
 	///     This property is used to determine if the job option includes expenses.
-	///     When expenses are included in the job option, this property is set to <c>true</c>.
-	///     When expenses are not included in the job option, this property is set to <c>false</c>.
+	///     When expenses are included in the job option, this property will be set to <c>true</c>.
+	///     When expenses are not included in the job option, this property will be set to <c>false</c>.
 	/// </remarks>
 	public bool Exp
 	{
@@ -186,7 +188,7 @@ public class JobOption
 	/// <value>
 	///     The option for the job.
 	/// </value>
-	public string Option
+	public string? Option
 	{
 		get;
 		set;
@@ -201,7 +203,7 @@ public class JobOption
 	/// <remarks>
 	///     This property is used in the JobOptionDialog to bind the value of the TextBoxControl.
 	/// </remarks>
-	public string PercentText
+	public string? PercentText
 	{
 		get;
 		set;
@@ -245,7 +247,7 @@ public class JobOption
 	/// <value>
 	///     The rate text.
 	/// </value>
-	public string RateText
+	public string? RateText
 	{
 		get;
 		set;
@@ -307,7 +309,7 @@ public class JobOption
 	///     This property is used to store the tax information related to the job option. It is used in the calculation of the
 	///     total cost of the job option.
 	/// </remarks>
-	public string Tax
+	public string? Tax
 	{
 		get;
 		set;
@@ -323,7 +325,7 @@ public class JobOption
 	///     This property is used to track the last modification of the JobOption instance. It is displayed in the "Last
 	///     Updated" column of the Job Options grid in the Admin interface.
 	/// </remarks>
-	public string UpdatedDate
+	public string? UpdatedDate
 	{
 		get;
 		set;
@@ -367,5 +369,5 @@ public class JobOption
 	/// <remarks>
 	///     This method uses the MemberwiseClone method to create a shallow copy of the current object.
 	/// </remarks>
-	public JobOption Copy() => MemberwiseClone() as JobOption;
+	public JobOption? Copy() => MemberwiseClone() as JobOption;
 }

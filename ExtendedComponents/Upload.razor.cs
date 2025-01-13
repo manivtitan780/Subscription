@@ -77,7 +77,7 @@ public partial class Upload : ComponentBase
     ///     render additional HTML content or Razor components within the UploaderControl.
     /// </summary>
     [Parameter]
-    public RenderFragment ChildContent
+    public RenderFragment? ChildContent
     {
         get;
         set;
@@ -148,7 +148,7 @@ public partial class Upload : ComponentBase
     ///     This property allows for setting a display text in the date input field when it is empty.
     /// </summary>
     [Parameter]
-    public string Placeholder
+    public string? Placeholder
     {
         get;
         set;

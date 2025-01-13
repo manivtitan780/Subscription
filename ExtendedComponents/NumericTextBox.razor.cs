@@ -8,7 +8,7 @@
 // File Name:           NumericTextBox.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-13-2024 21:12
-// Last Updated On:     12-13-2024 21:12
+// Last Updated On:     01-13-2025 16:01
 // *****************************************/
 
 #endregion
@@ -17,7 +17,14 @@ namespace ExtendedComponents;
 
 public partial class NumericTextBox<TValue> : ComponentBase
 {
-    private TValue _value;
+    private TValue? _value;
+
+    [Parameter]
+    public string Currency
+    {
+        get;
+        set;
+    } = "USD";
 
     [Parameter]
     public int? Decimals
@@ -34,28 +41,28 @@ public partial class NumericTextBox<TValue> : ComponentBase
     } = "c2";
 
     [Parameter]
-    public string ID
+    public string? ID
     {
         get;
         set;
     }
 
     [Parameter]
-    public TValue Max
+    public TValue? Max
     {
         get;
         set;
     }
 
     [Parameter]
-    public TValue Min
+    public TValue? Min
     {
         get;
         set;
     }
 
     [Parameter]
-    public string Placeholder
+    public string? Placeholder
     {
         get;
         set;
@@ -80,7 +87,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     If the selected value changes, the ValueChanged event is invoked.
     /// </remarks>
     [Parameter]
-    public TValue Value
+    public TValue? Value
     {
         get => _value;
         set
@@ -108,7 +115,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     The callback receives the new selected value as an argument.
     /// </remarks>
     [Parameter]
-    public EventCallback<TValue> ValueChanged
+    public EventCallback<TValue?> ValueChanged
     {
         get;
         set;
@@ -126,16 +133,15 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>> ValueExpression
+    public Expression<Func<TValue>>? ValueExpression
     {
         get;
         set;
     }
 
-    [Parameter]
-    public string Currency
+    protected override Task OnInitializedAsync()
     {
-        get;
-        set;
-    } = "USD";
+        _value = default;
+        return base.OnInitializedAsync();
+    }
 }

@@ -13,10 +13,6 @@
 
 #endregion
 
-#region Using
-
-#endregion
-
 namespace Subscription.Model;
 
 /// <summary>
@@ -26,6 +22,7 @@ namespace Subscription.Model;
 ///     This class is used to track and manage a candidate's activity such as interviews, status updates, and other related
 ///     actions.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CandidateActivity
 {
 	/// <summary>
@@ -66,9 +63,9 @@ public class CandidateActivity
 	/// <param name="phoneNumber">The phone number associated with the candidate activity.</param>
 	/// <param name="interviewDetails">The details of the interview in the candidate activity.</param>
 	/// <param name="undone">A value indicating whether the candidate activity is undone.</param>
-	public CandidateActivity(string requisition, DateTime updatedDate, string updatedBy, int positions, int positionFilled, string status, string notes, int id,
-							 bool schedule, string appliesTo, string color, string icon, bool doRoleHaveRight, string lastActionBy, int requisitionID, string candidateUpdatedBy,
-							 int countSubmitted, string statusCode, bool showCalendar, DateTime dateTimeInterview, string typeOfInterview, string phoneNumber, string interviewDetails, bool undone)
+	public CandidateActivity(string? requisition, DateTime updatedDate, string? updatedBy, int positions, int positionFilled, string? status, string? notes, int id,
+							 bool schedule, string? appliesTo, string? color, string? icon, bool doRoleHaveRight, string? lastActionBy, int requisitionID, string? candidateUpdatedBy,
+							 int countSubmitted, string? statusCode, bool showCalendar, DateTime dateTimeInterview, string? typeOfInterview, string? phoneNumber, string? interviewDetails, bool undone)
 	{
 		Requisition = requisition;
 		UpdatedDate = updatedDate;
@@ -106,7 +103,7 @@ public class CandidateActivity
 	///     This property is used to specify the entity (such as a job position, department, or project)
 	///     that the candidate activity is related to or impacts.
 	/// </remarks>
-	public string AppliesTo
+	public string? AppliesTo
 	{
 		get;
 		set;
@@ -121,7 +118,7 @@ public class CandidateActivity
 	/// <remarks>
 	///     This property is used to track who made the most recent update to the candidate's information.
 	/// </remarks>
-	public string CandidateUpdatedBy
+	public string? CandidateUpdatedBy
 	{
 		get;
 		set;
@@ -137,7 +134,7 @@ public class CandidateActivity
 	///     This property is used to visually distinguish candidate activities.
 	///     The color is represented as a string in hexadecimal color code format (e.g., "#FFFFFF" for white).
 	/// </remarks>
-	public string Color
+	public string? Color
 	{
 		get;
 		set;
@@ -202,7 +199,7 @@ public class CandidateActivity
 	/// <remarks>
 	///     This property is used to specify a visual representation or symbol for the candidate activity.
 	/// </remarks>
-	public string Icon
+	public string? Icon
 	{
 		get;
 		set;
@@ -233,7 +230,7 @@ public class CandidateActivity
 	///     This property is used in the user interface to provide a detailed description of the interview process. It can
 	///     include information such as interview questions, interviewer's feedback, and other relevant details.
 	/// </remarks>
-	public string InterviewDetails
+	public string? InterviewDetails
 	{
 		get;
 		set;
@@ -249,7 +246,7 @@ public class CandidateActivity
 	///     This property is used to track the user who last interacted with the candidate activity.
 	///     It could be useful for auditing purposes or to provide context for subsequent actions.
 	/// </remarks>
-	public string LastActionBy
+	public string? LastActionBy
 	{
 		get;
 		set;
@@ -265,7 +262,7 @@ public class CandidateActivity
 	///     This property is used to update the status of a candidate's activity. It is bound to a dropdown control in the UI
 	///     for selection of new status.
 	/// </remarks>
-	public string NewStatusCode
+	public string? NewStatusCode
 	{
 		get;
 		set;
@@ -275,14 +272,14 @@ public class CandidateActivity
 	///     Gets or sets the notes for the candidate's activity.
 	/// </summary>
 	/// <value>
-	///     The notes for the candidate's activity. This is a required field and should be between 2 to 1000 characters.
+	///     The notes for the candidate's activity. This is a required field and should be between 2 and 1000 characters.
 	/// </value>
 	/// <remarks>
 	///     This property is used in various parts of the application such as the ActivityPanel, ActivityPanelRequisition, and
 	///     EditActivityDialog.
 	///     It is displayed in the UI and can be edited by the user.
 	/// </remarks>
-	public string Notes
+	public string? Notes
 	{
 		get;
 		set;
@@ -297,7 +294,7 @@ public class CandidateActivity
 	/// <remarks>
 	///     This property is used in the `EditActivityDialog` component for data binding.
 	/// </remarks>
-	public string PhoneNumber
+	public string? PhoneNumber
 	{
 		get;
 		set;
@@ -347,7 +344,7 @@ public class CandidateActivity
 	///     This property is used in the `ActivityPanel` and `ActivityPanelRequisition` classes to display the requisition in
 	///     the user interface.
 	/// </remarks>
-	public string Requisition
+	public string? Requisition
 	{
 		get;
 		set;
@@ -410,7 +407,7 @@ public class CandidateActivity
 	///     This property is used to represent the current state of the candidate's activity in the application.
 	///     It is displayed in various parts of the application such as the ActivityPanel and EditActivityDialog.
 	/// </remarks>
-	public string Status
+	public string? Status
 	{
 		get;
 		set;
@@ -427,7 +424,7 @@ public class CandidateActivity
 	///     The status code is used in various parts of the application to determine the next steps in the workflow,
 	///     and to control access to certain functionalities based on the current status of the activity.
 	/// </remarks>
-	public string StatusCode
+	public string? StatusCode
 	{
 		get;
 		set;
@@ -443,7 +440,7 @@ public class CandidateActivity
 	///     This property is used in the `EditActivityDialog` component for data binding and in the `CandidatesController` for
 	///     saving candidate activity.
 	/// </remarks>
-	public string TypeOfInterview
+	public string? TypeOfInterview
 	{
 		get;
 		set;
@@ -475,7 +472,7 @@ public class CandidateActivity
 	///     This property is used to track who made the most recent changes to the candidate activity. It is displayed in the
 	///     activity panel and is also used for permission checks.
 	/// </remarks>
-	public string UpdatedBy
+	public string? UpdatedBy
 	{
 		get;
 		set;
@@ -500,6 +497,7 @@ public class CandidateActivity
 	///     This method is typically used when initializing a new instance of the CandidateActivity class or when needing to
 	///     reset the state of an existing instance.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public void Clear()
 	{
 		Requisition = "";
@@ -538,5 +536,5 @@ public class CandidateActivity
 	///     This method is used when you want to create a duplicate of the current object with the same values.
 	///     Note that this is a shallow copy, so any reference types within the object will still point to the same instance.
 	/// </remarks>
-	public CandidateActivity Copy() => MemberwiseClone() as CandidateActivity;
+	public CandidateActivity? Copy() => MemberwiseClone() as CandidateActivity;
 }

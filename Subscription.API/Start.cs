@@ -13,59 +13,62 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Subscription.API;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public static class Start
 {
-    public static string Access
+    public static string? Access
     {
         get;
         set;
     }
 
-    public static string AccountName
+    public static string? AccountName
     {
         get;
         set;
     }
 
-    public static string APIHost
+    public static string? APIHost
     {
         get;
         set;
     }
 
-    public static string AzureBlob
+    public static string? AzureBlob
     {
         get;
         set;
     }
 
-    public static string AzureBlobContainer
+    public static string? AzureBlobContainer
     {
         get;
         set;
     } = "sub";
 
-    public static string AzureKey
+    public static string? AzureKey
     {
         get;
         set;
     }
 
-    public static string CachePort
+    public static string? CachePort
     {
         get;
         set;
     }
 
-    public static string CacheServer
+    public static string? CacheServer
     {
         get;
         set;
     }
 
-    public static string ConnectionString
+    public static string? ConnectionString
     {
         get;
         set;

@@ -17,8 +17,8 @@ namespace ExtendedComponents;
 
 public partial class DropDown<TValue, TItem> : ComponentBase
 {
-    private SfDropDownList<TValue, TItem> _drop;
-    private TValue _value;
+    private SfDropDownList<TValue, TItem>? _drop;
+    private TValue? _value;
 
     [Parameter]
     public bool AllowFilter
@@ -45,7 +45,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     }
 
     [Parameter]
-    public string ID
+    public string? ID
     {
         get;
         set;
@@ -63,21 +63,21 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     When an item is selected in the DropDown, the value of this field is used as the selected value.
     /// </remarks>
     [Parameter]
-    public string Key
+    public string? Key
     {
         get;
         set;
     }
 
     [Parameter]
-    public IEnumerable<TItem> Model
+    public IEnumerable<TItem>? Model
     {
         get;
         set;
     }
 
     [Parameter]
-    public string Placeholder
+    public string? Placeholder
     {
         get;
         set;
@@ -102,7 +102,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     The display text is shown in the DropDown's input field and in the dropdown list.
     /// </remarks>
     [Parameter]
-    public string Text
+    public string? Text
     {
         get;
         set;
@@ -120,7 +120,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     If the selected value changes, the ValueChanged event is invoked.
     /// </remarks>
     [Parameter]
-    public TValue Value
+    public TValue? Value
     {
         get => _value;
         set
@@ -165,7 +165,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>> ValueExpression
+    public Expression<Func<TValue>>? ValueExpression
     {
         get;
         set;
@@ -198,5 +198,10 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     It is useful when the data source has been updated and the changes need to be reflected in the DropDown.
     /// </remarks>
     // ReSharper disable once UnusedMember.Global
-    public Task Refresh() => _drop.RefreshDataAsync();
+    public Task? Refresh() => _drop?.RefreshDataAsync();
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
 }

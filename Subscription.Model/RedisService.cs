@@ -3,22 +3,13 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           RedisService.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-15-2023 19:38
-// Last Updated On:     12-20-2023 19:48
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created On:          04-15-2024 19:04
+// Last Updated On:     01-13-2025 19:17
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using Newtonsoft.Json;
-// using Newtonsoft.Json.Linq;
-
-using StackExchange.Redis;
 
 #endregion
 
@@ -47,7 +38,7 @@ public class RedisService
     ///     This constructor establishes a secure connection to the Redis server using the provided hostname, SSL port, and
     ///     access password.
     /// </remarks>
-    public RedisService(string hostName, int sslPort, string access, bool ssl)
+    public RedisService(string? hostName, int sslPort, string? access, bool ssl)
     {
         ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect($"{hostName}:{sslPort},password={access},ssl={ssl},abortConnect=False");
         _db = _redis.GetDatabase();
@@ -68,7 +59,7 @@ public class RedisService
     ///     key does not exist in the database, its associated value in the returned dictionary will be null.
     /// </remarks>
     public async Task<Dictionary<string, string>> BatchGet(IEnumerable<string> keyArray)
-	{
+    {
         IEnumerable<string> _keyArray = keyArray.ToList();
         RedisKey[] _keys = _keyArray.Select(k => (RedisKey)k).ToArray();
 
@@ -145,7 +136,7 @@ public class RedisService
     ///     the specified key, and return createItems.
     ///     The newly created item will have an expiration time of 365 days.
     /// </remarks>
-    public async Task<T> GetOrCreateAsync<T>(string key, T createItems)
+    public async Task<T?> GetOrCreateAsync<T>(string key, T? createItems)
     {
         RedisValue _value = await _db.StringGetAsync(key);
 

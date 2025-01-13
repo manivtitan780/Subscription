@@ -43,7 +43,7 @@ public class CandidateSkills
 	/// <param name="lastUsed">The year when the skill was last used by the candidate.</param>
 	/// <param name="expMonth">The number of months of experience the candidate has with the skill.</param>
 	/// <param name="updatedBy">The identifier of the user who last updated the candidate's skills.</param>
-	public CandidateSkills(int id, string skill, short lastUsed, short expMonth, string updatedBy)
+	public CandidateSkills(int id, string? skill, short lastUsed, short expMonth, string? updatedBy)
 	{
 		ID = id;
 		Skill = skill;
@@ -96,7 +96,7 @@ public class CandidateSkills
 	/// <value>
 	///     The skill of the candidate.
 	/// </value>
-	public string Skill
+	public string? Skill
 	{
 		get;
 		set;
@@ -108,7 +108,7 @@ public class CandidateSkills
 	/// <value>
 	///     The identifier of the user who last updated the candidate's skills.
 	/// </value>
-	public string UpdatedBy
+	public string? UpdatedBy
 	{
 		get;
 		set;
@@ -136,5 +136,5 @@ public class CandidateSkills
 	/// <returns>
 	///     A new CandidateSkills object that is a shallow copy of this instance.
 	/// </returns>
-	public CandidateSkills Copy() => MemberwiseClone() as CandidateSkills;
+	public CandidateSkills? Copy() => MemberwiseClone() as CandidateSkills;
 }

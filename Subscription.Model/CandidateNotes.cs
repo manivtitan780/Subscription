@@ -25,6 +25,7 @@ namespace Subscription.Model;
 ///     It also includes methods for initializing a new instance of the class, resetting the properties to their default
 ///     values, and creating a shallow copy of the current object.
 /// </remarks>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CandidateNotes
 {
 	/// <summary>
@@ -46,7 +47,7 @@ public class CandidateNotes
 	/// <param name="updatedDate">The date and time when the candidate's notes were last updated.</param>
 	/// <param name="updatedBy">The name of the user who last updated the candidate's notes.</param>
 	/// <param name="notes">The notes for the candidate.</param>
-	public CandidateNotes(int id, DateTime updatedDate, string updatedBy, string notes)
+	public CandidateNotes(int id, DateTime updatedDate, string? updatedBy, string? notes)
 	{
 		ID = id;
 		UpdatedDate = updatedDate;
@@ -78,7 +79,7 @@ public class CandidateNotes
 	/// <remarks>
 	///     This property is used to store any notes or comments about the candidate.
 	/// </remarks>
-	public string Notes
+	public string? Notes
 	{
 		get;
 		set;
@@ -93,7 +94,7 @@ public class CandidateNotes
 	/// <remarks>
 	///     This property is used to track the user who made the most recent modifications to the candidate's notes.
 	/// </remarks>
-	public string UpdatedBy
+	public string? UpdatedBy
 	{
 		get;
 		set;
@@ -135,5 +136,5 @@ public class CandidateNotes
 	/// <returns>
 	///     A new CandidateNotes object that is a deep copy of this instance.
 	/// </returns>
-	public CandidateNotes Copy() => MemberwiseClone() as CandidateNotes;
+	public CandidateNotes? Copy() => MemberwiseClone() as CandidateNotes;
 }

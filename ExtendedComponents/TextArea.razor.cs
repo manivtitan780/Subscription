@@ -17,10 +17,10 @@ namespace ExtendedComponents;
 
 public partial class TextArea : ComponentBase
 {
-    private string _value;
+    private string? _value;
 
     [Parameter]
-    public string ID
+    public string? ID
     {
         get;
         set;
@@ -34,7 +34,7 @@ public partial class TextArea : ComponentBase
     } = 1000;
 
     [Parameter]
-    public string Placeholder
+    public string? Placeholder
     {
         get;
         set;
@@ -68,7 +68,7 @@ public partial class TextArea : ComponentBase
     ///     current value and invokes the ValueChanged event.
     /// </summary>
     [Parameter]
-    public string Value
+    public string? Value
     {
         get => _value;
         set
@@ -101,7 +101,7 @@ public partial class TextArea : ComponentBase
     ///     This expression is used to bind the date control's value to a specified property.
     /// </summary>
     [Parameter]
-    public Expression<Func<string>> ValueExpression
+    public Expression<Func<string>>? ValueExpression
     {
         get;
         set;

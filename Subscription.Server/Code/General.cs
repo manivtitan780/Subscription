@@ -71,8 +71,26 @@ public class General
     /// </summary>
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
+    /// <param name="checkForNullOrEmptyArray">Should check if array converted to string is null/empty/whitespace or an empty json array.</param>
     /// <returns>The deserialized object of type T.</returns>
-    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+    internal static T DeserializeObject<T>(object array, bool checkForNullOrEmptyArray = false)
+    {
+        if (!checkForNullOrEmptyArray)
+        {
+            return JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+        }
+
+        string _stringArray = array?.ToString() ?? string.Empty;
+        if (_stringArray.NotNullOrWhiteSpace() || _stringArray == "[]")
+        {
+            return JsonConvert.DeserializeObject<T>(_stringArray);
+        }
+        else
+        {
+            return default;
+        }
+
+    }
 
     /// <summary>
     ///     Creates and returns a DialogOptions object with the specified content text.

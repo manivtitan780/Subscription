@@ -23,6 +23,7 @@ namespace Subscription.Model;
 ///     such as the code, company, creation date, due date, and more. It also includes properties
 ///     to manage the pagination of the search results.
 /// </remarks>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class RequisitionSearch
 {
 	/// <summary>
@@ -53,8 +54,8 @@ public class RequisitionSearch
 	/// <param name="dueEnd">The end date for the due time range of the requisition search.</param>
 	/// <param name="recruiter">Indicates whether the requisition is for a recruiter.</param>
 	/// <param name="user">The user who is performing the requisition search.</param>
-	public RequisitionSearch(int itemCount, int page, byte sortField, byte sortDirection, string code, string title, string company, string option,
-							 string status, string createdBy, DateTime createdOn, DateTime createdOnEnd, DateTime due, DateTime dueEnd, bool recruiter, string user)
+	public RequisitionSearch(int itemCount, int page, byte sortField, byte sortDirection, string? code, string? title, string? company, string? option,
+							 string? status, string? createdBy, DateTime createdOn, DateTime createdOnEnd, DateTime due, DateTime dueEnd, bool recruiter, string? user)
 	{
 		ItemCount = itemCount;
 		Page = page;
@@ -83,7 +84,7 @@ public class RequisitionSearch
 	/// <remarks>
 	///     This property is used to filter the requisitions based on their code in the search operation.
 	/// </remarks>
-	public string Code
+	public string? Code
 	{
 		get;
 		set;
@@ -98,7 +99,7 @@ public class RequisitionSearch
 	/// <remarks>
 	///     This property is used to filter requisitions based on the associated company.
 	/// </remarks>
-	public string Company
+	public string? Company
 	{
 		get;
 		set;
@@ -113,7 +114,7 @@ public class RequisitionSearch
 	/// <remarks>
 	///     This property is used to filter requisitions based on the user who created them.
 	/// </remarks>
-	public string CreatedBy
+	public string? CreatedBy
 	{
 		get;
 		set;
@@ -199,7 +200,7 @@ public class RequisitionSearch
 	///     This property is used to specify an additional search criterion for the RequisitionSearch. It is bound to a
 	///     dropdown control in the AdvancedRequisitionSearch component.
 	/// </remarks>
-	public string Option
+	public string? Option
 	{
 		get;
 		set;
@@ -266,9 +267,9 @@ public class RequisitionSearch
 	/// </value>
 	/// <remarks>
 	///     This property is used to filter requisitions based on their status.
-	///     The status value is case-insensitive and it is converted to upper case in the application.
+	///     The status value is case-insensitive, and it is converted to upper case in the application.
 	/// </remarks>
-	public string Status
+	public string? Status
 	{
 		get;
 		set;
@@ -280,7 +281,7 @@ public class RequisitionSearch
 	/// <value>
 	///     The title of the requisition.
 	/// </value>
-	public string Title
+	public string? Title
 	{
 		get;
 		set;
@@ -290,13 +291,13 @@ public class RequisitionSearch
 	///     Gets or sets the user associated with the requisition search.
 	/// </summary>
 	/// <value>
-	///     The user name as a string.
+	///     The username as a string.
 	/// </value>
 	/// <remarks>
 	///     This property is used to filter requisitions based on the user.
-	///     The user name is case-insensitive and it is converted to upper case in the application.
+	///     The username is case-insensitive, and it is converted to upper case in the application.
 	/// </remarks>
-	public string User
+	public string? User
 	{
 		get;
 		set;
@@ -334,5 +335,5 @@ public class RequisitionSearch
 	/// <returns>
 	///     A shallow copy of the current RequisitionSearch object.
 	/// </returns>
-	public RequisitionSearch Copy() => MemberwiseClone() as RequisitionSearch;
+	public RequisitionSearch? Copy() => MemberwiseClone() as RequisitionSearch;
 }

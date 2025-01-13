@@ -23,7 +23,7 @@ public class CompanyContactList
         set;
     }
 
-    public string ContactName
+    public string? ContactName
     {
         get;
         set;

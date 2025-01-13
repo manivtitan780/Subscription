@@ -76,7 +76,7 @@ public class CandidateDocument
     ///     This property is used to specify the type of the document. The actual meaning of specific types is determined by
     ///     the document type definitions in the system.
     /// </remarks>
-    public string DocumentType
+    public string? DocumentType
     {
         get;
         set;
@@ -109,7 +109,7 @@ public class CandidateDocument
     ///     It is used in the document upload process where a file name is added to the list when a file is selected,
     ///     and the list is cleared when a file's removed from the upload queue.
     /// </remarks>
-    public List<string> Files
+    public List<string>? Files
     {
         get;
         set;
@@ -133,7 +133,8 @@ public class CandidateDocument
     /// <value>
     ///     The internal file name of the candidate document.
     /// </value>
-    public string InternalFileName
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public string? InternalFileName
     {
         get;
         set;
@@ -145,7 +146,8 @@ public class CandidateDocument
     /// <value>
     ///     The location of the candidate document.
     /// </value>
-    public string Location
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public string? Location
     {
         get;
         set;
@@ -157,7 +159,7 @@ public class CandidateDocument
     /// <value>
     ///     The name of the candidate document.
     /// </value>
-    public string Name
+    public string? Name
     {
         get;
         set;
@@ -169,7 +171,7 @@ public class CandidateDocument
     /// <value>
     ///     The notes for the candidate document.
     /// </value>
-    public string Notes
+    public string? Notes
     {
         get;
         set;
@@ -181,7 +183,7 @@ public class CandidateDocument
     /// <value>
     ///     The identifier of the user who last updated the document.
     /// </value>
-    public string UpdatedBy
+    public string? UpdatedBy
     {
         get;
         set;
@@ -216,5 +218,5 @@ public class CandidateDocument
     /// <returns>
     ///     A new CandidateDocument object that is a deep copy of this instance.
     /// </returns>
-    public CandidateDocument Copy() => MemberwiseClone() as CandidateDocument;
+    public CandidateDocument? Copy() => MemberwiseClone() as CandidateDocument;
 }

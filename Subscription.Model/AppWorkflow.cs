@@ -24,6 +24,7 @@ namespace Subscription.Model;
 ///     workflow step can be scheduled, whether the workflow step can be executed at any stage, and the full descriptions
 ///     of the next step, the roles, and the step.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class AppWorkflow
 {
 	/// <summary>
@@ -50,8 +51,8 @@ public class AppWorkflow
 	/// <param name="nextFull">The full description of the next step in the workflow.</param>
 	/// <param name="roleFull">The full description of the roles associated with the AppWorkflow instance.</param>
 	/// <param name="stepFull">The full description of the step in the workflow. This parameter is optional.</param>
-	public AppWorkflow(int id, string step, string next, bool isLast, string roleIDs, bool schedule, bool anyStage, string nextFull,
-					   string roleFull, string stepFull = "")
+	public AppWorkflow(int id, string? step, string? next, bool isLast, string? roleIDs, bool schedule, bool anyStage, string? nextFull,
+					   string? roleFull, string? stepFull = "")
     {
         ID = id;
         Step = step;
@@ -124,7 +125,7 @@ public class AppWorkflow
 	///     The next step is used to determine the subsequent step in the workflow.
 	///     It is displayed in the 'Next Step' column of the Workflow grid in the Admin section of the application.
 	/// </remarks>
-	public string Next
+	public string? Next
     {
         get;
         set;
@@ -141,7 +142,7 @@ public class AppWorkflow
 	///     The full name of the next step provides a more detailed description of the next step in the workflow.
 	///     It is displayed in the 'Next Step' column of the Workflow grid in the Admin section of the application.
 	/// </remarks>
-	public string NextFull
+	public string? NextFull
     {
         get;
         set;
@@ -158,7 +159,7 @@ public class AppWorkflow
 	///     step.
 	///     It is displayed in the 'Roles' column of the Workflow grid in the Admin section of the application.
 	/// </remarks>
-	public string RoleFull
+	public string? RoleFull
     {
         get;
         set;
@@ -174,7 +175,7 @@ public class AppWorkflow
 	///     The Role IDs are used to determine the roles associated with a particular workflow step.
 	///     Each Role ID should be unique. At least one Role ID is required for each AppWorkflow instance.
 	/// </remarks>
-	public string RoleIDs
+	public string? RoleIDs
     {
         get;
         set;
@@ -207,7 +208,7 @@ public class AppWorkflow
 	///     This property is used in various parts of the application such as the `Candidate`, `CompanyRequisitions`, and other
 	///     classes to control the flow of the application.
 	/// </remarks>
-	public string Step
+	public string? Step
     {
         get;
         set;
@@ -223,7 +224,7 @@ public class AppWorkflow
 	///     This property is used to provide a more detailed description of the step in the workflow. It can be used in user
 	///     interfaces to give users more context about the step.
 	/// </remarks>
-	public string StepFull
+	public string? StepFull
     {
         get;
         set;
@@ -235,6 +236,7 @@ public class AppWorkflow
 	/// <remarks>
 	///     This method is typically used to prepare an AppWorkflow instance for reuse or to clear its data before disposal.
 	/// </remarks>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public void Clear()
     {
         ID = 0;
@@ -253,5 +255,5 @@ public class AppWorkflow
 	///     Creates a deep copy of the current AppWorkflow object.
 	/// </summary>
 	/// <returns>A new AppWorkflow object that is a deep copy of this instance.</returns>
-	public AppWorkflow Copy() => MemberwiseClone() as AppWorkflow;
+	public AppWorkflow? Copy() => MemberwiseClone() as AppWorkflow;
 }

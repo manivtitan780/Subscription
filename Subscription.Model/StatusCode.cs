@@ -23,6 +23,8 @@ namespace Subscription.Model;
 ///     It is used to track the status of various entities in the system, such as users, processes, etc.
 ///     Each status code has a unique identifier, a code, a status, a description, an icon, and other properties.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class StatusCode
 {
 	/// <summary>
@@ -49,8 +51,8 @@ public class StatusCode
 	/// <param name="color">The color associated with the StatusCode.</param>
 	/// <param name="createdDate">The creation date of the StatusCode.</param>
 	/// <param name="updatedDate">The updated date of the StatusCode.</param>
-	public StatusCode(int id, string code, string status, string description, string appliesToCode, string appliesTo, string icon, bool submitCandidate,
-					  bool showCommission, string color, string createdDate, string updatedDate)
+	public StatusCode(int id, string? code, string? status, string? description, string? appliesToCode, string? appliesTo, string? icon, bool submitCandidate,
+					  bool showCommission, string? color, string? createdDate, string? updatedDate)
 	{
 		ID = id;
 		Code = code;
@@ -80,7 +82,7 @@ public class StatusCode
 	///     This constructor is used to create a new instance of the <see cref="StatusCode" /> class with the specified
 	///     parameters.
 	/// </remarks>
-	public StatusCode(int id, string code, string status, string icon, string appliesToCode, bool submitCandidate, bool showCommission)
+	public StatusCode(int id, string? code, string? status, string? icon, string? appliesToCode, bool submitCandidate, bool showCommission)
 	{
 		ID = id;
 		Code = code;
@@ -106,7 +108,7 @@ public class StatusCode
 	///     This property is used to specify the entity (like a user, a process, etc.) to which the status code is applicable.
 	///     It helps in filtering and identifying the status codes based on the entity they are associated with.
 	/// </remarks>
-	public string AppliesTo
+	public string? AppliesTo
 	{
 		get;
 		set;
@@ -123,7 +125,7 @@ public class StatusCode
 	///     `AppliesToCode` of "SCN" is applicable to scenarios where the `Code` property of the `StatusCode` object matches
 	///     the `AppliesToCode`.
 	/// </remarks>
-	public string AppliesToCode
+	public string? AppliesToCode
 	{
 		get;
 		set;
@@ -138,7 +140,7 @@ public class StatusCode
 	/// <remarks>
 	///     This property is used in various parts of the application to filter and identify status codes.
 	/// </remarks>
-	public string Code
+	public string? Code
 	{
 		get;
 		set;
@@ -154,7 +156,7 @@ public class StatusCode
 	///     This property is used in the StatusCodeDialog component for binding the color value to the SfColorPicker control in
 	///     the UI.
 	/// </remarks>
-	public string Color
+	public string? Color
 	{
 		get;
 		set;
@@ -170,7 +172,7 @@ public class StatusCode
 	///     This property is used to track when the StatusCode was created.
 	///     The date is stored as a string in the format "MM/dd/yyyy".
 	/// </remarks>
-	public string CreatedDate
+	public string? CreatedDate
 	{
 		get;
 		set;
@@ -187,7 +189,7 @@ public class StatusCode
 	///     the UI,
 	///     and in the StatusCodes component for displaying the description in the grid.
 	/// </remarks>
-	public string Description
+	public string? Description
 	{
 		get;
 		set;
@@ -202,7 +204,7 @@ public class StatusCode
 	/// <remarks>
 	///     This property is used in the StatusCodeDialog component for binding the icon value to the TextBoxControl in the UI.
 	/// </remarks>
-	public string Icon
+	public string? Icon
 	{
 		get;
 		set;
@@ -250,7 +252,7 @@ public class StatusCode
 	/// <value>
 	///     The status represented as a string.
 	/// </value>
-	public string Status
+	public string? Status
 	{
 		get;
 		set;
@@ -274,7 +276,7 @@ public class StatusCode
 	/// <value>
 	///     A string representing the last updated date in the format "MM/dd/yyyy".
 	/// </value>
-	public string UpdatedDate
+	public string? UpdatedDate
 	{
 		get;
 		set;
@@ -307,5 +309,5 @@ public class StatusCode
 	/// <returns>
 	///     A new StatusCode object with the same values as the current StatusCode object.
 	/// </returns>
-	public StatusCode Copy() => MemberwiseClone() as StatusCode;
+	public StatusCode? Copy() => MemberwiseClone() as StatusCode;
 }

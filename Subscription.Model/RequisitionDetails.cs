@@ -16,7 +16,7 @@
 namespace Subscription.Model;
 
 /// <summary>
-///     Represents the details of a requisition in the professional services domain.
+///     Represents the details of a requisition in the professional services' domain.
 /// </summary>
 /// <remarks>
 ///     This class includes information such as the requisition ID, company name, contact name, position title,
@@ -26,6 +26,8 @@ namespace Subscription.Model;
 ///     benefits, OFCCP compliance, due date, submission details, location details, mandatory and optional requirements,
 ///     assigned recruiter, and various IDs related to the requisition.
 /// </remarks>
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class RequisitionDetails
 {
 	/// <summary>
@@ -94,13 +96,13 @@ public class RequisitionDetails
 	/// <param name="companyCity">The city of the company for the requisition.</param>
 	/// <param name="companyState">The state of the company for the requisition.</param>
 	/// <param name="companyZip">The zip code of the company for the requisition.</param>
-	public RequisitionDetails(int requisitionID, string companyName, string contactName, string positionTitle, string description, int positions, string duration, string durationCode,
-							  string location, string experience, decimal expRateLow, decimal expRateHigh, decimal expLoadLow, decimal expLoadHigh, decimal placementFee, bool placementType,
-							  string jobOptions, string reportTo, decimal salaryLow, decimal salaryHigh, bool expensesPaid, DateTime expectedStart, string status, string priority,
-							  string createdBy, DateTime createdDate, string updatedBy, DateTime updatedDate, string skillsRequired, string education, string eligibility, bool securityClearance,
-							  bool benefits, string benefitNotes, bool ofccp, DateTime dueDate, bool submitCandidate, string city, int stateID, string zipCode,
-							  string mandatory, string optional, string assignedRecruiter, short priorityID, int eligibilityID, int experienceID, int educationID, string jobOption,
-							  int companyID, int contactID, string statusCode, string companyCity, string companyState, string companyZip)
+	public RequisitionDetails(int requisitionID, string? companyName, string? contactName, string? positionTitle, string? description, int positions, string? duration, string? durationCode,
+							  string? location, string? experience, decimal expRateLow, decimal expRateHigh, decimal expLoadLow, decimal expLoadHigh, decimal placementFee, bool placementType,
+							  string? jobOptions, string? reportTo, decimal salaryLow, decimal salaryHigh, bool expensesPaid, DateTime expectedStart, string? status, string? priority,
+							  string? createdBy, DateTime createdDate, string? updatedBy, DateTime updatedDate, string? skillsRequired, string? education, string? eligibility, bool securityClearance,
+							  bool benefits, string? benefitNotes, bool ofccp, DateTime dueDate, bool submitCandidate, string? city, int stateID, string? zipCode,
+							  string? mandatory, string? optional, string? assignedRecruiter, short priorityID, int eligibilityID, int experienceID, int educationID, string? jobOption,
+							  int companyID, int contactID, string? statusCode, string? companyCity, string? companyState, string? companyZip)
 	{
 		RequisitionID = requisitionID;
 		CompanyName = companyName;
@@ -161,7 +163,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the name of the person or entity to whom the requisition is assigned.
 	/// </summary>
-	public string AssignedTo
+	public string? AssignedTo
 	{
 		get;
 		set;
@@ -185,7 +187,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The benefit notes.
 	/// </value>
-	public string BenefitNotes
+	public string? BenefitNotes
 	{
 		get;
 		set;
@@ -209,7 +211,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The city name.
 	/// </value>
-	public string City
+	public string? City
 	{
 		get;
 		set;
@@ -221,7 +223,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The city of the company.
 	/// </value>
-	public string CompanyCity
+	public string? CompanyCity
 	{
 		get;
 		set;
@@ -242,7 +244,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the name of the company associated with the requisition.
 	/// </summary>
-	public string CompanyName
+	public string? CompanyName
 	{
 		get;
 		set;
@@ -259,7 +261,7 @@ public class RequisitionDetails
 	///     It is used in the `RequisitionDetailsPanel` class to display and manage the company's state in the application's
 	///     user interface.
 	/// </remarks>
-	public string CompanyState
+	public string? CompanyState
 	{
 		get;
 		set;
@@ -271,7 +273,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The zip code of the company.
 	/// </value>
-	public string CompanyZip
+	public string? CompanyZip
 	{
 		get;
 		set;
@@ -289,7 +291,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the contact name associated with the requisition.
 	/// </summary>
-	public string ContactName
+	public string? ContactName
 	{
 		get;
 		set;
@@ -298,7 +300,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the username of the user who created the requisition.
 	/// </summary>
-	public string CreatedBy
+	public string? CreatedBy
 	{
 		get;
 		set;
@@ -322,7 +324,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The description of the requisition.
 	/// </value>
-	public string Description
+	public string? Description
 	{
 		get;
 		set;
@@ -346,7 +348,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The duration of the requisition.
 	/// </value>
-	public string Duration
+	public string? Duration
 	{
 		get;
 		set;
@@ -358,7 +360,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The duration code.
 	/// </value>
-	public string DurationCode
+	public string? DurationCode
 	{
 		get;
 		set;
@@ -370,7 +372,7 @@ public class RequisitionDetails
 	/// <value>
 	///     A string representing the education requirements.
 	/// </value>
-	public string Education
+	public string? Education
 	{
 		get;
 		set;
@@ -394,7 +396,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The eligibility requirements for the requisition.
 	/// </value>
-	public string Eligibility
+	public string? Eligibility
 	{
 		get;
 		set;
@@ -442,7 +444,7 @@ public class RequisitionDetails
 	/// <value>
 	///     A string representing the experience requirements.
 	/// </value>
-	public string Experience
+	public string? Experience
 	{
 		get;
 		set;
@@ -514,7 +516,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The Job Option ID is a string value representing the unique identifier for a job option in the requisition process.
 	/// </value>
-	public string JobOptionID
+	public string? JobOptionID
 	{
 		get;
 		set;
@@ -526,7 +528,7 @@ public class RequisitionDetails
 	/// <value>
 	///     A string representing the job options.
 	/// </value>
-	public string JobOptions
+	public string? JobOptions
 	{
 		get;
 		set;
@@ -536,7 +538,7 @@ public class RequisitionDetails
 	///     Gets or sets the JobOptionsID associated with the RequisitionDetails.
 	/// </summary>
 	/// <value>The JobOptionsID string.</value>
-	public string JobOptionsID
+	public string? JobOptionsID
 	{
 		get;
 		set;
@@ -546,7 +548,7 @@ public class RequisitionDetails
 	///     Gets or sets the location associated with the requisition details.
 	/// </summary>
 	/// <value>The location string.</value>
-	public string Location
+	public string? Location
 	{
 		get;
 		set;
@@ -558,7 +560,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The mandatory requirements for the requisition.
 	/// </value>
-	public string Mandatory
+	public string? Mandatory
 	{
 		get;
 		set;
@@ -586,7 +588,7 @@ public class RequisitionDetails
 	///     This property is used in the `SetSkills` method of the `CompanyRequisitions` class to split the optional skills and
 	///     match them with the `Skills` list.
 	/// </remarks>
-	public string Optional
+	public string? Optional
 	{
 		get;
 		set;
@@ -628,7 +630,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the title of the position for the requisition.
 	/// </summary>
-	public string PositionTitle
+	public string? PositionTitle
 	{
 		get;
 		set;
@@ -640,7 +642,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The priority of the requisition.
 	/// </value>
-	public string Priority
+	public string? Priority
 	{
 		get;
 		set;
@@ -665,7 +667,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The name of the person or department to whom the requisition should be reported.
 	/// </value>
-	public string ReportTo
+	public string? ReportTo
 	{
 		get;
 		set;
@@ -731,7 +733,7 @@ public class RequisitionDetails
 	///     This property is used in the `SetSkills` method of the `CompanyRequisitions` class to set the skills required for
 	///     company requisitions.
 	/// </remarks>
-	public string SkillsRequired
+	public string? SkillsRequired
 	{
 		get;
 		set;
@@ -759,7 +761,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The status of the requisition.
 	/// </value>
-	public string Status
+	public string? Status
 	{
 		get;
 		set;
@@ -771,7 +773,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The status code is a string that represents the current status of the requisition.
 	/// </value>
-	public string StatusCode
+	public string? StatusCode
 	{
 		get;
 		set;
@@ -792,7 +794,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the title of the requisition.
 	/// </summary>
-	public string Title
+	public string? Title
 	{
 		get;
 		set;
@@ -801,7 +803,7 @@ public class RequisitionDetails
 	/// <summary>
 	///     Gets or sets the username of the user who last updated the requisition details.
 	/// </summary>
-	public string UpdatedBy
+	public string? UpdatedBy
 	{
 		get;
 		set;
@@ -822,7 +824,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The ZipCode is a string representing the postal code for the requisition.
 	/// </value>
-	public string ZipCode
+	public string? ZipCode
 	{
 		get;
 		set;
@@ -894,5 +896,5 @@ public class RequisitionDetails
 	/// <returns>
 	///     A new RequisitionDetails object that is a shallow copy of this instance.
 	/// </returns>
-	public RequisitionDetails Copy() => MemberwiseClone() as RequisitionDetails;
+	public RequisitionDetails? Copy() => MemberwiseClone() as RequisitionDetails;
 }

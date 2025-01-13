@@ -15,6 +15,7 @@
 
 #region Using
 
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,6 +25,7 @@ using Newtonsoft.Json;
 
 namespace Subscription.API.Code;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class General
 {
     public static byte[] ComputeHashWithSalt(string input, byte[] salt)
@@ -42,7 +44,7 @@ public static class General
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
     /// <returns>The deserialized object of type T.</returns>
-    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+    internal static T? DeserializeObject<T>(object? array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
 
     public static async Task SetCache()
     {
@@ -264,12 +266,12 @@ public static class General
     /// </summary>
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-    public static byte[] SHA512PasswordHash(string inputText) => SHA512.Create().ComputeHash(new UTF8Encoding().GetBytes(inputText));
+    public static byte[] SHA512PasswordHash(string inputText) => SHA512.HashData(new UTF8Encoding().GetBytes(inputText));
 
     /// <summary>
     ///     Computes the SHA-512 hash of the input text.
     /// </summary>
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-    public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.Create().ComputeHash(inputText);
+    public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.HashData(inputText);
 }

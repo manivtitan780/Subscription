@@ -105,7 +105,7 @@ public static partial class Extensions
 	///     The string value of the specified column or nullReplaceValue if the column value is DBNull or an empty string
 	///     (if checkEmptyString is true).
 	/// </returns>
-	public static string NString(this SqlDataReader read, int index, string nullReplaceValue = "", bool checkEmptyString = false) =>
+	public static string? NString(this SqlDataReader read, int index, string? nullReplaceValue = "", bool checkEmptyString = false) =>
         checkEmptyString ? read.IsDBNull(index) || read.GetString(index) == string.Empty ? nullReplaceValue : read.GetString(index).Trim() :
         read.IsDBNull(index) ? nullReplaceValue : read.GetString(index).Trim();
 
@@ -127,7 +127,7 @@ public static partial class Extensions
 	///     A boolean value that is equivalent to the boolean value contained in the object. If the object is null, or
 	///     does not represent a valid boolean value, the method returns false.
 	/// </returns>
-	public static bool ToBoolean(this object o)
+	public static bool ToBoolean(this object? o)
     {
         if (o is bool _b)
         {
@@ -170,7 +170,7 @@ public static partial class Extensions
 	/// <returns>
 	///     The byte representation of the object or nullValue if the object is null or cannot be converted.
 	/// </returns>
-	public static byte ToByte(this object o, byte nullValue = 0)
+	public static byte ToByte(this object? o, byte nullValue = 0)
     {
         if (o == null)
         {
@@ -284,7 +284,7 @@ public static partial class Extensions
 	///     A short integer value that is equivalent to the short integer value contained in the string. If the string is
 	///     null or empty, or does not represent a valid short integer value, the method returns the nullValue.
 	/// </returns>
-	public static short ToInt16(this string s, short nullValue = 0) => string.IsNullOrEmpty(s) ? nullValue : short.TryParse(s, out short _outInt) ? _outInt : nullValue;
+	public static short ToInt16(this string? s, short nullValue = 0) => string.IsNullOrEmpty(s) ? nullValue : short.TryParse(s, out short _outInt) ? _outInt : nullValue;
 
 	/// <summary>
 	///     Converts the object representation of a short integer value to its short integer equivalent.
@@ -320,7 +320,7 @@ public static partial class Extensions
 	///     A 32-bit signed integer that is equivalent to the number contained in the object. If the object is null or
 	///     does not represent a valid number, the method returns nullValue.
 	/// </returns>
-	public static int ToInt32(this object o, int nullValue = 0)
+	public static int ToInt32(this object? o, int nullValue = 0)
     {
         return o switch
                {
@@ -345,7 +345,7 @@ public static partial class Extensions
 	///     A 32-bit signed integer that is equivalent to the number contained in the string, or nullValue if the string
 	///     is null or empty, or does not represent a valid integer.
 	/// </returns>
-	public static int ToInt32(this string s, int nullValue = 0)
+	public static int ToInt32(this string? s, int nullValue = 0)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
@@ -364,7 +364,7 @@ public static partial class Extensions
 	///     The long value converted from the string.
 	///     If the string is null, empty, or cannot be converted to a long, the method returns the provided nullValue.
 	/// </returns>
-	public static long ToInt64(this string s, long nullValue = 0)
+	public static long ToInt64(this string? s, long nullValue = 0)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
@@ -410,15 +410,15 @@ public static partial class Extensions
 	///     A MarkupString where new line characters are replaced with HTML line break tags. If the input string is null,
 	///     empty, or consists only of white-space characters, an empty MarkupString is returned.
 	/// </returns>
-	public static MarkupString ToMarkupString(this string s)
+	public static MarkupString ToMarkupString(this string? s)
     {
         if (s.NullOrWhiteSpace())
         {
             return (MarkupString)"";
         }
 
-        s = s.Replace(Environment.NewLine, "<br/>");
+        s = s?.Replace(Environment.NewLine, "<br/>");
 
-        return (MarkupString)s;
+        return (MarkupString)s!;
     }
 }

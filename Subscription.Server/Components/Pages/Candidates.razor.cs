@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-12-2025 19:01
+// Last Updated On:     01-13-2025 15:01
 // *****************************************/
 
 #endregion
@@ -537,6 +537,12 @@ public partial class Candidates
         get;
         set;
     } = new();
+    
+    private CandidateEducation SelectedEducationClone
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Gets or sets the selected education for the candidate. This property is of type
@@ -704,10 +710,8 @@ public partial class Candidates
                                                                                                        };
 
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
-                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                              {
-                                                                  _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
-                                                              }
+
+                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response, true);
                                                           });
 
     /// <summary>
@@ -729,10 +733,7 @@ public partial class Candidates
                                                               Dictionary<string, string> _parameters = CreateParameters(id);
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", _parameters);
 
-                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                              {
-                                                                  _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
-                                                              }
+                                                              _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response, true);
                                                           });
 
     /// <summary>
@@ -754,10 +755,7 @@ public partial class Candidates
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", _parameters);
 
-                                                               if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                               {
-                                                                   _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
-                                                               }
+                                                               _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response, true);
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -765,10 +763,7 @@ public partial class Candidates
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteNotes", _parameters);
 
-                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                          {
-                                                              _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
-                                                          }
+                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response, true);
                                                       });
 
     /// <summary>
@@ -785,11 +780,9 @@ public partial class Candidates
     private Task DeleteSkill(int id) => ExecuteMethod(async () =>
                                                       {
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
-                                                          string _response = await General.ExecuteRest<string>("Candidates/DeleteSkill", _parameters);
-                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                          {
-                                                              _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
-                                                          }
+                                                          string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", _parameters);
+
+                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response, true);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
@@ -828,40 +821,13 @@ public partial class Candidates
                                                                           };
                                  ReturnCandidateDetails _response = await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters, null, false);
 
-                                 if (_response.Candidate.NotNullOrWhiteSpace() && _response.Candidate != "[]")
-                                 {
-                                     _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate);
-                                 }
-
-                                 if (_response.Skills.NotNullOrWhiteSpace() && _response.Skills != "[]")
-                                 {
-                                     _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills);
-                                 }
-
-                                 if (_response.Education.NotNullOrWhiteSpace() && _response.Education != "[]")
-                                 {
-                                     _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education);
-                                 }
-
-                                 if (_response.Experience.NotNullOrWhiteSpace() && _response.Experience != "[]")
-                                 {
-                                     _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience);
-                                 }
-
-                                 if (_response.Notes.NotNullOrWhiteSpace() && _response.Notes != "[]")
-                                 {
-                                     _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes);
-                                 }
-
-                                 if (_response.Documents.NotNullOrWhiteSpace() && _response.Documents != "[]")
-                                 {
-                                     _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents);
-                                 }
-
-                                 if (_response.Activity.NotNullOrWhiteSpace() && _response.Activity != "[]")
-                                 {
-                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity);
-                                 }
+                                 _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate, true);
+                                 _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills, true);
+                                 _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education, true);
+                                 _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience, true);
+                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes, true);
+                                 _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents, true);
+                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity, true);
 
                                  _candidateRatingObject = _response.Rating;
                                  _candidateMPCObject = _response.MPC;
@@ -899,10 +865,7 @@ public partial class Candidates
     ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
     /// </summary>
     [JSInvokable("DetailCollapse")]
-    public void DetailRowCollapse()
-    {
-        _target = null;
-    }
+    public void DetailRowCollapse() => _target = null;
 
     /// <summary>
     ///     Initiates the download of a document associated with a candidate.
@@ -941,16 +904,13 @@ public partial class Candidates
     /// </remarks>
     private Task EditCandidate() => ExecuteMethod(async () =>
                                                   {
-                                                      if (Spinner != null)
+                                                      try
                                                       {
-                                                          try
-                                                          {
-                                                              await Spinner.ShowAsync();
-                                                          }
-                                                          catch
-                                                          {
-                                                              //Ignore the exception.
-                                                          }
+                                                          await Spinner?.ShowAsync()!;
+                                                      }
+                                                      catch
+                                                      {
+                                                          //Ignore the exception.
                                                       }
 
                                                       if (_target == null || _target.ID == 0)
@@ -973,16 +933,13 @@ public partial class Candidates
                                                           _candidateDetailsObjectClone.IsAdd = false;
                                                       }
 
-                                                      if (Spinner != null)
+                                                      try
                                                       {
-                                                          try
-                                                          {
-                                                              await Spinner.HideAsync();
-                                                          }
-                                                          catch
-                                                          {
-                                                              //Ignore the exception.
-                                                          }
+                                                          await Spinner?.HideAsync()!;
+                                                      }
+                                                      catch
+                                                      {
+                                                          //Ignore the exception.
                                                       }
 
                                                       await CandidateDialog.ShowDialog();
@@ -1010,11 +967,11 @@ public partial class Candidates
                                                             {
                                                                 if (SelectedEducation == null)
                                                                 {
-                                                                    SelectedEducation = new();
+                                                                    SelectedEducationClone = new();
                                                                 }
                                                                 else
                                                                 {
-                                                                    SelectedEducation.Clear();
+                                                                     SelectedEducation.Clear();
                                                                 }
                                                             }
                                                             else
@@ -1022,7 +979,7 @@ public partial class Candidates
                                                                 SelectedEducation = EducationPanel.SelectedRow != null ? EducationPanel.SelectedRow.Copy() : new();
                                                             }
 
-                                                            EditConEducation = new(SelectedEducation);
+                                                            EditConEducation = new(SelectedEducation!);
                                                             await CandidateEducationDialog.ShowDialog();
                                                         });
 
