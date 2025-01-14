@@ -188,9 +188,17 @@ public class General
             _request.AddFile(parameterName, fileArray, fileName, "application/octet-stream");
         }
 
-        RestResponse<T> response = await _client.ExecuteAsync<T>(_request);
+        RestResponse<T> response = null;
+        try
+        {
+            response = await _client.ExecuteAsync<T>(_request);
+        }
+        catch (Exception ex)
+        {
+            response = null;
+        }
 
-        return response.IsSuccessful ? response.Data : default;
+        return response!.IsSuccessful ? response.Data : default;
     }
 
     /// <summary>

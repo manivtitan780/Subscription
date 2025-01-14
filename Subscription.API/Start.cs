@@ -32,6 +32,24 @@ public static class Start
         set;
     }
 
+    public static string? EmailSecret
+    {
+        get;
+        set;
+    } = "";
+
+    public static string? EmailClientID
+    {
+        get;
+        set;
+    } = "";
+
+    public static string? TenantID
+    {
+        get;
+        set;
+    } = "";
+    
     public static string? APIHost
     {
         get;

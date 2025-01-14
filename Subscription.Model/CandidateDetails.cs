@@ -252,11 +252,11 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated by the CheckCandidateExists method in the Validations class.
 	/// </remarks>
-	public string? FirstName
-    {
-        get;
-        set;
-    }
+	public string FirstName
+	{
+		get;
+		set;
+	} = "";
 
 	/// <summary>
 	///     Gets or sets the formatted resume of the candidate.

@@ -17,6 +17,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+using FluentEmail.Core;
+using FluentEmail.Core.Models;
+
+/*using FluentEmail.Core;
+using FluentEmail.Core.Models;*/
+
 #endregion
 
 namespace Subscription.API.Controllers;
@@ -635,8 +641,9 @@ public class CandidateController : ControllerBase
     ///     - Closes the connection to the database.
     ///     - Returns the result of the operation.
     /// </remarks>
-    [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-    public async Task<ActionResult<int>> SaveCandidate(CandidateDetails? candidateDetails, string jsonPath, string userName = "", string emailAddress = "maniv@titan-techs.com")
+    [HttpPost]
+    [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+    public async Task<ActionResult<int>> SaveCandidate(CandidateDetails? candidateDetails, string jsonPath = "", string userName = "", string emailAddress = "maniv@titan-techs.com")
     {
         if (candidateDetails == null)
         {
@@ -750,6 +757,11 @@ public class CandidateController : ControllerBase
                                                           .Replace("$CAND_SUMMARY$", candidateDetails.Summary)
                                                           .Replace("$LOGGED_USER$", userName);
 
+                SendResponse? _email = await Email.From("maniv@hire-titan.com")
+                                                  .To("manivenkit@gmail.com", "Mani Bhai")
+                                                  .Subject("Chup chaap accept kar")
+                                                  .Body("Bhai ka message aayela hain. Accept karne ka, samjha kya?")
+                                                  .SendAsync();
                 // GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);
             }
         }

@@ -7,9 +7,15 @@
 // Project:             Subscription.API
 // File Name:           Program.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          02-07-2024 16:02
-// Last Updated On:     12-28-2024 19:12
+// Created On:          12-28-2024 19:12
+// Last Updated On:     01-14-2025 18:01
 // *****************************************/
+
+#endregion
+
+#region Using
+
+using FluentEmail.Graph;
 
 #endregion
 
@@ -37,6 +43,14 @@ Log.Logger = new LoggerConfiguration()
                                  columnOptions: columnOptions).CreateLogger();
 _builder.Host.UseSerilog();
 
+/*GraphSenderOptions _graphOptions = new()
+                                   {
+                                       Secret = _config["Email:Secret"],
+                                       ClientId = _config["Email:ClientID"],
+                                       TenantId = _config["Email:TenantID"]
+                                   };*/
+_builder.Services.AddFluentEmail("dummy@emailprovider.com")
+        .AddSmtpSender(_config["Email:Host"], _config["Email:Port"].ToInt32(), _config["Email:Username"], _config["Email:Password"]);
 WebApplication _app = _builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -85,6 +99,9 @@ _app.Use(async (context, next) =>
                  Start.AzureBlobContainer = _config["AzureBlobContainer"];
                  Start.AzureKey = _config["AzureKey"];
                  Start.AccountName = _config["AccountName"];
+                 Start.EmailSecret = _config["Email:Secret"];
+                 Start.EmailClientID = _config["Email:ClientID"];
+                 Start.TenantID = _config["Email:TenantID"];
 
                  await General.SetCache();
                  _isSet = true;

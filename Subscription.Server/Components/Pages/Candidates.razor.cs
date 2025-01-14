@@ -1019,7 +1019,7 @@ public partial class Candidates
                                                                  SelectedExperience = ExperiencePanel.SelectedRow != null ? ExperiencePanel.SelectedRow.Copy() : new();
                                                              }
 
-                                                             EditConExperience = new(SelectedExperience);
+                                                             EditConExperience = new(SelectedExperience!);
                                                              await CandidateExperienceDialog.ShowDialog();
                                                          });
 
@@ -1041,7 +1041,7 @@ public partial class Candidates
                                                             SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
                                                         }
 
-                                                        EditConNotes = new(SelectedNotes);
+                                                        EditConNotes = new(SelectedNotes!);
                                                         await CandidateNotesDialog.ShowDialog();
                                                     });
 
@@ -1077,7 +1077,7 @@ public partial class Candidates
                                                                SelectedSkill = SkillPanel.SelectedRow != null ? SkillPanel.SelectedRow.Copy() : new();
                                                            }
 
-                                                           EditConSkill = new(SelectedSkill);
+                                                           EditConSkill = new(SelectedSkill!);
                                                            await CandidateSkillDialog.ShowDialog();
                                                        });
 
@@ -1231,13 +1231,6 @@ public partial class Candidates
                                                                           await Task.CompletedTask;
                                                                       });
 
-    /// <summary>
-    ///     Retrieves the state name associated with the given id.
-    /// </summary>
-    /// <param name="id">The id of the state.</param>
-    /// <returns>The name of the state associated with the given id. If no state is found, returns null.</returns>
-    private string GetState(int id) => _states.FirstOrDefault(state => state.Value == id)?.Text.Split('-')[1].Replace("[", "").Replace("]", "").Trim();
-
     private async Task GridPageChanging(GridPageChangingEventArgs page)
     {
         await ExecuteMethod(async () =>
@@ -1319,19 +1312,19 @@ public partial class Candidates
                                 Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
 
                                 // Deserialize configuration data into master objects
-                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]);
-                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
-                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
-                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
-                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()]);
-                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
-                                _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
-                                _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()]);
-                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
-                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
-
+                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()], true);
+                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()], true);
+                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()], true);
+                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()], true);
+                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()], true);
+                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()], true);
+                                _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()], true);
+                                _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()], true);
+                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()], true);
+                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()], true);
                                 SearchModel.Clear();
-                            });
+                                SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
+                            }); 
 
         _initializationTaskSource.SetResult(true);
 
@@ -1381,11 +1374,14 @@ public partial class Candidates
                                                       await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
 
                                                       _candidateDetailsObject = _candidateDetailsObjectClone.Copy();
-                                                      _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";
-                                                      _target.Phone = _candidateDetailsObject.Phone1.FormatPhoneNumber();
-                                                      _target.Email = _candidateDetailsObject.Email;
-                                                      _target.Location = $"{_candidateDetailsObject.City}, {GetState(_candidateDetailsObject.StateID)}, {_candidateDetailsObject.ZipCode}";
-                                                      //TODO: Set the State properly
+                                                      if (_candidateDetailsObject != null)
+                                                      {
+                                                          _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";
+                                                          _target.Phone = _candidateDetailsObject.Phone1.FormatPhoneNumber();
+                                                          _target.Email = _candidateDetailsObject.Email;
+                                                          _target.Location = $"{_candidateDetailsObject.City}, {SplitState(_candidateDetailsObject.StateID).Code}, {_candidateDetailsObject.ZipCode}";
+                                                      }
+
                                                       _target.Updated = DateTime.Today.CultureDate() + "[ADMIN]";
                                                       _target.Status = "Available";
                                                       SetupAddress();
@@ -1814,13 +1810,13 @@ public partial class Candidates
         {
             if (_generateAddress == "")
             {
-                _generateAddress = _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                _generateAddress = SplitState(_candidateDetailsObject.StateID).Name;// _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
             }
             else
             {
                 try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                 {
-                    _generateAddress += ", " + _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                    _generateAddress += ", " + SplitState(_candidateDetailsObject.StateID).Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
                 }
                 catch
                 {
@@ -1871,12 +1867,10 @@ public partial class Candidates
             case "itemEditRating":
                 _selectedTab = 0;
                 StateHasChanged();
-                //return Task.CompletedTask;
                 return RatingDialog.ShowDialog();
             case "itemEditMPC":
                 _selectedTab = 0;
                 StateHasChanged();
-                //return Task.CompletedTask;
                 return MPCDialog.ShowDialog();
             case "itemAddSkill":
                 _selectedTab = 1;
@@ -1892,7 +1886,6 @@ public partial class Candidates
                 return EditNotes(0);
             case "itemAddAttachment":
                 _selectedTab = 6;
-                //return Task.CompletedTask;
                 return AddDocument();
             case "itemOriginalResume":
                 _selectedTab = 5;
@@ -1907,19 +1900,21 @@ public partial class Candidates
         return Task.CompletedTask;
     }
 
-    private (string Code, string Name) SplitState(string state)
+    private (string Code, string Name) SplitState(int stateID)
     {
-        string[] parts = state.Split([" - "], StringSplitOptions.TrimEntries);
-        if (parts.Length == 2)
+        string _stateName = _states.FirstOrDefault(state => state.Value == stateID)?.Text!;
+        string[] parts = _stateName?.Split([" - "], StringSplitOptions.TrimEntries);
+        if (parts?.Length != 2)
         {
-            // Remove the brackets from the code
-            string _code = parts[0].Trim('[', ']');
-            string _state = parts[1];
-
-            return (_code, _state);
+            return ("", "");
         }
 
-        return ("", "");
+        // Remove the brackets from the code
+        string _code = parts[0].Trim('[', ']');
+        string _state = parts[1];
+
+        return (_code, _state);
+
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
