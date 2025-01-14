@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     01-07-2025 18:01
+// Last Updated On:     01-14-2025 20:01
 // *****************************************/
 
 #endregion
@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages;
 
 public partial class Companies
 {
-    // private const string StorageName = "CompaniesGrid";
+    private const string StorageName = "CompaniesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CompanyContacts> _companyContacts = [];
 
@@ -179,17 +179,6 @@ public partial class Companies
         set;
     } = new();
 
-    /*/// <summary>
-    ///     Gets or sets a clone of the CompanySearch model. This clone is used to manage the state of the search functionality
-    ///     in the Companies page. It holds the search parameters and criteria used to filter and display the company data in
-    ///     the grid view.
-    /// </summary>
-    private CompanySearch SearchModelClone
-    {
-        get;
-        set;
-    } = new();*/
-
     private CompanyContacts SelectedContact
     {
         get;
@@ -243,17 +232,19 @@ public partial class Companies
         set;
     }
 
-    private static async Task AllAlphabets()
+    private async Task AllAlphabets()
     {
         SearchModel.CompanyName = "";
         SearchModel.Page = 1;
+        await SaveStorage();
         await Grid.Refresh();
     }
 
-    private static async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
+    private async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
     {
         SearchModel.CompanyName = filter.Value;
         SearchModel.Page = 1;
+        await SaveStorage();
         await Grid.Refresh();
     }
 
@@ -261,6 +252,7 @@ public partial class Companies
     {
         SearchModel.Clear();
         SearchModel.User = User;
+        await SaveStorage();
         await Grid.Refresh();
     }
 
@@ -302,10 +294,7 @@ public partial class Companies
 
                                                                                                 try
                                                                                                 {
-                                                                                                    if (Spinner != null)
-                                                                                                    {
-                                                                                                        await Spinner.ShowAsync();
-                                                                                                    }
+                                                                                                    await Spinner?.ShowAsync()!;
                                                                                                 }
                                                                                                 catch
                                                                                                 {
@@ -324,10 +313,12 @@ public partial class Companies
                                                                                                 EditConCompany = new(_companyDetails);
                                                                                                 try
                                                                                                 {
-                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company);
-                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts);
-                                                                                                    _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents);
-                                                                                                    _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations);
+                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company, true);
+                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts, true);
+                                                                                                    _companyDocuments =
+                                                                                                        General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents, true);
+                                                                                                    _companyLocations =
+                                                                                                        General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations, true);
                                                                                                     SetupAddress();
                                                                                                 }
                                                                                                 catch (Exception ex)
@@ -339,10 +330,7 @@ public partial class Companies
 
                                                                                                 try
                                                                                                 {
-                                                                                                    if (Spinner != null)
-                                                                                                    {
-                                                                                                        await Spinner.HideAsync();
-                                                                                                    }
+                                                                                                    await Spinner?.HideAsync()!;
                                                                                                 }
                                                                                                 catch
                                                                                                 {
@@ -410,7 +398,7 @@ public partial class Companies
                                      SelectedContact = PanelContacts.SelectedRow != null ? PanelContacts.SelectedRow.Copy() : new();
                                  }
 
-                                 EditConContact = new(SelectedLocation);
+                                 EditConContact = new(SelectedContact!);
                                  await CompanyContactDialog.ShowDialog();
                              });
     }
@@ -437,7 +425,7 @@ public partial class Companies
                                      SelectedLocation = PanelLocations.SelectedRow != null ? PanelLocations.SelectedRow.Copy() : new();
                                  }
 
-                                 EditConLocation = new(SelectedLocation);
+                                 EditConLocation = new(SelectedLocation!);
                                  await CompanyLocationDialog.ShowDialog();
                              });
     }
@@ -459,6 +447,7 @@ public partial class Companies
                             {
                                 SearchModel.CompanyName = alphabet.ToString();
                                 SearchModel.Page = 1;
+                                await SaveStorage();
                                 await Grid.Refresh();
                             });
     }
@@ -472,80 +461,66 @@ public partial class Companies
                                     SearchModel.ItemCount = page.CurrentPageSize;
                                     SearchModel.Page = 1;
                                     await Grid.GoToPageAsync(1);
-                                    await Task.Yield();
                                 }
                                 else
                                 {
                                     SearchModel.Page = page.CurrentPage;
                                     await Grid.Refresh();
                                 }
+
+                                await SaveStorage();
                             });
     }
-
-    /*private Task OnActionBegin(ActionEventArgs<Company> company) => ExecuteMethod(async () =>
-                                                                                  {
-                                                                                      if (company.RequestType == GridAction.Sorting)
-                                                                                      {
-                                                                                          SearchModel.SortField = company.ColumnName switch
-                                                                                                                  {
-                                                                                                                      "CompanyName" => 1,
-                                                                                                                      "Address" => 2,
-                                                                                                                      "UpdatedDate" => 3,
-                                                                                                                      _ => 3
-                                                                                                                  };
-                                                                                          SearchModel.SortDirection = company.Direction == SortDirection.Ascending ? (byte)1 : (byte)0;
-                                                                                          //await SessionStorage.SetItemAsync(StorageName, SearchModel);
-                                                                                          await Grid.Refresh();
-                                                                                      }
-                                                                                  });*/
 
     protected override async Task OnInitializedAsync()
     {
-        IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
-
-        if (_claims == null)
-        {
-            NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
-        }
-        else
-        {
-            IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
-            User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
-            if (User.NullOrWhiteSpace())
-            {
-                NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
-            }
-
-            HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCompanies");
-        }
-
-        if (Start.APIHost.NullOrWhiteSpace())
-        {
-            Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
-        }
-
         _initializationTaskSource = new();
-        await ExecuteMethod(() =>
+        await ExecuteMethod(async () =>
                             {
-                                SearchModel = new()
-                                              {
-                                                  CompanyName = "",
-                                                  ItemCount = 25,
-                                                  Page = 5,
-                                                  SortDirection = 1,
-                                                  SortField = 1,
-                                                  User = User
-                                              };
-                                return Task.CompletedTask;
+                                IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
+
+                                if (_claims == null)
+                                {
+                                    NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
+                                }
+                                else
+                                {
+                                    IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
+                                    User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    if (User.NullOrWhiteSpace())
+                                    {
+                                        NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
+                                    }
+
+                                    HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCompanies");
+                                }
+
+                                if (Start.APIHost.NullOrWhiteSpace())
+                                {
+                                    Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
+                                }
+
+                                SearchModel.Clear();
+                                SearchModel = await SessionStorage.GetItemAsync<CompanySearch>(StorageName) ?? new()
+                                                                                                               {
+                                                                                                                   CompanyName = "",
+                                                                                                                   ItemCount = 25,
+                                                                                                                   Page = 5,
+                                                                                                                   SortDirection = 1,
+                                                                                                                   SortField = 1,
+                                                                                                                   User = User
+                                                                                                               };
+
+                                _initializationTaskSource.SetResult(true);
+                                await base.OnInitializedAsync();
                             });
-        _initializationTaskSource.SetResult(true);
-        //await Task.Delay(1000);
-        await base.OnInitializedAsync();
     }
 
-    private static async Task PageNumberClick(PagerItemClickEventArgs page)
+    /*
+    private async Task PageNumberClick(PagerItemClickEventArgs page)
     {
         SearchModel.Page = page.CurrentPage;
+        await SaveStorage();
         await Grid.Refresh();
     }
 
@@ -555,6 +530,7 @@ public partial class Companies
         SearchModel.Page = 1;
         await Grid.Refresh();
     }
+    */
 
     /*private Task RowSelected(RowSelectEventArgs<Company> company) => null;*/
 
@@ -565,21 +541,24 @@ public partial class Companies
                                                                                                              {"userID", User}
                                                                                                          };
 
-                                                                await General.PostRest<int>("Company/SaveCompany", _parameters, _companyDetailsClone);
+                                                                await General.ExecuteRest<int>("Company/SaveCompany", _parameters, _companyDetailsClone);
                                                                 _companyDetails = _companyDetailsClone.Copy();
 
                                                                 if (_target != null)
                                                                 {
                                                                     /* This will work only if the columns are template else this will fail without warning. */
-                                                                    _target.CompanyName = _companyDetails.Name;
-                                                                    _target.Email = _companyDetails.EmailAddress;
-                                                                    _target.Phone = _companyDetails.Phone;
-                                                                    _target.Address = SetupTargetAddress();
-                                                                    SetupAddress();
-                                                                    _target.Website = _companyDetails.Website;
-                                                                    _target.Status = _companyDetails.Status;
-                                                                    _target.UpdatedBy = _companyDetails.UpdatedBy;
-                                                                    _target.UpdatedDate = _companyDetails.UpdatedDate;
+                                                                    if (_companyDetails != null)
+                                                                    {
+                                                                        _target.CompanyName = _companyDetails.Name;
+                                                                        _target.Email = _companyDetails.EmailAddress;
+                                                                        _target.Phone = _companyDetails.Phone;
+                                                                        _target.Address = SetupTargetAddress();
+                                                                        SetupAddress();
+                                                                        _target.Website = _companyDetails.Website;
+                                                                        _target.Status = _companyDetails.Status;
+                                                                        _target.UpdatedBy = _companyDetails.UpdatedBy;
+                                                                        _target.UpdatedDate = _companyDetails.UpdatedDate;
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
@@ -597,10 +576,7 @@ public partial class Companies
                                                                                                          };
                                                                 string _response = await General.ExecuteRest<string>("Company/SaveCompanyContact", _parameters, SelectedContact);
 
-                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                {
-                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_response);
-                                                                }
+                                                                _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_response, true);
 
                                                                 if (_target == null)
                                                                 {
@@ -615,11 +591,8 @@ public partial class Companies
                                                                                                               {"user", User}
                                                                                                           };
                                                                  string _response = await General.ExecuteRest<string>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
-                                                                 
-                                                                 if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                 {
-                                                                     _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_response);
-                                                                 }
+
+                                                                 _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_response);
 
                                                                  if (_target != null)
                                                                  {
@@ -641,6 +614,11 @@ public partial class Companies
 
                                                                  // StateHasChanged();
                                                              });
+
+    private async Task SaveStorage()
+    {
+        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+    }
 
     private void SetupAddress(bool useLocation = false)
     {
@@ -664,7 +642,7 @@ public partial class Companies
             {
                 IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
 
-                if (_state != null)
+                if (_state is {Text: not null})
                 {
                     if (_generateAddress == "")
                     {
@@ -716,7 +694,7 @@ public partial class Companies
                 {
                     IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
 
-                    if (_state != null)
+                    if (_state is {Text: not null})
                     {
                         if (_generateAddress == "")
                         {

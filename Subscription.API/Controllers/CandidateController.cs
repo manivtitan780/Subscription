@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-28-2024 19:12
-// Last Updated On:     01-13-2025 15:01
+// Last Updated On:     01-14-2025 20:01
 // *****************************************/
 
 #endregion
@@ -16,12 +16,8 @@
 #region Using
 
 using System.Diagnostics.CodeAnalysis;
-
-using FluentEmail.Core;
-using FluentEmail.Core.Models;
-
-/*using FluentEmail.Core;
-using FluentEmail.Core.Models;*/
+using System.Net;
+using System.Net.Mail;
 
 #endregion
 
@@ -641,8 +637,7 @@ public class CandidateController : ControllerBase
     ///     - Closes the connection to the database.
     ///     - Returns the result of the operation.
     /// </remarks>
-    [HttpPost]
-    [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+    [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public async Task<ActionResult<int>> SaveCandidate(CandidateDetails? candidateDetails, string jsonPath = "", string userName = "", string emailAddress = "maniv@titan-techs.com")
     {
         if (candidateDetails == null)
@@ -757,12 +752,25 @@ public class CandidateController : ControllerBase
                                                           .Replace("$CAND_SUMMARY$", candidateDetails.Summary)
                                                           .Replace("$LOGGED_USER$", userName);
 
-                SendResponse? _email = await Email.From("maniv@hire-titan.com")
+                /*SendResponse? _email = await Email.From("maniv@hire-titan.com")
                                                   .To("manivenkit@gmail.com", "Mani Bhai")
                                                   .Subject("Chup chaap accept kar")
                                                   .Body("Bhai ka message aayela hain. Accept karne ka, samjha kya?")
-                                                  .SendAsync();
-                // GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);
+                                                  .SendAsync();*/
+                using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
+                _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
+                _smtpClient.EnableSsl = true;
+
+                MailMessage _mailMessage = new()
+                                           {
+                                               From = new("jolly@hire-titan.com", "Mani Bhai"),
+                                               Subject = _templateSingle.Subject,
+                                               Body = _templateSingle.Template,
+                                               IsBodyHtml = true
+                                           };
+                _mailMessage.To.Add("manivenkit@gmail.com");
+                _smtpClient.Send(_mailMessage);
+                /*GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
             }
         }
         catch (Exception ex)

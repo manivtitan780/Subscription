@@ -44,6 +44,30 @@ public static class Start
         set;
     } = "";
 
+    public static string EmailHost
+    {
+        get;
+        set;
+    } = "";
+
+    public static int Port
+    {
+        get;
+        set;
+    } = 587;
+    
+    public static string? EmailPassword
+    {
+        get;
+        set;
+    } = "";
+    
+    public static string? EmailUsername
+    {
+        get;
+        set;
+    } = "";
+    
     public static string? TenantID
     {
         get;

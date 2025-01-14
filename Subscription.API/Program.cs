@@ -13,11 +13,6 @@
 
 #endregion
 
-#region Using
-
-using FluentEmail.Graph;
-
-#endregion
 
 WebApplicationBuilder _builder = WebApplication.CreateBuilder(args);
 
@@ -49,8 +44,10 @@ _builder.Host.UseSerilog();
                                        ClientId = _config["Email:ClientID"],
                                        TenantId = _config["Email:TenantID"]
                                    };*/
+/*
 _builder.Services.AddFluentEmail("dummy@emailprovider.com")
         .AddSmtpSender(_config["Email:Host"], _config["Email:Port"].ToInt32(), _config["Email:Username"], _config["Email:Password"]);
+*/
 WebApplication _app = _builder.Build();
 
 // Configure the HTTP request pipeline.
