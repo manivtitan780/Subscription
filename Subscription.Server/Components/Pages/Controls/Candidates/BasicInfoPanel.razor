@@ -22,12 +22,12 @@
 		</div>
 		<div>
 			<div>Hourly Pay Rate:</div>
-			<div>@($"{Model.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {Model.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")</div>
+			<div>@($"{Model.HourlyRate.CultureCurrency()} - {Model.HourlyRateHigh.CultureCurrency()}")</div>
 			@* <div>@string.Format(new CultureInfo("en-US"), "{0:C} - {1:C}", Model.HourlyRate, Model.HourlyRateHigh)</div> *@
 		</div>
 		<div>
 			<div>Salary Expected:</div>
-			<div>@($"{Model.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {Model.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")</div>
+			<div>@($"{Model.SalaryLow.CultureCurrency()} - {Model.SalaryHigh.CultureCurrency()}")</div>
 			@* <div>@string.Format(new CultureInfo("en-US"), "{0:C} - {1:C}", Model.SalaryLow, Model.SalaryHigh)</div> *@
 		</div>
 	</div>

@@ -1,4 +1,5 @@
 ﻿@page "/requisition"
+@using AnimationEffect = AnimationEffect
 @layout SubscriptionLayout
 
 <PageHeader/>
@@ -79,43 +80,33 @@
 					</Template>
 				</GridColumn>
 			</GridColumns>
-			@*<GridTemplates Context="context">
-			<DetailTemplate>
-				<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-				             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabRequisition" title="Action" Visible="@(UserRights.EditRequisition || UserRights.SubmitCandidate)">
-					<SpeedDialRadialSettings Direction="RadialDirection.AntiClockwise" EndAngle="360" OffSet="100px" StartAngle="180"/>
-					<SpeedDialItems>
-						@{
-							if (context is Requisitions _con)
-							{
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditRequisition" Text="Edit Requisition" Title="Edit Requisition"
-								               style="@("display:" + (UserRights.EditCandidate && _con.UpdatedBy == User ? "unset" : "none"))"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddDocument" Text="Add Document" Title="Add Document"
-								               style="@("display:" + (UserRights.EditCandidate && _con.UpdatedBy == User ? "unset" : "none"))"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitExisting" Text="Submit Existing Candidate" Title="Submit Existing Candidate"
-								               style="@("display:" + (UserRights.SubmitCandidate ? "unset" : "none"))"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitNew" Text="Submit New Candidate" Title="Submit New Candidate"
-								               style="@("display:" + (UserRights.SubmitCandidate ? "unset" : "none"))"/>
-							}
-						}
-					</SpeedDialItems>
-				</SfSpeedDial>
-				<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
-					<TabAnimationSettings>
-						<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
-						<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
-						<TabEvents Selected="TabSelected"></TabEvents>
-					</TabAnimationSettings>
-					<TabItems>
-						<TabItem>
-							<ChildContent>
-								<TabHeader Text="Requisition Info"/>
-							</ChildContent>
-							<ContentTemplate>
-								<basicinforequisitionpanel Model="_requisitionDetailsObject" SkillsText="_requisitionDetailSkills" States="_states"/>
-							</ContentTemplate>
-						</TabItem>
-						<TabItem>
+			<GridTemplates Context="context">
+				<DetailTemplate>
+					<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
+					             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabRequisition" title="Action">
+						<SpeedDialItems>
+							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditRequisition" Text="Edit Requisition" Title="Edit Requisition"/>
+							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddDocument" Text="Add Document" Title="Add Document"/>
+							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitExisting" Text="Submit Existing Candidate" Title="Submit Existing Candidate"/>
+							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitNew" Text="Submit New Candidate" Title="Submit New Candidate"/>
+						</SpeedDialItems>
+					</SfSpeedDial>
+					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%">
+						<TabAnimationSettings>
+							<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+							<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+							@* <TabEvents Selected="TabSelected"></TabEvents>SelectedItem="_selectedTab"  *@
+						</TabAnimationSettings>
+						<TabItems>
+							<TabItem>
+								<ChildContent>
+									<TabHeader Text="Requisition Info"/>
+								</ChildContent>
+								<ContentTemplate>
+									<RequisitionInfoPanel Model="_requisitionDetailsObject" SkillsText="_requisitionDetailSkills" States="_states"/>
+								</ContentTemplate>
+							</TabItem>
+							@*<<TabItem>
 							<ChildContent>
 								<TabHeader Text="Documents"/>
 							</ChildContent>
@@ -131,12 +122,12 @@
 							<ContentTemplate>
 								<activitypanelrequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID" User="@User"/>
 							</ContentTemplate>
-						</TabItem>
-					</TabItems>
-					<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
-				</SfTab>
-			</DetailTemplate>
-		</GridTemplates>*@
+						</TabItem>*@
+						</TabItems>
+						<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+					</SfTab>
+				</DetailTemplate>
+			</GridTemplates>
 		</SfGrid>
 	</GridContent>
 </GridHeader>

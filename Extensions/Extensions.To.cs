@@ -8,7 +8,7 @@
 // File Name:           Extensions.To.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-07-2024 15:02
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     01-15-2025 15:01
 // *****************************************/
 
 #endregion
@@ -110,16 +110,6 @@ public static partial class Extensions
         read.IsDBNull(index) ? nullReplaceValue : read.GetString(index).Trim();
 
 	/// <summary>
-	///     Converts the string representation of a boolean value to its boolean equivalent.
-	/// </summary>
-	/// <param name="s">A string containing the value to convert.</param>
-	/// <returns>
-	///     A boolean value that is equivalent to the boolean value contained in the string. If the string is null or
-	///     empty, or does not represent a valid boolean value, the method returns false.
-	/// </returns>
-	public static bool ToBoolean(this string s) => !string.IsNullOrEmpty(s) && bool.TryParse(s, out bool _outDate) && _outDate;
-
-	/// <summary>
 	///     Converts the object representation of a boolean value to its boolean equivalent.
 	/// </summary>
 	/// <param name="o">An object containing the value to convert.</param>
@@ -128,38 +118,16 @@ public static partial class Extensions
 	///     does not represent a valid boolean value, the method returns false.
 	/// </returns>
 	public static bool ToBoolean(this object? o)
-    {
-        if (o is bool _b)
-        {
-            return _b;
-        }
+	{
+		return o switch
+			   {
+				   null => false,
+				   bool _b => _b,
+				   _ => bool.TryParse(o.ToString(), out bool _outDate) && _outDate
+			   };
+	}
 
-        return o != null && bool.TryParse(o.ToString(), out bool _outDate) && _outDate;
-    }
-
-	/// <summary>
-	///     Converts the boolean value to its string equivalent.
-	/// </summary>
-	/// <param name="b">The boolean value to convert.</param>
-	/// <returns>
-	///     A string that represents the boolean value. If the boolean value is true, the method returns "true". If the
-	///     boolean value is false, the method returns "false".
-	/// </returns>
-	public static string ToBooleanString(this bool b) => b ? "true" : "false";
-
-	/// <summary>
-	///     Converts the string representation of a byte value to its byte equivalent.
-	/// </summary>
-	/// <param name="s">A string containing the value to convert.</param>
-	/// <param name="nullValue">
-	///     The value to return if the string is null or empty, or does not represent a valid byte value.
-	///     Default is 0.
-	/// </param>
-	/// <returns>
-	///     A byte value that is equivalent to the byte value contained in the string. If the string is null or empty, or
-	///     does not represent a valid byte value, the method returns the nullValue.
-	/// </returns>
-	public static byte ToByte(this string s, byte nullValue = 0) => string.IsNullOrEmpty(s) ? nullValue : byte.TryParse(s, out byte _outInt) ? _outInt : nullValue;
+	public static string ToBooleanString(this bool b, string trueString = "true", string falseString = "false") => b ? trueString : falseString;
 
 	/// <summary>
 	///     Converts the object representation of a byte value to its byte equivalent.
@@ -170,22 +138,8 @@ public static partial class Extensions
 	/// <returns>
 	///     The byte representation of the object or nullValue if the object is null or cannot be converted.
 	/// </returns>
-	public static byte ToByte(this object? o, byte nullValue = 0)
-    {
-        if (o == null)
-        {
-            return nullValue;
-        }
-
-        return o switch
-               {
-                   byte _i => _i,
-                   decimal _ when decimal.TryParse(o.ToString(), out decimal _outDecimal) => (byte)_outDecimal,
-                   double _ when double.TryParse(o.ToString(), out double _outDouble) => (byte)_outDouble,
-                   float _ when float.TryParse(o.ToString(), out float _outFloat) => (byte)_outFloat,
-                   _ => byte.TryParse(o.ToString(), out byte _outInt) ? _outInt : nullValue
-               };
-    }
+	public static byte ToByte(this object? o, byte nullValue = 0) => o != null && byte.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																								out byte _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the object representation of a DateTime value to its DateTime equivalent.
@@ -237,18 +191,8 @@ public static partial class Extensions
 	///     A decimal value that is equivalent to the value contained in the object. If the object is null, or does not
 	///     represent a valid decimal value, the method returns the nullValue.
 	/// </returns>
-	public static decimal ToDecimal(this object o, decimal nullValue = 0)
-    {
-        return o switch
-               {
-                   null => nullValue,
-                   int => Convert.ToDecimal(o),
-                   decimal => Convert.ToDecimal(o),
-                   double => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue,
-                   float => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue,
-                   _ => decimal.TryParse(o.ToString(), out decimal _out) ? _out : nullValue
-               };
-    }
+	public static decimal ToDecimal(this object? o, decimal nullValue = 0) => o != null && decimal.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																											out decimal _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the object representation of a value to its double equivalent.
@@ -259,23 +203,13 @@ public static partial class Extensions
 	///     A double value that is equivalent to the value contained in the object. If the object is null, or does not
 	///     represent a valid double value, the method returns the nullValue.
 	/// </returns>
-	public static double ToDouble(this object o, double nullValue = 0)
-    {
-        return o switch
-               {
-                   null => nullValue,
-                   int => Convert.ToDouble(o),
-                   double => Convert.ToDouble(o),
-                   decimal => double.TryParse(o.ToString(), out double _out) ? _out : nullValue,
-                   float => double.TryParse(o.ToString(), out double _out) ? _out : nullValue,
-                   _ => double.TryParse(o.ToString(), out double _out) ? _out : nullValue
-               };
-    }
+	public static double ToDouble(this object? o, double nullValue = 0) => o != null && double.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																										out double _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the string representation of a short integer value to its short integer equivalent.
 	/// </summary>
-	/// <param name="s">A string containing the value to convert.</param>
+	/// <param name="o">A string containing the value to convert.</param>
 	/// <param name="nullValue">
 	///     The value to return if the string is null or empty, or does not represent a valid short integer
 	///     value. Default is 0.
@@ -284,32 +218,8 @@ public static partial class Extensions
 	///     A short integer value that is equivalent to the short integer value contained in the string. If the string is
 	///     null or empty, or does not represent a valid short integer value, the method returns the nullValue.
 	/// </returns>
-	public static short ToInt16(this string? s, short nullValue = 0) => string.IsNullOrEmpty(s) ? nullValue : short.TryParse(s, out short _outInt) ? _outInt : nullValue;
-
-	/// <summary>
-	///     Converts the object representation of a short integer value to its short integer equivalent.
-	/// </summary>
-	/// <param name="o">An object containing the value to convert.</param>
-	/// <param name="nullValue">
-	///     The value to return if the object is null or does not represent a valid short integer value.
-	///     Default is 0.
-	/// </param>
-	/// <returns>
-	///     A short integer value that is equivalent to the short integer value contained in the object. If the object is
-	///     null or does not represent a valid short integer value, the method returns nullValue.
-	/// </returns>
-	public static short ToInt16(this object o, short nullValue = 0)
-    {
-        return o switch
-               {
-                   null => nullValue,
-                   short _i => _i,
-                   decimal => (short)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
-                   double => (short)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
-                   float => (short)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
-                   _ => short.TryParse(o.ToString(), out short _outInt) ? _outInt : nullValue
-               };
-    }
+	public static short ToInt16(this object? o, short nullValue = 0) => o != null && short.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																									out short _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the object representation of a number to its 32-bit signed integer equivalent.
@@ -320,59 +230,8 @@ public static partial class Extensions
 	///     A 32-bit signed integer that is equivalent to the number contained in the object. If the object is null or
 	///     does not represent a valid number, the method returns nullValue.
 	/// </returns>
-	public static int ToInt32(this object? o, int nullValue = 0)
-    {
-        return o switch
-               {
-                   null => nullValue,
-                   int _i => _i,
-                   decimal => (int)(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
-                   double => (int)(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
-                   float => (int)(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
-                   _ => int.TryParse(o.ToString(), out int _outInt) ? _outInt : nullValue
-               };
-    }
-
-	/// <summary>
-	///     Converts the string representation of a number to its 32-bit signed integer equivalent.
-	/// </summary>
-	/// <param name="s">A string containing a number to convert.</param>
-	/// <param name="nullValue">
-	///     A number to return if the string is null or empty, or does not represent a valid integer.
-	///     Default is 0.
-	/// </param>
-	/// <returns>
-	///     A 32-bit signed integer that is equivalent to the number contained in the string, or nullValue if the string
-	///     is null or empty, or does not represent a valid integer.
-	/// </returns>
-	public static int ToInt32(this string? s, int nullValue = 0)
-    {
-        if (string.IsNullOrWhiteSpace(s))
-        {
-            return nullValue;
-        }
-
-        return int.TryParse(s, NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat, out int _outInt) ? _outInt : nullValue;
-    }
-
-	/// <summary>
-	///     Converts the given string to a long (Int64) value.
-	/// </summary>
-	/// <param name="s">The string to be converted.</param>
-	/// <param name="nullValue">The value to return if the string is null or cannot be converted to a long. Default is 0.</param>
-	/// <returns>
-	///     The long value converted from the string.
-	///     If the string is null, empty, or cannot be converted to a long, the method returns the provided nullValue.
-	/// </returns>
-	public static long ToInt64(this string? s, long nullValue = 0)
-    {
-        if (string.IsNullOrWhiteSpace(s))
-        {
-            return nullValue;
-        }
-
-        return long.TryParse(s, NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat, out long _outInt) ? _outInt : nullValue;
-    }
+	public static int ToInt32(this object? o, int nullValue = 0) => o != null && int.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																							  out int _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the given object to a long integer (Int64).
@@ -384,23 +243,8 @@ public static partial class Extensions
 	///     The long integer (Int64) representation of the object or nullValue if the object is null or cannot be
 	///     converted.
 	/// </returns>
-	public static long ToInt64(this object o, int nullValue = 0)
-    {
-        if (o == null)
-        {
-            return nullValue;
-        }
-
-        return o switch
-               {
-                   int _i => Convert.ToInt64(_i),
-                   long _i => _i,
-                   decimal => (long)Math.Round(decimal.TryParse(o.ToString(), out decimal _outDecimal) ? _outDecimal : nullValue),
-                   double => (long)Math.Round(double.TryParse(o.ToString(), out double _outDouble) ? _outDouble : nullValue),
-                   float => (long)Math.Round(float.TryParse(o.ToString(), out float _outFloat) ? _outFloat : nullValue),
-                   _ => (long)Math.Round((double)(long.TryParse(o.ToString(), out long _outInt) ? _outInt : nullValue))
-               };
-    }
+	public static long ToInt64(this object? o, int nullValue = 0) => o != null && long.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																								out long _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the given string to a MarkupString.

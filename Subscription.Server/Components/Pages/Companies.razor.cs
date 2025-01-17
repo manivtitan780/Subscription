@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          04-22-2024 15:04
-// Last Updated On:     01-14-2025 20:01
+// Last Updated On:     01-14-2025 21:01
 // *****************************************/
 
 #endregion
@@ -313,12 +313,12 @@ public partial class Companies
                                                                                                 EditConCompany = new(_companyDetails);
                                                                                                 try
                                                                                                 {
-                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company, true);
-                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts, true);
+                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company);
+                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts);
                                                                                                     _companyDocuments =
-                                                                                                        General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents, true);
+                                                                                                        General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents);
                                                                                                     _companyLocations =
-                                                                                                        General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations, true);
+                                                                                                        General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations);
                                                                                                     SetupAddress();
                                                                                                 }
                                                                                                 catch (Exception ex)
@@ -576,7 +576,7 @@ public partial class Companies
                                                                                                          };
                                                                 string _response = await General.ExecuteRest<string>("Company/SaveCompanyContact", _parameters, SelectedContact);
 
-                                                                _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_response, true);
+                                                                _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_response);
 
                                                                 if (_target == null)
                                                                 {
@@ -747,7 +747,7 @@ public partial class Companies
             {
                 IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
 
-                if (_state != null)
+                if (_state is {Text: not null})
                 {
                     if (_address == "")
                     {
@@ -790,7 +790,7 @@ public partial class Companies
                 {
                     IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
 
-                    if (_state != null)
+                    if (_state is {Text: not null})
                     {
                         if (_address == "")
                         {

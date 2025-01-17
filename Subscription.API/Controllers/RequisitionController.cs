@@ -17,8 +17,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Subscription.API.Controllers;
 
-[ApiController, Route("api/[controller]/[action]")]
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[ApiController, Route("api/[controller]/[action]"), SuppressMessage("ReSharper", "UnusedMember.Local")]
 public class RequisitionController : ControllerBase
 {
     /// <summary>
@@ -85,7 +84,7 @@ public class RequisitionController : ControllerBase
                                                                                bool thenProceed = false, string user = "")
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("GetGridRequisitions", _connection);
+        await using SqlCommand _command = new("GetRequisitions", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Count", reqSearch.ItemCount);
         _command.Int("Page", reqSearch.Page);
@@ -206,6 +205,99 @@ public class RequisitionController : ControllerBase
                    0 => "Low",
                    2 => "High",
                    _ => "Medium"
+               };
+    }
+
+    /// <summary>
+    ///     Asynchronously retrieves the details of a specific requisition.
+    /// </summary>
+    /// <param name="requisitionID">The ID of the requisition to retrieve details for.</param>
+    /// <param name="roleID">The ID of the role. Default value is "RC".</param>
+    /// <returns>A dictionary containing the requisition details, activity, and documents related to the specified requisition.</returns>
+    [HttpGet]
+    public async Task<ActionResult<ReturnRequisitionDetails>> GetRequisitionDetails([FromQuery] int requisitionID, [FromQuery] string roleID = "RC")
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        if (requisitionID == 0)
+        {
+            return StatusCode(500, "Requisition ID is not provided.");
+        }
+        string _requisitionDetail = "{}";
+
+        await using SqlCommand _command = new("GetGridRequisitionDetailsView", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("RequisitionID", requisitionID);
+        _command.Varchar("RoleID", 2, roleID);
+        await _connection.OpenAsync();
+        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+        if (_reader.HasRows) //Candidate Details
+        {
+            await _reader.ReadAsync();
+            try
+            {
+                /*_requisitionDetail = new(requisitionID, _reader.GetString(0), _reader.NString(1), _reader.GetString(2), _reader.GetString(3),
+                                         _reader.GetInt32(4), _reader.GetString(5), _reader.GetString(6), _reader.GetString(38), _reader.GetString(8),
+                                         _reader.GetDecimal(9), _reader.GetDecimal(10), _reader.GetDecimal(11), _reader.GetDecimal(12), _reader.GetDecimal(13),
+                                         _reader.GetBoolean(14), _reader.GetString(15), _reader.NString(16), _reader.GetDecimal(17), _reader.GetDecimal(18),
+                                         _reader.GetBoolean(19), _reader.GetDateTime(20), _reader.GetString(21), _reader.GetString(22), _reader.GetString(23),
+                                         _reader.GetDateTime(24), _reader.GetString(25), _reader.GetDateTime(26), _reader.NString(27), _reader.NString(28),
+                                         _reader.NString(29), _reader.GetBoolean(30), _reader.GetBoolean(31), _reader.NString(32), _reader.GetBoolean(33),
+                                         _reader.GetDateTime(34), _reader.GetBoolean(35), _reader.GetString(39), _reader.GetInt32(7), _reader.GetString(40),
+                                         _reader.NString(41), _reader.NString(42), _reader.NString(43), _reader.GetByte(44), _reader.NInt32(45),
+                                         _reader.NInt32(46), _reader.NInt32(47), _reader.NString(48), _reader.GetInt32(36), _reader.GetInt32(37),
+                                         _reader.NString(49), _reader.NString(50), _reader.NString(51), _reader.NString(52));*/
+            }
+            catch (Exception)
+            {
+                //
+            }
+        }
+
+        await _reader.NextResultAsync(); //Activity
+        List<CandidateActivity> _activity = new();
+        while (await _reader.ReadAsync())
+        {
+            _activity.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
+                              _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9),
+                              _reader.GetString(10), _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14),
+                              _reader.GetString(15), _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18),
+                              _reader.NDateTime(19), _reader.GetString(20), _reader.NString(21), _reader.NString(22),
+                              _reader.GetBoolean(23)));
+        }
+
+        await _reader.NextResultAsync();
+        List<RequisitionDocuments> _documents = [];
+        if (_reader.HasRows)
+        {
+            while (await _reader.ReadAsync())
+            {
+                try
+                {
+                    _documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
+                                       $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));
+                }
+                catch (Exception)
+                {
+                    //
+                }
+            }
+        }
+
+        await _reader.CloseAsync();
+
+        await _connection.CloseAsync();
+
+        return new Dictionary<string, object>
+               {
+                   {
+                       "Requisition", _requisitionDetail
+                   },
+                   {
+                       "Activity", _activity
+                   },
+                   {
+                       "Documents", _documents
+                   }
                };
     }
 

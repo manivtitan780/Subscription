@@ -19,6 +19,7 @@ public partial class Requisitions
 {
     private const string StorageName = "RequisitionGrid";
     private static int _currentPage = 1;
+    private Requisition _target;
 
     private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<KeyValues> _companies;
@@ -27,6 +28,11 @@ public partial class Requisitions
     private List<IntValues> _experience;
     private List<KeyValues> _jobOptions;
     private Preferences _preference;
+    private MarkupString _requisitionDetailSkills = "".ToMarkupString();
+
+    private RequisitionDetails _requisitionDetailsObject = new(), _requisitionDetailsObjectClone = new();
+    private List<RequisitionDocuments> _requisitionDocumentsObject = [];
+    private int _selectedTab;
 
     private List<Role> _roles;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -257,6 +263,12 @@ public partial class Requisitions
         set;
     }
 
+    private SfSpinner Spinner
+    {
+        get;
+        set;
+    } = new();
+
     internal static int StartRecord
     {
         get;
@@ -399,7 +411,131 @@ public partial class Requisitions
                                                               RequisitionID = 0;
                                                           });
 
-    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> arg) => Task.CompletedTask;
+    private List<CandidateActivity> _candidateActivityObject = [];
+
+    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition)
+    {
+        return ExecuteMethod(async () =>
+                             {
+                                 if (_target != null && _target != requisition.Data)
+                                 {
+                                     // return when target is equal to args.data
+                                     await Grid.ExpandCollapseDetailRowAsync(_target);
+                                 }
+
+                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(requisition.Data.ID);
+                                 if (_index != Grid.SelectedRowIndex)
+                                 {
+                                     await Grid.SelectRowAsync(_index);
+                                 }
+
+                                 _target = requisition.Data;
+
+                                 await Task.Yield();
+                                 try
+                                 {
+                                     await Spinner?.ShowAsync()!;
+                                 }
+                                 catch
+                                 {
+                                     //
+                                 }
+
+                                 Dictionary<string, string> _parameters = new()
+                                                                          {
+                                                                              {"requisitionID", _target.ID.ToString()}
+                                                                          };
+
+                                 Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Requisition/GetRequisitionDetails", _parameters);
+
+                                 if (_restResponse != null)
+                                 {
+                                     _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_restResponse["Requisition"]);
+                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_restResponse["Activity"]);
+                                     _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_restResponse["Documents"]);
+                                     SetSkills();
+                                 }
+
+                                 _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
+
+                                 await Task.Yield();
+
+                                 try
+                                 {
+                                     await Spinner?.HideAsync()!;
+                                 }
+                                 catch
+                                 {
+                                     //
+                                 }
+                             });
+    }
+
+    /// <summary>
+    ///     Sets the skills for the requisition details object.
+    /// </summary>
+    /// <remarks>
+    ///     This method sets the required and optional skills for the requisition details object.
+    ///     The skills are retrieved from the SkillsRequired and Optional properties of the requisition details object.
+    ///     The skills are then formatted into a string and converted to a MarkupString which is stored in the
+    ///     _requisitionDetailSkills field.
+    ///     If the requisition details object is null or both the SkillsRequired and Optional properties are null or
+    ///     whitespace, the method will return without setting the skills.
+    /// </remarks>
+    private void SetSkills()
+    {
+        if (_requisitionDetailsObject == null)
+        {
+            return;
+        }
+
+        if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
+        {
+            return;
+        }
+
+        _requisitionDetailSkills = "".ToMarkupString();
+
+        string[] _skillRequiredStrings = [], _skillOptionalStrings = [];
+        if (_requisitionDetailsObject.SkillsRequired.NotNullOrWhiteSpace())
+        {
+            _skillRequiredStrings = _requisitionDetailsObject.SkillsRequired!.Split(',');
+        }
+
+        if (_requisitionDetailsObject.Optional.NotNullOrWhiteSpace())
+        {
+            _skillOptionalStrings = _requisitionDetailsObject.Optional.Split(',');
+        }
+
+        string _skillsRequired = "", _skillsOptional = "";
+        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.Value == skillString.ToInt32()))
+                                               .Where(skill => skill != null).Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
+        if (_skillsRequired.StartsWith(", "))
+        {
+            _skillsRequired = _skillsRequired[2..];
+        }
+
+        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.Value == skillString.ToInt32()))
+                                               .Where(skill => skill != null).Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
+        if (_skillsOptional.StartsWith(", "))
+        {
+            _skillsOptional = _skillsRequired[2..];
+        }
+
+        string _skillStringTemp = "";
+
+        if (!_skillsRequired.NullOrWhiteSpace())
+        {
+            _skillStringTemp = "Required Skills: <br/>" + _skillsRequired + "<br/>";
+        }
+
+        if (!_skillsOptional.NullOrWhiteSpace())
+        {
+            _skillStringTemp += "Optional Skills: <br/>" + _skillsOptional;
+        }
+
+        _requisitionDetailSkills = _skillStringTemp.ToMarkupString();
+    }
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -427,7 +563,6 @@ public partial class Requisitions
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
                                                                                    {
-
                                                                                        if (page.CurrentPageSize != SearchModel.ItemCount)
                                                                                        {
                                                                                            SearchModel.ItemCount = page.CurrentPageSize;
@@ -441,7 +576,6 @@ public partial class Requisitions
                                                                                        }
 
                                                                                        await SessionStorage.SetItemAsync(StorageName, SearchModel);
-
                                                                                    });
 
     /// <summary>
@@ -695,5 +829,10 @@ public partial class Requisitions
                 _semaphoreSlim.Release();
             }
         }
+    }
+
+    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg)
+    {
+        return Task.CompletedTask;
     }
 }

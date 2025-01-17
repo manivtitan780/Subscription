@@ -73,7 +73,7 @@ public class General
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
     /// <param name="checkForNullOrEmptyArray">Should check if array converted to string is null/empty/whitespace or an empty json array.</param>
     /// <returns>The deserialized object of type T.</returns>
-    internal static T DeserializeObject<T>(object array, bool checkForNullOrEmptyArray = false)
+    internal static T DeserializeObject<T>(object array, bool checkForNullOrEmptyArray = true)
     {
         if (!checkForNullOrEmptyArray)
         {

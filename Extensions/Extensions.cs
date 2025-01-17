@@ -55,6 +55,30 @@ public static partial class Extensions
 
         return d.ToString(format, c);
     }
+    
+    /// <summary>
+    ///     Formats the given decimal value to a currency string representation using the specified format and culture.
+    ///     If no culture is provided, it defaults to US culture.
+    /// </summary>
+    /// <param name="d">The decimal value to be formatted.</param>
+    /// <param name="format">
+    ///     The format string to use for formatting the currency. Defaults to "c2" for currency format with
+    ///     two decimal places.
+    /// </param>
+    /// <param name="c">
+    ///     The CultureInfo object representing the culture to use for formatting. Defaults to null, in which case
+    ///     US culture is used.
+    /// </param>
+    /// <returns>
+    ///     A string representation of the decimal value formatted as currency according to the specified format and
+    ///     culture.
+    /// </returns>
+    public static string CulturePercentage(this decimal d, string format = "p2", CultureInfo? c = null)
+    {
+        c ??= new("en-us");
+
+        return d.ToString(format, c);
+    }
 
     /// <summary>
     ///     Formats the given DateTime object to a string representation using the specified format and culture.

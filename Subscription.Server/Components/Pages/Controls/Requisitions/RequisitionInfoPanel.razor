@@ -1,0 +1,116 @@
+﻿<div class="containerBox">
+	<div>
+		<div>
+			<div>Company Name:</div>
+			<div>@Model.CompanyName</div>
+		</div>
+		<div>
+			<div>Contact Name:</div>
+			<div>@Model.ContactName</div>
+		</div>
+		<div>
+			<div>Job Title:</div>
+			<div>@Model.PositionTitle</div>
+		</div>
+		<div>
+			<div>No. of Positions:</div>
+			<div>@Model.Positions</div>
+		</div>
+		<div>
+			<div>Location:</div>
+			<div>@(GetLocation(Model.Location))</div>
+		</div>
+		<div>
+			<div>Duration:</div>
+			<div>@(Model.Duration + " " + GetDurationCode(Model.DurationCode))</div>
+		</div>
+		<div>
+			<div>Expected Start Date:</div>
+			<div>@Model.ExpectedStart.CultureDate()</div>
+		</div>
+		<div>
+			<div>Due Date:</div>
+			<div>@Model.DueDate.CultureDate()</div>
+		</div>
+		<div>
+			<div>Expected Rate:</div>
+			<div>@($"{Model.ExpRateLow.CultureCurrency()} - {Model.ExpRateHigh.CultureCurrency()}")</div>
+		</div>
+		<div>
+			<div>Salary Expected:</div>
+			<div>@($"{Model.SalaryLow.CultureCurrency()} - {Model.SalaryHigh.CultureCurrency()}")</div>
+		</div>
+		<div>
+			<div>Load Expected:</div>
+			<div>@($"{Model.ExpLoadLow.CultureCurrency()} - {Model.ExpLoadHigh.CultureCurrency()}")</div>
+		</div>
+		<div>
+			<div>Placement Fee:</div>
+			<div>@(Model.PlacementFee.CulturePercentage())</div>
+		</div>
+		<div>
+			<div>Status:</div>
+			<div>@Model.Status</div>
+		</div>
+	</div>
+	<div>
+		<div style="display: block">
+			<div style="display: block">Description:</div>
+			<div style="display: block; height: 233px; line-height: 18px; overflow-y: auto; width: 96%; padding-right: 2%">@Model.Description.ToMarkupString()</div>
+		</div>
+		<div style="display: block">
+			<div style="display: block">Skills:</div>
+			<div style="display: block; height: 158px; overflow-y: auto; width: 98%;">@(SkillsText)</div>
+		</div>
+	</div>
+	<div>
+		<div>
+			<div>Assigned Recruiter(s):</div>
+			<div>@Model.AssignedTo</div>
+		</div>
+		<div>
+			<div>Priority:</div>
+			<div>@Model.Priority</div>
+		</div>
+		<div>
+			<div>Job Options:</div>
+			<div>@Model.JobOptions</div>
+		</div>
+		<div>
+			<div>Experience:</div>
+			<div>@Model.Experience</div>
+		</div>
+		<div>
+			<div>Report To:</div>
+			<div>@Model.ReportTo</div>
+		</div>
+		<div>
+			<div>Education:</div>
+			<div>@Model.Education</div>
+		</div>
+		<div>
+			<div>Eligibility:</div>
+			<div>@Model.Eligibility</div>
+		</div>
+		<div>
+			<div>Expenses Paid?:</div>
+			<div>@(Model.ExpensesPaid.ToBooleanString("Yes", "No"))</div>
+		</div>
+		<div>
+			<div>Security Clearance?:</div>
+			<div>@(Model.SecurityClearance.ToBooleanString("Yes", "No"))</div>
+		</div>
+		<div>
+			<div>Benefits?:</div>
+			<div>@(Model.Benefits.ToBooleanString("Yes", "No")) </div>
+		</div>
+		<div>
+			<div>Benefits Notes:</div>
+			<div> @Model.BenefitNotes?.ToMarkupString() </div>
+		</div>
+		<div>
+			<div>OFCCP?:</div>
+			<div>@(Model.OFCCP ? "Yes" : "No") </div>
+		</div>
+	</div>
+</div>

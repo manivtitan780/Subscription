@@ -64,5 +64,6 @@ global using Subscription.Model.Return;
 
 global using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
 
+global using Subscription.Server.Components.Pages.Controls.Requisitions;
 //global using Syncfusion.Blazor.SfPdfViewer;
 #endregion
