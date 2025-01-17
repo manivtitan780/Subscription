@@ -21,6 +21,8 @@ using System.Text;
 
 using Newtonsoft.Json;
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 #endregion
 
 namespace Subscription.API.Code;
@@ -81,100 +83,173 @@ public static class General
 
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            List<IntValues> _companies = [];
-            _companies = await SetIntValues(_reader);
+            List<IntValues>? _companies = [];
+            while (await _reader.ReadAsync())
+            {
+                _companies = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+
+            //_companies = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<CompanyContactList> _companyContacts = await _reader.FillList<CompanyContactList>(contact => new()
-                                                                                                              {
-                                                                                                                  ID = contact.GetInt32(0),
-                                                                                                                  ContactName = contact.GetString(2),
-                                                                                                                  CompanyID = contact.GetInt32(1)
-                                                                                                              }).ToListAsync();
+            List<CompanyContactList>? _companyContacts = [];
+            while (await _reader.ReadAsync())
+            {
+                _companyContacts = JsonSerializer.Deserialize<List<CompanyContactList>>(_reader.NString(0)!);
+            }
+
+            // _companyContacts = await _reader.FillList<CompanyContactList>(contact => new()
+            //                                                                          {
+            //                                                                              ID = contact.GetInt32(0),
+            //                                                                              ContactName = contact.GetString(2),
+            //                                                                              CompanyID = contact.GetInt32(1)
+            //                                                                          }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<IntValues> _titles = [];
-            _titles = await SetIntValues(_reader);
+            List<IntValues>? _titles = [];
+            while (await _reader.ReadAsync())
+            {
+                _titles = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _titles = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _documentTypes = [];
-            _documentTypes = await SetIntValues(_reader);
+            List<IntValues>? _documentTypes = [];
+            while (await _reader.ReadAsync())
+            {
+                _documentTypes = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _documentTypes = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _educations = [];
-            _educations = await SetIntValues(_reader);
+            List<IntValues>? _educations = [];
+            while (await _reader.ReadAsync())
+            {
+                _educations = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _educations = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _eligibilities = [];
-            _eligibilities = await SetIntValues(_reader);
+            List<IntValues>? _eligibilities = [];
+            while (await _reader.ReadAsync())
+            {
+                _eligibilities = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _eligibilities = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _experiences = [];
-            _experiences = await SetIntValues(_reader);
+            List<IntValues>? _experiences = [];
+            while (await _reader.ReadAsync())
+            {
+                _experiences = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _experiences = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<KeyValues> _jobOptions = [];
-            _jobOptions = await SetKeyValues(_reader);
+            List<KeyValues>? _jobOptions = [];
+            while (await _reader.ReadAsync())
+            {
+                _jobOptions = JsonSerializer.Deserialize<List<KeyValues>>(_reader.NString(0)!);
+            }
+            // _jobOptions = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _leadIndustries = [];
-            _leadIndustries = await SetIntValues(_reader, 2);
+            List<IntValues>? _leadIndustries = [];
+            while (await _reader.ReadAsync())
+            {
+                _leadIndustries = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _leadIndustries = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues> _leadSources = [];
-            _leadSources = await SetIntValues(_reader, 2);
+            List<IntValues>? _leadSources = [];
+            while (await _reader.ReadAsync())
+            {
+                _leadSources = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _leadSources = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues> _leadStatuses = [];
-            _leadStatuses = await SetIntValues(_reader, 2);
+            List<IntValues>? _leadStatuses = [];
+            while (await _reader.ReadAsync())
+            {
+                _leadStatuses = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _leadStatuses = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues> _naics = [];
-            _naics = await SetIntValues(_reader);
+            List<IntValues>? _naics = [];
+            while (await _reader.ReadAsync())
+            {
+                _naics = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _naics = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<Role> _roles = await _reader.FillList<Role>(role => new()
-                                                                     {
-                                                                         ID = role.GetByte(0),
-                                                                         RoleName = role.GetString(1),
-                                                                         Description = role.GetString(2),
-                                                                         CreateOrEditCompany = role.GetBoolean(3),
-                                                                         CreateOrEditCandidate = role.GetBoolean(4),
-                                                                         ViewAllCompanies = role.GetBoolean(5),
-                                                                         ViewMyCompanyProfile = role.GetBoolean(6),
-                                                                         EditMyCompanyProfile = role.GetBoolean(7),
-                                                                         CreateOrEditRequisition = role.GetBoolean(8),
-                                                                         ViewOnlyMyCandidates = role.GetBoolean(9),
-                                                                         ViewAllCandidates = role.GetBoolean(10),
-                                                                         ManageSubmittedCandidates = role.GetBoolean(11),
-                                                                         DownloadOriginal = role.GetBoolean(12),
-                                                                         DownloadFormatted = role.GetBoolean(13),
-                                                                         ViewRequisitions = role.GetBoolean(14)
-                                                                     }).ToListAsync();
+            List<Role>? _roles = [];
+            while (await _reader.ReadAsync())
+            {
+                _roles = JsonSerializer.Deserialize<List<Role>>(_reader.NString(0)!);
+            }
+            // _roles = await _reader.FillList<Role>(role => new()
+            //                                               {
+            //                                                   ID = role.GetByte(0),
+            //                                                   RoleName = role.GetString(1),
+            //                                                   Description = role.GetString(2),
+            //                                                   CreateOrEditCompany = role.GetBoolean(3),
+            //                                                   CreateOrEditCandidate = role.GetBoolean(4),
+            //                                                   ViewAllCompanies = role.GetBoolean(5),
+            //                                                   ViewMyCompanyProfile = role.GetBoolean(6),
+            //                                                   EditMyCompanyProfile = role.GetBoolean(7),
+            //                                                   CreateOrEditRequisition = role.GetBoolean(8),
+            //                                                   ViewOnlyMyCandidates = role.GetBoolean(9),
+            //                                                   ViewAllCandidates = role.GetBoolean(10),
+            //                                                   ManageSubmittedCandidates = role.GetBoolean(11),
+            //                                                   DownloadOriginal = role.GetBoolean(12),
+            //                                                   DownloadFormatted = role.GetBoolean(13),
+            //                                                   ViewRequisitions = role.GetBoolean(14)
+            //                                               }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<IntValues> _skills = [];
-            _skills = await SetIntValues(_reader);
+            List<IntValues>? _skills = [];
+            while (await _reader.ReadAsync())
+            {
+                _skills = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _skills = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _states = [];
-            _states = await SetIntValues(_reader);
+            List<IntValues>? _states = [];
+            while (await _reader.ReadAsync())
+            {
+                _states = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+            }
+            // _states = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<StatusCode> _statusCodes = await _reader.FillList<StatusCode>(status => new()
-                                                                                         {
-                                                                                             ID = status.GetInt32(6),
-                                                                                             Code = status.GetString(0),
-                                                                                             Status = status.GetString(1),
-                                                                                             Icon = status.NString(2),
-                                                                                             AppliesToCode = status.GetString(3),
-                                                                                             SubmitCandidate = status.GetBoolean(4),
-                                                                                             ShowCommission = status.GetBoolean(5)
-                                                                                         }).ToListAsync();
+            List<StatusCode>? _statusCodes = [];
+            while (await _reader.ReadAsync())
+            {
+                _statusCodes = JsonSerializer.Deserialize<List<StatusCode>>(_reader.NString(0)!);
+            }
+            // _statusCodes = await _reader.FillList<StatusCode>(status => new()
+            //                                                             {
+            //                                                                 ID = status.GetInt32(6),
+            //                                                                 Code = status.GetString(0),
+            //                                                                 Status = status.GetString(1),
+            //                                                                 Icon = status.NString(2),
+            //                                                                 AppliesToCode = status.GetString(3),
+            //                                                                 SubmitCandidate = status.GetBoolean(4),
+            //                                                                 ShowCommission = status.GetBoolean(5)
+            //                                                             }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<KeyValues> _taxTerms = [];
-            _taxTerms = await SetKeyValues(_reader);
+            List<KeyValues>? _taxTerms = [];
+            while (await _reader.ReadAsync())
+            {
+                _taxTerms = JsonSerializer.Deserialize<List<KeyValues>>(_reader.NString(0)!);
+            }
+            // _taxTerms = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
             List<UserList> _users = await _reader.FillList<UserList>(user => new()
@@ -237,7 +312,7 @@ public static class General
         }
     }
 
-    private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
+    private static async Task<List<IntValues>?> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
     {
         return await reader.FillList<IntValues>(intValue => new()
                                                             {
