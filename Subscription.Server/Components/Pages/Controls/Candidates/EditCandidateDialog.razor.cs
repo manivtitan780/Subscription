@@ -77,7 +77,7 @@ public partial class EditCandidateDialog
 	///     collection represents a specific communication detail.
 	/// </remarks>
 	[Parameter]
-    public IEnumerable<KeyValues> Communication
+    public IEnumerable<StringValues> Communication
     {
         get;
         set;
@@ -155,7 +155,7 @@ public partial class EditCandidateDialog
 	///     Each `KeyValues` instance represents a single job option.
 	/// </value>
 	[Parameter]
-    public IEnumerable<KeyValues> JobOptions
+    public IEnumerable<StringValues> JobOptions
     {
         get;
         set;
@@ -245,13 +245,13 @@ public partial class EditCandidateDialog
 	///     Gets or sets the collection of tax terms associated with the candidate.
 	/// </summary>
 	/// <value>
-	///     The collection of tax terms, represented as instances of <see cref="KeyValues" />.
+	///     The collection of tax terms, represented as instances of <see cref="StringValues" />.
 	/// </value>
 	/// <remarks>
 	///     This property is used to populate the tax terms section in the candidate editing dialog.
 	/// </remarks>
 	[Parameter]
-    public IEnumerable<KeyValues> TaxTerms
+    public IEnumerable<StringValues> TaxTerms
     {
         get;
         set;

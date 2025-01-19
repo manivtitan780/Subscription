@@ -16,6 +16,7 @@
 #region Using
 
 using System.Diagnostics.CodeAnalysis;
+using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -146,10 +147,10 @@ public static class General
             // _experiences = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<KeyValues>? _jobOptions = [];
+            List<StringValues>? _jobOptions = [];
             while (await _reader.ReadAsync())
             {
-                _jobOptions = JsonSerializer.Deserialize<List<KeyValues>>(_reader.NString(0)!);
+                _jobOptions = JsonSerializer.Deserialize<List<StringValues>>(_reader.NString(0)!);
             }
             // _jobOptions = await SetKeyValues(_reader);
 
@@ -244,49 +245,74 @@ public static class General
             //                                                             }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<KeyValues>? _taxTerms = [];
+            List<StringValues>? _taxTerms = [];
             while (await _reader.ReadAsync())
             {
-                _taxTerms = JsonSerializer.Deserialize<List<KeyValues>>(_reader.NString(0)!);
+                _taxTerms = JsonSerializer.Deserialize<List<StringValues>>(_reader.NString(0)!);
             }
             // _taxTerms = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
-            List<UserList> _users = await _reader.FillList<UserList>(user => new()
-                                                                             {
-                                                                                 UserName = user.GetString(0),
-                                                                                 Role = user.GetByte(1)
-                                                                             }).ToListAsync();
+            List<UserList>? _users = [];
+            while (await _reader.ReadAsync())
+            {
+                _users = JsonSerializer.Deserialize<List<UserList>>(_reader.NString(0)!);
+            }
+            // _users = await _reader.FillList<UserList>(user => new()
+            //                                                   {
+            //                                                       UserName = user.GetString(0),
+            //                                                       Role = user.GetByte(1)
+            //                                                   }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<AppWorkflow> _workflows = await _reader.FillList<AppWorkflow>(workflow => new()
-                                                                                           {
-                                                                                               ID = workflow.GetInt32(0),
-                                                                                               Step = workflow.GetString(1),
-                                                                                               Next = workflow.NString(2),
-                                                                                               IsLast = workflow.GetBoolean(3),
-                                                                                               RoleIDs = workflow.GetString(4),
-                                                                                               Schedule = workflow.GetBoolean(5),
-                                                                                               AnyStage = workflow.GetBoolean(6),
-                                                                                               NextFull = "",
-                                                                                               RoleFull = ""
-                                                                                           }).ToListAsync();
+            List<AppWorkflow>? _workflows = [];
+            while (await _reader.ReadAsync())
+            {
+                _workflows = JsonSerializer.Deserialize<List<AppWorkflow>>(_reader.NString(0)!);
+            }
+            // _workflows = await _reader.FillList<AppWorkflow>(workflow => new()
+            //                                                              {
+            //                                                                  ID = workflow.GetInt32(0),
+            //                                                                  Step = workflow.GetString(1),
+            //                                                                  Next = workflow.NString(2),
+            //                                                                  IsLast = workflow.GetBoolean(3),
+            //                                                                  RoleIDs = workflow.GetString(4),
+            //                                                                  Schedule = workflow.GetBoolean(5),
+            //                                                                  AnyStage = workflow.GetBoolean(6),
+            //                                                                  NextFull = "",
+            //                                                                  RoleFull = ""
+            //                                                              }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<Zip> _zips = await _reader.FillList<Zip>(zip => new()
-                                                                 {
-                                                                     ZipCode = zip.GetString(0),
-                                                                     City = zip.GetString(1),
-                                                                     State = zip.GetString(2),
-                                                                     StateID = zip.GetInt32(3)
-                                                                 }).ToListAsync();
+            List<Zip>? _zips = [];
+            await _reader.ReadAsync();
+            byte[] _zipCompressed = (byte[])_reader[0];
+            using (MemoryStream _memStreamReader = new(_zipCompressed))
+            {
+                await using (GZipStream _gZipStream = new(_memStreamReader, CompressionMode.Decompress))
+                {
+                    using (MemoryStream _memStream = new())
+                    {
+                        await _gZipStream.CopyToAsync(_memStream);
+                        _zips = JsonSerializer.Deserialize<List<Zip>>(Encoding.UTF8.GetString(_memStream.ToArray()));
+                    }
+                }
+            }
+            // _zips = JsonSerializer.Deserialize<List<Zip>>(_reader.NString(0)!);
+            // _zips = await _reader.FillList<Zip>(zip => new()
+            //                                            {
+            //                                                ZipCode = zip.GetString(0),
+            //                                                City = zip.GetString(1),
+            //                                                State = zip.GetString(2),
+            //                                                StateID = zip.GetInt32(3)
+            //                                            }).ToListAsync();
 
-            List<KeyValues> _communications =
+            List<StringValues> _communications =
             [
-                new() {Key = "A", Value = "Average"},
-                new() {Key = "X", Value = "Excellent"},
-                new() {Key = "F", Value = "Fair"},
-                new() {Key = "G", Value = "Good"}
+                new() {KeyValue = "A", Text = "Average"},
+                new() {KeyValue = "X", Text = "Excellent"},
+                new() {KeyValue = "F", Text = "Fair"},
+                new() {KeyValue = "G", Text = "Good"}
             ];
 
             await _reader.CloseAsync();
@@ -316,7 +342,7 @@ public static class General
     {
         return await reader.FillList<IntValues>(intValue => new()
                                                             {
-                                                                Value = keyType switch
+                                                                KeyValue = keyType switch
                                                                         {
                                                                             0 => intValue.GetInt32(0),
                                                                             1 => intValue.GetInt16(0),
@@ -327,12 +353,12 @@ public static class General
                                                             }).ToListAsync();
     }
 
-    private static async Task<List<KeyValues>> SetKeyValues(SqlDataReader reader)
+    private static async Task<List<StringValues>> SetKeyValues(SqlDataReader reader)
     {
-        return await reader.FillList<KeyValues>(keyValue => new()
+        return await reader.FillList<StringValues>(keyValue => new()
                                                             {
-                                                                Key = keyValue.GetString(0),
-                                                                Value = keyValue.GetString(1)
+                                                                KeyValue = keyValue.GetString(0),
+                                                                Text = keyValue.GetString(1)
                                                             }).ToListAsync();
     }
 

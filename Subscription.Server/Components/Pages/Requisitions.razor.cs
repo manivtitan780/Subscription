@@ -22,11 +22,11 @@ public partial class Requisitions
     private Requisition _target;
 
     private static TaskCompletionSource<bool> _initializationTaskSource;
-    private List<KeyValues> _companies;
+    private List<StringValues> _companies;
     private List<IntValues> _education;
     private List<IntValues> _eligibility;
     private List<IntValues> _experience;
-    private List<KeyValues> _jobOptions;
+    private List<StringValues> _jobOptions;
     private Preferences _preference;
     private MarkupString _requisitionDetailSkills = "".ToMarkupString();
 
@@ -40,7 +40,7 @@ public partial class Requisitions
     private List<IntValues> _states;
     private List<StatusCode> _statusCodes;
 
-    private readonly List<KeyValues> _statusSearch = [];
+    private readonly List<StringValues> _statusSearch = [];
     private List<AppWorkflow> _workflows;
 
     /// <summary>
@@ -280,7 +280,7 @@ public partial class Requisitions
     ///     This list is populated with the 'StatusCount' data from the API response.
     ///     Each status is represented by a 'KeyValues' object.
     /// </summary>
-    internal static List<KeyValues> StatusList
+    internal static List<StringValues> StatusList
     {
         get;
         set;
@@ -325,7 +325,7 @@ public partial class Requisitions
                                                                         await Grid.Refresh();
                                                                     });
 
-    private static async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
+    private static async Task AutocompleteValueChange(ChangeEventArgs<string, StringValues> filter)
     {
         SearchModel.Title = filter.Value;
         SearchModel.Page = 1;
@@ -508,14 +508,14 @@ public partial class Requisitions
         }
 
         string _skillsRequired = "", _skillsOptional = "";
-        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.Value == skillString.ToInt32()))
+        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
                                                .Where(skill => skill != null).Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
         if (_skillsRequired.StartsWith(", "))
         {
             _skillsRequired = _skillsRequired[2..];
         }
 
-        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.Value == skillString.ToInt32()))
+        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
                                                .Where(skill => skill != null).Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
         if (_skillsOptional.StartsWith(", "))
         {
@@ -686,7 +686,7 @@ public partial class Requisitions
 
                                 while (_jobOptions == null)
                                 {
-                                    _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
+                                    _jobOptions = General.DeserializeObject<List<StringValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
                                 }
 
                                 /*while (_recruiters == null)
@@ -718,8 +718,8 @@ public partial class Requisitions
                                     {
                                         _statusSearch.Add(new()
                                                           {
-                                                              Key = _statusCode.Status,
-                                                              Value = _statusCode.Code
+                                                              KeyValue = _statusCode.Status,
+                                                              Text = _statusCode.Code
                                                           });
                                     }
                                 }
@@ -727,8 +727,8 @@ public partial class Requisitions
                                 List<Company> _companyList = General.DeserializeObject<List<Company>>(_cacheValues[CacheObjects.Companies.ToString()]);
                                 _companies.Add(new()
                                                {
-                                                   Key = "All Companies",
-                                                   Value = "%"
+                                                   KeyValue = "All Companies",
+                                                   Text = "%"
                                                });
                                 if (_companyList != null)
                                 {
@@ -736,8 +736,8 @@ public partial class Requisitions
                                     {
                                         _companies.Add(new()
                                                        {
-                                                           Key = _company.CompanyName,
-                                                           Value = _company.CompanyName
+                                                           KeyValue = _company.CompanyName,
+                                                           Text = _company.CompanyName
                                                        });
                                     }
                                 }

@@ -220,7 +220,7 @@ public class General
     /// </remarks>
     internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm)
     {
-        List<KeyValues> _dataSource = [];
+        List<StringValues> _dataSource = [];
 
         if (dm.Where is not {Count: > 0} || dm.Where[0].value.NullOrWhiteSpace())
         {
@@ -241,7 +241,7 @@ public class General
 
             if (_response.NotNullOrWhiteSpace() && _response != "[]")
             {
-                _dataSource = JsonConvert.DeserializeObject<List<KeyValues>>(_response);
+                _dataSource = JsonConvert.DeserializeObject<List<StringValues>>(_response);
             }
 
             int _count = _dataSource.Count;
@@ -359,7 +359,7 @@ public class General
             Requisitions.CompanyContacts = JsonConvert.DeserializeObject<List<CompanyContacts>>(_companyContacts);
             //TODO: Use Cache
             // Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
-            Requisitions.StatusList = JsonConvert.DeserializeObject<List<KeyValues>>(_status);
+            Requisitions.StatusList = JsonConvert.DeserializeObject<List<StringValues>>(_status);
 
             return dm.RequiresCounts ? new DataResult
                                        {

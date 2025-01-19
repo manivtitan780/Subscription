@@ -33,7 +33,7 @@
 						<Template>
 							<label class="e-form-label" for="dropNAICS">NAICS Code:</label>
 							<SfDropDownList AllowFiltering="true" @bind-Value="Model.NAICSCode" DataSource="NAICS" ID="dropNAICS" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+								<DropDownListFieldSettings Text="Text" Value="KeyValue"></DropDownListFieldSettings>
 							</SfDropDownList>
 						</Template>
 					</FormItem>
@@ -47,7 +47,7 @@
 						<Template>
 							<label class="e-form-label">State:</label>
 							<SfDropDownList @bind-Value="Model.StateID" DataSource="State" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+								<DropDownListFieldSettings Text="Text" Value="KeyValue"></DropDownListFieldSettings>
 							</SfDropDownList>
 						</Template>
 					</FormItem>

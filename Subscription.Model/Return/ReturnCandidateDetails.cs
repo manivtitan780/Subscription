@@ -16,13 +16,13 @@
 namespace Subscription.Model.Return;
 
 public record struct ReturnCandidateDetails(
-    string? Candidate,
-    string? Notes,
-    string? Skills,
-    string? Education,
-    string? Experience,
-    string? Activity,
+    string Candidate,
+    string Notes,
+    string Skills,
+    string Education,
+    string Experience,
+    string Activity,
     List<CandidateRating> Rating,
     List<CandidateMPC> MPC,
     CandidateRatingMPC RatingMPC,
-    string? Documents);
+    string Documents);

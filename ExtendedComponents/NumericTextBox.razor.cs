@@ -17,7 +17,7 @@ namespace ExtendedComponents;
 
 public partial class NumericTextBox<TValue> : ComponentBase
 {
-    private TValue? _value;
+    private TValue _value;
 
     [Parameter]
     public string Currency
@@ -41,28 +41,28 @@ public partial class NumericTextBox<TValue> : ComponentBase
     } = "c2";
 
     [Parameter]
-    public string? ID
+    public string ID
     {
         get;
         set;
     }
 
     [Parameter]
-    public TValue? Max
+    public TValue Max
     {
         get;
         set;
     }
 
     [Parameter]
-    public TValue? Min
+    public TValue Min
     {
         get;
         set;
     }
 
     [Parameter]
-    public string? Placeholder
+    public string Placeholder
     {
         get;
         set;
@@ -87,7 +87,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     If the selected value changes, the ValueChanged event is invoked.
     /// </remarks>
     [Parameter]
-    public TValue? Value
+    public TValue Value
     {
         get => _value;
         set
@@ -115,7 +115,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     The callback receives the new selected value as an argument.
     /// </remarks>
     [Parameter]
-    public EventCallback<TValue?> ValueChanged
+    public EventCallback<TValue> ValueChanged
     {
         get;
         set;
@@ -133,7 +133,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>>? ValueExpression
+    public Expression<Func<TValue>> ValueExpression
     {
         get;
         set;

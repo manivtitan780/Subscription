@@ -109,7 +109,7 @@ public partial class RequisitionInfoPanel
             return location;
         }
 
-        foreach (IntValues _intValues in States.Where(intValues => location.ToInt32() == intValues.Value))
+        foreach (IntValues _intValues in States.Where(intValues => location.ToInt32() == intValues.KeyValue))
         {
             return _intValues.Text;
         }

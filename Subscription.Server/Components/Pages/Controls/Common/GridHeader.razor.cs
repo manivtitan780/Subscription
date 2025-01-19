@@ -26,7 +26,7 @@ public partial class GridHeader
                                                             //{"autocomplete", $"hoohoo_{new string(Enumerable.Range(0, 3).Select(_ => "abcdefghijklmnopqrstuvwxyz"[_random.Next(26)]).ToArray())}"}
                                                         };
 
-    private SfAutoComplete<string, KeyValues> Acb
+    private SfAutoComplete<string, StringValues> Acb
     {
         get;
         set;
@@ -190,7 +190,7 @@ public partial class GridHeader
     ///     It provides the new value and the associated KeyValues to the event handler.
     /// </remarks>
     [Parameter]
-    public EventCallback<ChangeEventArgs<string, KeyValues>> ValueChange
+    public EventCallback<ChangeEventArgs<string, StringValues>> ValueChange
     {
         get;
         set;

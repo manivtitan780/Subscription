@@ -31,7 +31,7 @@ public partial class Candidates
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
 
-    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [], _workflow = [];
+    private List<StringValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [], _workflow = [];
 
     //private CandidateRatingMPC _ratingMPC = new();
     private List<Role> _roles;
@@ -537,7 +537,7 @@ public partial class Candidates
         get;
         set;
     } = new();
-    
+
     private CandidateEducation SelectedEducationClone
     {
         get;
@@ -646,7 +646,7 @@ public partial class Candidates
         await Grid.Refresh();
     }
 
-    private async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
+    private async Task AutocompleteValueChange(ChangeEventArgs<string, StringValues> filter)
     {
         SearchModel.Name = filter.Value;
         SearchModel.Page = 1;
@@ -971,7 +971,7 @@ public partial class Candidates
                                                                 }
                                                                 else
                                                                 {
-                                                                     SelectedEducation.Clear();
+                                                                    SelectedEducation.Clear();
                                                                 }
                                                             }
                                                             else
@@ -1316,15 +1316,21 @@ public partial class Candidates
                                 _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()], true);
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()], true);
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()], true);
-                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()], true);
-                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()], true);
-                                _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()], true);
-                                _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()], true);
-                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()], true);
+                                _taxTerms = General.DeserializeObject<List<StringValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()], true);
+                                _jobOptions = General.DeserializeObject<List<StringValues>>(_cacheValues[CacheObjects.JobOptions.ToString()], true);
+                                _statusCodes = General.DeserializeObject<List<StringValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()], true);
+                                _workflow = General.DeserializeObject<List<StringValues>>(_cacheValues[CacheObjects.Workflow.ToString()], true);
+                                _communication = General.DeserializeObject<List<StringValues>>(_cacheValues[CacheObjects.Communications.ToString()], true);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()], true);
-                                SearchModel.Clear();
-                                SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
-                            }); 
+                                if (await SessionStorage.ContainKeyAsync(StorageName))
+                                {
+                                    SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
+                                }
+                                else
+                                {
+                                    SearchModel.Clear();
+                                }
+                            });
 
         _initializationTaskSource.SetResult(true);
 
@@ -1671,7 +1677,7 @@ public partial class Candidates
         if (_eligibility is {Count: > 0})
         {
             CandidateEligibility = _candidateDetailsObject.EligibilityID > 0
-                                       ? _eligibility.FirstOrDefault(eligibility => eligibility.Value == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
+                                       ? _eligibility.FirstOrDefault(eligibility => eligibility.KeyValue == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
                                        : "".ToMarkupString();
         }
     }
@@ -1690,7 +1696,7 @@ public partial class Candidates
         if (_experience is {Count: > 0})
         {
             CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
-                                       ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
+                                       ? _experience.FirstOrDefault(experience => experience.KeyValue == _candidateDetailsObject.ExperienceID)!.Text
                                        : "").ToMarkupString();
         }
     }
@@ -1722,11 +1728,11 @@ public partial class Candidates
 
                 if (_returnValue != "")
                 {
-                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.Key == _str)?.Value;
+                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
                 }
                 else
                 {
-                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.Key == _str)?.Value;
+                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
                 }
             }
         }
@@ -1762,11 +1768,11 @@ public partial class Candidates
 
                 if (_returnValue != "")
                 {
-                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.Key == _str)?.Value;
+                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
                 }
                 else
                 {
-                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.Key == _str)?.Value;
+                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
                 }
             }
         }
@@ -1810,13 +1816,14 @@ public partial class Candidates
         {
             if (_generateAddress == "")
             {
-                _generateAddress = SplitState(_candidateDetailsObject.StateID).Name;// _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                _generateAddress = SplitState(_candidateDetailsObject.StateID).Name; // _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
             }
             else
             {
                 try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                 {
-                    _generateAddress += ", " + SplitState(_candidateDetailsObject.StateID).Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                    _generateAddress += ", " + SplitState(_candidateDetailsObject.StateID)
+                                           .Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
                 }
                 catch
                 {
@@ -1902,7 +1909,7 @@ public partial class Candidates
 
     private (string Code, string Name) SplitState(int stateID)
     {
-        string _stateName = _states.FirstOrDefault(state => state.Value == stateID)?.Text!;
+        string _stateName = _states.FirstOrDefault(state => state.KeyValue == stateID)?.Text!;
         string[] parts = _stateName?.Split([" - "], StringSplitOptions.TrimEntries);
         if (parts?.Length != 2)
         {
@@ -1914,7 +1921,6 @@ public partial class Candidates
         string _state = parts[1];
 
         return (_code, _state);
-
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;

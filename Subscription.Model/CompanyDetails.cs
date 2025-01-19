@@ -19,13 +19,13 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CompanyDetails
 {
-    public string? City
+    public string City
     {
         get;
         set;
     }
 
-    public string? CreatedBy
+    public string CreatedBy
     {
         get;
         set;
@@ -37,31 +37,31 @@ public class CompanyDetails
         set;
     }
 
-    public string? DUNS
+    public string DUNS
     {
         get;
         set;
     }
 
-    public string? EIN
+    public string EIN
     {
         get;
         set;
     }
 
-    public string? Extension
+    public string Extension
     {
         get;
         set;
     }
 
-    public string? EmailAddress
+    public string EmailAddress
     {
         get;
         set;
     }
 
-    public string? Fax
+    public string Fax
     {
         get;
         set;
@@ -79,7 +79,7 @@ public class CompanyDetails
         set;
     }
 
-    public string? LocationNotes
+    public string LocationNotes
     {
         get;
         set;
@@ -91,25 +91,25 @@ public class CompanyDetails
         set;
     }
 
-    public string? Name
+    public string Name
     {
         get;
         set;
     }
 
-    public string? Notes
+    public string Notes
     {
         get;
         set;
     }
 
-    public string? Phone
+    public string Phone
     {
         get;
         set;
     }
 
-    public string? State
+    public string State
     {
         get;
         set;
@@ -127,13 +127,13 @@ public class CompanyDetails
         set;
     }
 
-    public string? StreetName
+    public string StreetName
     {
         get;
         set;
     }
 
-    public string? UpdatedBy
+    public string UpdatedBy
     {
         get;
         set;
@@ -145,13 +145,13 @@ public class CompanyDetails
         set;
     }
 
-    public string? Website
+    public string Website
     {
         get;
         set;
     }
 
-    public string? ZipCode
+    public string ZipCode
     {
         get;
         set;
@@ -180,5 +180,5 @@ public class CompanyDetails
         IsAdd = false;
     }
 
-    public CompanyDetails? Copy() => MemberwiseClone() as CompanyDetails;
+    public CompanyDetails Copy() => MemberwiseClone() as CompanyDetails;
 }

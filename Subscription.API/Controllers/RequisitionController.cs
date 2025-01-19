@@ -222,6 +222,7 @@ public class RequisitionController : ControllerBase
         {
             return StatusCode(500, "Requisition ID is not provided.");
         }
+
         string _requisitionDetail = "{}";
 
         await using SqlCommand _command = new("GetGridRequisitionDetailsView", _connection);
@@ -287,18 +288,24 @@ public class RequisitionController : ControllerBase
 
         await _connection.CloseAsync();
 
-        return new Dictionary<string, object>
-               {
-                   {
-                       "Requisition", _requisitionDetail
-                   },
-                   {
-                       "Activity", _activity
-                   },
-                   {
-                       "Documents", _documents
-                   }
-               };
+        return Ok(new ReturnRequisitionDetails
+                  {
+                      Activity = "",
+                      Documents = "",
+                      Requisition = ""
+                  });
+        // return new Dictionary<string, object>
+        //        {
+        //            {
+        //                "Requisition", _requisitionDetail
+        //            },
+        //            {
+        //                "Activity", _activity
+        //            },
+        //            {
+        //                "Documents", _documents
+        //            }
+        //        };
     }
 
     [HttpGet]

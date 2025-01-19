@@ -24,19 +24,19 @@ public class CompanyDocuments
         set;
     }
 
-    public string? CompanyName
+    public string CompanyName
     {
         get;
         set;
     }
 
-    public string? DocumentName
+    public string DocumentName
     {
         get;
         set;
     }
 
-    public string? FileName
+    public string FileName
     {
         get;
         set;
@@ -48,13 +48,13 @@ public class CompanyDocuments
         set;
     }
 
-    public string? Notes
+    public string Notes
     {
         get;
         set;
     }
 
-    public string? UpdatedBy
+    public string UpdatedBy
     {
         get;
         set;

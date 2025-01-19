@@ -17,7 +17,7 @@ namespace ExtendedComponents;
 
 public partial class MultiSelect<TItem, TValue> : ComponentBase
 {
-    private TValue? _value;
+    private TValue _value;
 
     [Parameter]
     public bool AllowFilter
@@ -27,35 +27,35 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     } = true;
 
     [Parameter]
-    public string? ID
+    public string ID
     {
         get;
         set;
     }
 
     [Parameter]
-    public string? Key
+    public string Key
     {
         get;
         set;
     }
 
     [Parameter]
-    public IEnumerable<TItem>? Model
+    public IEnumerable<TItem> Model
     {
         get;
         set;
     }
 
     [Parameter]
-    public string? Placeholder
+    public string Placeholder
     {
         get;
         set;
     }
 
     [Parameter]
-    public string? Text
+    public string Text
     {
         get;
         set;
@@ -73,7 +73,7 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     ///     If the selected value changes, the ValueChanged event is invoked.
     /// </remarks>
     [Parameter]
-    public TValue? Value
+    public TValue Value
     {
         get => _value;
         set
@@ -119,7 +119,7 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>>? ValueExpression
+    public Expression<Func<TValue>> ValueExpression
     {
         get;
         set;

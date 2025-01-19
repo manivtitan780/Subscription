@@ -49,7 +49,7 @@ public class DocumentDetails
 	///     It is used in various parts of the application, including the CandidatesController, CompanyController,
 	///     LeadController, and RequisitionController classes.
 	/// </remarks>
-	public DocumentDetails(int entityID, string? documentName, string? documentLocation, string? internalFileName)
+	public DocumentDetails(int entityID, string documentName, string documentLocation, string internalFileName)
 	{
 		EntityID = entityID;
 		DocumentName = documentName;
@@ -67,7 +67,7 @@ public class DocumentDetails
 	///     This property is used to store the location of the document. It is used in various parts of the application,
 	///     including the Candidate, DocumentsCompanyPanel, and DocumentsPanel classes.
 	/// </remarks>
-	public string? DocumentLocation
+	public string DocumentLocation
 	{
 		get;
 		set;
@@ -83,7 +83,7 @@ public class DocumentDetails
 	///     This property is used to store the name of the document. It is used in various parts of the application, including
 	///     the DocumentsCompanyPanel, DocumentsPanel, and DownloadsPanel classes.
 	/// </remarks>
-	public string? DocumentName
+	public string DocumentName
 	{
 		get;
 		set;
@@ -117,7 +117,7 @@ public class DocumentDetails
 	///     name. It is used in various parts of the application, including the Candidate, DocumentsCompanyPanel,
 	///     DocumentsPanel, and DownloadsPanel classes.
 	/// </remarks>
-	public string? InternalFileName
+	public string InternalFileName
 	{
 		get;
 		set;
@@ -140,5 +140,5 @@ public class DocumentDetails
 	/// <returns>
 	///     A new DocumentDetails object copied from the current instance.
 	/// </returns>
-	public DocumentDetails? Copy() => MemberwiseClone() as DocumentDetails;
+	public DocumentDetails Copy() => MemberwiseClone() as DocumentDetails;
 }

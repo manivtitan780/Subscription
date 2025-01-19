@@ -17,13 +17,13 @@ namespace Subscription.Model;
 
 public class IntValues
 {
-    public string? Text
+    public string Text
     {
         get;
         init;
     }
 
-    public int Value
+    public int KeyValue
     {
         get;
         init;

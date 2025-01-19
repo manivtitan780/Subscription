@@ -19,7 +19,7 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class LocationDrop
 {
-    public string? City
+    public string City
     {
         get;
         set;
@@ -31,13 +31,13 @@ public class LocationDrop
         set;
     }
 
-    public string? Location
+    public string Location
     {
         get;
         set;
     }
 
-    public string? State
+    public string State
     {
         get;
         set;
@@ -49,13 +49,13 @@ public class LocationDrop
         set;
     }
 
-    public string? StreetAddress
+    public string StreetAddress
     {
         get;
         set;
     }
 
-    public string? Zip
+    public string Zip
     {
         get;
         set;
@@ -72,5 +72,5 @@ public class LocationDrop
         StateID = 0;
     }
 
-    public LocationDrop? Copy() => MemberwiseClone() as LocationDrop;
+    public LocationDrop Copy() => MemberwiseClone() as LocationDrop;
 }

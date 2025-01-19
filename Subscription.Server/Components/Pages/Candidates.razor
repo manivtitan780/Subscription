@@ -21,11 +21,11 @@
 @if (HasViewRights)
 {
 	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)"
-	            NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
+	            NumericCount="10" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
 			        TValue="Candidate" Width="100%">
-				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="10" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID"/>
 				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate"/>@* OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
@@ -46,7 +46,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
+					<GridColumn AllowSorting="true" HeaderText="Phone" Width="14%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -58,7 +58,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
+					<GridColumn AllowSorting="true" HeaderText="Email" Width="19%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -68,7 +68,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
+					<GridColumn AllowSorting="true" HeaderText="Location" Width="19%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -80,7 +80,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
+					<GridColumn AllowSorting="true" HeaderText="Status" Width="14%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -92,7 +92,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
+					<GridColumn AllowSorting="true" HeaderText="Updated" Width="14%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -142,10 +142,10 @@
 											<div class="layout-2">
 												<div class="leftLayout">
 													<PanelDisplayText Label="Address" MarkupText="@Address"/>
-													<PanelDisplayText Label="Email Address" Text="@_candidateDetailsObject.Email"/>
-													<PanelDisplayText Label="Phone#" Text="@_candidateDetailsObject.Phone1.FormatPhoneNumber()"/>
-													<PanelDisplayText Label="Alternate Phone#" Text="@_candidateDetailsObject.Phone2.FormatPhoneNumber()"/>
-													<PanelDisplayText Label="Title" Text="@_candidateDetailsObject.Title"/>
+													<PanelDisplayText Label="Email Address" Text="@(_candidateDetailsObject.Email ?? string.Empty)"/>
+													<PanelDisplayText Label="Phone#" Text="@(_candidateDetailsObject.Phone1.FormatPhoneNumber() ?? string.Empty)"/>
+													<PanelDisplayText Label="Alternate Phone#" Text="@(_candidateDetailsObject.Phone2.FormatPhoneNumber() ?? string.Empty)"/>
+													<PanelDisplayText Label="Title" Text="@(_candidateDetailsObject.Title ?? string.Empty)"/>
 													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candidateDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")"/>
 													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"/>
 												</div>
@@ -216,7 +216,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<div class="resumeContainerBox">
-												<SfRichTextEditor Height="278px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
+												<SfRichTextEditor Height="278px" Readonly="true" Value="@(_candidateDetailsObject.TextResume ?? string.Empty)">
 													<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
