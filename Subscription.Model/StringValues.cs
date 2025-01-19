@@ -16,7 +16,7 @@
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 namespace Subscription.Model;
 
-public class StringValues
+public struct StringValues
 {
     public string KeyValue
     {

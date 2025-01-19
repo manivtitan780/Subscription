@@ -15,7 +15,7 @@
 
 namespace Subscription.Model;
 
-public class IntValues
+public struct IntValues
 {
     public string Text
     {

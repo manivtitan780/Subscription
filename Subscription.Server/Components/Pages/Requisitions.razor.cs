@@ -509,14 +509,14 @@ public partial class Requisitions
 
         string _skillsRequired = "", _skillsOptional = "";
         _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Where(skill => skill != null).Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
+                                               .Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
         if (_skillsRequired.StartsWith(", "))
         {
             _skillsRequired = _skillsRequired[2..];
         }
 
         _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Where(skill => skill != null).Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
+                                               .Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
         if (_skillsOptional.StartsWith(", "))
         {
             _skillsOptional = _skillsRequired[2..];

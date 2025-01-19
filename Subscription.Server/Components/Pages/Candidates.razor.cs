@@ -610,7 +610,7 @@ public partial class Candidates
     {
         get;
         set;
-    }
+    } = new();
 
     /// <summary>
     ///     Gets or sets the username of the current user.
@@ -804,10 +804,7 @@ public partial class Candidates
                                  _target = candidate.Data;
                                  try
                                  {
-                                     if (Spinner != null)
-                                     {
-                                         await Spinner.ShowAsync();
-                                     }
+                                     await Spinner?.ShowAsync()!;
                                  }
                                  catch
                                  {
@@ -1728,11 +1725,11 @@ public partial class Candidates
 
                 if (_returnValue != "")
                 {
-                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
+                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str).Text;
                 }
                 else
                 {
-                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
+                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str).Text;
                 }
             }
         }
@@ -1768,11 +1765,11 @@ public partial class Candidates
 
                 if (_returnValue != "")
                 {
-                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
+                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str).Text;
                 }
                 else
                 {
-                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
+                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str).Text;
                 }
             }
         }
@@ -1909,7 +1906,7 @@ public partial class Candidates
 
     private (string Code, string Name) SplitState(int stateID)
     {
-        string _stateName = _states.FirstOrDefault(state => state.KeyValue == stateID)?.Text!;
+        string _stateName = _states.FirstOrDefault(state => state.KeyValue == stateID).Text!;
         string[] parts = _stateName?.Split([" - "], StringSplitOptions.TrimEntries);
         if (parts?.Length != 2)
         {
