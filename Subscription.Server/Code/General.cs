@@ -87,7 +87,9 @@ public class General
         }
         else
         {
-            return default;
+            Type type = typeof(T);
+            return type == typeof(List<>).MakeGenericType(type.GetGenericArguments()[0]) ? (T)Activator.CreateInstance(type) : Activator.CreateInstance<T>();
+            //return default;
         }
 
     }

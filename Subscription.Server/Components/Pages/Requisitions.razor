@@ -103,7 +103,45 @@
 									<TabHeader Text="Requisition Info"/>
 								</ChildContent>
 								<ContentTemplate>
-									<RequisitionInfoPanel Model="_requisitionDetailsObject" SkillsText="_requisitionDetailSkills" States="_states"/>
+									<div class="layout-2">
+										<div class="leftLayout">
+											<PanelDisplayText Label="Company Name" Text="@_requisitionDetailsObject.CompanyName"/>
+											<PanelDisplayText Label="Contact Name" Text="@_requisitionDetailsObject.ContactName"/>
+											<PanelDisplayText Label="Job Title" Text="@_requisitionDetailsObject.PositionTitle"/>
+											<PanelDisplayText Label="No. of Positions" Text="@_requisitionDetailsObject.Positions.ToString()"/>
+											<PanelDisplayText Label="Location" Text="@GetLocation(_requisitionDetailsObject.Location)"/>
+											<PanelDisplayText Label="Duration" Text="@(_requisitionDetailsObject.Duration + " " + GetDurationCode(_requisitionDetailsObject.DurationCode))"/>
+											<PanelDisplayText Label="Expected Start Date" Text="@(_requisitionDetailsObject.ExpectedStart.CultureDate())"/>
+											<PanelDisplayText Label="Due Date" Text="@(_requisitionDetailsObject.DueDate.CultureDate())"/>
+											<PanelDisplayText Label="Expected Rate" Text="@($"{_requisitionDetailsObject.ExpRateLow.CultureCurrency()} - {_requisitionDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Salary Expected" Text="@($"{_requisitionDetailsObject.SalaryLow.CultureCurrency()} - {_requisitionDetailsObject.SalaryHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Load Expected" Text="@($"{_requisitionDetailsObject.ExpLoadLow.CultureCurrency()} - {_requisitionDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Placement Fee" Text="@(_requisitionDetailsObject.PlacementFee.CulturePercentage())"/>
+											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status)"/>
+										</div>
+										<div class="leftLayout">
+											<PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility"/>
+											<PanelDisplayText Label="Experience" MarkupText="@CandidateExperience"/>
+											<PanelDisplayText Label="Tax Terms" MarkupText="@CandidateTaxTerms"/>
+											<PanelDisplayText Label="Job Options" MarkupText="@CandidateJobOptions"/>
+											<PanelDisplayText Label="Communication" MarkupText="@CandidateCommunication"/>
+											<PanelDisplayText Label="Security Clearance" Text="@(_candidateDetailsObject.Background ? "Yes" : "No")"/>
+											<PanelDisplayText Label="Willing to Relocate" Text="@(_candidateDetailsObject.Relocate ? "Yes" : "No")"/>
+										</div>
+										<div class="rightLayout">
+											<div class="divPanelContainer" style="margin-bottom:5px;">
+												<span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
+												<span class="spanRightText ratingCandidateExpand">
+															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate"/>
+														</span>
+											</div>
+											<PanelDisplayText Label="Rating Date" MarkupText="@RatingDate"/>
+											<PanelDisplayText Label="Rating Notes" MarkupText="@RatingNote"/>
+											<PanelDisplayText Label="M.P.C.?" Text="@(_candidateDetailsObject.MPC ? "Yes" : "No")"/>
+											<PanelDisplayText Label="M.P.C. Date" MarkupText="@MPCDate"/>
+											<PanelDisplayText Label="M.P.C. Notes" MarkupText="@MPCNote"/>
+										</div>
+									</div>
 								</ContentTemplate>
 							</TabItem>
 							@*<<TabItem>

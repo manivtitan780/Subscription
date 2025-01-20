@@ -72,6 +72,32 @@ public partial class Requisitions
         set;
     } = [];
 
+    private string GetLocation(string location)
+    {
+        if (_states == null || location.ToInt32() == 0)
+        {
+            return location;
+        }
+
+        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
+        {
+            return _intValues.Text;
+        }
+
+        return location;
+    }
+
+    private string GetDurationCode(string durationCode)
+    {
+        return durationCode.ToLower() switch
+               {
+                   "m" => "months",
+                   "w" => "weeks",
+                   "d" => "days",
+                   _ => "years"
+               };
+    }
+
     /// <summary>
     ///     Gets or sets a list of company contacts associated with the requisition.
     /// </summary>

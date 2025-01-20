@@ -128,6 +128,8 @@
 						@if (context is Candidate)
 						{
 							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
+								<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+								@**@
 								<TabAnimationSettings>
 									<TabAnimationPrevious Effect="AnimationEffect.None"/>
 									<TabAnimationNext Effect="AnimationEffect.None"/>
@@ -253,7 +255,6 @@
 										</ContentTemplate>
 									</TabItem>
 								</TabItems>
-								<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
 							</SfTab>
 						}
 					</DetailTemplate>
