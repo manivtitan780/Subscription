@@ -15,7 +15,6 @@
 
 #region Using
 
-using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
@@ -47,7 +46,7 @@ public static class General
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
     /// <returns>The deserialized object of type T.</returns>
-    internal static T? DeserializeObject<T>(object? array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
 
     public static async Task SetCache()
     {
@@ -84,7 +83,7 @@ public static class General
 
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            List<IntValues>? _companies = [];
+            List<IntValues> _companies = [];
             while (await _reader.ReadAsync())
             {
                 _companies = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -93,7 +92,7 @@ public static class General
             //_companies = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<CompanyContactList>? _companyContacts = [];
+            List<CompanyContactList> _companyContacts = [];
             while (await _reader.ReadAsync())
             {
                 _companyContacts = JsonSerializer.Deserialize<List<CompanyContactList>>(_reader.NString(0)!);
@@ -107,7 +106,7 @@ public static class General
             //                                                                          }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<IntValues>? _titles = [];
+            List<IntValues> _titles = [];
             while (await _reader.ReadAsync())
             {
                 _titles = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -115,7 +114,7 @@ public static class General
             // _titles = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _documentTypes = [];
+            List<IntValues> _documentTypes = [];
             while (await _reader.ReadAsync())
             {
                 _documentTypes = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -123,7 +122,7 @@ public static class General
             // _documentTypes = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _educations = [];
+            List<IntValues> _educations = [];
             while (await _reader.ReadAsync())
             {
                 _educations = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -131,7 +130,7 @@ public static class General
             // _educations = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _eligibilities = [];
+            List<IntValues> _eligibilities = [];
             while (await _reader.ReadAsync())
             {
                 _eligibilities = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -139,7 +138,7 @@ public static class General
             // _eligibilities = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _experiences = [];
+            List<IntValues> _experiences = [];
             while (await _reader.ReadAsync())
             {
                 _experiences = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -147,7 +146,7 @@ public static class General
             // _experiences = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<StringValues>? _jobOptions = [];
+            List<StringValues> _jobOptions = [];
             while (await _reader.ReadAsync())
             {
                 _jobOptions = JsonSerializer.Deserialize<List<StringValues>>(_reader.NString(0)!);
@@ -155,7 +154,7 @@ public static class General
             // _jobOptions = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _leadIndustries = [];
+            List<IntValues> _leadIndustries = [];
             while (await _reader.ReadAsync())
             {
                 _leadIndustries = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -163,7 +162,7 @@ public static class General
             // _leadIndustries = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _leadSources = [];
+            List<IntValues> _leadSources = [];
             while (await _reader.ReadAsync())
             {
                 _leadSources = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -171,7 +170,7 @@ public static class General
             // _leadSources = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _leadStatuses = [];
+            List<IntValues> _leadStatuses = [];
             while (await _reader.ReadAsync())
             {
                 _leadStatuses = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -179,7 +178,7 @@ public static class General
             // _leadStatuses = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _naics = [];
+            List<IntValues> _naics = [];
             while (await _reader.ReadAsync())
             {
                 _naics = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -187,7 +186,7 @@ public static class General
             // _naics = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<Role>? _roles = [];
+            List<Role> _roles = [];
             while (await _reader.ReadAsync())
             {
                 _roles = JsonSerializer.Deserialize<List<Role>>(_reader.NString(0)!);
@@ -212,7 +211,7 @@ public static class General
             //                                               }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<IntValues>? _skills = [];
+            List<IntValues> _skills = [];
             while (await _reader.ReadAsync())
             {
                 _skills = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -220,7 +219,7 @@ public static class General
             // _skills = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues>? _states = [];
+            List<IntValues> _states = [];
             while (await _reader.ReadAsync())
             {
                 _states = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
@@ -228,7 +227,7 @@ public static class General
             // _states = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<StatusCode>? _statusCodes = [];
+            List<StatusCode> _statusCodes = [];
             while (await _reader.ReadAsync())
             {
                 _statusCodes = JsonSerializer.Deserialize<List<StatusCode>>(_reader.NString(0)!);
@@ -245,7 +244,7 @@ public static class General
             //                                                             }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<StringValues>? _taxTerms = [];
+            List<StringValues> _taxTerms = [];
             while (await _reader.ReadAsync())
             {
                 _taxTerms = JsonSerializer.Deserialize<List<StringValues>>(_reader.NString(0)!);
@@ -253,7 +252,7 @@ public static class General
             // _taxTerms = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
-            List<UserList>? _users = [];
+            List<UserList> _users = [];
             while (await _reader.ReadAsync())
             {
                 _users = JsonSerializer.Deserialize<List<UserList>>(_reader.NString(0)!);
@@ -265,7 +264,7 @@ public static class General
             //                                                   }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<AppWorkflow>? _workflows = [];
+            List<AppWorkflow> _workflows = [];
             while (await _reader.ReadAsync())
             {
                 _workflows = JsonSerializer.Deserialize<List<AppWorkflow>>(_reader.NString(0)!);
@@ -284,7 +283,7 @@ public static class General
             //                                                              }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<Zip>? _zips = [];
+            List<Zip> _zips = [];
             await _reader.ReadAsync();
             byte[] _zipCompressed = (byte[])_reader[0];
             using (MemoryStream _memStreamReader = new(_zipCompressed))
@@ -338,7 +337,7 @@ public static class General
         }
     }
 
-    private static async Task<List<IntValues>?> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
+    private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
     {
         return await reader.FillList<IntValues>(intValue => new()
                                                             {

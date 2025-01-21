@@ -629,6 +629,12 @@ public partial class Candidates
         set;
     }
 
+    private bool VisibleSpin
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     This method is used to add a new document to the candidate's profile.
     ///     It first checks if a new document instance exists, if not, it creates a new one.
@@ -806,7 +812,8 @@ public partial class Candidates
                                  }
 
                                  _target = candidate.Data;
-                                 try
+                                 VisibleSpin = true;
+                                 /*try
                                  {
                                      if (!_spinnerRendered)
                                      {
@@ -826,11 +833,11 @@ public partial class Candidates
                                      }
 
                                      await Spinner?.ShowAsync()!;
-                                 }
-                                 catch
+                                 }*/
+                                 /*catch
                                  {
-                                     //Ignore the error. 
-                                 }
+                                     //Ignore the error.
+                                 }*/
 
                                  Dictionary<string, string> _parameters = new()
                                                                           {
@@ -865,17 +872,7 @@ public partial class Candidates
                                  _formattedExists = _target.FormattedResume;
                                  _originalExists = _target.OriginalResume;
 
-                                 try
-                                 {
-                                     if (Spinner != null)
-                                     {
-                                         await Spinner.HideAsync();
-                                     }
-                                 }
-                                 catch
-                                 {
-                                     //Ignore the error.
-                                 }
+                                 VisibleSpin = false;
                              });
     }
 
@@ -2029,6 +2026,4 @@ public partial class Candidates
             }
         }
     }
-
-    
 }

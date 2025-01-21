@@ -8,12 +8,10 @@
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          12-21-2024 19:12
-// Last Updated On:     01-11-2025 20:01
+// Last Updated On:     01-21-2025 16:01
 // *****************************************/
 
 #endregion
-
-using System.Diagnostics.CodeAnalysis;
 
 namespace Subscription.API.Controllers;
 
@@ -29,9 +27,9 @@ public class RequisitionController : ControllerBase
     ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
     ///     will be omitted from the string.
     /// </returns>
-    private static string? GenerateLocation(RequisitionDetails requisition, string? stateName)
+    private static string GenerateLocation(RequisitionDetails requisition, string stateName)
     {
-        string? _location = "";
+        string _location = "";
         if (!requisition.City.NullOrWhiteSpace())
         {
             _location = requisition.City;
@@ -107,11 +105,11 @@ public class RequisitionController : ControllerBase
         _command.Bit("ThenProceed", thenProceed);
         _command.Varchar("LoggedUser", 10, user);
 
-        string? _requisitions = "[]";
+        string _requisitions = "[]";
         int _count = 0, _page = 0;
-        string? _companies = "[]";
-        string? _companyContacts = "[]";
-        string? _statusCount = "[]";
+        string _companies = "[]";
+        string _companyContacts = "[]";
+        string _statusCount = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -223,76 +221,78 @@ public class RequisitionController : ControllerBase
             return StatusCode(500, "Requisition ID is not provided.");
         }
 
-        string _requisitionDetail = "{}";
-
         await using SqlCommand _command = new("GetGridRequisitionDetailsView", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("RequisitionID", requisitionID);
         _command.Varchar("RoleID", 2, roleID);
-        await _connection.OpenAsync();
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-        if (_reader.HasRows) //Candidate Details
+        string _requisitionDetail = "{}", _activity = "[]", _documents = "[]";
+        try
         {
-            await _reader.ReadAsync();
-            try
-            {
-                /*_requisitionDetail = new(requisitionID, _reader.GetString(0), _reader.NString(1), _reader.GetString(2), _reader.GetString(3),
-                                         _reader.GetInt32(4), _reader.GetString(5), _reader.GetString(6), _reader.GetString(38), _reader.GetString(8),
-                                         _reader.GetDecimal(9), _reader.GetDecimal(10), _reader.GetDecimal(11), _reader.GetDecimal(12), _reader.GetDecimal(13),
-                                         _reader.GetBoolean(14), _reader.GetString(15), _reader.NString(16), _reader.GetDecimal(17), _reader.GetDecimal(18),
-                                         _reader.GetBoolean(19), _reader.GetDateTime(20), _reader.GetString(21), _reader.GetString(22), _reader.GetString(23),
-                                         _reader.GetDateTime(24), _reader.GetString(25), _reader.GetDateTime(26), _reader.NString(27), _reader.NString(28),
-                                         _reader.NString(29), _reader.GetBoolean(30), _reader.GetBoolean(31), _reader.NString(32), _reader.GetBoolean(33),
-                                         _reader.GetDateTime(34), _reader.GetBoolean(35), _reader.GetString(39), _reader.GetInt32(7), _reader.GetString(40),
-                                         _reader.NString(41), _reader.NString(42), _reader.NString(43), _reader.GetByte(44), _reader.NInt32(45),
-                                         _reader.NInt32(46), _reader.NInt32(47), _reader.NString(48), _reader.GetInt32(36), _reader.GetInt32(37),
-                                         _reader.NString(49), _reader.NString(50), _reader.NString(51), _reader.NString(52));*/
-            }
-            catch (Exception)
-            {
-                //
-            }
-        }
-
-        await _reader.NextResultAsync(); //Activity
-        List<CandidateActivity> _activity = new();
-        while (await _reader.ReadAsync())
-        {
-            _activity.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
-                              _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9),
-                              _reader.GetString(10), _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14),
-                              _reader.GetString(15), _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18),
-                              _reader.NDateTime(19), _reader.GetString(20), _reader.NString(21), _reader.NString(22),
-                              _reader.GetBoolean(23)));
-        }
-
-        await _reader.NextResultAsync();
-        List<RequisitionDocuments> _documents = [];
-        if (_reader.HasRows)
-        {
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             while (await _reader.ReadAsync())
             {
-                try
+                _requisitionDetail = _reader.NString(0);
+            }
+            /*_requisitionDetail = new(requisitionID, _reader.GetString(0), _reader.NString(1), _reader.GetString(2), _reader.GetString(3),
+                                     _reader.GetInt32(4), _reader.GetString(5), _reader.GetString(6), _reader.GetString(38), _reader.GetString(8),
+                                     _reader.GetDecimal(9), _reader.GetDecimal(10), _reader.GetDecimal(11), _reader.GetDecimal(12), _reader.GetDecimal(13),
+                                     _reader.GetBoolean(14), _reader.GetString(15), _reader.NString(16), _reader.GetDecimal(17), _reader.GetDecimal(18),
+                                     _reader.GetBoolean(19), _reader.GetDateTime(20), _reader.GetString(21), _reader.GetString(22), _reader.GetString(23),
+                                     _reader.GetDateTime(24), _reader.GetString(25), _reader.GetDateTime(26), _reader.NString(27), _reader.NString(28),
+                                     _reader.NString(29), _reader.GetBoolean(30), _reader.GetBoolean(31), _reader.NString(32), _reader.GetBoolean(33),
+                                     _reader.GetDateTime(34), _reader.GetBoolean(35), _reader.GetString(39), _reader.GetInt32(7), _reader.GetString(40),
+                                     _reader.NString(41), _reader.NString(42), _reader.NString(43), _reader.GetByte(44), _reader.NInt32(45),
+                                     _reader.NInt32(46), _reader.NInt32(47), _reader.NString(48), _reader.GetInt32(36), _reader.GetInt32(37),
+                                     _reader.NString(49), _reader.NString(50), _reader.NString(51), _reader.NString(52));*/
+
+            await _reader.NextResultAsync(); //Activity
+            while (await _reader.ReadAsync())
+            {
+                _activity = _reader.NString(0);
+                /*_activity.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
+                                  _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9),
+                                  _reader.GetString(10), _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14),
+                                  _reader.GetString(15), _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18),
+                                  _reader.NDateTime(19), _reader.GetString(20), _reader.NString(21), _reader.NString(22),
+                                  _reader.GetBoolean(23)));*/
+            }
+
+            await _reader.NextResultAsync();
+            if (_reader.HasRows)
+            {
+                while (await _reader.ReadAsync())
                 {
-                    _documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
-                                       $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));
-                }
-                catch (Exception)
-                {
-                    //
+                    _documents = _reader.NString(0);
+                    /*try
+                    {
+                        _documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
+                                           $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }*/
                 }
             }
+
+            await _reader.CloseAsync();
         }
-
-        await _reader.CloseAsync();
-
-        await _connection.CloseAsync();
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error fetching requisition details. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
 
         return Ok(new ReturnRequisitionDetails
                   {
-                      Activity = "",
-                      Documents = "",
-                      Requisition = ""
+                      Activity = _activity,
+                      Documents = _documents,
+                      Requisition = _requisitionDetail
                   });
         // return new Dictionary<string, object>
         //        {
@@ -316,7 +316,7 @@ public class RequisitionController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Requisition", 30, filter);
 
-        string? _requisitions = "[]";
+        string _requisitions = "[]";
         try
         {
             await _connection.OpenAsync();

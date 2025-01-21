@@ -847,9 +847,10 @@ body, form, html {
     background: var(--c-red);
 }
 
-div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"] {
+div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"], div#tabRequisition div[id^="e-content-tabRequisition"] {
     border: 1px solid var(--c-red);
-    height: 280px;
+    /*height: 280px;*/
+    height: calc(100% - 15px);
     width: 99%;
 }
 

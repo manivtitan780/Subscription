@@ -295,6 +295,12 @@ public partial class Requisitions
         set;
     } = new();
 
+    private bool VisibleSpin
+    {
+        get;
+        set;
+    }
+
     internal static int StartRecord
     {
         get;
@@ -457,15 +463,7 @@ public partial class Requisitions
 
                                  _target = requisition.Data;
 
-                                 await Task.Yield();
-                                 try
-                                 {
-                                     await Spinner?.ShowAsync()!;
-                                 }
-                                 catch
-                                 {
-                                     //
-                                 }
+                                 VisibleSpin = true;
 
                                  Dictionary<string, string> _parameters = new()
                                                                           {
@@ -486,14 +484,7 @@ public partial class Requisitions
 
                                  await Task.Yield();
 
-                                 try
-                                 {
-                                     await Spinner?.HideAsync()!;
-                                 }
-                                 catch
-                                 {
-                                     //
-                                 }
+                                 VisibleSpin = false;
                              });
     }
 

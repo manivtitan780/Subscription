@@ -18,6 +18,7 @@
 global using Microsoft.AspNetCore.Mvc;
 
 global using System.Data;
+global using System.Diagnostics.CodeAnalysis;
 
 global using Microsoft.Data.SqlClient;
 

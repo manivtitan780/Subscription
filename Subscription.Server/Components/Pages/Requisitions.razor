@@ -6,7 +6,7 @@
 <GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)"
             NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" @ref="Grid"
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
 		        TValue="Requisition" Width="100%">
 			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
@@ -92,6 +92,7 @@
 						</SpeedDialItems>
 					</SfSpeedDial>
 					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%">
+						<SfSpinner @bind-Visible="@VisibleSpin" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 						<TabAnimationSettings>
 							<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
 							<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
@@ -119,27 +120,29 @@
 											<PanelDisplayText Label="Placement Fee" Text="@(_requisitionDetailsObject.PlacementFee.CulturePercentage())"/>
 											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status)"/>
 										</div>
-										<div class="leftLayout">
-											<PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility"/>
-											<PanelDisplayText Label="Experience" MarkupText="@CandidateExperience"/>
-											<PanelDisplayText Label="Tax Terms" MarkupText="@CandidateTaxTerms"/>
-											<PanelDisplayText Label="Job Options" MarkupText="@CandidateJobOptions"/>
-											<PanelDisplayText Label="Communication" MarkupText="@CandidateCommunication"/>
-											<PanelDisplayText Label="Security Clearance" Text="@(_candidateDetailsObject.Background ? "Yes" : "No")"/>
-											<PanelDisplayText Label="Willing to Relocate" Text="@(_candidateDetailsObject.Relocate ? "Yes" : "No")"/>
+										<div class="leftLayout" style="display:flex; flex-direction:column;">
+											<div style="font-weight: bold; height: 23px;">Description:</div>
+											<div style="overflow-y: auto; flex: 1;">
+												@_requisitionDetailsObject.Description.ToMarkupString()
+											</div>
+											<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
+											<div style="flex: 1; overflow-y: auto;">
+												@_requisitionDetailSkills
+											</div>
 										</div>
 										<div class="rightLayout">
-											<div class="divPanelContainer" style="margin-bottom:5px;">
-												<span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
-												<span class="spanRightText ratingCandidateExpand">
-															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate"/>
-														</span>
-											</div>
-											<PanelDisplayText Label="Rating Date" MarkupText="@RatingDate"/>
-											<PanelDisplayText Label="Rating Notes" MarkupText="@RatingNote"/>
-											<PanelDisplayText Label="M.P.C.?" Text="@(_candidateDetailsObject.MPC ? "Yes" : "No")"/>
-											<PanelDisplayText Label="M.P.C. Date" MarkupText="@MPCDate"/>
-											<PanelDisplayText Label="M.P.C. Notes" MarkupText="@MPCNote"/>
+											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@_requisitionDetailsObject.AssignedTo"/>
+											<PanelDisplayText Label="Priority" Text="@_requisitionDetailsObject.Priority"/>
+											<PanelDisplayText Label="Job Options" Text="@_requisitionDetailsObject.JobOptions"/>
+											<PanelDisplayText Label="Experience" Text="@_requisitionDetailsObject.Experience"/>
+											<PanelDisplayText Label="Report To" Text="@_requisitionDetailsObject.ReportTo"/>
+											<PanelDisplayText Label="Education" Text="@_requisitionDetailsObject.Education"/>
+											<PanelDisplayText Label="Eligibility" Text="@_requisitionDetailsObject.Eligibility"/>
+											<PanelDisplayText Label="Expenses Paid?" Text="@_requisitionDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Security Clearance?" Text="@_requisitionDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="OFCCP?" Text="@_requisitionDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Benefits?" Text="@_requisitionDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Benefits Notes" MarkupText="@_requisitionDetailsObject.BenefitNotes.ToMarkupString()"/>
 										</div>
 									</div>
 								</ContentTemplate>
@@ -162,7 +165,6 @@
 							</ContentTemplate>
 						</TabItem>*@
 						</TabItems>
-						<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 					</SfTab>
 				</DetailTemplate>
 			</GridTemplates>

@@ -15,7 +15,6 @@
 
 #region Using
 
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mail;
 
@@ -41,7 +40,7 @@ public class CandidateController : ControllerBase
     public async Task<ActionResult<string>> DeleteCandidateDocument(int documentID, string user)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _documents = "[]";
+        string _documents = "[]";
         await using SqlCommand _command = new("DeleteCandidateDocument", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("CandidateDocumentId", documentID);
@@ -81,7 +80,7 @@ public class CandidateController : ControllerBase
     public async Task<ActionResult<string>> DeleteEducation(int id, int candidateID, string user)
     {
         await Task.Delay(1);
-        string? _education = "[]";
+        string _education = "[]";
         if (id == 0)
         {
             return Ok("[]");
@@ -129,7 +128,7 @@ public class CandidateController : ControllerBase
     public async Task<ActionResult<string>> DeleteExperience(int id, int candidateID, string user)
     {
         await Task.Delay(1);
-        string? _experiences = "[]";
+        string _experiences = "[]";
         if (id == 0)
         {
             return Ok(_experiences);
@@ -174,7 +173,7 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> DeleteNotes(int id, int candidateID, string user)
     {
-        string? _notes = "[]";
+        string _notes = "[]";
         if (id == 0)
         {
             return Ok("[]");
@@ -219,7 +218,7 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> DeleteSkill(int id, int candidateID, string user)
     {
-        string? _skills = "[]";
+        string _skills = "[]";
         if (id == 0)
         {
             return Ok(_skills);
@@ -271,7 +270,7 @@ public class CandidateController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("DocumentID", documentID);
 
-        string? _documentDetails = "[]";
+        string _documentDetails = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -315,7 +314,7 @@ public class CandidateController : ControllerBase
         _command.Int("CandidateID", candidateID);
         _command.Varchar("ResumeType", 20, resumeType);
 
-        string? _documentDetails = "[]";
+        string _documentDetails = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -356,9 +355,9 @@ public class CandidateController : ControllerBase
     public async Task<ActionResult<ReturnCandidateDetails>> GetCandidateDetails(int candidateID, string roleID)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _candidate = "";
-        string? _candRating = "";
-        string? _candMPC = "";
+        string _candidate = "";
+        string _candRating = "";
+        string _candMPC = "";
 
         await using SqlCommand _command = new("GetDetailCandidate", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -380,35 +379,35 @@ public class CandidateController : ControllerBase
             }
 
             await _reader.NextResultAsync(); //Notes
-            string? _notes = "[]";
+            string _notes = "[]";
             while (await _reader.ReadAsync())
             {
                 _notes = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Skills
-            string? _skills = "[]";
+            string _skills = "[]";
             while (await _reader.ReadAsync())
             {
                 _skills = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Education
-            string? _education = "[]";
+            string _education = "[]";
             while (await _reader.ReadAsync())
             {
                 _education = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Experience
-            string? _experience = "[]";
+            string _experience = "[]";
             while (await _reader.ReadAsync())
             {
                 _experience = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Activity
-            string? _activity = "[]";
+            string _activity = "[]";
             while (await _reader.ReadAsync())
             {
                 _activity = _reader.NString(0);
@@ -417,7 +416,7 @@ public class CandidateController : ControllerBase
             await _reader.NextResultAsync(); //Managers
 
             await _reader.NextResultAsync(); //Documents
-            string? _documents = "[]";
+            string _documents = "[]";
             while (await _reader.ReadAsync())
             {
                 _documents = _reader.NString(0);
@@ -494,9 +493,9 @@ public class CandidateController : ControllerBase
     ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
     ///     will be omitted from the string.
     /// </returns>
-    private static string? GetCandidateLocation(CandidateDetails? candidateDetails, string? stateName)
+    private static string GetCandidateLocation(CandidateDetails candidateDetails, string stateName)
     {
-        string? _location = "";
+        string _location = "";
 
         if (!candidateDetails!.City.NullOrWhiteSpace())
         {
@@ -540,10 +539,10 @@ public class CandidateController : ControllerBase
     ///     It reads the result set from the database to populate the list of candidates and the total count.
     /// </remarks>
     [HttpGet]
-    public async Task<ActionResult<ReturnGrid>> GetGridCandidates([FromBody] CandidateSearch? searchModel = null)
+    public async Task<ActionResult<ReturnGrid>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _candidates = "[]";
+        string _candidates = "[]";
 
         await using SqlCommand _command = new("GetCandidates", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -638,7 +637,7 @@ public class CandidateController : ControllerBase
     ///     - Returns the result of the operation.
     /// </remarks>
     [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-    public async Task<ActionResult<int>> SaveCandidate(CandidateDetails? candidateDetails, string jsonPath = "", string userName = "", string emailAddress = "maniv@titan-techs.com")
+    public async Task<ActionResult<int>> SaveCandidate(CandidateDetails candidateDetails, string jsonPath = "", string userName = "", string emailAddress = "maniv@titan-techs.com")
     {
         if (candidateDetails == null)
         {
@@ -807,9 +806,9 @@ public class CandidateController : ControllerBase
     ///     If the operation is successful, the JSON formatted string will contain a list of the candidate's education records.
     /// </remarks>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveEducation(CandidateEducation? education, int candidateID, string user)
+    public async Task<ActionResult<string>> SaveEducation(CandidateEducation education, int candidateID, string user)
     {
-        string? _returnVal = "[]";
+        string _returnVal = "[]";
         if (education == null)
         {
             return Ok(_returnVal);
@@ -866,9 +865,9 @@ public class CandidateController : ControllerBase
     ///     candidate.
     /// </remarks>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveExperience(CandidateExperience? experience, int candidateID, string user)
+    public async Task<ActionResult<string>> SaveExperience(CandidateExperience experience, int candidateID, string user)
     {
-        string? _returnVal = "[]";
+        string _returnVal = "[]";
         if (experience == null)
         {
             return Ok(_returnVal);
@@ -923,7 +922,7 @@ public class CandidateController : ControllerBase
     ///     The method handles any exceptions that occur during the database operations and continues execution.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object?>> SaveMPC(CandidateRatingMPC? mpc, string user)
+    public async Task<Dictionary<string, object>> SaveMPC(CandidateRatingMPC mpc, string user)
     {
         string _mpc = "[]";
         try
@@ -949,12 +948,12 @@ public class CandidateController : ControllerBase
             _command.Bit("@MPC", mpc.MPC);
             _command.Varchar("@Notes", -1, mpc.MPCComments);
             _command.Varchar("@From", 10, user);
-            string? _mpcNotes = (await _command.ExecuteScalarAsync())?.ToString();
+            string _mpcNotes = (await _command.ExecuteScalarAsync())?.ToString();
 
             await _connection.CloseAsync();
 
             bool _mpcFirst = false;
-            string? _mpcComments = "";
+            string _mpcComments = "";
             if (_mpcNotes != null)
             {
                 JArray _mpcNotesArray = JArray.Parse(_mpcNotes);
@@ -963,7 +962,7 @@ public class CandidateController : ControllerBase
                 {
                     JArray _mpcSortedArray = new(_mpcNotesArray.OrderByDescending(obj => DateTime.Parse(obj["DateTime"]!.ToString())));
 
-                    JToken? _mpcFirstCandidate = _mpcSortedArray.FirstOrDefault();
+                    JToken _mpcFirstCandidate = _mpcSortedArray.FirstOrDefault();
                     if (_mpcFirstCandidate != null)
                     {
                         _mpcFirst = _mpcFirstCandidate["MPC"].ToBoolean();
@@ -1016,9 +1015,9 @@ public class CandidateController : ControllerBase
     ///     If the candidateNote parameter is null, an empty list of notes is returned.
     /// </remarks>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveNotes(CandidateNotes? candidateNote, int candidateID, string user)
+    public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int candidateID, string user)
     {
-        string? _returnVal = "[]";
+        string _returnVal = "[]";
         if (candidateNote == null)
         {
             return Ok(_returnVal);
@@ -1073,7 +1072,7 @@ public class CandidateController : ControllerBase
     ///     These are then returned in a dictionary.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object?>> SaveRating(CandidateRatingMPC? rating, string user)
+    public async Task<Dictionary<string, object>> SaveRating(CandidateRatingMPC rating, string user)
     {
         string _rating = "[]";
         try
@@ -1099,12 +1098,12 @@ public class CandidateController : ControllerBase
             _command.TinyInt("@Rating", rating.Rating);
             _command.Varchar("@Notes", -1, rating.RatingComments);
             _command.Varchar("@From", 10, user);
-            string? _ratingNotes = (await _command.ExecuteScalarAsync())?.ToString();
+            string _ratingNotes = (await _command.ExecuteScalarAsync())?.ToString();
 
             await _connection.CloseAsync();
 
             byte _ratingFirst = 1;
-            string? _ratingComments = "";
+            string _ratingComments = "";
             if (_ratingNotes != null)
             {
                 JArray _ratingNotesArray = JArray.Parse(_ratingNotes);
@@ -1113,7 +1112,7 @@ public class CandidateController : ControllerBase
                 {
                     JArray _ratingSortedArray = new(_ratingNotesArray.OrderByDescending(obj => DateTime.Parse(obj["DateTime"]!.ToString())));
 
-                    JToken? _ratingFirstCandidate = _ratingSortedArray.FirstOrDefault();
+                    JToken _ratingFirstCandidate = _ratingSortedArray.FirstOrDefault();
                     if (_ratingFirstCandidate != null)
                     {
                         _ratingFirst = _ratingFirstCandidate["Rating"].ToByte();
@@ -1166,9 +1165,9 @@ public class CandidateController : ControllerBase
     ///     candidate.
     /// </remarks>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveSkill(CandidateSkills? skill, int candidateID, string user)
+    public async Task<ActionResult<string>> SaveSkill(CandidateSkills skill, int candidateID, string user)
     {
-        string? _returnVal = "[]";
+        string _returnVal = "[]";
         if (skill == null)
         {
             return Ok(_returnVal);
@@ -1226,7 +1225,7 @@ public class CandidateController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Name", 30, filter);
 
-        string? _candidates = "[]";
+        string _candidates = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -1262,7 +1261,7 @@ public class CandidateController : ControllerBase
     ///     of documents for the candidate.
     /// </remarks>
     [HttpPost, RequestSizeLimit(62_914_560)]
-    public async Task<string?> UploadDocument(IFormFile file)
+    public async Task<string> UploadDocument(IFormFile file)
     {
         string _fileName = file.FileName;
         string _candidateID = Request.Form["candidateID"].ToString();
@@ -1280,7 +1279,7 @@ public class CandidateController : ControllerBase
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _returnVal = "[]";
+        string _returnVal = "[]";
         try
         {
             await using SqlCommand _command = new("SaveCandidateDocuments", _connection);
