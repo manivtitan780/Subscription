@@ -221,7 +221,7 @@ public class RequisitionController : ControllerBase
             return StatusCode(500, "Requisition ID is not provided.");
         }
 
-        await using SqlCommand _command = new("GetGridRequisitionDetailsView", _connection);
+        await using SqlCommand _command = new("GetRequisitionDetails", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("RequisitionID", requisitionID);
         _command.Varchar("RoleID", 2, roleID);

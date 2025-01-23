@@ -195,7 +195,7 @@ public class General
         {
             response = await _client.ExecuteAsync<T>(_request);
         }
-        catch (Exception ex)
+        catch
         {
             response = null;
         }

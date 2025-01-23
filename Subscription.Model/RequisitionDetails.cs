@@ -152,7 +152,7 @@ public class RequisitionDetails
 		ExperienceID = experienceID;
 		EducationID = educationID;
 		JobOptionID = jobOption;
-		CompanyID = companyID;
+		CompanyID = companyID;	
 		ContactID = contactID;
 		StatusCode = statusCode;
 		CompanyCity = companyCity;

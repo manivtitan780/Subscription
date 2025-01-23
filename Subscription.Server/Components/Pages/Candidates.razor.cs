@@ -41,8 +41,6 @@ public partial class Candidates
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
 
-    private bool _spinnerRendered;
-
     private Candidate _target;
 
     private readonly List<ToolbarItemModel> _tools1 =

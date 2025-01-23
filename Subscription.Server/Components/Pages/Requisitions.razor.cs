@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-11-2025 19:01
+// Last Updated On:     01-22-2025 19:01
 // *****************************************/
 
 #endregion
@@ -19,9 +19,10 @@ public partial class Requisitions
 {
     private const string StorageName = "RequisitionGrid";
     private static int _currentPage = 1;
-    private Requisition _target;
 
     private static TaskCompletionSource<bool> _initializationTaskSource;
+
+    private List<CandidateActivity> _candidateActivityObject = [];
     private List<StringValues> _companies;
     private List<IntValues> _education;
     private List<IntValues> _eligibility;
@@ -32,15 +33,16 @@ public partial class Requisitions
 
     private RequisitionDetails _requisitionDetailsObject = new(), _requisitionDetailsObjectClone = new();
     private List<RequisitionDocuments> _requisitionDocumentsObject = [];
-    private int _selectedTab;
 
     private List<Role> _roles;
+    private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
     private List<IntValues> _skills;
     private List<IntValues> _states;
     private List<StatusCode> _statusCodes;
 
     private readonly List<StringValues> _statusSearch = [];
+    private Requisition _target;
     private List<AppWorkflow> _workflows;
 
     /// <summary>
@@ -71,32 +73,6 @@ public partial class Requisitions
         get;
         set;
     } = [];
-
-    private string GetLocation(string location)
-    {
-        if (_states == null || location.ToInt32() == 0)
-        {
-            return location;
-        }
-
-        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
-        {
-            return _intValues.Text;
-        }
-
-        return location;
-    }
-
-    private string GetDurationCode(string durationCode)
-    {
-        return durationCode.ToLower() switch
-               {
-                   "m" => "months",
-                   "w" => "weeks",
-                   "d" => "days",
-                   _ => "years"
-               };
-    }
 
     /// <summary>
     ///     Gets or sets a list of company contacts associated with the requisition.
@@ -283,19 +259,13 @@ public partial class Requisitions
         set;
     }
 
-    private SfSpinner SpinnerTop
-    {
-        get;
-        set;
-    }
-
     private SfSpinner Spinner
     {
         get;
         set;
     } = new();
 
-    private bool VisibleSpin
+    private SfSpinner SpinnerTop
     {
         get;
         set;
@@ -319,6 +289,12 @@ public partial class Requisitions
     } = [];
 
     private static string User
+    {
+        get;
+        set;
+    }
+
+    private bool VisibleSpin
     {
         get;
         set;
@@ -443,8 +419,6 @@ public partial class Requisitions
                                                               RequisitionID = 0;
                                                           });
 
-    private List<CandidateActivity> _candidateActivityObject = [];
-
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition)
     {
         return ExecuteMethod(async () =>
@@ -470,15 +444,13 @@ public partial class Requisitions
                                                                               {"requisitionID", _target.ID.ToString()}
                                                                           };
 
-                                 Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Requisition/GetRequisitionDetails", _parameters);
+                                 ReturnRequisitionDetails _response = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters, 
+                                                                                                                          null, false);
 
-                                 if (_restResponse != null)
-                                 {
-                                     _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_restResponse["Requisition"]);
-                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_restResponse["Activity"]);
-                                     _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_restResponse["Documents"]);
-                                     SetSkills();
-                                 }
+                                 _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_response.Requisition);
+                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity);
+                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response.Documents);
+                                 SetSkills();
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
 
@@ -486,72 +458,6 @@ public partial class Requisitions
 
                                  VisibleSpin = false;
                              });
-    }
-
-    /// <summary>
-    ///     Sets the skills for the requisition details object.
-    /// </summary>
-    /// <remarks>
-    ///     This method sets the required and optional skills for the requisition details object.
-    ///     The skills are retrieved from the SkillsRequired and Optional properties of the requisition details object.
-    ///     The skills are then formatted into a string and converted to a MarkupString which is stored in the
-    ///     _requisitionDetailSkills field.
-    ///     If the requisition details object is null or both the SkillsRequired and Optional properties are null or
-    ///     whitespace, the method will return without setting the skills.
-    /// </remarks>
-    private void SetSkills()
-    {
-        if (_requisitionDetailsObject == null)
-        {
-            return;
-        }
-
-        if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
-        {
-            return;
-        }
-
-        _requisitionDetailSkills = "".ToMarkupString();
-
-        string[] _skillRequiredStrings = [], _skillOptionalStrings = [];
-        if (_requisitionDetailsObject.SkillsRequired.NotNullOrWhiteSpace())
-        {
-            _skillRequiredStrings = _requisitionDetailsObject.SkillsRequired!.Split(',');
-        }
-
-        if (_requisitionDetailsObject.Optional.NotNullOrWhiteSpace())
-        {
-            _skillOptionalStrings = _requisitionDetailsObject.Optional.Split(',');
-        }
-
-        string _skillsRequired = "", _skillsOptional = "";
-        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
-        if (_skillsRequired.StartsWith(", "))
-        {
-            _skillsRequired = _skillsRequired[2..];
-        }
-
-        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
-        if (_skillsOptional.StartsWith(", "))
-        {
-            _skillsOptional = _skillsRequired[2..];
-        }
-
-        string _skillStringTemp = "";
-
-        if (!_skillsRequired.NullOrWhiteSpace())
-        {
-            _skillStringTemp = "Required Skills: <br/>" + _skillsRequired + "<br/>";
-        }
-
-        if (!_skillsOptional.NullOrWhiteSpace())
-        {
-            _skillStringTemp += "Optional Skills: <br/>" + _skillsOptional;
-        }
-
-        _requisitionDetailSkills = _skillStringTemp.ToMarkupString();
     }
 
     /// <summary>
@@ -576,6 +482,32 @@ public partial class Requisitions
                                 await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                 await Grid.Refresh();
                             });
+    }
+
+    private string GetDurationCode(string durationCode)
+    {
+        return durationCode.ToLower() switch
+               {
+                   "m" => "months",
+                   "w" => "weeks",
+                   "d" => "days",
+                   _ => "years"
+               };
+    }
+
+    private string GetLocation(string location)
+    {
+        if (_states == null || location.ToInt32() == 0)
+        {
+            return location;
+        }
+
+        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
+        {
+            return _intValues.Text;
+        }
+
+        return location;
     }
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
@@ -782,6 +714,74 @@ public partial class Requisitions
     }
 
     /// <summary>
+    ///     Sets the skills for the requisition details object.
+    /// </summary>
+    /// <remarks>
+    ///     This method sets the required and optional skills for the requisition details object.
+    ///     The skills are retrieved from the SkillsRequired and Optional properties of the requisition details object.
+    ///     The skills are then formatted into a string and converted to a MarkupString which is stored in the
+    ///     _requisitionDetailSkills field.
+    ///     If the requisition details object is null or both the SkillsRequired and Optional properties are null or
+    ///     whitespace, the method will return without setting the skills.
+    /// </remarks>
+    private void SetSkills()
+    {
+        if (_requisitionDetailsObject == null)
+        {
+            return;
+        }
+
+        if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
+        {
+            return;
+        }
+
+        _requisitionDetailSkills = "".ToMarkupString();
+
+        string[] _skillRequiredStrings = [], _skillOptionalStrings = [];
+        if (_requisitionDetailsObject.SkillsRequired.NotNullOrWhiteSpace())
+        {
+            _skillRequiredStrings = _requisitionDetailsObject.SkillsRequired!.Split(',');
+        }
+
+        if (_requisitionDetailsObject.Optional.NotNullOrWhiteSpace())
+        {
+            _skillOptionalStrings = _requisitionDetailsObject.Optional.Split(',');
+        }
+
+        string _skillsRequired = "", _skillsOptional = "";
+        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
+                                               .Aggregate(_skillsRequired, (current, skill) => current + ", " + skill.Text);
+        if (_skillsRequired.StartsWith(", "))
+        {
+            _skillsRequired = _skillsRequired[2..];
+        }
+
+        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
+                                               .Aggregate(_skillsOptional, (current, skill) => current + ", " + skill.Text);
+        if (_skillsOptional.StartsWith(", "))
+        {
+            _skillsOptional = _skillsRequired[2..];
+        }
+
+        string _skillStringTemp = "";
+
+        if (!_skillsRequired.NullOrWhiteSpace())
+        {
+            _skillStringTemp = "Required Skills: <br/>" + _skillsRequired + "<br/>";
+        }
+
+        if (!_skillsOptional.NullOrWhiteSpace())
+        {
+            _skillStringTemp += "Optional Skills: <br/>" + _skillsOptional;
+        }
+
+        _requisitionDetailSkills = _skillStringTemp.ToMarkupString();
+    }
+
+    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg) => Task.CompletedTask;
+
+    /// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
@@ -846,10 +846,5 @@ public partial class Requisitions
                 _semaphoreSlim.Release();
             }
         }
-    }
-
-    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg)
-    {
-        return Task.CompletedTask;
     }
 }
