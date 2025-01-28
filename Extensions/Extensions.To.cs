@@ -15,9 +15,6 @@
 
 #region Using
 
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-
 using Microsoft.AspNetCore.Components;
 using Microsoft.Data.SqlClient;
 

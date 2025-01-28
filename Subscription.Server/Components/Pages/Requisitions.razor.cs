@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           Requisitions.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-23-2025 18:01
+// Last Updated On:     01-28-2025 19:01
 // *****************************************/
 
 #endregion
@@ -41,7 +41,7 @@ public partial class Requisitions
     private List<IntValues> _states;
     private List<StatusCode> _statusCodes;
 
-    private List<StringValues> _statusSearch = [];
+    private readonly List<StringValues> _statusSearch = [];
     private Requisition _target;
     private List<AppWorkflow> _workflows;
 
@@ -473,6 +473,15 @@ public partial class Requisitions
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
+    /// <summary>
+    ///     Retrieves requisitions starting with the specified alphabet.
+    /// </summary>
+    /// <param name="alphabet">
+    ///     The alphabet character to filter requisitions by title.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
     private async Task GetAlphabets(char alphabet)
     {
         await ExecuteMethod(async () =>

@@ -59,12 +59,12 @@
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="12%">
+				<GridColumn AllowSorting="true" HeaderText="Updated" Width="12%">
 					<Template Context="aCon">
 						@{
 							if (aCon is Requisition _con)
 							{
-								<span style="color: @(_con.PriorityColor)">@_con.Updated</span>
+								<span style="color: @(_con.PriorityColor)">@($"{_con.Updated} [{_con.UpdatedBy}]")</span>
 							}
 						}
 					</Template>
@@ -120,17 +120,7 @@
 											<PanelDisplayText Label="Placement Fee" Text="@(_requisitionDetailsObject.PlacementFee.CulturePercentage())"/>
 											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status)"/>
 										</div>
-										<div class="leftLayout" style="display:flex; flex-direction:column;">
-											<div style="font-weight: bold; height: 23px;">Description:</div>
-											<div style="overflow-y: auto; flex: 1;">
-												@_requisitionDetailsObject.Description.ToMarkupString()
-											</div>
-											<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
-											<div style="flex: 1; overflow-y: auto;">
-												@_requisitionDetailSkills
-											</div>
-										</div>
-										<div class="rightLayout">
+										<div class="leftLayout">
 											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@_requisitionDetailsObject.AssignedTo"/>
 											<PanelDisplayText Label="Priority" Text="@_requisitionDetailsObject.Priority"/>
 											<PanelDisplayText Label="Job Options" Text="@_requisitionDetailsObject.JobOptions"/>
@@ -143,6 +133,16 @@
 											<PanelDisplayText Label="OFCCP?" Text="@_requisitionDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
 											<PanelDisplayText Label="Benefits?" Text="@_requisitionDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
 											<PanelDisplayText Label="Benefits Notes" MarkupText="@_requisitionDetailsObject.BenefitNotes.ToMarkupString()"/>
+										</div>
+										<div class="rightLayout" style="display:flex; flex-direction:column;">
+											<div style="font-weight: bold; height: 23px;">Description:</div>
+											<div style="overflow-y: auto; flex: 1;">
+												@_requisitionDetailsObject.Description.ToMarkupString()
+											</div>
+											<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
+											<div style="flex: 1; overflow-y: auto;">
+												@_requisitionDetailSkills
+											</div>
 										</div>
 									</div>
 								</ContentTemplate>

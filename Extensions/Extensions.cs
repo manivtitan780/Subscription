@@ -6,26 +6,10 @@
 // Solution:            Subscription
 // Project:             Extensions
 // File Name:           Extensions.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-07-2024 15:02
 // Last Updated On:     01-28-2025 19:01
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO.Compression;
-using System.Net.Mail;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
-
-//using ProfSvc_AppTrack.Code;
 
 #endregion
 
@@ -55,15 +39,15 @@ public static partial class Extensions
             return [];
         }
 
-        byte[] byteArray = Encoding.UTF8.GetBytes(s);
+        byte[] _byteArray = Encoding.UTF8.GetBytes(s);
 
-        using MemoryStream memStream = new();
-        using GZipStream gZipStream = new(memStream, CompressionMode.Compress);
+        using MemoryStream _memStream = new();
+        using GZipStream _gZipStream = new(_memStream, CompressionMode.Compress);
 
-        gZipStream.Write(byteArray, 0, byteArray.Length);
-        gZipStream.Close();
+        _gZipStream.Write(_byteArray, 0, _byteArray.Length);
+        _gZipStream.Close();
 
-        return memStream.ToArray();
+        return _memStream.ToArray();
     }
 
     /// <summary>
@@ -176,20 +160,22 @@ public static partial class Extensions
     /// </returns>
     public static string DecompressGZip(this byte[] byteString)
     {
-        // Create a MemoryStream object from the byte array
         using MemoryStream _memStreamReader = new(byteString);
-
-        // Create a GZipStream object for decompression
         using GZipStream _gZipStream = new(_memStreamReader, CompressionMode.Decompress);
-
-        // Create a MemoryStream object to hold the decompressed data
         using MemoryStream _memStream = new();
 
         // Copy the decompressed data to the MemoryStream
-        _gZipStream.CopyTo(_memStream);
+        try
+        {
+            _gZipStream.CopyTo(_memStream);
 
-        // Convert the decompressed byte array to a string and return it
-        return Encoding.UTF8.GetString(_memStream.ToArray());
+            // Convert the decompressed byte array to a string and return it
+            return Encoding.UTF8.GetString(_memStream.ToArray());
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
     /// <summary>
