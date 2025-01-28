@@ -83,19 +83,19 @@ public static class General
 
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            List<IntValues> _companies = [];
+            string _companies = "[]";
             while (await _reader.ReadAsync())
             {
-                _companies = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _companies = _reader.NString(0);
             }
 
             //_companies = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<CompanyContactList> _companyContacts = [];
+            string _companyContacts = "[]";
             while (await _reader.ReadAsync())
             {
-                _companyContacts = JsonSerializer.Deserialize<List<CompanyContactList>>(_reader.NString(0)!);
+                _companyContacts = _reader.NString(0);
             }
 
             // _companyContacts = await _reader.FillList<CompanyContactList>(contact => new()
@@ -106,90 +106,90 @@ public static class General
             //                                                                          }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<IntValues> _titles = [];
+            string _titles = "[]";
             while (await _reader.ReadAsync())
             {
-                _titles = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _titles = _reader.NString(0);
             }
             // _titles = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _documentTypes = [];
+            string _documentTypes = "[]";
             while (await _reader.ReadAsync())
             {
-                _documentTypes = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _documentTypes = _reader.NString(0);
             }
             // _documentTypes = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _educations = [];
+            string _educations = "[]";
             while (await _reader.ReadAsync())
             {
-                _educations = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _educations = _reader.NString(0);
             }
             // _educations = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _eligibilities = [];
+            string _eligibilities = "[]";
             while (await _reader.ReadAsync())
             {
-                _eligibilities = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _eligibilities = _reader.NString(0);
             }
             // _eligibilities = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _experiences = [];
+            string _experiences = "[]";
             while (await _reader.ReadAsync())
             {
-                _experiences = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _experiences = _reader.NString(0);
             }
             // _experiences = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<StringValues> _jobOptions = [];
+            string _jobOptions = "[]";
             while (await _reader.ReadAsync())
             {
-                _jobOptions = JsonSerializer.Deserialize<List<StringValues>>(_reader.NString(0)!);
+                _jobOptions = _reader.NString(0);
             }
             // _jobOptions = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _leadIndustries = [];
+            string _leadIndustries = "[]";
             while (await _reader.ReadAsync())
             {
-                _leadIndustries = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _leadIndustries = _reader.NString(0);
             }
             // _leadIndustries = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues> _leadSources = [];
+            string _leadSources = "[]";
             while (await _reader.ReadAsync())
             {
-                _leadSources = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _leadSources = _reader.NString(0);
             }
             // _leadSources = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues> _leadStatuses = [];
+            string _leadStatuses = "[]";
             while (await _reader.ReadAsync())
             {
-                _leadStatuses = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _leadStatuses = _reader.NString(0);
             }
             // _leadStatuses = await SetIntValues(_reader, 2);
 
             await _reader.NextResultAsync();
-            List<IntValues> _naics = [];
+            string _naics = "[]";
             while (await _reader.ReadAsync())
             {
-                _naics = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _naics = _reader.NString(0);
             }
             // _naics = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<Role> _roles = [];
+            string _roles = "[]";
             while (await _reader.ReadAsync())
             {
-                _roles = JsonSerializer.Deserialize<List<Role>>(_reader.NString(0)!);
+                _roles = _reader.NString(0);
             }
             // _roles = await _reader.FillList<Role>(role => new()
             //                                               {
@@ -211,26 +211,26 @@ public static class General
             //                                               }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<IntValues> _skills = [];
+            string _skills = "[]";
             while (await _reader.ReadAsync())
             {
-                _skills = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _skills = _reader.NString(0);
             }
             // _skills = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<IntValues> _states = [];
+            string _states = "[]";
             while (await _reader.ReadAsync())
             {
-                _states = JsonSerializer.Deserialize<List<IntValues>>(_reader.NString(0)!);
+                _states = _reader.NString(0);
             }
             // _states = await SetIntValues(_reader);
 
             await _reader.NextResultAsync();
-            List<StatusCode> _statusCodes = [];
+            string _statusCodes = "[]";
             while (await _reader.ReadAsync())
             {
-                _statusCodes = JsonSerializer.Deserialize<List<StatusCode>>(_reader.NString(0)!);
+                _statusCodes = _reader.NString(0);
             }
             // _statusCodes = await _reader.FillList<StatusCode>(status => new()
             //                                                             {
@@ -244,18 +244,18 @@ public static class General
             //                                                             }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<StringValues> _taxTerms = [];
+            string _taxTerms = "[]";
             while (await _reader.ReadAsync())
             {
-                _taxTerms = JsonSerializer.Deserialize<List<StringValues>>(_reader.NString(0)!);
+                _taxTerms = _reader.NString(0);
             }
             // _taxTerms = await SetKeyValues(_reader);
 
             await _reader.NextResultAsync();
-            List<UserList> _users = [];
+            string _users = "[]";
             while (await _reader.ReadAsync())
             {
-                _users = JsonSerializer.Deserialize<List<UserList>>(_reader.NString(0)!);
+                _users = _reader.NString(0);
             }
             // _users = await _reader.FillList<UserList>(user => new()
             //                                                   {
@@ -264,10 +264,10 @@ public static class General
             //                                                   }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<AppWorkflow> _workflows = [];
+            string _workflows = "[]";
             while (await _reader.ReadAsync())
             {
-                _workflows = JsonSerializer.Deserialize<List<AppWorkflow>>(_reader.NString(0)!);
+                _workflows = _reader.NString(0);
             }
             // _workflows = await _reader.FillList<AppWorkflow>(workflow => new()
             //                                                              {
@@ -283,9 +283,10 @@ public static class General
             //                                                              }).ToListAsync();
 
             await _reader.NextResultAsync();
-            List<Zip> _zips = [];
+            string _zips = "[]";
             await _reader.ReadAsync();
-            byte[] _zipCompressed = (byte[])_reader[0];
+            _zips = ((byte[])_reader[0]).DecompressGZip();
+            /*byte[]* _zipCompressed = (byte[])_reader[0];
             using (MemoryStream _memStreamReader = new(_zipCompressed))
             {
                 await using (GZipStream _gZipStream = new(_memStreamReader, CompressionMode.Decompress))
@@ -293,18 +294,20 @@ public static class General
                     using (MemoryStream _memStream = new())
                     {
                         await _gZipStream.CopyToAsync(_memStream);
-                        _zips = JsonSerializer.Deserialize<List<Zip>>(Encoding.UTF8.GetString(_memStream.ToArray()));
+                        _zips = Encoding.UTF8.GetString(_memStream.ToArray());
                     }
                 }
+            }*/
+
+            //string* _zipCodes = JsonConvert.SerializeObject(_zips); 
+
+            await _reader.NextResultAsync();
+            string _preferences = "[]";
+            if (_reader.HasRows)
+            {
+                await _reader.ReadAsync();
+                _preferences=_reader.NString(0);
             }
-            // _zips = JsonSerializer.Deserialize<List<Zip>>(_reader.NString(0)!);
-            // _zips = await _reader.FillList<Zip>(zip => new()
-            //                                            {
-            //                                                ZipCode = zip.GetString(0),
-            //                                                City = zip.GetString(1),
-            //                                                State = zip.GetString(2),
-            //                                                StateID = zip.GetInt32(3)
-            //                                            }).ToListAsync();
 
             List<StringValues> _communications =
             [
@@ -314,23 +317,25 @@ public static class General
                 new() {KeyValue = "G", Text = "Good"}
             ];
 
+            string _comms = JsonConvert.SerializeObject(_communications);
+
             await _reader.CloseAsync();
 
             await _connection.CloseAsync();
 
-            List<string> _keys =
+            string[] _keys =
             [
                 CacheObjects.Companies.ToString(), CacheObjects.CompanyContacts.ToString(), CacheObjects.Titles.ToString(), CacheObjects.DocumentTypes.ToString(), CacheObjects.Education.ToString(),
                 CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.LeadIndustries.ToString(),
                 CacheObjects.LeadSources.ToString(), CacheObjects.LeadStatus.ToString(), CacheObjects.NAICS.ToString(), CacheObjects.Roles.ToString(), CacheObjects.Skills.ToString(),
                 CacheObjects.States.ToString(), CacheObjects.StatusCodes.ToString(), CacheObjects.TaxTerms.ToString(), CacheObjects.Users.ToString(), CacheObjects.Workflow.ToString(),
-                CacheObjects.Zips.ToString(), CacheObjects.Communications.ToString()
+                CacheObjects.Zips.ToString(), CacheObjects.Communications.ToString(), CacheObjects.Preferences.ToString()
             ];
 
-            List<object> _values =
+            string[] _values =
             [
                 _companies, _companyContacts, _titles, _documentTypes, _educations, _eligibilities, _experiences, _jobOptions, _leadIndustries, _leadSources, _leadStatuses, _naics, _roles, _skills,
-                _states, _statusCodes, _taxTerms, _users, _workflows, _zips, _communications
+                _states, _statusCodes, _taxTerms, _users, _workflows, _zips, _comms, _preferences
             ];
 
             await _service.CreateBatchSet(_keys, _values);
@@ -342,12 +347,12 @@ public static class General
         return await reader.FillList<IntValues>(intValue => new()
                                                             {
                                                                 KeyValue = keyType switch
-                                                                        {
-                                                                            0 => intValue.GetInt32(0),
-                                                                            1 => intValue.GetInt16(0),
-                                                                            2 => intValue.GetByte(0),
-                                                                            _ => 0
-                                                                        },
+                                                                           {
+                                                                               0 => intValue.GetInt32(0),
+                                                                               1 => intValue.GetInt16(0),
+                                                                               2 => intValue.GetByte(0),
+                                                                               _ => 0
+                                                                           },
                                                                 Text = intValue.GetString(1)
                                                             }).ToListAsync();
     }
@@ -355,10 +360,10 @@ public static class General
     private static async Task<List<StringValues>> SetKeyValues(SqlDataReader reader)
     {
         return await reader.FillList<StringValues>(keyValue => new()
-                                                            {
-                                                                KeyValue = keyValue.GetString(0),
-                                                                Text = keyValue.GetString(1)
-                                                            }).ToListAsync();
+                                                               {
+                                                                   KeyValue = keyValue.GetString(0),
+                                                                   Text = keyValue.GetString(1)
+                                                               }).ToListAsync();
     }
 
     /// <summary>

@@ -8,7 +8,7 @@
 // File Name:           Extensions.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          02-07-2024 15:02
-// Last Updated On:     01-01-2025 21:01
+// Last Updated On:     01-28-2025 19:01
 // *****************************************/
 
 #endregion
@@ -17,7 +17,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO.Compression;
 using System.Net.Mail;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -33,29 +35,37 @@ namespace Extensions;
 public static partial class Extensions
 {
     /// <summary>
-    ///     Formats the given decimal value to a currency string representation using the specified format and culture.
-    ///     If no culture is provided, it defaults to US culture.
+    ///     Compresses the input string using GZip compression.
     /// </summary>
-    /// <param name="d">The decimal value to be formatted.</param>
-    /// <param name="format">
-    ///     The format string to use for formatting the currency. Defaults to "c2" for currency format with
-    ///     two decimal places.
-    /// </param>
-    /// <param name="c">
-    ///     The CultureInfo object representing the culture to use for formatting. Defaults to null, in which case
-    ///     US culture is used.
+    /// <param name="s">
+    ///     The string to be compressed. If the string is null or empty, a zero-length byte array is returned.
     /// </param>
     /// <returns>
-    ///     A string representation of the decimal value formatted as currency according to the specified format and
-    ///     culture.
+    ///     A byte array containing the compressed data, or a zero-length byte array if the input string is null or empty.
     /// </returns>
-    public static string CultureCurrency(this decimal d, string format = "c2", CultureInfo? c = null)
+    /// <example>
+    ///     string originalString = "Hello, world!";
+    ///     byte[] compressedData = originalString.CompressGZip();
+    /// </example>
+    public static byte[] CompressGZip(this string s)
     {
-        c ??= new("en-us");
+        if (s.NullOrWhiteSpace())
+        {
+            // Return a zero-length byte array instead of throwing an exception
+            return [];
+        }
 
-        return d.ToString(format, c);
+        byte[] byteArray = Encoding.UTF8.GetBytes(s);
+
+        using MemoryStream memStream = new();
+        using GZipStream gZipStream = new(memStream, CompressionMode.Compress);
+
+        gZipStream.Write(byteArray, 0, byteArray.Length);
+        gZipStream.Close();
+
+        return memStream.ToArray();
     }
-    
+
     /// <summary>
     ///     Formats the given decimal value to a currency string representation using the specified format and culture.
     ///     If no culture is provided, it defaults to US culture.
@@ -73,7 +83,8 @@ public static partial class Extensions
     ///     A string representation of the decimal value formatted as currency according to the specified format and
     ///     culture.
     /// </returns>
-    public static string CulturePercentage(this decimal d, string format = "p2", CultureInfo? c = null)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string CultureCurrency(this decimal d, string format = "c2", CultureInfo? c = null)
     {
         c ??= new("en-us");
 
@@ -91,7 +102,33 @@ public static partial class Extensions
     ///     US culture is used.
     /// </param>
     /// <returns>A string representation of the DateTime object formatted according to the specified format and culture.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string CultureDate(this DateTime d, string format = "d", CultureInfo? c = null)
+    {
+        c ??= new("en-us");
+
+        return d.ToString(format, c);
+    }
+
+    /// <summary>
+    ///     Formats the given decimal value to a currency string representation using the specified format and culture.
+    ///     If no culture is provided, it defaults to US culture.
+    /// </summary>
+    /// <param name="d">The decimal value to be formatted.</param>
+    /// <param name="format">
+    ///     The format string to use for formatting the currency. Defaults to "c2" for currency format with
+    ///     two decimal places.
+    /// </param>
+    /// <param name="c">
+    ///     The CultureInfo object representing the culture to use for formatting. Defaults to null, in which case
+    ///     US culture is used.
+    /// </param>
+    /// <returns>
+    ///     A string representation of the decimal value formatted as currency according to the specified format and
+    ///     culture.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string CulturePercentage(this decimal d, string format = "p2", CultureInfo? c = null)
     {
         c ??= new("en-us");
 
@@ -129,6 +166,33 @@ public static partial class Extensions
                                                                        string.IsNullOrWhiteSpace(s) ? System.DBNull.Value : s.Trim();
 
     /// <summary>
+    ///     Decompresses a GZip compressed byte array to a string.
+    /// </summary>
+    /// <param name="byteString">
+    ///     The byte array to be decompressed.
+    /// </param>
+    /// <returns>
+    ///     A string representation of the decompressed byte array.
+    /// </returns>
+    public static string DecompressGZip(this byte[] byteString)
+    {
+        // Create a MemoryStream object from the byte array
+        using MemoryStream _memStreamReader = new(byteString);
+
+        // Create a GZipStream object for decompression
+        using GZipStream _gZipStream = new(_memStreamReader, CompressionMode.Decompress);
+
+        // Create a MemoryStream object to hold the decompressed data
+        using MemoryStream _memStream = new();
+
+        // Copy the decompressed data to the MemoryStream
+        _gZipStream.CopyTo(_memStream);
+
+        // Convert the decompressed byte array to a string and return it
+        return Encoding.UTF8.GetString(_memStream.ToArray());
+    }
+
+    /// <summary>
     ///     Formats the given string to a phone number format.
     /// </summary>
     /// <param name="s">The string to be formatted.</param>
@@ -140,6 +204,7 @@ public static partial class Extensions
     ///     The method uses the ToInt64 extension method to convert the input string to a long.
     ///     The resulting long is then formatted to a phone number format.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string? FormatPhoneNumber(this string? s) => s.ToInt64() > 0 ? $"{s.ToInt64():(###) ###-####}" : "";
 
     /// <summary>
@@ -233,6 +298,7 @@ public static partial class Extensions
     ///     True if the string contains characters other than null, empty, or consists only of white-space characters;
     ///     otherwise, false.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NotNullOrWhiteSpace(this string? s) => !string.IsNullOrWhiteSpace(s);
 
     /// <summary>
@@ -242,6 +308,7 @@ public static partial class Extensions
     /// <returns>
     ///     True if the string is null, empty, or consists only of white-space characters; otherwise, false.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NullOrWhiteSpace(this string? s) => string.IsNullOrWhiteSpace(s);
 
     /// <summary>
@@ -251,6 +318,7 @@ public static partial class Extensions
     /// <returns>
     ///     True if the integer is zero; otherwise, false.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NullOrWhiteSpace(this int s) => s.Equals(0);
 
     /// <summary>
@@ -262,6 +330,7 @@ public static partial class Extensions
     ///     True if the object is null or its string representation is null, empty, or consists only of white-space characters;
     ///     otherwise, false.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NullOrWhiteSpace(this object? o) => o == null || o.ToString().NullOrWhiteSpace();
 
     /// <summary>
@@ -288,9 +357,8 @@ public static partial class Extensions
     /// <returns>
     ///     A random integer number within the specified range.
     /// </returns>
-    public static int RandomNumber(this object p, bool negative = true, int lowerBound = 0, int negativeLowerBound = -5000, int upperBound = 5000) => !negative ?
-                                                                                                                                                          RandomNumberGenerator.GetInt32(lowerBound, upperBound) :
-                                                                                                                                                          RandomNumberGenerator.GetInt32(negativeLowerBound, upperBound);
+    public static int RandomNumber(this object p, bool negative = true, int lowerBound = 0, int negativeLowerBound = -5000,
+                                   int upperBound = 5000) => !negative ? RandomNumberGenerator.GetInt32(lowerBound, upperBound) : RandomNumberGenerator.GetInt32(negativeLowerBound, upperBound);
 
     /// <summary>
     ///     Removes the leading comma from the given string.
@@ -317,6 +385,7 @@ public static partial class Extensions
     /// <returns>
     ///     A string containing only the numeric characters from the input string.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string StripPhoneNumber(this string? s) => MyRegex().Replace(s!, string.Empty);
 
     /// <summary>
@@ -326,6 +395,7 @@ public static partial class Extensions
     /// <returns>
     ///     A Base64 encoded string that represents the original text.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToBase64String(this string s)
     {
         byte[] _bytes = Encoding.UTF8.GetBytes(s);
@@ -343,6 +413,7 @@ public static partial class Extensions
     ///     The method creates a new MemoryStream, copies the content of the input Stream into it,
     ///     and then converts the MemoryStream to a byte array.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] ToStreamByteArray(this Stream s)
     {
         using MemoryStream _memoryStream = new();

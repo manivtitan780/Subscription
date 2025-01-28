@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
 // Created On:          05-01-2024 15:05
-// Last Updated On:     01-22-2025 19:01
+// Last Updated On:     01-23-2025 18:01
 // *****************************************/
 
 #endregion
@@ -41,7 +41,7 @@ public partial class Requisitions
     private List<IntValues> _states;
     private List<StatusCode> _statusCodes;
 
-    private readonly List<StringValues> _statusSearch = [];
+    private List<StringValues> _statusSearch = [];
     private Requisition _target;
     private List<AppWorkflow> _workflows;
 
@@ -444,7 +444,7 @@ public partial class Requisitions
                                                                               {"requisitionID", _target.ID.ToString()}
                                                                           };
 
-                                 ReturnRequisitionDetails _response = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters, 
+                                 ReturnRequisitionDetails _response = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters,
                                                                                                                           null, false);
 
                                  _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_response.Requisition);
@@ -610,7 +610,11 @@ public partial class Requisitions
                                                                          {
                                                                              {"value", JsonConvert.SerializeObject(_keys)}
                                                                          };
-                                Dictionary<string, object> _cacheValues = await General.PostRest("Redis/BatchGet", _parameters);
+                                // Dictionary<string, object> _cacheValues = await General.PostRest("Redis/BatchGet", _parameters);
+                                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+
+                                Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
+
                                 _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
 
                                 while (_states == null)
@@ -658,8 +662,10 @@ public partial class Requisitions
                                     _skills = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Skills.ToString()]);
                                 }
 
-                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
-                                _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
+                                while (_statusCodes == null)
+                                {
+                                    _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
+                                }
 
                                 if (_statusCodes is {Count: > 0})
                                 {
@@ -673,7 +679,18 @@ public partial class Requisitions
                                     }
                                 }
 
-                                List<Company> _companyList = General.DeserializeObject<List<Company>>(_cacheValues[CacheObjects.Companies.ToString()]);
+                                while (_preference == null)
+                                {
+                                    _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
+                                }
+
+                                List<Company> _companyList = null;
+                                while (_companyList == null)
+                                {
+                                    _companyList = General.DeserializeObject<List<Company>>(_cacheValues[CacheObjects.Companies.ToString()]);
+                                }
+
+                                _companies ??= [];
                                 _companies.Add(new()
                                                {
                                                    KeyValue = "All Companies",
@@ -726,57 +743,40 @@ public partial class Requisitions
     /// </remarks>
     private void SetSkills()
     {
-        if (_requisitionDetailsObject == null)
-        {
-            return;
-        }
-
         if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
         {
             return;
         }
 
-        _requisitionDetailSkills = "".ToMarkupString();
+        string _skillsRequired = _requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() ? "" :
+                                     _requisitionDetailsObject.SkillsRequired.Split(',')
+                                                              .Where(skillString => !string.IsNullOrWhiteSpace(skillString))
+                                                              .Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()).Text)
+                                                              .Where(text => text != null)
+                                                              .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
+                                     ?? string.Empty;
 
-        string[] _skillRequiredStrings = [], _skillOptionalStrings = [];
-        if (_requisitionDetailsObject.SkillsRequired.NotNullOrWhiteSpace())
-        {
-            _skillRequiredStrings = _requisitionDetailsObject.SkillsRequired!.Split(',');
-        }
-
-        if (_requisitionDetailsObject.Optional.NotNullOrWhiteSpace())
-        {
-            _skillOptionalStrings = _requisitionDetailsObject.Optional.Split(',');
-        }
-
-        string _skillsRequired = "", _skillsOptional = "";
-        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Aggregate(_skillsRequired, (current, skill) => current + ", " + skill.Text);
-        if (_skillsRequired.StartsWith(", "))
-        {
-            _skillsRequired = _skillsRequired[2..];
-        }
-
-        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Aggregate(_skillsOptional, (current, skill) => current + ", " + skill.Text);
-        if (_skillsOptional.StartsWith(", "))
-        {
-            _skillsOptional = _skillsRequired[2..];
-        }
+        string _skillsOptional = _requisitionDetailsObject.Optional.NullOrWhiteSpace() ? "" :
+                                     _requisitionDetailsObject.Optional.Split(',')
+                                                              .Where(skillString => !string.IsNullOrWhiteSpace(skillString))
+                                                              .Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()).Text)
+                                                              .Where(text => text != null)
+                                                              .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
+                                     ?? string.Empty;
 
         string _skillStringTemp = "";
 
         if (!_skillsRequired.NullOrWhiteSpace())
         {
-            _skillStringTemp = "Required Skills: <br/>" + _skillsRequired + "<br/>";
+            _skillStringTemp = "<strong>Required Skills:</strong> <br/>" + _skillsRequired + "<br/><br/>";
         }
 
         if (!_skillsOptional.NullOrWhiteSpace())
         {
-            _skillStringTemp += "Optional Skills: <br/>" + _skillsOptional;
+            _skillStringTemp += "<strong>Optional Skills:</strong> <br/>" + _skillsOptional;
         }
 
-        _requisitionDetailSkills = _skillStringTemp.ToMarkupString();
+        _requisitionDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? "" : _skillStringTemp).ToMarkupString();
     }
 
     private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg) => Task.CompletedTask;
@@ -831,7 +831,8 @@ public partial class Requisitions
                     _getInformation = Companies.Count == 0;
                 }
 
-                object _requisitionReturn = await General.GetRequisitionReadAdaptor(SearchModel, dm, _getInformation, RequisitionID, true, User);
+                object _requisitionReturn = await General.GetRequisitionReadAdaptor(SearchModel, dm, _getInformation, RequisitionID,
+                                                                                    true, User);
 
                 _currentPage = SearchModel.Page;
 
