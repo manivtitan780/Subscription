@@ -59,7 +59,7 @@
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn AllowSorting="true" HeaderText="Updated" Width="12%">
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="12%">
 					<Template Context="aCon">
 						@{
 							if (aCon is Requisition _con)
