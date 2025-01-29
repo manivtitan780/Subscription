@@ -198,6 +198,7 @@ public partial class Requisitions
     private static RequisitionSearch SearchModel
     {
         get;
+        set;
     } = new();
 
     /// <summary>
@@ -328,9 +329,9 @@ public partial class Requisitions
                                                                         SearchModel.Title = "";
                                                                         _currentPage = 1;
                                                                         SearchModel.Page = 1;
-                                                                        await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                         AutocompleteValue = "";
                                                                         await Grid.Refresh();
+                                                                        await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                     });
 
     private static async Task AutocompleteValueChange(ChangeEventArgs<string, StringValues> filter)
@@ -354,10 +355,9 @@ public partial class Requisitions
                                                                                         {
                                                                                             SearchModel.Page = 1;
                                                                                             SearchModel.ItemCount = item.Value;
-
-                                                                                            await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                                             await Grid.Refresh();
                                                                                             StateHasChanged();
+                                                                                            await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                                         });
 
     /// <summary>
@@ -488,8 +488,8 @@ public partial class Requisitions
                             {
                                 SearchModel.Title = alphabet.ToString();
                                 SearchModel.Page = 1;
-                                await SessionStorage.SetItemAsync(StorageName, SearchModel);
                                 await Grid.Refresh();
+                                await SessionStorage.SetItemAsync(StorageName, SearchModel);
                             });
     }
 
@@ -719,6 +719,14 @@ public partial class Requisitions
 
                                 _workflows = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
 
+                                if (await SessionStorage.ContainKeyAsync(StorageName))
+                                {
+                                    SearchModel = await SessionStorage.GetItemAsync<RequisitionSearch>(StorageName);
+                                }
+                                else
+                                {
+                                    SearchModel.Clear();
+                                }
                                 SortDirectionProperty = SearchModel.SortDirection == 1 ? SortDirection.Ascending : SortDirection.Descending;
                                 SortField = SearchModel.SortField switch
                                             {

@@ -330,7 +330,8 @@ public class General
             (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
                 await ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, searchModel, false);
 
-            _dataSource = JsonConvert.DeserializeObject<List<Requisition>>(_requisitions);
+            _dataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
+
             searchModel.Page = _pageNumber;
             _page = searchModel.Page;
             Requisitions.Count = _count;

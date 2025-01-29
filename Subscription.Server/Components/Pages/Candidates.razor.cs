@@ -1119,8 +1119,8 @@ public partial class Candidates
                             {
                                 SearchModel.Name = alphabet.ToString();
                                 SearchModel.Page = 1;
-                                await SaveStorage();
                                 await Grid.Refresh();
+                                await SaveStorage();
                             });
     }
 
@@ -1976,7 +1976,7 @@ public partial class Candidates
                 {
                     (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
 
-                    _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
+                    _dataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Candidate>>(_data) : [];
 
                     Count = _count;
                     _candidateReturn = dm.RequiresCounts ? new DataResult

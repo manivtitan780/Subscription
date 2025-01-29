@@ -273,7 +273,7 @@ public class RequisitionSearch
 	{
 		get;
 		set;
-	}
+	} = "";
 
 	/// <summary>
 	///     Gets or sets the title of the requisition.
@@ -285,7 +285,7 @@ public class RequisitionSearch
 	{
 		get;
 		set;
-	}
+	} = "";
 
 	/// <summary>
 	///     Gets or sets the user associated with the requisition search.
@@ -322,9 +322,9 @@ public class RequisitionSearch
 		Status = "";
 		CreatedBy = "";
 		CreatedOn = new(1900, 1, 1);
-		CreatedOnEnd = new(2099, 12, 31);
+		CreatedOnEnd = new(2049, 12, 31);
 		Due = new(1900, 1, 1);
-		DueEnd = new(2099, 12, 31);
+		DueEnd = new(2049, 12, 31);
 		Recruiter = true;
 		User = "%";
 	}

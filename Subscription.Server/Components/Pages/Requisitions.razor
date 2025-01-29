@@ -147,16 +147,16 @@
 									</div>
 								</ContentTemplate>
 							</TabItem>
+							<TabItem>
+								<ChildContent>
+									<TabHeader Text="Documents"/>
+								</ChildContent>
+								<ContentTemplate>
+									<documentspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditRequisition" User="@User" Model="@_requisitionDocumentsObject"
+									                @ref="DocumentsPanel"/>
+								</ContentTemplate>
+							</TabItem>
 							@*<<TabItem>
-							<ChildContent>
-								<TabHeader Text="Documents"/>
-							</ChildContent>
-							<ContentTemplate>
-								<documentspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditRequisition" User="@User" Model="@_requisitionDocumentsObject"
-								                @ref="DocumentsPanel"/>
-							</ContentTemplate>
-						</TabItem>
-						<TabItem>
 							<ChildContent>
 								<TabHeader Text="Candidate Activity"/>
 							</ChildContent>
