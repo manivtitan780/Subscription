@@ -3,18 +3,15 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           DocumentsPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-02-2023 19:24
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          01-29-2025 19:01
+// Last Updated On:     01-29-2025 20:01
 // *****************************************/
 
 #endregion
-
-// using ConfirmDialog = Profsvc_AppTrack.Client.Pages.Controls.Common.ConfirmDialog;
-// using ViewPDFDocument = Profsvc_AppTrack.Client.Pages.Controls.Common.ViewPDFDocument;
 
 namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
@@ -323,8 +320,12 @@ public partial class DocumentsPanel
     /// <summary>
     ///     Asynchronously displays a dialog to view a document.
     /// </summary>
-    /// <param name="documentID">The ID of the document to be viewed.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    /// <param name="documentID">
+    ///     The ID of the document to be viewed.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
     /// <remarks>
     ///     This method fetches the document details from the server using the provided document ID.
     ///     It then determines the type of the document (PDF or Word) and displays the appropriate dialog for viewing the
@@ -332,7 +333,6 @@ public partial class DocumentsPanel
     /// </remarks>
     private async Task ViewDocumentDialog(int documentID)
     {
-        await Task.Yield();
         await Spinner.ShowAsync();
         RestClient _restClient = new($"{Start.APIHost}");
         string _controller = EntityTypeName == EntityType.Requisition ? "Requisition" : "Lead";
@@ -355,7 +355,7 @@ public partial class DocumentsPanel
                 _internalFileName = _restResponse.InternalFileName;
                 /*if (_location.EndsWith(".pdf"))
                 {*/
-                    await DocumentViewPDF.ShowDialog();
+                await DocumentViewPDF.ShowDialog();
                 /*}
                 else
                 {
@@ -364,7 +364,6 @@ public partial class DocumentsPanel
             }
         }
 
-        await Task.Yield();
         await Spinner.HideAsync();
     }
 }
