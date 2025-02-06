@@ -23,7 +23,7 @@ public class IntValues
         init;
     }
 
-    public int Value
+    public int KeyValue
     {
         get;
         init;

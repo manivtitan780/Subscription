@@ -400,7 +400,7 @@ public partial class Requisitions
             return location;
         }
 
-        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.Value))
+        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
         {
             return _intValues.Text;
         }
@@ -550,14 +550,14 @@ public partial class Requisitions
         }
 
         string _skillsRequired = "", _skillsOptional = "";
-        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.Value == skillString.ToInt32()))
+        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
                                                .Where(skill => skill != null).Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
         if (_skillsRequired.StartsWith(", "))
         {
             _skillsRequired = _skillsRequired[2..];
         }
 
-        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.Value == skillString.ToInt32()))
+        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
                                                .Where(skill => skill != null).Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
         if (_skillsOptional.StartsWith(", "))
         {

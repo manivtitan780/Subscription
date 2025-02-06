@@ -46,7 +46,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
 						<Template>
-							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="Value" />
+							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="KeyValue" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)">
@@ -114,12 +114,12 @@
 				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)">
 						<Template>
-							<DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="Value" />
+							<DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="KeyValue" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)">
 						<Template>
-							<DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="Value" />
+							<DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="KeyValue" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Communication)">

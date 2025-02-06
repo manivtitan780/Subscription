@@ -640,7 +640,7 @@ public partial class Companies
 
             if (_companyDetails.StateID > 0)
             {
-                IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+                IntValues _state = State.FirstOrDefault(state => state.KeyValue == _companyDetails.StateID);
 
                 if (_state is {Text: not null})
                 {
@@ -692,7 +692,7 @@ public partial class Companies
 
                 if (_companyDetails.StateID > 0)
                 {
-                    IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
+                    IntValues _state = State.FirstOrDefault(state => state.KeyValue == _loc.StateID);
 
                     if (_state is {Text: not null})
                     {
@@ -745,7 +745,7 @@ public partial class Companies
 
             if (_companyDetails.StateID > 0)
             {
-                IntValues _state = State.FirstOrDefault(state => state.Value == _companyDetails.StateID);
+                IntValues _state = State.FirstOrDefault(state => state.KeyValue == _companyDetails.StateID);
 
                 if (_state is {Text: not null})
                 {
@@ -788,7 +788,7 @@ public partial class Companies
 
                 if (_loc.StateID > 0)
                 {
-                    IntValues _state = State.FirstOrDefault(state => state.Value == _loc.StateID);
+                    IntValues _state = State.FirstOrDefault(state => state.KeyValue == _loc.StateID);
 
                     if (_state is {Text: not null})
                     {

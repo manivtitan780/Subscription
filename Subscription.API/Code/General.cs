@@ -316,7 +316,7 @@ public static class General
     {
         return await reader.FillList<IntValues>(intValue => new()
                                                             {
-                                                                Value = keyType switch
+                                                                KeyValue = keyType switch
                                                                         {
                                                                             0 => intValue.GetInt32(0),
                                                                             1 => intValue.GetInt16(0),

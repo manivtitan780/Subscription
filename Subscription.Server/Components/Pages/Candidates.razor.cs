@@ -1671,7 +1671,7 @@ public partial class Candidates
         if (_eligibility is {Count: > 0})
         {
             CandidateEligibility = _candidateDetailsObject.EligibilityID > 0
-                                       ? _eligibility.FirstOrDefault(eligibility => eligibility.Value == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
+                                       ? _eligibility.FirstOrDefault(eligibility => eligibility.KeyValue == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
                                        : "".ToMarkupString();
         }
     }
@@ -1690,7 +1690,7 @@ public partial class Candidates
         if (_experience is {Count: > 0})
         {
             CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
-                                       ? _experience.FirstOrDefault(experience => experience.Value == _candidateDetailsObject.ExperienceID)!.Text
+                                       ? _experience.FirstOrDefault(experience => experience.KeyValue == _candidateDetailsObject.ExperienceID)!.Text
                                        : "").ToMarkupString();
         }
     }
@@ -1902,7 +1902,7 @@ public partial class Candidates
 
     private (string Code, string Name) SplitState(int stateID)
     {
-        string _stateName = _states.FirstOrDefault(state => state.Value == stateID)?.Text!;
+        string _stateName = _states.FirstOrDefault(state => state.KeyValue == stateID)?.Text!;
         string[] parts = _stateName?.Split([" - "], StringSplitOptions.TrimEntries);
         if (parts?.Length != 2)
         {
