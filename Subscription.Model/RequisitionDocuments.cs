@@ -53,7 +53,7 @@ public class RequisitionDocuments
 	///     This constructor initializes the properties of the RequisitionDocuments instance with the provided parameters.
 	///     It also ensures that the Files list is initialized and empty.
 	/// </remarks>
-	public RequisitionDocuments(int id, int requisitionID, string? documentName, string? documentFileName, string? documentNotes, string? updateBy, string? originalFileName, string? requisitionOwner)
+	public RequisitionDocuments(int id, int requisitionID, string documentName, string documentFileName, string documentNotes, string updateBy, string originalFileName, string requisitionOwner)
 	{
 		ID = id;
 		RequisitionID = requisitionID;
@@ -76,7 +76,7 @@ public class RequisitionDocuments
 	///     This property is used to construct a query string for downloading the document.
 	///     The query string is Base64 encoded and appended to the base URI to form the download URL.
 	/// </remarks>
-	public string? DocumentFileName
+	public string DocumentFileName
 	{
 		get;
 		set;
@@ -88,7 +88,7 @@ public class RequisitionDocuments
 	/// <value>
 	///     The name of the document.
 	/// </value>
-	public string? DocumentName
+	public string DocumentName
 	{
 		get;
 		set;
@@ -103,7 +103,7 @@ public class RequisitionDocuments
 	/// <remarks>
 	///     This property is validated to be not empty and its length should be between 10 and 2000 characters.
 	/// </remarks>
-	public string? DocumentNotes
+	public string DocumentNotes
 	{
 		get;
 		set;
@@ -146,7 +146,7 @@ public class RequisitionDocuments
 	/// <remarks>
 	///     This property is used when downloading the document to provide the user with the original file name.
 	/// </remarks>
-	public string? OriginalFileName
+	public string OriginalFileName
 	{
 		get;
 		set;
@@ -174,7 +174,7 @@ public class RequisitionDocuments
 	///     This property is used to determine the user who owns the requisition.
 	///     It is used in the context of permissions, allowing only the owner of the requisition to edit it.
 	/// </remarks>
-	public string? RequisitionOwner
+	public string RequisitionOwner
 	{
 		get;
 		set;
@@ -186,7 +186,7 @@ public class RequisitionDocuments
 	/// <value>
 	///     The username of the user who last updated the requisition document.
 	/// </value>
-	public string? UpdateBy
+	public string UpdateBy
 	{
 		get;
 		set;
@@ -219,5 +219,5 @@ public class RequisitionDocuments
 	/// <returns>
 	///     A new RequisitionDocuments object that is a copy of the current instance.
 	/// </returns>
-	public RequisitionDocuments? Copy() => MemberwiseClone() as RequisitionDocuments;
+	public RequisitionDocuments Copy() => MemberwiseClone() as RequisitionDocuments;
 }

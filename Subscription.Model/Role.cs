@@ -77,7 +77,7 @@ public class Role
     /// <value>
     ///     The description of the role.
     /// </value>
-    public string? Description
+    public string Description
     {
         get;
         set;
@@ -135,7 +135,7 @@ public class Role
         set;
     }
 
-    public string? RoleName
+    public string RoleName
     {
         get;
         set;
@@ -236,5 +236,5 @@ public class Role
     ///     If a field is a reference type, the reference is copied but the referred object is not; therefore, the original
     ///     object and its clone refer to the same object.
     /// </remarks>
-    public Role? Copy() => MemberwiseClone() as Role;
+    public Role Copy() => MemberwiseClone() as Role;
 }

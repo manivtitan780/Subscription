@@ -17,7 +17,7 @@ namespace Subscription.Model;
 
 public class LoginModel
 {
-    public string? Password
+    public string Password
     {
         get;
         set;
@@ -29,7 +29,7 @@ public class LoginModel
         set;
     }
 
-    public string? UserName
+    public string UserName
     {
         get;
         set;

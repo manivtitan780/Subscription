@@ -19,7 +19,7 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CompanyContacts
 {
-    public string? City
+    public string City
     {
         get;
         set;
@@ -31,13 +31,13 @@ public class CompanyContacts
         set;
     }
 
-    public string? CompanyName
+    public string CompanyName
     {
         get;
         set;
     }
 
-    public string? CreatedBy
+    public string CreatedBy
     {
         get;
         set;
@@ -49,31 +49,31 @@ public class CompanyContacts
         set;
     }
 
-    public string? Department
+    public string Department
     {
         get;
         set;
     }
 
-    public string? EmailAddress
+    public string EmailAddress
     {
         get;
         set;
     }
 
-    public string? Extension
+    public string Extension
     {
         get;
         set;
     }
 
-    public string? Fax
+    public string Fax
     {
         get;
         set;
     }
 
-    public string? FirstName
+    public string FirstName
     {
         get;
         set;
@@ -85,7 +85,7 @@ public class CompanyContacts
         set;
     }
 
-    public string? LastName
+    public string LastName
     {
         get;
         set;
@@ -97,25 +97,25 @@ public class CompanyContacts
         set;
     }
 
-    public string? MiddleInitial
+    public string MiddleInitial
     {
         get;
         set;
     }
 
-    public string? Notes
+    public string Notes
     {
         get;
         set;
     }
 
-    public string? Phone
+    public string Phone
     {
         get;
         set;
     }
 
-    public string? Prefix
+    public string Prefix
     {
         get;
         set;
@@ -127,7 +127,7 @@ public class CompanyContacts
         set;
     }
 
-    public string? Role
+    public string Role
     {
         get;
         set;
@@ -139,13 +139,13 @@ public class CompanyContacts
         set;
     }
 
-    public string? RoleName
+    public string RoleName
     {
         get;
         set;
     }
 
-    public string? State
+    public string State
     {
         get;
         set;
@@ -157,25 +157,25 @@ public class CompanyContacts
         set;
     }
 
-    public string? StreetName
+    public string StreetName
     {
         get;
         set;
     }
 
-    public string? Suffix
+    public string Suffix
     {
         get;
         set;
     }
 
-    public string? Title
+    public string Title
     {
         get;
         set;
     }
 
-    public string? UpdatedBy
+    public string UpdatedBy
     {
         get;
         set;
@@ -187,7 +187,7 @@ public class CompanyContacts
         set;
     }
 
-    public string? ZipCode
+    public string ZipCode
     {
         get;
         set;
@@ -225,5 +225,5 @@ public class CompanyContacts
         ZipCode = "";
     }
 
-    public CompanyContacts? Copy() => MemberwiseClone() as CompanyContacts;
+    public CompanyContacts Copy() => MemberwiseClone() as CompanyContacts;
 }

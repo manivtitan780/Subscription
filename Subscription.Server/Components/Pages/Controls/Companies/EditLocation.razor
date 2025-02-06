@@ -40,7 +40,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Extension)">
 						<Template>
 							<label class="e-form-label" for="maskedExt">Extension:</label>
-							<SfMaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension" />
+							<SfMaskedTextBox @bind-Value="@Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Fax)">

@@ -47,7 +47,7 @@ public class CandidateEducation
 	///     <param name="year">The year of graduation.</param>
 	///     <param name="updatedBy">The username of the person who last updated the education record.</param>
 	/// </summary>
-	public CandidateEducation(int id, string? degree, string? college, string? state, string? country, string? year, string? updatedBy)
+	public CandidateEducation(int id, string degree, string college, string state, string country, string year, string updatedBy)
 	{
 		ID = id;
 		Degree = degree;
@@ -67,7 +67,7 @@ public class CandidateEducation
 	/// <remarks>
 	///     This property is required. If not provided, an error message will be returned.
 	/// </remarks>
-	public string? College
+	public string College
 	{
 		get;
 		set;
@@ -76,7 +76,7 @@ public class CandidateEducation
 	/// <summary>
 	///     Gets or sets the country of the candidate's education institution.
 	/// </summary>
-	public string? Country
+	public string Country
 	{
 		get;
 		set;
@@ -86,7 +86,7 @@ public class CandidateEducation
 	///     Gets or sets the degree, diploma, or course name of the candidate's education.
 	///     This property is required.
 	/// </summary>
-	public string? Degree
+	public string Degree
 	{
 		get;
 		set;
@@ -116,7 +116,7 @@ public class CandidateEducation
 	/// <remarks>
 	///     This property is used in the 'Edit Education' dialog for candidates.
 	/// </remarks>
-	public string? State
+	public string State
 	{
 		get;
 		set;
@@ -132,7 +132,7 @@ public class CandidateEducation
 	///     This property is used to track who made the last update to the education record of a candidate.
 	///     It is typically the username of the logged-in user who made the change.
 	/// </remarks>
-	public string? UpdatedBy
+	public string UpdatedBy
 	{
 		get;
 		set;
@@ -148,7 +148,7 @@ public class CandidateEducation
 	///     This property is used to store the year in which the candidate completed their education.
 	///     It is represented as a string and not a DateTime object because it only contains the year part, not the full date.
 	/// </remarks>
-	public string? Year
+	public string Year
 	{
 		get;
 		set;
@@ -178,5 +178,5 @@ public class CandidateEducation
 	/// <returns>
 	///     A new dep copy of the CandidateEducation class with the same values as the current instance.
 	/// </returns>
-	public CandidateEducation? Copy() => MemberwiseClone() as CandidateEducation;
+	public CandidateEducation Copy() => MemberwiseClone() as CandidateEducation;
 }

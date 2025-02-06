@@ -17,13 +17,13 @@ namespace Subscription.Model;
 
 public class Company
 {
-    public string? Address
+    public string Address
     {
         get;
         set;
     }
 
-    public string? CompanyName
+    public string CompanyName
     {
         get;
         set;
@@ -35,13 +35,13 @@ public class Company
         set;
     }
 
-    public string? EINNumber
+    public string EINNumber
     {
         get;
         set;
     }
 
-    public string? Email
+    public string Email
     {
         get;
         set;
@@ -59,7 +59,7 @@ public class Company
         set;
     }
 
-    public string? Phone
+    public string Phone
     {
         get;
         set;
@@ -71,7 +71,7 @@ public class Company
         set;
     }
 
-    public string? UpdatedBy
+    public string UpdatedBy
     {
         get;
         set;
@@ -83,11 +83,11 @@ public class Company
         set;
     }
 
-    public string? Website
+    public string Website
     {
         get;
         set;
     }
 
-    public Company? Copy() => MemberwiseClone() as Company;
+    public Company Copy() => MemberwiseClone() as Company;
 }

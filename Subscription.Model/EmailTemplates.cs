@@ -49,7 +49,7 @@ public class EmailTemplates
 	///     The email template. This is a string that contains placeholders which are replaced with actual
 	///     values when sending an email.
 	/// </param>
-	public EmailTemplates(string? cc, string? subject, string? template)
+	public EmailTemplates(string cc, string subject, string template)
 	{
 		CC = cc;
 		Subject = subject;
@@ -61,7 +61,7 @@ public class EmailTemplates
 	///     copy of the email.
 	///     Multiple email addresses should be separated by a comma.
 	/// </summary>
-	public string? CC
+	public string CC
 	{
 		get;
 		set;
@@ -71,7 +71,7 @@ public class EmailTemplates
 	///     Gets or sets the subject of the email template. This subject can contain placeholders which will be replaced with
 	///     actual values when the email is being sent.
 	/// </summary>
-	public string? Subject
+	public string Subject
 	{
 		get;
 		set;
@@ -87,7 +87,7 @@ public class EmailTemplates
 	/// <example>
 	///     An example of a template could be: "Hello $FIRST_NAME$, your application has been received."
 	/// </example>
-	public string? Template
+	public string Template
 	{
 		get;
 		set;
@@ -109,5 +109,5 @@ public class EmailTemplates
 	/// <returns>
 	///     A new EmailTemplates object that is a copy of the current instance.
 	/// </returns>
-	public EmailTemplates? Copy() => MemberwiseClone() as EmailTemplates;
+	public EmailTemplates Copy() => MemberwiseClone() as EmailTemplates;
 }

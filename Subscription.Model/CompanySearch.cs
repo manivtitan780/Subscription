@@ -19,7 +19,7 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CompanySearch
 {
-    public string? CompanyName
+    public string CompanyName
     {
         get;
         set;
@@ -49,7 +49,7 @@ public class CompanySearch
         set;
     }
 
-    public string? User
+    public string User
     {
         get;
         set;

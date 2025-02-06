@@ -19,7 +19,7 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CompanyLocations
 {
-    public string? City
+    public string City
     {
         set;
         get;
@@ -31,13 +31,13 @@ public class CompanyLocations
         set;
     }
 
-    public string? CompanyName
+    public string CompanyName
     {
         get;
         set;
     }
 
-    public string? CreatedBy
+    public string CreatedBy
     {
         get;
         set;
@@ -49,19 +49,19 @@ public class CompanyLocations
         set;
     }
 
-    public string? EmailAddress
+    public string EmailAddress
     {
         get;
         set;
     }
 
-    public string? Extension
+    public string Extension
     {
         get;
         set;
     }
 
-    public string? Fax
+    public string Fax
     {
         get;
         set;
@@ -73,13 +73,13 @@ public class CompanyLocations
         set;
     }
 
-    public string? Notes
+    public string Notes
     {
         get;
         set;
     }
 
-    public string? Phone
+    public string Phone
     {
         get;
         set;
@@ -91,7 +91,7 @@ public class CompanyLocations
         set;
     }
 
-    public string? State
+    public string State
     {
         get;
         set;
@@ -103,13 +103,13 @@ public class CompanyLocations
         set;
     }
 
-    public string? StreetName
+    public string StreetName
     {
         get;
         set;
     }
 
-    public string? UpdatedBy
+    public string UpdatedBy
     {
         get;
         set;
@@ -121,7 +121,7 @@ public class CompanyLocations
         set;
     }
 
-    public string? ZipCode
+    public string ZipCode
     {
         get;
         set;
@@ -149,5 +149,5 @@ public class CompanyLocations
         ZipCode = "";
     }
 
-    public CompanyLocations? Copy() => MemberwiseClone() as CompanyLocations;
+    public CompanyLocations Copy() => MemberwiseClone() as CompanyLocations;
 }

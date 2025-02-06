@@ -24,7 +24,7 @@ public class UserList
         set;
     }
 
-    public string? UserName
+    public string UserName
     {
         get;
         set;

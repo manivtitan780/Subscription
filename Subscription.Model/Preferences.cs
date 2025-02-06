@@ -50,7 +50,7 @@ public class Preferences
 	/// <param name="changeCandidateSubmissionStatus">The permission level required to change candidate submission status.</param>
 	/// <param name="pageSize">The number of items to display per page.</param>
 	/// <param name="sortOnPriority">A value indicating whether to sort items based on their priority.</param>
-	public Preferences(int id, string? highPriorityColor, string? normalPriorityColor, string? lowPriorityColor, bool recruitersSubmitCandidate, bool adminCandidates, bool adminRequisitions,
+	public Preferences(int id, string highPriorityColor, string normalPriorityColor, string lowPriorityColor, bool recruitersSubmitCandidate, bool adminCandidates, bool adminRequisitions,
 					   byte changeRequisitionStatus, byte changeCandidateStatus, byte changeCandidateSubmissionStatus, byte pageSize, bool sortOnPriority)
 	{
 		ID = id;
@@ -133,7 +133,7 @@ public class Preferences
 	/// <value>
 	///     A string representing the color in hexadecimal format.
 	/// </value>
-	public string? HighPriorityColor
+	public string HighPriorityColor
 	{
 		get;
 		set;
@@ -157,7 +157,7 @@ public class Preferences
 	/// <value>
 	///     A string representing the color in hexadecimal format.
 	/// </value>
-	public string? LowPriorityColor
+	public string LowPriorityColor
 	{
 		get;
 		set;
@@ -169,7 +169,7 @@ public class Preferences
 	/// <value>
 	///     A string representing the color in hexadecimal format.
 	/// </value>
-	public string? NormalPriorityColor
+	public string NormalPriorityColor
 	{
 		get;
 		set;
@@ -236,5 +236,5 @@ public class Preferences
 	/// <returns>
 	///     A new Preferences object that is a copy of the current instance.
 	/// </returns>
-	public Preferences? Copy() => MemberwiseClone() as Preferences;
+	public Preferences Copy() => MemberwiseClone() as Preferences;
 }

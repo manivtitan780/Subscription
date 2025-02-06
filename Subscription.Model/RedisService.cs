@@ -38,7 +38,7 @@ public class RedisService
     ///     This constructor establishes a secure connection to the Redis server using the provided hostname, SSL port, and
     ///     access password.
     /// </remarks>
-    public RedisService(string? hostName, int sslPort, string? access, bool ssl)
+    public RedisService(string hostName, int sslPort, string access, bool ssl)
     {
         ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect($"{hostName}:{sslPort},password={access},ssl={ssl},abortConnect=False");
         _db = _redis.GetDatabase();
@@ -136,7 +136,7 @@ public class RedisService
     ///     the specified key, and return createItems.
     ///     The newly created item will have an expiration time of 365 days.
     /// </remarks>
-    public async Task<T?> GetOrCreateAsync<T>(string key, T? createItems)
+    public async Task<T> GetOrCreateAsync<T>(string key, T createItems)
     {
         RedisValue _value = await _db.StringGetAsync(key);
 

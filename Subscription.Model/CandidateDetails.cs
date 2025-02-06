@@ -47,7 +47,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and its length should be between 1 and 255 characters.
 	/// </remarks>
-	public string? Address1
+	public string Address1
     {
         get;
         set;
@@ -63,7 +63,7 @@ public class CandidateDetails
 	///     This property is used when the candidate's address requires an additional line for more detailed information.
 	///     The maximum length of this property is 255 characters.
 	/// </remarks>
-	public string? Address2
+	public string Address2
     {
         get;
         set;
@@ -108,7 +108,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and should be between 1 and 50 characters.
 	/// </remarks>
-	public string? City
+	public string City
     {
         get;
         set;
@@ -128,7 +128,7 @@ public class CandidateDetails
 	///     - "X" => "Excellent"
 	///     - Any other value => "Fair"
 	/// </remarks>
-	public string? Communication
+	public string Communication
     {
         get;
         set;
@@ -143,7 +143,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used to track when the candidate details were first created.
 	/// </remarks>
-	public string? Created
+	public string Created
     {
         get;
         set;
@@ -174,7 +174,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used to store and retrieve the EEO file of the candidate.
 	/// </remarks>
-	public string? EEOFile
+	public string EEOFile
     {
         get;
         set;
@@ -209,7 +209,7 @@ public class CandidateDetails
 	///     The length of the email address should be between 5 and 255 characters.
 	///     The email address is also validated to check if the candidate already exists.
 	/// </remarks>
-	public string? Email
+	public string Email
     {
         get;
         set;
@@ -237,7 +237,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when saving candidate details in the `CandidatesController.SaveCandidate()` method.
 	/// </remarks>
-	public string? Facebook
+	public string Facebook
     {
         get;
         set;
@@ -267,7 +267,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when saving candidate details to the database via the 'SaveCandidate' stored procedure.
 	/// </remarks>
-	public string? FormattedResume
+	public string FormattedResume
     {
         get;
         set;
@@ -283,7 +283,7 @@ public class CandidateDetails
 	///     This property is used to store the Google+ profile ID of the candidate. It can be used to access the candidate's
 	///     Google+ profile.
 	/// </remarks>
-	public string? GooglePlus
+	public string GooglePlus
     {
         get;
         set;
@@ -345,7 +345,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property can be used to store and retrieve the job options that a candidate is interested in.
 	/// </remarks>
-	public string? JobOptions
+	public string JobOptions
     {
         get;
         set;
@@ -360,7 +360,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The keywords are used to categorize the candidate and improve searching.
 	/// </remarks>
-	public string? Keywords
+	public string Keywords
     {
         get;
         set;
@@ -373,7 +373,7 @@ public class CandidateDetails
 	///     This property is required and must be between 1 and 50 characters.
 	///     It also uses custom validation to check if the candidate exists.
 	/// </remarks>
-	public string? LastName
+	public string LastName
     {
         get;
         set;
@@ -388,7 +388,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The LinkedIn profile ID should be less than 255 characters.
 	/// </remarks>
-	public string? LinkedIn
+	public string LinkedIn
     {
         get;
         set;
@@ -403,7 +403,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to ensure that the middle name is no more than 50 characters in length.
 	/// </remarks>
-	public string? MiddleName
+	public string MiddleName
     {
         get;
         set;
@@ -434,7 +434,7 @@ public class CandidateDetails
 	///     This property is used in the Candidate page of the ProfSvc_AppTrack application for retrieving the most recent note
 	///     from the CandidateMPC object list and for retrieving the most recent date from the CandidateMPC list.
 	/// </remarks>
-	public string? MPCNotes
+	public string MPCNotes
     {
         get;
         set;
@@ -450,7 +450,7 @@ public class CandidateDetails
 	///     This property is used to store the original format of the candidate's resume.
 	///     It is used in the `SaveCandidate` method of the `CandidatesController` class.
 	/// </remarks>
-	public string? OriginalResume
+	public string OriginalResume
     {
         get;
         set;
@@ -466,7 +466,7 @@ public class CandidateDetails
 	///     This property is required and should be in proper phone number format. The phone number should be 10 digits long,
 	///     including the area code.
 	/// </remarks>
-	public string? Phone1
+	public string Phone1
     {
         get;
         set;
@@ -481,7 +481,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when the candidate has more than one phone number.
 	/// </remarks>
-	public string? Phone2
+	public string Phone2
     {
         get;
         set;
@@ -496,7 +496,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when the candidate has more than two phone numbers.
 	/// </remarks>
-	public string? Phone3
+	public string Phone3
     {
         get;
         set;
@@ -511,7 +511,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when more than one phone line is associated with the same phone number.
 	/// </remarks>
-	public string? PhoneExt
+	public string PhoneExt
     {
         get;
         set;
@@ -544,7 +544,7 @@ public class CandidateDetails
 	///     It is used in the Candidate page of the ProfSvc_AppTrack application to retrieve and display the rating note for a
 	///     candidate.
 	/// </remarks>
-	public string? RateNotes
+	public string RateNotes
     {
         get;
         set;
@@ -576,7 +576,7 @@ public class CandidateDetails
 	///     This property is used when the candidate is referred by an account manager.
 	///     The value corresponds to the account manager's identifier.
 	/// </remarks>
-	public string? ReferAccountManager
+	public string ReferAccountManager
     {
         get;
         set;
@@ -607,7 +607,7 @@ public class CandidateDetails
 	///     This property is used to store any additional notes or details about the candidate's relocation preferences or
 	///     requirements.
 	/// </remarks>
-	public string? RelocationNotes
+	public string RelocationNotes
     {
         get;
         set;
@@ -654,7 +654,7 @@ public class CandidateDetails
 	///     This property is used to store any security-related notes or comments about the candidate.
 	///     The length of the notes should be less than 2000 characters.
 	/// </remarks>
-	public string? SecurityNotes
+	public string SecurityNotes
     {
         get;
         set;
@@ -685,7 +685,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The status of the candidate can be used to track the candidate's progress in the recruitment process.
 	/// </remarks>
-	public string? Status
+	public string Status
     {
         get;
         set;
@@ -702,7 +702,7 @@ public class CandidateDetails
 	///     of the candidate's profile.
 	///     The summary should be less than 32767 characters.
 	/// </remarks>
-	public string? Summary
+	public string Summary
     {
         get;
         set;
@@ -719,7 +719,7 @@ public class CandidateDetails
 	///     This property is used in the `Candidate.SetTaxTerm()` method in the `Candidate` class and the
 	///     `EditCandidateDialog.BuildRenderTree()` method in the `EditCandidateDialog` class.
 	/// </remarks>
-	public string? TaxTerm
+	public string TaxTerm
     {
         get;
         set;
@@ -734,7 +734,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to ensure that the text resume is less than 262,136 characters.
 	/// </remarks>
-	public string? TextResume
+	public string TextResume
     {
         get;
         set;
@@ -749,7 +749,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and its length should be between 1 and 200 characters.
 	/// </remarks>
-	public string? Title
+	public string Title
     {
         get;
         set;
@@ -764,7 +764,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to ensure that the Twitter profile ID is less than 255 characters.
 	/// </remarks>
-	public string? Twitter
+	public string Twitter
     {
         get;
         set;
@@ -779,7 +779,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The value is typically set automatically when changes are made to the candidate details.
 	/// </remarks>
-	public string? Updated
+	public string Updated
     {
         get;
         set;
@@ -794,7 +794,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and must be a minimum of 5 digits and a maximum of 10 digits.
 	/// </remarks>
-	public string? ZipCode
+	public string ZipCode
     {
         get;
         set;
@@ -868,7 +868,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This method uses the MemberwiseClone method to create a shallow copy of the current object.
 	/// </remarks>
-	public CandidateDetails? Copy() => MemberwiseClone() as CandidateDetails;
+	public CandidateDetails Copy() => MemberwiseClone() as CandidateDetails;
 
 	/*/// <summary>
 	///     Enumerates the possible communication ratings for a candidate.

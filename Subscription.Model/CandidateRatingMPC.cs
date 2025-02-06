@@ -46,7 +46,7 @@ public class CandidateRatingMPC
 	/// <param name="ratingComments">The comments related to the candidate's rating.</param>
 	/// <param name="mpc">A boolean value indicating whether the candidate is marked as MPC (Most Placeable Candidate).</param>
 	/// <param name="mpcComments">The comments related to the candidate's MPC status.</param>
-	public CandidateRatingMPC(int id, int rating, string? ratingComments, bool mpc, string? mpcComments)
+	public CandidateRatingMPC(int id, int rating, string ratingComments, bool mpc, string mpcComments)
     {
         ID = id;
         Rating = rating;
@@ -93,7 +93,7 @@ public class CandidateRatingMPC
 	///     Gets or sets the comments for the Candidate's MPC (Most Placeable Candidate) status.
 	///     This property is used to store additional information or notes about the candidate's MPC status.
 	/// </summary>
-	public string? MPCComments
+	public string MPCComments
     {
         get;
         set;
@@ -126,7 +126,7 @@ public class CandidateRatingMPC
 	///     This property is used in the rating dialog of a candidate and is stored in the database via the
 	///     `CandidatesController.SaveRating()` method.
 	/// </remarks>
-	public string? RatingComments
+	public string RatingComments
     {
         get;
         set;
@@ -150,5 +150,5 @@ public class CandidateRatingMPC
 	/// <returns>
 	///     A new CandidateRatingMPC object that is a deep copy of this instance.
 	/// </returns>
-	public CandidateRatingMPC? Copy() => MemberwiseClone() as CandidateRatingMPC;
+	public CandidateRatingMPC Copy() => MemberwiseClone() as CandidateRatingMPC;
 }

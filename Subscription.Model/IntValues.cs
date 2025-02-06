@@ -17,7 +17,7 @@ namespace Subscription.Model;
 
 public class IntValues
 {
-    public string? Text
+    public string Text
     {
         get;
         init;
