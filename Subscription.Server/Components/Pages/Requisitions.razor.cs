@@ -130,6 +130,12 @@ public partial class Requisitions
         set;
     }
 
+    private bool HasRendered
+    {
+        get;
+        set;
+    }
+
     public bool HasViewRights
     {
         get;
@@ -292,6 +298,12 @@ public partial class Requisitions
         set;
     }
 
+    private bool VisibleSpin
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Initiates the advanced search process for requisitions. This method is invoked when the advanced search option is
     ///     selected.
@@ -306,6 +318,10 @@ public partial class Requisitions
                                                                           //await DialogSearch.ShowDialog();
                                                                       });
 
+    private async Task SaveStorage()
+    {
+        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+    }
     /// <summary>
     ///     Handles the click event for the "All Alphabet" button in the requisition grid.
     /// </summary>
@@ -320,7 +336,7 @@ public partial class Requisitions
                                                                         SearchModel.Title = "";
                                                                         _currentPage = 1;
                                                                         SearchModel.Page = 1;
-                                                                        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+                                                                        await SaveStorage();
                                                                         AutocompleteValue = "";
                                                                         await Grid.Refresh();
                                                                     });
@@ -364,6 +380,32 @@ public partial class Requisitions
         SearchModel.Clear();
         SearchModel.User = User;
         await Grid.Refresh();
+    }
+
+    private string GetDurationCode(string durationCode)
+    {
+        return durationCode.ToLower() switch
+               {
+                   "m" => "months",
+                   "w" => "weeks",
+                   "d" => "days",
+                   _ => "years"
+               };
+    }
+
+    private string GetLocation(string location)
+    {
+        if (_states == null || location.ToInt32() == 0)
+        {
+            return location;
+        }
+
+        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.Value))
+        {
+            return _intValues.Text;
+        }
+
+        return location;
     }
 
     /// <summary>

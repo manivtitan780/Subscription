@@ -103,7 +103,47 @@
 									<TabHeader Text="Requisition Info"/>
 								</ChildContent>
 								<ContentTemplate>
-									<RequisitionInfoPanel Model="_requisitionDetailsObject" SkillsText="_requisitionDetailSkills" States="_states"/>
+									<div class="layout-2">
+										<div class="leftLayout">
+											<PanelDisplayText Label="Company Name" Text="@(_requisitionDetailsObject.CompanyName ?? string.Empty)"/>
+											<PanelDisplayText Label="Contact Name" Text="@(_requisitionDetailsObject.ContactName ?? string.Empty)"/>
+											<PanelDisplayText Label="Job Title" Text="@(_requisitionDetailsObject.PositionTitle ?? string.Empty)"/>
+											<PanelDisplayText Label="No. of Positions" Text="@(_requisitionDetailsObject.Positions.ToString())"/>
+											<PanelDisplayText Label="Location" Text="@GetLocation(_requisitionDetailsObject.Location)"/>
+											<PanelDisplayText Label="Duration" Text="@(_requisitionDetailsObject.Duration + " " + GetDurationCode(_requisitionDetailsObject.DurationCode))"/>
+											<PanelDisplayText Label="Expected Start Date" Text="@(_requisitionDetailsObject.ExpectedStart.CultureDate())"/>
+											<PanelDisplayText Label="Due Date" Text="@(_requisitionDetailsObject.DueDate.CultureDate())"/>
+											<PanelDisplayText Label="Expected Rate" Text="@($"{_requisitionDetailsObject.ExpRateLow.CultureCurrency()} - {_requisitionDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Salary Expected" Text="@($"{_requisitionDetailsObject.SalaryLow.CultureCurrency()} - {_requisitionDetailsObject.SalaryHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Load Expected" Text="@($"{_requisitionDetailsObject.ExpLoadLow.CultureCurrency()} - {_requisitionDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Placement Fee" Text="@(_requisitionDetailsObject.PlacementFee.CulturePercentage())"/>
+											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status ?? string.Empty)"/>
+										</div>
+										<div class="leftLayout">
+											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_requisitionDetailsObject.AssignedTo ?? string.Empty)"/>
+											<PanelDisplayText Label="Priority" Text="@(_requisitionDetailsObject.Priority ?? string.Empty)"/>
+											<PanelDisplayText Label="Job Options" Text="@(_requisitionDetailsObject.JobOptions ?? string.Empty)"/>
+											<PanelDisplayText Label="Experience" Text="@(_requisitionDetailsObject.Experience ?? string.Empty)"/>
+											<PanelDisplayText Label="Report To" Text="@(_requisitionDetailsObject.ReportTo ?? string.Empty)"/>
+											<PanelDisplayText Label="Education" Text="@(_requisitionDetailsObject.Education ?? string.Empty)"/>
+											<PanelDisplayText Label="Eligibility" Text="@(_requisitionDetailsObject.Eligibility ?? string.Empty)"/>
+											<PanelDisplayText Label="Expenses Paid?" Text="@_requisitionDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Security Clearance?" Text="@_requisitionDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="OFCCP?" Text="@_requisitionDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Benefits?" Text="@_requisitionDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Benefits Notes" MarkupText="@_requisitionDetailsObject.BenefitNotes.ToMarkupString()"/>
+										</div>
+										<div class="rightLayout" style="display:flex; flex-direction:column;">
+											<div style="font-weight: bold; height: 23px;">Description:</div>
+											<div style="overflow-y: auto; flex: 1;">
+												@_requisitionDetailsObject.Description.ToMarkupString()
+											</div>
+											<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
+											<div style="flex: 1; overflow-y: auto;">
+												@_requisitionDetailSkills
+											</div>
+										</div>
+									</div>
 								</ContentTemplate>
 							</TabItem>
 							@*<<TabItem>
@@ -124,7 +164,7 @@
 							</ContentTemplate>
 						</TabItem>*@
 						</TabItems>
-						<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+						<SfSpinner @bind-Visible="@VisibleSpin" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 					</SfTab>
 				</DetailTemplate>
 			</GridTemplates>
