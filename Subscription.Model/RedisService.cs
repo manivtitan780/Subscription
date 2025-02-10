@@ -97,13 +97,19 @@ public class RedisService
     ///     The items will be set only if the key does not already exist in Redis.
     ///     Each item will have an expiration time of 365 days.
     /// </remarks>
-    public async Task CreateBatchSet(List<string> keyArray, List<object> items)
+    public async Task CreateBatchSet(string[] keyArray, string[] items)
     {
         List<KeyValuePair<RedisKey, RedisValue>> _values = [];
-        for (int i = 0; i < items.Count; i++)
+        int i = 0;
+        foreach (string _item in items)
         {
-            _values.Add(new(keyArray[i], JsonConvert.SerializeObject(items[i])));
+            _values.Add(new(keyArray[i], _item));
+            i++;
         }
+        // for (int i = 0; i < items.Count; i++)
+        // {
+        //     _values.Add(new(keyArray[i], JsonConvert.SerializeObject(items[i])));
+        // }
 
         await _db.StringSetAsync(_values.ToArray());
     }

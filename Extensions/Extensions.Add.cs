@@ -87,7 +87,7 @@ public static partial class Extensions
     ///     Optional parameter that indicates whether the SqlParameter is an output parameter. Default is
     ///     false.
     /// </param>
-    public static void Char(this SqlCommand t, string name, int size, object? value, bool isNType = true,
+    public static void Char(this SqlCommand t, string name, int size, object value, bool isNType = true,
                             bool output = false) => t.Parameters.Add(new(name.AppendAtRateChar(), isNType ? SqlDbType.NChar : SqlDbType.Char, size)
                                                                      {
                                                                          Value = value,
@@ -246,7 +246,7 @@ public static partial class Extensions
     /// <param name="value">The value of the parameter.</param>
     /// <param name="isNType">A flag indicating whether the SqlDbType should be NVarChar. If false, SqlDbType will be VarChar.</param>
     /// <param name="output">A flag indicating whether the parameter is an output parameter.</param>
-    public static void Varchar(this SqlCommand t, string name, int size, object? value, bool isNType = true, bool output = false) =>
+    public static void Varchar(this SqlCommand t, string name, int size, object value, bool isNType = true, bool output = false) =>
         t.Parameters.Add(new(name.AppendAtRateChar(), isNType ? SqlDbType.NVarChar : SqlDbType.VarChar, size)
                          {
                              Value = value.NullOrWhiteSpace() ? "" : value, Direction = output ? ParameterDirection.InputOutput : ParameterDirection.Input

@@ -128,7 +128,7 @@ public class RequisitionController : ControllerBase
                 return new ReturnGridRequisition {Page = _page};
             }
 
-            _count = _reader.GetInt32(0);
+            _count = _reader.NInt32(0);
 
             await _reader.NextResultAsync();
 
@@ -140,7 +140,7 @@ public class RequisitionController : ControllerBase
             await _reader.NextResultAsync();
             if (getCompanyInformation)
             {
-                while (await _reader.ReadAsync())
+                /*while (await _reader.ReadAsync())
                 {
                     _companies = _reader.NString(0);
                 }
@@ -151,7 +151,7 @@ public class RequisitionController : ControllerBase
                     _companyContacts = _reader.NString(0);
                 }
 
-                await _reader.NextResultAsync();
+                await _reader.NextResultAsync();*/
                 while (await _reader.ReadAsync())
                 {
                     _statusCount = _reader.NString(0);
@@ -159,8 +159,8 @@ public class RequisitionController : ControllerBase
             }
             else
             {
-                await _reader.NextResultAsync();
-                await _reader.NextResultAsync();
+                /*await _reader.NextResultAsync();
+                await _reader.NextResultAsync();*/
             }
 
             await _reader.NextResultAsync();

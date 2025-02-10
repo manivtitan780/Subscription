@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           Candidates.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          05-01-2024 15:05
-// Last Updated On:     01-13-2025 15:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 19:02
+// Last Updated On:     02-10-2025 20:02
 // *****************************************/
 
 #endregion
@@ -203,19 +203,6 @@ public partial class Candidates
     }
 
     /// <summary>
-    ///     Gets or sets the count of items.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the total number of items in the data source.
-    ///     It is updated whenever the data source is refreshed or a new set of items is loaded.
-    /// </remarks>
-    private static int Count
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the dialog for adding a candidate document.
     /// </summary>
     /// <remarks>
@@ -329,6 +316,8 @@ public partial class Candidates
         get;
         set;
     } = true;
+
+    private bool HasRendered { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the user has view rights.
@@ -509,7 +498,7 @@ public partial class Candidates
     ///     This model contains the search parameters used to filter the list of candidates displayed in the grid.
     ///     It includes properties such as Name and Page for pagination and filtering.
     /// </remarks>
-    public static CandidateSearch SearchModel
+    internal static CandidateSearch SearchModel
     {
         get;
         set;
@@ -537,7 +526,7 @@ public partial class Candidates
         get;
         set;
     } = new();
-    
+
     private CandidateEducation SelectedEducationClone
     {
         get;
@@ -625,6 +614,12 @@ public partial class Candidates
         set;
     }
 
+    private bool VisibleSpin
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     This method is used to add a new document to the candidate's profile.
     ///     It first checks if a new document instance exists, if not, it creates a new one.
@@ -638,21 +633,21 @@ public partial class Candidates
                                                     return DialogDocument.ShowDialog();
                                                 });
 
-    private async Task AllAlphabets()
-    {
-        SearchModel.Name = "";
-        SearchModel.Page = 1;
-        await SaveStorage();
-        await Grid.Refresh();
-    }
+    private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
+                                                                    {
+                                                                        SearchModel.Name = "";
+                                                                        SearchModel.Page = 1;
+                                                                        await SaveStorage();
+                                                                        await Grid.Refresh();
+                                                                    });
 
-    private async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
-    {
-        SearchModel.Name = filter.Value;
-        SearchModel.Page = 1;
-        await SaveStorage();
-        await Grid.Refresh();
-    }
+    private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
+                                                                                                     {
+                                                                                                         SearchModel.Name = filter.Value;
+                                                                                                         SearchModel.Page = 1;
+                                                                                                         await SaveStorage();
+                                                                                                         await Grid.Refresh();
+                                                                                                     });
 
     /// <summary>
     ///     Clears the filter applied to the candidates.
@@ -661,13 +656,13 @@ public partial class Candidates
     ///     This function is called when the "Clear Filter" button is clicked.
     ///     It resets the filter values and reloads the candidates.
     /// </remarks>
-    private async Task ClearFilter()
-    {
-        SearchModel.Clear();
-        SearchModel.User = User;
-        await SaveStorage();
-        await Grid.Refresh();
-    }
+    private Task ClearFilter() => ExecuteMethod(async () =>
+                                                {
+                                                    SearchModel.Clear();
+                                                    SearchModel.User = User;
+                                                    await SaveStorage();
+                                                    await Grid.Refresh();
+                                                });
 
     private Dictionary<string, string> CreateParameters(int id) => new()
                                                                    {
@@ -711,7 +706,7 @@ public partial class Candidates
 
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
 
-                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response, true);
+                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                           });
 
     /// <summary>
@@ -733,7 +728,7 @@ public partial class Candidates
                                                               Dictionary<string, string> _parameters = CreateParameters(id);
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", _parameters);
 
-                                                              _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response, true);
+                                                              _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                           });
 
     /// <summary>
@@ -755,7 +750,7 @@ public partial class Candidates
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", _parameters);
 
-                                                               _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response, true);
+                                                               _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -763,7 +758,7 @@ public partial class Candidates
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteNotes", _parameters);
 
-                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response, true);
+                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
                                                       });
 
     /// <summary>
@@ -782,7 +777,7 @@ public partial class Candidates
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", _parameters);
 
-                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response, true);
+                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
@@ -802,32 +797,24 @@ public partial class Candidates
                                  }
 
                                  _target = candidate.Data;
-                                 try
-                                 {
-                                     if (Spinner != null)
-                                     {
-                                         await Spinner.ShowAsync();
-                                     }
-                                 }
-                                 catch
-                                 {
-                                     //Ignore the error.
-                                 }
+
+                                 VisibleSpin = true;
 
                                  Dictionary<string, string> _parameters = new()
                                                                           {
                                                                               {"candidateID", _target.ID.ToString()},
                                                                               {"roleID", "RS"}
                                                                           };
-                                 ReturnCandidateDetails _response = await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters, null, false);
+                                 ReturnCandidateDetails _response = await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters,
+                                                                                                                      null, false);
 
-                                 _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate, true);
-                                 _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills, true);
-                                 _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education, true);
-                                 _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience, true);
-                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes, true);
-                                 _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents, true);
-                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity, true);
+                                 _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate) ?? new();
+                                 _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills) ?? [];
+                                 _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education) ?? [];
+                                 _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience) ?? [];
+                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes) ?? [];
+                                 _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents) ?? [];
+                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity) ?? [];
 
                                  _candidateRatingObject = _response.Rating;
                                  _candidateMPCObject = _response.MPC;
@@ -843,21 +830,11 @@ public partial class Candidates
                                  SetTaxTerm();
                                  SetExperience();
 
-                                 _selectedTab = _candidateActivityObject.Count > 0 ? 7 : 0;
+                                 _selectedTab = _candidateActivityObject is {Count: > 0} ? 7 : 0;
                                  _formattedExists = _target.FormattedResume;
                                  _originalExists = _target.OriginalResume;
 
-                                 try
-                                 {
-                                     if (Spinner != null)
-                                     {
-                                         await Spinner.HideAsync();
-                                     }
-                                 }
-                                 catch
-                                 {
-                                     //Ignore the error.
-                                 }
+                                 VisibleSpin = false;
                              });
     }
 
@@ -971,7 +948,7 @@ public partial class Candidates
                                                                 }
                                                                 else
                                                                 {
-                                                                     SelectedEducation.Clear();
+                                                                    SelectedEducation.Clear();
                                                                 }
                                                             }
                                                             else
@@ -1100,16 +1077,13 @@ public partial class Candidates
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task FormattedClick(MouseEventArgs arg) => GetResumeOnClick("Formatted");
 
-    private async Task GetAlphabets(char alphabet)
-    {
-        await ExecuteMethod(async () =>
-                            {
-                                SearchModel.Name = alphabet.ToString();
-                                SearchModel.Page = 1;
-                                await SaveStorage();
-                                await Grid.Refresh();
-                            });
-    }
+    private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
+                                                                          {
+                                                                              SearchModel.Name = alphabet.ToString();
+                                                                              SearchModel.Page = 1;
+                                                                              await SaveStorage();
+                                                                              await Grid.Refresh();
+                                                                          });
 
     /// <summary>
     ///     Retrieves the most recent date from the CandidateMPC list and converts it to a MarkupString.
@@ -1231,24 +1205,48 @@ public partial class Candidates
                                                                           await Task.CompletedTask;
                                                                       });
 
-    private async Task GridPageChanging(GridPageChangingEventArgs page)
-    {
-        await ExecuteMethod(async () =>
-                            {
-                                if (page.CurrentPageSize != SearchModel.ItemCount)
-                                {
-                                    SearchModel.ItemCount = page.CurrentPageSize;
-                                    SearchModel.Page = 1;
-                                    await Grid.GoToPageAsync(1);
-                                }
-                                else
-                                {
-                                    SearchModel.Page = page.CurrentPage;
-                                    await Grid.Refresh();
-                                }
+    private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
+                                                                                   {
+                                                                                       if (page.CurrentPageSize != SearchModel.ItemCount)
+                                                                                       {
+                                                                                           SearchModel.ItemCount = page.CurrentPageSize;
+                                                                                           SearchModel.Page = 1;
+                                                                                           await Grid.GoToPageAsync(1);
+                                                                                       }
+                                                                                       else
+                                                                                       {
+                                                                                           SearchModel.Page = page.CurrentPage;
+                                                                                           // await Grid.Refresh();
+                                                                                       }
 
-                                await SaveStorage();
-                            });
+                                                                                       await SaveStorage();
+                                                                                   });
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (await SessionStorage.ContainKeyAsync(StorageName))
+            {
+                SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
+            }
+            else
+            {
+                SearchModel.Clear();
+            }
+
+            HasRendered = true;
+            try
+            {
+                _initializationTaskSource.SetResult(true);
+            }
+            catch
+            {
+                //
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     /// <summary>
@@ -1268,7 +1266,6 @@ public partial class Candidates
     protected override async Task OnInitializedAsync()
     {
         _initializationTaskSource = new();
-
         await ExecuteMethod(async () =>
                             {
                                 // Get user claims
@@ -1312,21 +1309,19 @@ public partial class Candidates
                                 Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
 
                                 // Deserialize configuration data into master objects
-                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()], true);
-                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()], true);
-                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()], true);
-                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()], true);
-                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()], true);
-                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()], true);
-                                _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()], true);
-                                _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()], true);
-                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()], true);
-                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()], true);
-                                SearchModel.Clear();
-                                SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
-                            }); 
+                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]);
+                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
+                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
+                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
+                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()]);
+                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
+                                _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
+                                _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()]);
+                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
+                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
+                            });
 
-        _initializationTaskSource.SetResult(true);
+        //        _initializationTaskSource.SetResult(true);
 
         await base.OnInitializedAsync();
     }
@@ -1627,10 +1622,7 @@ public partial class Candidates
                                                                    }
                                                                });
 
-    private async Task SaveStorage()
-    {
-        await SessionStorage.SetItemAsync(StorageName, SearchModel);
-    }
+    private async Task SaveStorage() => await SessionStorage.SetItemAsync(StorageName, SearchModel);
 
     /// <summary>
     ///     Sets the communication rating of the candidate.
@@ -1722,11 +1714,11 @@ public partial class Candidates
 
                 if (_returnValue != "")
                 {
-                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.Key == _str)?.Value;
+                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
                 }
                 else
                 {
-                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.Key == _str)?.Value;
+                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
                 }
             }
         }
@@ -1762,11 +1754,11 @@ public partial class Candidates
 
                 if (_returnValue != "")
                 {
-                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.Key == _str)?.Value;
+                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
                 }
                 else
                 {
-                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.Key == _str)?.Value;
+                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
                 }
             }
         }
@@ -1810,13 +1802,14 @@ public partial class Candidates
         {
             if (_generateAddress == "")
             {
-                _generateAddress = SplitState(_candidateDetailsObject.StateID).Name;// _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                _generateAddress = SplitState(_candidateDetailsObject.StateID).Name; // _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
             }
             else
             {
                 try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                 {
-                    _generateAddress += ", " + SplitState(_candidateDetailsObject.StateID).Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                    _generateAddress += ", " + SplitState(_candidateDetailsObject.StateID)
+                                           .Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
                 }
                 catch
                 {
@@ -1914,7 +1907,6 @@ public partial class Candidates
         string _state = parts[1];
 
         return (_code, _state);
-
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
@@ -1953,13 +1945,13 @@ public partial class Candidates
                 List<Candidate> _dataSource = [];
 
                 object _candidateReturn = null;
+                int _count = 0;
                 try
                 {
-                    (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
+                    (string _data, _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
 
                     _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
 
-                    Count = _count;
                     _candidateReturn = dm.RequiresCounts ? new DataResult
                                                            {
                                                                Result = _dataSource,
@@ -1988,10 +1980,10 @@ public partial class Candidates
                     }
                 }
 
-                if (Count > 0)
+                /*if (_count > 0)
                 {
                     await Grid.SelectRowAsync(0);
-                }
+                }*/
 
                 return _candidateReturn;
             }

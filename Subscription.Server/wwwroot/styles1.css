@@ -804,17 +804,6 @@ body, form, html {
     stroke: var(--c-grayCF);
 }
 
-.spinnerHeight {
-    background-color: #ffffff;
-    background-color: rgba(255, 255, 255, 1);
-    height: 100%;
-    width: 100%;
-}
-
-.spinnerSmall {
-    height: calc(100% - 44px);
-    margin-top: 44px;
-}
 /* #endregion Spinner */
 
 /* #region Switch */
@@ -847,10 +836,9 @@ body, form, html {
     background: var(--c-red);
 }
 
-div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"], div#tabRequisition div[id^="e-content-tabRequisition"] {
+div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-content-tabCandidates"] {
     border: 1px solid var(--c-red);
-    /*height: 280px;*/
-    height: calc(100% - 15px);
+    height: 280px;
     width: 99%;
 }
 

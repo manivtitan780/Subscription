@@ -6,41 +6,41 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           Requisitions.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          05-01-2024 15:05
-// Last Updated On:     01-11-2025 19:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 19:02
+// Last Updated On:     02-08-2025 16:02
 // *****************************************/
 
 #endregion
+
+using System.Runtime.InteropServices.JavaScript;
 
 namespace Subscription.Server.Components.Pages;
 
 public partial class Requisitions
 {
     private const string StorageName = "RequisitionGrid";
-    private static int _currentPage = 1;
-    private Requisition _target;
 
     private static TaskCompletionSource<bool> _initializationTaskSource;
+
+    private List<CandidateActivity> _candidateActivityObject = [];
     private List<KeyValues> _companies;
-    private List<IntValues> _education;
-    private List<IntValues> _eligibility;
-    private List<IntValues> _experience;
-    private List<KeyValues> _jobOptions;
+    private List<IntValues> _education, _eligibility, _experience, _states;
+    private List<KeyValues> _jobOptions, _statusSearch = [];
     private Preferences _preference;
-    private MarkupString _requisitionDetailSkills = "".ToMarkupString();
+
+    private Query _query = new();
+    private MarkupString _requisitionDetailSkills = string.Empty.ToMarkupString();
 
     private RequisitionDetails _requisitionDetailsObject = new(), _requisitionDetailsObjectClone = new();
     private List<RequisitionDocuments> _requisitionDocumentsObject = [];
-    private int _selectedTab;
 
     private List<Role> _roles;
+    private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
-    private List<IntValues> _skills;
-    private List<IntValues> _states;
     private List<StatusCode> _statusCodes;
 
-    private readonly List<KeyValues> _statusSearch = [];
+    private Requisition _target;
     private List<AppWorkflow> _workflows;
 
     /// <summary>
@@ -66,7 +66,7 @@ public partial class Requisitions
     /// <value>
     ///     The list of companies.
     /// </value>
-    internal static List<Company> Companies
+    private List<Company> Companies
     {
         get;
         set;
@@ -78,7 +78,7 @@ public partial class Requisitions
     /// <value>
     ///     The list of company contacts.
     /// </value>
-    internal static List<CompanyContacts> CompanyContacts
+    private List<CompanyContacts> CompanyContacts
     {
         get;
         set;
@@ -94,29 +94,14 @@ public partial class Requisitions
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the count of items.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the total number of items in the data source.
-    ///     It is updated whenever the data source is refreshed or a new set of items is loaded.
-    /// </remarks>
-    internal static int Count
+    /*
+    [Inject]
+    private Container ContainerObject
     {
         get;
         set;
     }
-
-    /// <summary>
-    ///     Gets or sets the end record of the requisition. The end record is calculated as the start record plus the count of
-    ///     data source items.
-    ///     This property is used to determine the range of records displayed on the current page of the requisition grid.
-    /// </summary>
-    internal static int EndRecord
-    {
-        get;
-        set;
-    }
+    */
 
     private static SfGrid<Requisition> Grid
     {
@@ -180,16 +165,10 @@ public partial class Requisitions
         set;
     }
 
-    internal static int PageCount
-    {
-        get;
-        set;
-    }
-
     /// <summary>
     ///     Gets or sets the ID of the requisition. This ID is used to uniquely identify a requisition in the system.
     /// </summary>
-    private static int RequisitionID
+    private int RequisitionID
     {
         get;
         set;
@@ -199,16 +178,17 @@ public partial class Requisitions
     ///     Gets or sets the search model for the requisition. This model is used to store the search parameters for finding
     ///     requisitions.
     /// </summary>
-    private static RequisitionSearch SearchModel
+    private RequisitionSearch SearchModel
     {
         get;
+        set;
     } = new();
 
     /// <summary>
     ///     Gets or sets the search model for the requisition. This model is used to store the search parameters for finding
     ///     requisitions.
     /// </summary>
-    private static RequisitionSearch SearchModelClone
+    private RequisitionSearch SearchModelClone
     {
         get;
         set;
@@ -233,11 +213,11 @@ public partial class Requisitions
     ///     Gets or sets the skills associated with the requisition.
     ///     This is a list of <see cref="IntValues" /> where each value represents a unique skill.
     /// </summary>
-    internal static List<IntValues> Skills
+    private List<IntValues> Skills
     {
         get;
         set;
-    }
+    } = [];
 
     /// <summary>
     ///     Gets or sets the sort direction for the requisition grid. This property is used to determine the order in which
@@ -263,19 +243,13 @@ public partial class Requisitions
         set;
     }
 
-    private SfSpinner SpinnerTop
-    {
-        get;
-        set;
-    }
-
     private SfSpinner Spinner
     {
         get;
         set;
     } = new();
 
-    internal static int StartRecord
+    private SfSpinner SpinnerTop
     {
         get;
         set;
@@ -286,7 +260,7 @@ public partial class Requisitions
     ///     This list is populated with the 'StatusCount' data from the API response.
     ///     Each status is represented by a 'KeyValues' object.
     /// </summary>
-    internal static List<KeyValues> StatusList
+    private List<KeyValues> StatusList
     {
         get;
         set;
@@ -318,10 +292,6 @@ public partial class Requisitions
                                                                           //await DialogSearch.ShowDialog();
                                                                       });
 
-    private async Task SaveStorage()
-    {
-        await SessionStorage.SetItemAsync(StorageName, SearchModel);
-    }
     /// <summary>
     ///     Handles the click event for the "All Alphabet" button in the requisition grid.
     /// </summary>
@@ -333,40 +303,20 @@ public partial class Requisitions
     /// <param name="args">The <see cref="MouseEventArgs" /> instance containing the event data.</param>
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                     {
-                                                                        SearchModel.Title = "";
-                                                                        _currentPage = 1;
+                                                                        SearchModel.Title = string.Empty;
                                                                         SearchModel.Page = 1;
                                                                         await SaveStorage();
-                                                                        AutocompleteValue = "";
-                                                                        await Grid.Refresh();
+                                                                        AutocompleteValue = string.Empty;
+                                                                        //await Grid.Refresh();
                                                                     });
 
-    private static async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
-    {
-        SearchModel.Title = filter.Value;
-        SearchModel.Page = 1;
-        await Grid.Refresh();
-    }
-
-    /// <summary>
-    ///     Asynchronously changes the item count of the requisition.
-    /// </summary>
-    /// <param name="item">The change event arguments containing the new item count.</param>
-    /// <remarks>
-    ///     This method updates the item count of the requisition and refreshes the grid.
-    ///     It also saves the updated search model to the session storage.
-    ///     This method is not executed if an action is already in progress.
-    /// </remarks>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    private Task ChangeItemCount(ChangeEventArgs<int, IntValues> item) => ExecuteMethod(async () =>
-                                                                                        {
-                                                                                            SearchModel.Page = 1;
-                                                                                            SearchModel.ItemCount = item.Value;
-
-                                                                                            await SessionStorage.SetItemAsync(StorageName, SearchModel);
-                                                                                            await Grid.Refresh();
-                                                                                            StateHasChanged();
-                                                                                        });
+    private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
+                                                                                                     {
+                                                                                                         SearchModel.Title = filter.Value;
+                                                                                                         SearchModel.Page = 1;
+                                                                                                         await SaveStorage();
+                                                                                                         await Grid.Refresh();
+                                                                                                     });
 
     /// <summary>
     ///     Clears the filter applied to the requisitions.
@@ -375,38 +325,19 @@ public partial class Requisitions
     ///     This function is called when the "Clear Filter" button is clicked.
     ///     It resets the filter values and reloads the requisitions.
     /// </remarks>
-    private async Task ClearFilter()
-    {
-        SearchModel.Clear();
-        SearchModel.User = User;
-        await Grid.Refresh();
-    }
+    private Task ClearFilter() => ExecuteMethod(async () =>
+                                                {
+                                                    SearchModel.Clear();
+                                                    SearchModel.User = User;
+                                                    await SaveStorage();
+                                                    await Grid.Refresh();
+                                                });
 
-    private string GetDurationCode(string durationCode)
-    {
-        return durationCode.ToLower() switch
-               {
-                   "m" => "months",
-                   "w" => "weeks",
-                   "d" => "days",
-                   _ => "years"
-               };
-    }
-
-    private string GetLocation(string location)
-    {
-        if (_states == null || location.ToInt32() == 0)
-        {
-            return location;
-        }
-
-        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
-        {
-            return _intValues.Text;
-        }
-
-        return location;
-    }
+    /// <summary>
+    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
+    /// </summary>
+    [JSInvokable("DetailCollapse")]
+    public void DetailRowCollapse() => _target = null;
 
     /// <summary>
     ///     Handles the data processing for the requisition. This method is responsible for creating a reference to the current
@@ -448,12 +379,19 @@ public partial class Requisitions
                                                                   {
                                                                       await Grid.SelectRowAsync(0);
                                                                   }
+
+                                                                  if (StatusList.Count == 0)
+                                                                  {
+                                                                      byte[] _value = await SessionStorage.GetItemAsync<byte[]>("StatusList");
+                                                                      if (_value != null)
+                                                                      {
+                                                                          StatusList = General.DeserializeObject<List<KeyValues>>(_value.DecompressGZip());
+                                                                      }
+                                                                  }
                                                               }
 
                                                               RequisitionID = 0;
                                                           });
-
-    private List<CandidateActivity> _candidateActivityObject = [];
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition)
     {
@@ -473,110 +411,25 @@ public partial class Requisitions
 
                                  _target = requisition.Data;
 
-                                 await Task.Yield();
-                                 try
-                                 {
-                                     await Spinner?.ShowAsync()!;
-                                 }
-                                 catch
-                                 {
-                                     //
-                                 }
+                                 VisibleSpin = true;
 
                                  Dictionary<string, string> _parameters = new()
                                                                           {
                                                                               {"requisitionID", _target.ID.ToString()}
                                                                           };
 
-                                 Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Requisition/GetRequisitionDetails", _parameters);
+                                 ReturnRequisitionDetails _response = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters,
+                                                                                                                          null, false);
 
-                                 if (_restResponse != null)
-                                 {
-                                     _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_restResponse["Requisition"]);
-                                     _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_restResponse["Activity"]);
-                                     _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_restResponse["Documents"]);
-                                     SetSkills();
-                                 }
+                                 _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_response.Requisition);
+                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity);
+                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response.Documents);
+                                 SetSkills();
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
 
-                                 await Task.Yield();
-
-                                 try
-                                 {
-                                     await Spinner?.HideAsync()!;
-                                 }
-                                 catch
-                                 {
-                                     //
-                                 }
+                                 VisibleSpin = false;
                              });
-    }
-
-    /// <summary>
-    ///     Sets the skills for the requisition details object.
-    /// </summary>
-    /// <remarks>
-    ///     This method sets the required and optional skills for the requisition details object.
-    ///     The skills are retrieved from the SkillsRequired and Optional properties of the requisition details object.
-    ///     The skills are then formatted into a string and converted to a MarkupString which is stored in the
-    ///     _requisitionDetailSkills field.
-    ///     If the requisition details object is null or both the SkillsRequired and Optional properties are null or
-    ///     whitespace, the method will return without setting the skills.
-    /// </remarks>
-    private void SetSkills()
-    {
-        if (_requisitionDetailsObject == null)
-        {
-            return;
-        }
-
-        if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
-        {
-            return;
-        }
-
-        _requisitionDetailSkills = "".ToMarkupString();
-
-        string[] _skillRequiredStrings = [], _skillOptionalStrings = [];
-        if (_requisitionDetailsObject.SkillsRequired.NotNullOrWhiteSpace())
-        {
-            _skillRequiredStrings = _requisitionDetailsObject.SkillsRequired!.Split(',');
-        }
-
-        if (_requisitionDetailsObject.Optional.NotNullOrWhiteSpace())
-        {
-            _skillOptionalStrings = _requisitionDetailsObject.Optional.Split(',');
-        }
-
-        string _skillsRequired = "", _skillsOptional = "";
-        _skillsRequired = _skillRequiredStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Where(skill => skill != null).Aggregate(_skillsRequired, (current, skill) => current + (", " + skill.Text));
-        if (_skillsRequired.StartsWith(", "))
-        {
-            _skillsRequired = _skillsRequired[2..];
-        }
-
-        _skillsOptional = _skillOptionalStrings.Select(skillString => _skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32()))
-                                               .Where(skill => skill != null).Aggregate(_skillsOptional, (current, skill) => current + (", " + skill.Text));
-        if (_skillsOptional.StartsWith(", "))
-        {
-            _skillsOptional = _skillsRequired[2..];
-        }
-
-        string _skillStringTemp = "";
-
-        if (!_skillsRequired.NullOrWhiteSpace())
-        {
-            _skillStringTemp = "Required Skills: <br/>" + _skillsRequired + "<br/>";
-        }
-
-        if (!_skillsOptional.NullOrWhiteSpace())
-        {
-            _skillStringTemp += "Optional Skills: <br/>" + _skillsOptional;
-        }
-
-        _requisitionDetailSkills = _skillStringTemp.ToMarkupString();
     }
 
     /// <summary>
@@ -592,15 +445,39 @@ public partial class Requisitions
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
-    private async Task GetAlphabets(char alphabet)
+    private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
+                                                                          {
+                                                                              SearchModel.Title = alphabet.ToString();
+                                                                              SearchModel.Page = 1;
+                                                                              _query.Queries.Params["GetInformation"] = _companies.Count == 0;
+                                                                              await SaveStorage();
+                                                                              await Grid.Refresh();
+                                                                          });
+
+    private string GetDurationCode(string durationCode)
     {
-        await ExecuteMethod(async () =>
-                            {
-                                SearchModel.Title = alphabet.ToString();
-                                SearchModel.Page = 1;
-                                await SessionStorage.SetItemAsync(StorageName, SearchModel);
-                                await Grid.Refresh();
-                            });
+        return durationCode.ToLower() switch
+               {
+                   "m" => "months",
+                   "w" => "weeks",
+                   "d" => "days",
+                   _ => "years"
+               };
+    }
+
+    private string GetLocation(string location)
+    {
+        if (_states == null || location.ToInt32() == 0)
+        {
+            return location;
+        }
+
+        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
+        {
+            return _intValues.Text;
+        }
+
+        return location;
     }
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
@@ -614,11 +491,52 @@ public partial class Requisitions
                                                                                        else
                                                                                        {
                                                                                            SearchModel.Page = page.CurrentPage;
-                                                                                           await Grid.Refresh();
+                                                                                           // await Grid.Refresh();
                                                                                        }
 
-                                                                                       await SessionStorage.SetItemAsync(StorageName, SearchModel);
+                                                                                       await SaveStorage();
                                                                                    });
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (await SessionStorage.ContainKeyAsync(StorageName))
+            {
+                SearchModel = await SessionStorage.GetItemAsync<RequisitionSearch>(StorageName);
+            }
+            else
+            {
+                SearchModel.Clear();
+            }
+
+            SortDirectionProperty = SearchModel.SortDirection == 1 ? SortDirection.Ascending : SortDirection.Descending;
+            SortField = SearchModel.SortField switch
+                        {
+                            2 => "Code",
+                            3 => "Title",
+                            4 => "Company",
+                            5 => "Option",
+                            6 => "Status",
+                            8 => "DueEnd",
+                            _ => "Updated"
+                        };
+            AutocompleteValue = SearchModel.Title;
+            _query ??= new();
+            _query = _query.AddParams("GetInformation", true).AddParams("RequisitionID", 0).AddParams("User", User).AddParams("SearchModel", SearchModel).AddParams("StatusList", string.Empty);
+            HasRendered = true;
+            try
+            {
+                _initializationTaskSource.SetResult(true);
+            }
+            catch
+            {
+                //
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     /// <summary>
     ///     Asynchronously initializes the Requisition component.
@@ -696,40 +614,21 @@ public partial class Requisitions
                                 [
                                     CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Education.ToString(),
                                     CacheObjects.Experience.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.Users.ToString(), CacheObjects.Skills.ToString(),
-                                    CacheObjects.StatusCodes.ToString(), CacheObjects.Preferences.ToString(), CacheObjects.Companies.ToString(), CacheObjects.Workflow.ToString()
+                                    CacheObjects.StatusCodes.ToString(), CacheObjects.Preferences.ToString(), CacheObjects.Companies.ToString(), CacheObjects.Workflow.ToString(),
+                                    CacheObjects.CompanyContacts.ToString()
                                 ];
 
-                                Dictionary<string, string> _parameters = new()
-                                                                         {
-                                                                             {"value", JsonConvert.SerializeObject(_keys)}
-                                                                         };
-                                Dictionary<string, object> _cacheValues = await General.PostRest("Redis/BatchGet", _parameters);
+                                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+
+                                Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
+
                                 _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
 
-                                while (_states == null)
-                                {
-                                    _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
-                                }
-
-                                while (_eligibility == null)
-                                {
-                                    _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
-                                }
-
-                                while (_education == null)
-                                {
-                                    _education = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Education.ToString()]);
-                                }
-
-                                while (_experience == null)
-                                {
-                                    _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
-                                }
-
-                                while (_jobOptions == null)
-                                {
-                                    _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
-                                }
+                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
+                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
+                                _education = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Education.ToString()]);
+                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
+                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
 
                                 /*while (_recruiters == null)
                                 {
@@ -746,10 +645,7 @@ public partial class Requisitions
                                     }
                                 }*/
 
-                                while (_skills == null)
-                                {
-                                    _skills = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Skills.ToString()]);
-                                }
+                                Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Skills.ToString()]);
 
                                 _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
                                 _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
@@ -760,51 +656,115 @@ public partial class Requisitions
                                     {
                                         _statusSearch.Add(new()
                                                           {
-                                                              Key = _statusCode.Status,
-                                                              Value = _statusCode.Code
+                                                              KeyValue = _statusCode.Status,
+                                                              Text = _statusCode.Code
                                                           });
                                     }
                                 }
 
-                                List<Company> _companyList = General.DeserializeObject<List<Company>>(_cacheValues[CacheObjects.Companies.ToString()]);
+                                List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[CacheObjects.Companies.ToString()]);
+
+                                _companies = [];
+                                Companies = [];
                                 _companies.Add(new()
                                                {
-                                                   Key = "All Companies",
-                                                   Value = "%"
+                                                   KeyValue = "All Companies",
+                                                   Text = "%"
                                                });
                                 if (_companyList != null)
                                 {
-                                    foreach (Company _company in _companyList.Where(company => company.UpdatedBy == User || company.UpdatedBy == "ADMIN"))
+                                    foreach (CompaniesList _company in _companyList.Where(company => company.UpdatedBy == User || company.UpdatedBy == "ADMIN"))
                                     {
                                         _companies.Add(new()
                                                        {
-                                                           Key = _company.CompanyName,
-                                                           Value = _company.CompanyName
+                                                           KeyValue = _company.CompanyName,
+                                                           Text = _company.CompanyName
                                                        });
+
+                                        Companies.Add(new()
+                                                      {
+                                                          ID = _company.ID,
+                                                          CompanyName = _company.CompanyName
+                                                      });
                                     }
                                 }
 
+                                List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[CacheObjects.CompanyContacts.ToString()]);
+                                if (_companyContacts != null && _companyContacts.Count != 0)
+                                {
+                                    foreach (Company _company in Companies)
+                                    {
+                                        foreach (CompanyContacts _companyContact in _companyContacts.Where(companyContact => _company.ID == companyContact.CompanyID))
+                                        {
+                                            CompanyContacts.Add(new() {CompanyID = _company.ID, ID = _companyContact.ID, FirstName = $"{_companyContact.FirstName} {_companyContact.LastName}"});
+                                            break;
+                                        }
+                                    }
+
+                                    CompanyContacts = _companyContacts;
+                                }
+
                                 _workflows = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
-
-                                SortDirectionProperty = SearchModel.SortDirection == 1 ? SortDirection.Ascending : SortDirection.Descending;
-                                SortField = SearchModel.SortField switch
-                                            {
-                                                2 => "Code",
-                                                3 => "Title",
-                                                4 => "Company",
-                                                5 => "Option",
-                                                6 => "Status",
-                                                8 => "DueEnd",
-                                                _ => "Updated"
-                                            };
-                                AutocompleteValue = SearchModel.Title;
-
-                                await Grid.Refresh();
                             });
 
-        _initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
+
+    private async Task SaveStorage() => await SessionStorage.SetItemAsync(StorageName, SearchModel);
+
+    /// <summary>
+    ///     Sets the skills for the requisition details object.
+    /// </summary>
+    /// <remarks>
+    ///     This method sets the required and optional skills for the requisition details object.
+    ///     The skills are retrieved from the SkillsRequired and Optional properties of the requisition details object.
+    ///     The skills are then formatted into a string and converted to a MarkupString which is stored in the
+    ///     _requisitionDetailSkills field.
+    ///     If the requisition details object is null or both the SkillsRequired and Optional properties are null or
+    ///     whitespace, the method will return without setting the skills.
+    /// </remarks>
+    private void SetSkills()
+    {
+        if (_requisitionDetailsObject == null)
+        {
+            return;
+        }
+
+        if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
+        {
+            return;
+        }
+
+        string _skillsRequired = _requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() ? string.Empty :
+                                     _requisitionDetailsObject.SkillsRequired.Split(',')
+                                                              .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
+                                                               //.Where(text => text != null)
+                                                              .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
+                                     ?? string.Empty;
+
+        string _skillsOptional = _requisitionDetailsObject.Optional.NullOrWhiteSpace() ? string.Empty :
+                                     _requisitionDetailsObject.Optional.Split(',')
+                                                              .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
+                                                               //.Where(text => text != null)
+                                                              .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
+                                     ?? string.Empty;
+
+        string _skillStringTemp = string.Empty;
+
+        if (!_skillsRequired.NullOrWhiteSpace())
+        {
+            _skillStringTemp = "<strong>Required Skills:</strong> <br/>" + _skillsRequired + "<br/><br/>";
+        }
+
+        if (!_skillsOptional.NullOrWhiteSpace())
+        {
+            _skillStringTemp += "<strong>Optional Skills:</strong> <br/>" + _skillsOptional;
+        }
+
+        _requisitionDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? string.Empty : _skillStringTemp).ToMarkupString();
+    }
+
+    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg) => Task.CompletedTask;
 
     /// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
@@ -817,7 +777,7 @@ public partial class Requisitions
     ///     DataManagerRequest.
     ///     If there are any requisitions, it selects the first one. The method returns the retrieved requisitions data.
     /// </remarks>
-    internal class RequisitionAdaptor : DataAdaptor
+    public class RequisitionAdaptor(ISessionStorageService sessionStorage) : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
@@ -847,20 +807,85 @@ public partial class Requisitions
                 return null;
             }
 
+            if (_initializationTaskSource == null)
+            {
+                return null;
+            }
+
             await _initializationTaskSource.Task;
             try
             {
-                bool _getInformation = true;
-                if (Companies != null)
+                RequisitionSearch _searchModel = General.DeserializeObject<RequisitionSearch>(dm.Params["SearchModel"].ToString());
+                List<Requisition> _dataSource = [];
+
+                try
                 {
-                    _getInformation = Companies.Count == 0;
+                    Dictionary<string, string> _parameters = new()
+                                                             {
+                                                                 {"getCompanyInformation", dm.Params["GetInformation"].ToString()},
+                                                                 {"requisitionID", dm.Params["RequisitionID"].ToString()},
+                                                                 {"thenProceed", false.ToString()},
+                                                                 {"user", dm.Params["User"].ToString()}
+                                                             };
+                    (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
+                        await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, _searchModel, false);
+
+                    _dataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
+
+                    if (_dataSource == null)
+                    {
+                        return dm.RequiresCounts ? new DataResult
+                                                   {
+                                                       Result = null,
+                                                       Count = 0 /*_count*/
+                                                   } : null;
+                    }
+
+                    if (!dm.Params["GetInformation"].ToBoolean())
+                    {
+                        return dm.RequiresCounts ? new DataResult
+                                                   {
+                                                       Result = _dataSource,
+                                                       Count = _count /*_count*/
+                                                   } : _dataSource;
+                    }
+
+                    if (_status.NullOrWhiteSpace())
+                    {
+                        return dm.RequiresCounts ? new DataResult
+                                                   {
+                                                       Result = _dataSource,
+                                                       Count = _count /*_count*/
+                                                   } : _dataSource;
+                    }
+
+                    await sessionStorage.SetItemAsync("StatusList", _status.CompressGZip());
+
+                    return dm.RequiresCounts ? new DataResult
+                                               {
+                                                   Result = _dataSource,
+                                                   Count = _count /*_count*/
+                                               } : _dataSource;
                 }
+                catch (Exception)
+                {
+                    if (_dataSource == null)
+                    {
+                        return dm.RequiresCounts ? new DataResult
+                                                   {
+                                                       Result = null,
+                                                       Count = 1
+                                                   } : null;
+                    }
 
-                object _requisitionReturn = await General.GetRequisitionReadAdaptor(SearchModel, dm, _getInformation, RequisitionID, true, User);
+                    _dataSource.Add(new());
 
-                _currentPage = SearchModel.Page;
-
-                return _requisitionReturn;
+                    return dm.RequiresCounts ? new DataResult
+                                               {
+                                                   Result = _dataSource,
+                                                   Count = 1
+                                               } : _dataSource;
+                }
             }
             catch
             {
@@ -871,10 +896,5 @@ public partial class Requisitions
                 _semaphoreSlim.Release();
             }
         }
-    }
-
-    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg)
-    {
-        return Task.CompletedTask;
     }
 }

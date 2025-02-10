@@ -124,26 +124,26 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Communication)">
 						<Template>
-							<DropDown @bind-Value="Model.Communication" Model="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string" Placeholder="Communication" Text="Value" Key="Key" />
+							<DropDown @bind-Value="Model.Communication" Model="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string" Placeholder="Communication" Text="Text" Key="KeyValues" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerm)">
 						<Template>
-							<MultiSelect @bind-Value="Model.TaxTerm" Model="TaxTerms" ID="multiTaxTerms" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+							<MultiSelect @bind-Value="Model.TaxTerm" Model="TaxTerms" ID="multiTaxTerms" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" Text="Text" Key="KeyValue"/>
 							@*<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
 							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms"
 							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
-								<MultiSelectFieldSettings Text="Value" Value="Key" />
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue" />
 							</SfMultiSelect>*@
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.JobOptions)">
 						<Template>
-							<MultiSelect @bind-Value="Model.JobOptions" Model="JobOptions" ID="multiJobOptions" Placeholder="Select Job Option(s)" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+							<MultiSelect @bind-Value="Model.JobOptions" Model="JobOptions" ID="multiJobOptions" Placeholder="Select Job Option(s)" TItem="KeyValues" TValue="string" Text="Text" Key="KeyValue"/>
 							@*<label class="e-form-label" for="multiJobOptions">Job Options:</label>
 							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptions" DataSource="JobOptions" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiJobOptions"
 							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
-								<MultiSelectFieldSettings Text="Value" Value="Key" />
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue" />
 							</SfMultiSelect>*@
 						</Template>
 					</FormItem>

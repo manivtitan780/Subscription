@@ -17,9 +17,6 @@
 
 using Microsoft.AspNetCore.ResponseCompression;
 
-using Serilog;
-using Serilog.Sinks.MSSqlServer;
-
 using Subscription.Server.Components;
 
 #endregion
@@ -39,6 +36,8 @@ _builder.Services.AddSignalR(e =>
                                  e.EnableDetailedErrors = true;
                              });
 _builder.Services.AddScoped<SfDialogService>();
+_builder.Services.AddScoped<Container>();
+_builder.Services.AddScoped<Requisitions.RequisitionAdaptor>();
 _builder.Services.AddSyncfusionBlazor();
 _builder.Services.AddResponseCompression(options =>
                                          {
@@ -50,7 +49,6 @@ _builder.Services.AddResponseCompression(options =>
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
 /*
 Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Error()
@@ -64,8 +62,7 @@ _builder.Host.UseSerilog();*/
 WebApplication _app = _builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!_app.Environment.IsDevelopment())
-{
+if (!_app.Environment.IsDevelopment()){
     _app.UseExceptionHandler("/Error", true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     _app.UseHsts();
@@ -118,5 +115,6 @@ _app.Use(async (context, next) =>
 
              await next.Invoke();
          });
-
-_app.Run();
+//ServiceLocator.Configure(_app.Services);
+// General.SetServiceProvider(_app.Services);
+await _app.RunAsync();

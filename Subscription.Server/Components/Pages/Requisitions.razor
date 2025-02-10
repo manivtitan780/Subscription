@@ -3,14 +3,18 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)"
-            NumericCount="7" PageSize="SearchModel.ItemCount" TotalCount="@Count" ValueChange="AutocompleteValueChange">
+<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" ValueChange="AutocompleteValueChange">
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" @ref="Grid"
-		        TValue="Requisition" Width="100%">
+		        TValue="Requisition" Width="100%" Query="_query">
 			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
-			<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/>
+			@{
+				if (HasRendered)
+				{
+					<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/>
+				}
+			}
 			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>@* OnActionBegin="OnActionBegin"*@
 			<GridColumns>
 				<GridSortSettings AllowUnsort="false">
@@ -92,6 +96,7 @@
 						</SpeedDialItems>
 					</SfSpeedDial>
 					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%">
+						<SfSpinner @bind-Visible="@VisibleSpin" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 						<TabAnimationSettings>
 							<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
 							<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
@@ -105,9 +110,9 @@
 								<ContentTemplate>
 									<div class="layout-2">
 										<div class="leftLayout">
-											<PanelDisplayText Label="Company Name" Text="@(_requisitionDetailsObject.CompanyName ?? string.Empty)"/>
-											<PanelDisplayText Label="Contact Name" Text="@(_requisitionDetailsObject.ContactName ?? string.Empty)"/>
-											<PanelDisplayText Label="Job Title" Text="@(_requisitionDetailsObject.PositionTitle ?? string.Empty)"/>
+											<PanelDisplayText Label="Company Name" Text="@(_requisitionDetailsObject.CompanyName)"/>
+											<PanelDisplayText Label="Contact Name" Text="@(_requisitionDetailsObject.ContactName)"/>
+											<PanelDisplayText Label="Job Title" Text="@(_requisitionDetailsObject.PositionTitle)"/>
 											<PanelDisplayText Label="No. of Positions" Text="@(_requisitionDetailsObject.Positions.ToString())"/>
 											<PanelDisplayText Label="Location" Text="@GetLocation(_requisitionDetailsObject.Location)"/>
 											<PanelDisplayText Label="Duration" Text="@(_requisitionDetailsObject.Duration + " " + GetDurationCode(_requisitionDetailsObject.DurationCode))"/>
@@ -117,16 +122,16 @@
 											<PanelDisplayText Label="Salary Expected" Text="@($"{_requisitionDetailsObject.SalaryLow.CultureCurrency()} - {_requisitionDetailsObject.SalaryHigh.CultureCurrency()}")"/>
 											<PanelDisplayText Label="Load Expected" Text="@($"{_requisitionDetailsObject.ExpLoadLow.CultureCurrency()} - {_requisitionDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
 											<PanelDisplayText Label="Placement Fee" Text="@(_requisitionDetailsObject.PlacementFee.CulturePercentage())"/>
-											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status ?? string.Empty)"/>
+											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status)"/>
 										</div>
 										<div class="leftLayout">
-											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_requisitionDetailsObject.AssignedTo ?? string.Empty)"/>
-											<PanelDisplayText Label="Priority" Text="@(_requisitionDetailsObject.Priority ?? string.Empty)"/>
-											<PanelDisplayText Label="Job Options" Text="@(_requisitionDetailsObject.JobOptions ?? string.Empty)"/>
-											<PanelDisplayText Label="Experience" Text="@(_requisitionDetailsObject.Experience ?? string.Empty)"/>
-											<PanelDisplayText Label="Report To" Text="@(_requisitionDetailsObject.ReportTo ?? string.Empty)"/> 
-											<PanelDisplayText Label="Education" Text="@(_requisitionDetailsObject.Education ?? string.Empty)"/>
-											<PanelDisplayText Label="Eligibility" Text="@(_requisitionDetailsObject.Eligibility ?? string.Empty)"/>
+											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_requisitionDetailsObject.AssignedTo)"/>
+											<PanelDisplayText Label="Priority" Text="@(_requisitionDetailsObject.Priority)"/>
+											<PanelDisplayText Label="Job Options" Text="@(_requisitionDetailsObject.JobOptions)"/>
+											<PanelDisplayText Label="Experience" Text="@(_requisitionDetailsObject.Experience)"/>
+											<PanelDisplayText Label="Report To" Text="@(_requisitionDetailsObject.ReportTo)"/>
+											<PanelDisplayText Label="Education" Text="@(_requisitionDetailsObject.Education)"/>
+											<PanelDisplayText Label="Eligibility" Text="@(_requisitionDetailsObject.Eligibility)"/>
 											<PanelDisplayText Label="Expenses Paid?" Text="@_requisitionDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
 											<PanelDisplayText Label="Security Clearance?" Text="@_requisitionDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
 											<PanelDisplayText Label="OFCCP?" Text="@_requisitionDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
@@ -164,7 +169,6 @@
 							</ContentTemplate>
 						</TabItem>*@
 						</TabItems>
-						<SfSpinner @bind-Visible="@VisibleSpin" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
 					</SfTab>
 				</DetailTemplate>
 			</GridTemplates>

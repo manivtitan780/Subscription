@@ -20,7 +20,7 @@
         <SfAutoComplete CssClass="rightMargin" AllowCustom="true" EnablePersistence="false" Highlight="true" HtmlAttributes="@_htmlAttribute" ID="autoFilter" MinLength="3" Placeholder="Select&hellip;"
                         @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="200px" @bind-Value="@Name">
             <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(DropDownAdaptor)" Key="Key"></SfDataManager>
-            <AutoCompleteFieldSettings Text="Key" Value="Value"></AutoCompleteFieldSettings>
+            <AutoCompleteFieldSettings Text="Text" Value="KeyValue"></AutoCompleteFieldSettings>
             <AutoCompleteEvents Created="Created" TItem="KeyValues" TValue="string" ValueChange="ValueChange" />
         </SfAutoComplete>
     </div>
