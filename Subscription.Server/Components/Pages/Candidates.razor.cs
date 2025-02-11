@@ -638,7 +638,7 @@ public partial class Candidates
                                                                         SearchModel.Name = "";
                                                                         SearchModel.Page = 1;
                                                                         await SaveStorage();
-                                                                        await Grid.Refresh();
+                                                                        await Grid.Refresh(true);
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
@@ -661,7 +661,7 @@ public partial class Candidates
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
                                                     await SaveStorage();
-                                                    await Grid.Refresh();
+                                                    await Grid.Refresh(true);
                                                 });
 
     private Dictionary<string, string> CreateParameters(int id) => new()
@@ -1082,7 +1082,7 @@ public partial class Candidates
                                                                               SearchModel.Name = alphabet.ToString();
                                                                               SearchModel.Page = 1;
                                                                               await SaveStorage();
-                                                                              await Grid.Refresh();
+                                                                              await Grid.Refresh(true);
                                                                           });
 
     /// <summary>
@@ -1120,7 +1120,7 @@ public partial class Candidates
         string _mpcNote = "";
         if (_candidateDetailsObject.MPCNotes == "")
         {
-            MPCNote = _mpcNote.ToMarkupString();
+            MPCNote = _mpcNote.ToMarkupString(); 
             return;
         }
 
