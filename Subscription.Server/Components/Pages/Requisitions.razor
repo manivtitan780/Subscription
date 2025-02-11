@@ -5,8 +5,8 @@
 <PageHeader/>
 <GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" ValueChange="AutocompleteValueChange">
 	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" @ref="Grid"
-		        TValue="Requisition" Width="100%" Query="_query">
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" 
+				Query="_query" @ref="Grid" TValue="Requisition" Width="100%">
 			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 			@{
@@ -15,7 +15,7 @@
 					<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/>
 				}
 			}
-			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>@* OnActionBegin="OnActionBegin"*@
+			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>
 			<GridColumns>
 				<GridSortSettings AllowUnsort="false">
 					@*<GridSortColumns>

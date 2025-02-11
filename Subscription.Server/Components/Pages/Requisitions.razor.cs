@@ -305,9 +305,8 @@ public partial class Requisitions
                                                                     {
                                                                         SearchModel.Title = string.Empty;
                                                                         SearchModel.Page = 1;
-                                                                        await SaveStorage();
                                                                         AutocompleteValue = string.Empty;
-                                                                        //await Grid.Refresh();
+                                                                        await SaveStorage();
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
@@ -315,7 +314,6 @@ public partial class Requisitions
                                                                                                          SearchModel.Title = filter.Value;
                                                                                                          SearchModel.Page = 1;
                                                                                                          await SaveStorage();
-                                                                                                         await Grid.Refresh();
                                                                                                      });
 
     /// <summary>
@@ -330,7 +328,6 @@ public partial class Requisitions
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
                                                     await SaveStorage();
-                                                    await Grid.Refresh();
                                                 });
 
     /// <summary>
@@ -451,7 +448,6 @@ public partial class Requisitions
                                                                               SearchModel.Page = 1;
                                                                               _query.Queries.Params["GetInformation"] = _companies.Count == 0;
                                                                               await SaveStorage();
-                                                                              await Grid.Refresh();
                                                                           });
 
     private string GetDurationCode(string durationCode)
@@ -494,7 +490,7 @@ public partial class Requisitions
                                                                                            // await Grid.Refresh();
                                                                                        }
 
-                                                                                       await SaveStorage();
+                                                                                       await SaveStorage(false);
                                                                                    });
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -523,7 +519,7 @@ public partial class Requisitions
                         };
             AutocompleteValue = SearchModel.Title;
             _query ??= new();
-            _query = _query.AddParams("GetInformation", true).AddParams("RequisitionID", 0).AddParams("User", User).AddParams("SearchModel", SearchModel).AddParams("StatusList", string.Empty);
+            _query = _query.AddParams("GetInformation", true).AddParams("RequisitionID", 0).AddParams("User", User).AddParams("SearchModel", SearchModel);
             HasRendered = true;
             try
             {
@@ -710,7 +706,14 @@ public partial class Requisitions
         await base.OnInitializedAsync();
     }
 
-    private async Task SaveStorage() => await SessionStorage.SetItemAsync(StorageName, SearchModel);
+    private async Task SaveStorage(bool refreshGrid = true)
+    {
+        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+        if (refreshGrid)
+        {
+            await Grid.Refresh(true);
+        }
+    }
 
     /// <summary>
     ///     Sets the skills for the requisition details object.

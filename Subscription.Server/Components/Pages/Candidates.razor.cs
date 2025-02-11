@@ -47,6 +47,8 @@ public partial class Candidates
         new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
     ];
 
+    private Query _query = new();
+
     /// <summary>
     ///     Represents the address of the candidate.
     /// </summary>
@@ -298,7 +300,7 @@ public partial class Candidates
     ///     This grid is used to display the list of candidates and their details.
     ///     It supports various operations such as sorting, filtering, and paging.
     /// </remarks>
-    private static SfGrid<Candidate> Grid
+    private SfGrid<Candidate> Grid
     {
         get;
         set;
@@ -498,7 +500,7 @@ public partial class Candidates
     ///     This model contains the search parameters used to filter the list of candidates displayed in the grid.
     ///     It includes properties such as Name and Page for pagination and filtering.
     /// </remarks>
-    internal static CandidateSearch SearchModel
+    private CandidateSearch SearchModel
     {
         get;
         set;
@@ -638,7 +640,6 @@ public partial class Candidates
                                                                         SearchModel.Name = "";
                                                                         SearchModel.Page = 1;
                                                                         await SaveStorage();
-                                                                        await Grid.Refresh(true);
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
@@ -646,7 +647,6 @@ public partial class Candidates
                                                                                                          SearchModel.Name = filter.Value;
                                                                                                          SearchModel.Page = 1;
                                                                                                          await SaveStorage();
-                                                                                                         await Grid.Refresh();
                                                                                                      });
 
     /// <summary>
@@ -661,7 +661,6 @@ public partial class Candidates
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
                                                     await SaveStorage();
-                                                    await Grid.Refresh(true);
                                                 });
 
     private Dictionary<string, string> CreateParameters(int id) => new()
@@ -881,14 +880,7 @@ public partial class Candidates
     /// </remarks>
     private Task EditCandidate() => ExecuteMethod(async () =>
                                                   {
-                                                      try
-                                                      {
-                                                          await Spinner?.ShowAsync()!;
-                                                      }
-                                                      catch
-                                                      {
-                                                          //Ignore the exception.
-                                                      }
+                                                      VisibleSpin = true;
 
                                                       if (_target == null || _target.ID == 0)
                                                       {
@@ -910,14 +902,7 @@ public partial class Candidates
                                                           _candidateDetailsObjectClone.IsAdd = false;
                                                       }
 
-                                                      try
-                                                      {
-                                                          await Spinner?.HideAsync()!;
-                                                      }
-                                                      catch
-                                                      {
-                                                          //Ignore the exception.
-                                                      }
+                                                      VisibleSpin = false;
 
                                                       await CandidateDialog.ShowDialog();
                                                       StateHasChanged();
@@ -940,6 +925,7 @@ public partial class Candidates
     /// </remarks>
     private Task EditEducation(int id) => ExecuteMethod(async () =>
                                                         {
+                                                            VisibleSpin = true;
                                                             if (id == 0)
                                                             {
                                                                 if (SelectedEducation == null)
@@ -957,6 +943,7 @@ public partial class Candidates
                                                             }
 
                                                             EditConEducation = new(SelectedEducation!);
+                                                            VisibleSpin = false;
                                                             await CandidateEducationDialog.ShowDialog();
                                                         });
 
@@ -980,6 +967,7 @@ public partial class Candidates
     /// </remarks>
     private Task EditExperience(int id) => ExecuteMethod(async () =>
                                                          {
+                                                             VisibleSpin = true;
                                                              if (id == 0)
                                                              {
                                                                  if (SelectedExperience == null)
@@ -997,11 +985,13 @@ public partial class Candidates
                                                              }
 
                                                              EditConExperience = new(SelectedExperience!);
+                                                             VisibleSpin = false;
                                                              await CandidateExperienceDialog.ShowDialog();
                                                          });
 
     private Task EditNotes(int id) => ExecuteMethod(async () =>
                                                     {
+                                                        VisibleSpin = true;
                                                         if (id == 0)
                                                         {
                                                             if (SelectedNotes == null)
@@ -1019,6 +1009,7 @@ public partial class Candidates
                                                         }
 
                                                         EditConNotes = new(SelectedNotes!);
+                                                        VisibleSpin = false;
                                                         await CandidateNotesDialog.ShowDialog();
                                                     });
 
@@ -1038,6 +1029,7 @@ public partial class Candidates
     /// </remarks>
     private Task EditSkill(int skill) => ExecuteMethod(async () =>
                                                        {
+                                                           VisibleSpin = true;
                                                            if (skill == 0)
                                                            {
                                                                if (SelectedSkill == null)
@@ -1055,6 +1047,7 @@ public partial class Candidates
                                                            }
 
                                                            EditConSkill = new(SelectedSkill!);
+                                                           VisibleSpin = false;
                                                            await CandidateSkillDialog.ShowDialog();
                                                        });
 
@@ -1082,7 +1075,6 @@ public partial class Candidates
                                                                               SearchModel.Name = alphabet.ToString();
                                                                               SearchModel.Page = 1;
                                                                               await SaveStorage();
-                                                                              await Grid.Refresh(true);
                                                                           });
 
     /// <summary>
@@ -1120,7 +1112,7 @@ public partial class Candidates
         string _mpcNote = "";
         if (_candidateDetailsObject.MPCNotes == "")
         {
-            MPCNote = _mpcNote.ToMarkupString(); 
+            MPCNote = _mpcNote.ToMarkupString();
             return;
         }
 
@@ -1216,10 +1208,9 @@ public partial class Candidates
                                                                                        else
                                                                                        {
                                                                                            SearchModel.Page = page.CurrentPage;
-                                                                                           // await Grid.Refresh();
                                                                                        }
 
-                                                                                       await SaveStorage();
+                                                                                       await SaveStorage(false);
                                                                                    });
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -1235,6 +1226,8 @@ public partial class Candidates
                 SearchModel.Clear();
             }
 
+            _query ??= new();
+            _query = _query.AddParams("SearchModel", SearchModel);
             HasRendered = true;
             try
             {
@@ -1320,8 +1313,6 @@ public partial class Candidates
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
                             });
-
-        //        _initializationTaskSource.SetResult(true);
 
         await base.OnInitializedAsync();
     }
@@ -1452,7 +1443,8 @@ public partial class Candidates
                                                                                                                             {"candidateID", _target.ID.ToString()},
                                                                                                                             {"user", User}
                                                                                                                         };
-                                                                               string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters, _candidateEducation);
+                                                                               string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters, 
+                                                                                                                                    _candidateEducation);
                                                                                if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                {
                                                                                    return;
@@ -1622,7 +1614,14 @@ public partial class Candidates
                                                                    }
                                                                });
 
-    private async Task SaveStorage() => await SessionStorage.SetItemAsync(StorageName, SearchModel);
+    private async Task SaveStorage(bool refreshGrid = true)
+    {
+        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+        if (refreshGrid)
+        {
+            await Grid.Refresh(true);
+        }
+    }
 
     /// <summary>
     ///     Sets the communication rating of the candidate.
@@ -1945,10 +1944,11 @@ public partial class Candidates
                 List<Candidate> _dataSource = [];
 
                 object _candidateReturn = null;
-                int _count = 0;
                 try
                 {
-                    (string _data, _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
+                    CandidateSearch _searchModel = General.DeserializeObject<CandidateSearch>(dm.Params["SearchModel"].ToString());
+
+                    (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, _searchModel, false);
 
                     _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
 
@@ -1979,11 +1979,6 @@ public partial class Candidates
                                                                } : _dataSource;
                     }
                 }
-
-                /*if (_count > 0)
-                {
-                    await Grid.SelectRowAsync(0);
-                }*/
 
                 return _candidateReturn;
             }

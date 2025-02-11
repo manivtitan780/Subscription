@@ -22,11 +22,10 @@
 @if (HasViewRights)
 {
 	*@
-<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates"
-            ValueChange="AutocompleteValueChange">@*Name="@(SearchModel.Name)"*@
+<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)"ValueChange="AutocompleteValueChange">
 	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
-		        TValue="Candidate" Width="100%">
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" 
+				Query="_query" @ref="Grid" TValue="Candidate" Width="100%">
 			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			@{
@@ -35,7 +34,7 @@
 					<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID"/>
 				}
 			}
-			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate"/>@* OnActionBegin="OnActionBegin" RowSelected="RowSelected" *@
+			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate"/>
 			<GridColumns>
 				<GridSortSettings AllowUnsort="false">
 					@* <GridSortColumns>
