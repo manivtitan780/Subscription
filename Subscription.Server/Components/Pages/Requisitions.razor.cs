@@ -13,8 +13,6 @@
 
 #endregion
 
-using System.Runtime.InteropServices.JavaScript;
-
 namespace Subscription.Server.Components.Pages;
 
 public partial class Requisitions
@@ -24,9 +22,8 @@ public partial class Requisitions
     private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private List<CandidateActivity> _candidateActivityObject = [];
-    private List<KeyValues> _companies;
-    private List<IntValues> _education, _eligibility, _experience, _states;
-    private List<KeyValues> _jobOptions, _statusSearch = [];
+    private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
+    private List<KeyValues> _companies = [], _jobOptions = [], _statusSearch = [];
     private Preferences _preference;
 
     private Query _query = new();
@@ -272,7 +269,7 @@ public partial class Requisitions
         set;
     }
 
-    private bool VisibleSpin
+    private bool VisibleSpinner
     {
         get;
         set;
@@ -305,7 +302,6 @@ public partial class Requisitions
                                                                     {
                                                                         SearchModel.Title = string.Empty;
                                                                         SearchModel.Page = 1;
-                                                                        AutocompleteValue = string.Empty;
                                                                         await SaveStorage();
                                                                     });
 
@@ -408,7 +404,7 @@ public partial class Requisitions
 
                                  _target = requisition.Data;
 
-                                 VisibleSpin = true;
+                                 VisibleSpinner = true;
 
                                  Dictionary<string, string> _parameters = new()
                                                                           {
@@ -425,7 +421,7 @@ public partial class Requisitions
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
 
-                                 VisibleSpin = false;
+                                 VisibleSpinner = false;
                              });
     }
 
@@ -517,7 +513,6 @@ public partial class Requisitions
                             8 => "DueEnd",
                             _ => "Updated"
                         };
-            AutocompleteValue = SearchModel.Title;
             _query ??= new();
             _query = _query.AddParams("GetInformation", true).AddParams("RequisitionID", 0).AddParams("User", User).AddParams("SearchModel", SearchModel);
             HasRendered = true;

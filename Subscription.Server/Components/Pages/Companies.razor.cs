@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           Companies.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-22-2024 15:04
-// Last Updated On:     01-14-2025 21:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 19:02
+// Last Updated On:     02-11-2025 19:02
 // *****************************************/
 
 #endregion
@@ -24,6 +24,7 @@ public partial class Companies
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
+    private readonly Query _query = new();
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
 
@@ -102,6 +103,11 @@ public partial class Companies
         get;
         set;
     }
+
+    private bool HasRendered
+    {
+        get;
+    } = false;
 
     private bool HasViewRights
     {
@@ -232,29 +238,32 @@ public partial class Companies
         set;
     }
 
-    private async Task AllAlphabets()
+    private bool VisibleSpinner
     {
-        SearchModel.CompanyName = "";
-        SearchModel.Page = 1;
-        await SaveStorage();
-        await Grid.Refresh();
+        get;
+        set;
     }
 
-    private async Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter)
-    {
-        SearchModel.CompanyName = filter.Value;
-        SearchModel.Page = 1;
-        await SaveStorage();
-        await Grid.Refresh();
-    }
+    private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
+                                                                    {
+                                                                        SearchModel.CompanyName = "";
+                                                                        SearchModel.Page = 1;
+                                                                        await SaveStorage();
+                                                                    });
 
-    private async Task ClearFilter()
-    {
-        SearchModel.Clear();
-        SearchModel.User = User;
-        await SaveStorage();
-        await Grid.Refresh();
-    }
+    private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
+                                                                                                     {
+                                                                                                         SearchModel.CompanyName = filter.Value;
+                                                                                                         SearchModel.Page = 1;
+                                                                                                         await SaveStorage();
+                                                                                                     });
+
+    private Task ClearFilter() => ExecuteMethod(async () =>
+                                                      {
+                                                          SearchModel.Clear();
+                                                          SearchModel.User = User;
+                                                          await SaveStorage();
+                                                      });
 
     /// <summary>
     ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
@@ -615,9 +624,13 @@ public partial class Companies
                                                                  // StateHasChanged();
                                                              });
 
-    private async Task SaveStorage()
+    private async Task SaveStorage(bool refreshGrid = true)
     {
         await SessionStorage.SetItemAsync(StorageName, SearchModel);
+        if (refreshGrid)
+        {
+            await Grid.Refresh(true);
+        }
     }
 
     private void SetupAddress(bool useLocation = false)
