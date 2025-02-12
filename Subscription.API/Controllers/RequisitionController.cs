@@ -6,20 +6,94 @@
 // Solution:            Subscription
 // Project:             Subscription.API
 // File Name:           RequisitionController.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-21-2024 19:12
-// Last Updated On:     01-11-2025 20:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 19:02
+// Last Updated On:     02-12-2025 16:02
 // *****************************************/
 
 #endregion
 
+#region Using
+
 using System.Diagnostics.CodeAnalysis;
+
+#endregion
 
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]"), SuppressMessage("ReSharper", "UnusedMember.Local")]
 public class RequisitionController : ControllerBase
 {
+    /// <summary>
+    ///     Deletes a requisition document from the database.
+    /// </summary>
+    /// <param name="documentID">
+    ///     The ID of the document to be deleted.
+    /// </param>
+    /// <param name="user">
+    ///     The user who is performing the delete operation.
+    /// </param>
+    /// <returns>
+    ///     A dictionary containing the details of the deleted document.
+    /// </returns>
+    /// <description>
+    ///     The code first creates a SqlCommand object named _command with the name of the stored procedure to be executed, which is "DeleteRequisitionDocuments", and
+    ///     the SQL connection object _connection. The CommandType property of _command is set to CommandType.StoredProcedure, indicating that the command text is the
+    ///     name of a stored procedure.
+    ///     Next, two parameters are added to _command using extension methods Int and Varchar defined in the Extensions class. The Int method adds an integer
+    ///     parameter named "RequisitionDocId" with the value of documentID. The Varchar method adds a string parameter named "User" with a maximum size of 10
+    ///     characters and the value of user.
+    ///     Then, the code executes the command with _command.ExecuteReaderAsync(), which sends the SqlCommand to the SqlConnection and builds a SqlDataReader. The
+    ///     SqlDataReader provides a way of reading a forward-only stream of rows from a SQL Server database. The NextResult method is called to advance the data
+    ///     reader to the next result, when multiple result sets are returned.
+    ///     The code then checks if the data reader has any rows using the HasRows property. If it does, it enters a while loop that continues as long as there are
+    ///     more rows to read with the Read method.
+    ///     Inside the loop, a new RequisitionDocuments object is created with data from the current row and added to the _documents list.
+    ///     After all rows have been read, the data reader is closed with CloseAsync.
+    ///     If any exceptions occur during the execution of the try block, the catch block is executed. In this case, the catch block is empty, so no action is taken
+    ///     when an exception occurs.
+    ///     Finally, the method returns a new dictionary containing a single key-value pair. The key is "Document" and the value is the _documents list.
+    /// </description>
+    [HttpPost]
+    public async Task<Dictionary<string, object>> DeleteRequisitionDocument([FromQuery] int documentID, [FromQuery] string user)
+    {
+        await Task.Yield();
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        List<RequisitionDocuments> _documents = new();
+
+        try
+        {
+            await using SqlCommand _command = new("DeleteRequisitionDocuments", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("RequisitionDocId", documentID);
+            _command.Varchar("User", 10, user);
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            _reader.NextResult();
+            if (_reader.HasRows)
+            {
+                while (_reader.Read())
+                {
+                    _documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
+                                       $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));
+                }
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch
+        {
+            //
+        }
+
+        return new()
+               {
+                   {
+                       "Document", _documents
+                   }
+               };
+    }
+
     /// <summary>
     ///     Generates a location string based on the provided requisition details and state name.
     /// </summary>
@@ -109,8 +183,8 @@ public class RequisitionController : ControllerBase
 
         string? _requisitions = "[]";
         int _count = 0, _page = 0;
-        string? _companies = "[]";
-        string? _companyContacts = "[]";
+        string _companies = "[]";
+        string _companyContacts = "[]";
         string? _statusCount = "[]";
         try
         {
@@ -157,12 +231,9 @@ public class RequisitionController : ControllerBase
                     _statusCount = _reader.NString(0);
                 }
             }
-            else
-            {
-                /*await _reader.NextResultAsync();
-                await _reader.NextResultAsync();*/
-            }
 
+            /*await _reader.NextResultAsync();
+                await _reader.NextResultAsync();*/
             await _reader.NextResultAsync();
             _page = reqSearch.Page;
             while (await _reader.ReadAsync())

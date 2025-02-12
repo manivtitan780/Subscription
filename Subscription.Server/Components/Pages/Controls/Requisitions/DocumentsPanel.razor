@@ -1,0 +1,55 @@
+﻿<div class="downloadContainerBox" style="height: @Height">
+	<div>
+		<div>
+			<SfGrid AllowPaging="false" DataSource="@Model" EnableHeaderFocus="true" EnableHover="true" Height="410px" ID="gridDownload" @ref="GridDownload" RowHeight="@RowHeight" SelectedRowIndex="0"
+					TValue="RequisitionDocuments" Width="99%">
+				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
+				<GridEvents RowSelected="RowSelected" TValue="RequisitionDocuments" />
+				<GridColumns>
+					<GridColumn Field="@nameof(RequisitionDocuments.DocumentName)" HeaderText="Name" Width="35%"></GridColumn>
+					<GridColumn Field="@nameof(RequisitionDocuments.OriginalFileName)" HeaderText="File Name" Width="35%"></GridColumn>
+					<GridColumn Field="@nameof(RequisitionDocuments.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"></GridColumn>
+					<GridColumn Field="@nameof(RequisitionDocuments.UpdateBy)" HeaderText="Updated By" Width="20%"></GridColumn>
+					<GridColumn Width="10%">
+						<Template Context="bCon">
+							@{
+								if (bCon is RequisitionDocuments _con)
+								{
+									<SfButton Content="" IconCss="viewIconInner" @onclick="() => ViewDocumentDialog(_con.ID)" />
+									if (EditRights && _con.RequisitionOwner == User)
+									{
+										<SfButton Content="" IconCss="downloadIconInner" @onclick="() => DownloadDocumentDialog(_con.ID)" />
+										<SfButton Content="" IconCss="deleteIconInner" @onclick="() => DeleteDocumentMethod(_con.ID)" />
+									}
+								}
+							}
+						</Template>
+					</GridColumn>
+				</GridColumns>
+				<GridTemplates Context="context">
+					<DetailTemplate>
+						@{
+							RequisitionDocuments _document = context as RequisitionDocuments;
+						}
+
+						@if (_document != null)
+						{
+							if (_document.DocumentNotes.NullOrWhiteSpace())
+							{
+								<div class="blankActivityNotes">There are no Notes for this Document.</div>
+							}
+							else
+							{
+								<div class="activityNotes">@_document.DocumentNotes</div>
+							}
+						}
+					</DetailTemplate>
+				</GridTemplates>
+			</SfGrid>
+		</div>
+	</div>
+</div>
+<ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px"></ConfirmDialog>
+<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+<ViewPDFDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewPDF" />@**@
+@* <ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" /> *@

@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-08-2025 16:02
+// Last Updated On:     02-12-2025 15:02
 // *****************************************/
 
 #endregion
@@ -22,8 +22,9 @@ public partial class Requisitions
     private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private List<CandidateActivity> _candidateActivityObject = [];
+    private List<KeyValues> _companies = [], _jobOptions = [];
+    private readonly List<KeyValues> _statusSearch = [];
     private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
-    private List<KeyValues> _companies = [], _jobOptions = [], _statusSearch = [];
     private Preferences _preference;
 
     private Query _query = new();
@@ -86,6 +87,12 @@ public partial class Requisitions
     /// </summary>
     [Inject]
     private IConfiguration Configuration
+    {
+        get;
+        set;
+    }
+
+    private DocumentsPanel DocumentsPanel
     {
         get;
         set;
@@ -186,6 +193,17 @@ public partial class Requisitions
     ///     requisitions.
     /// </summary>
     private RequisitionSearch SearchModelClone
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the selected document for download from the requisition's documents panel.
+    ///     This property is used in the DownloadDocument method to generate a query string for downloading the selected
+    ///     document.
+    /// </summary>
+    private RequisitionDocuments SelectedDownload
     {
         get;
         set;
@@ -327,12 +345,6 @@ public partial class Requisitions
                                                 });
 
     /// <summary>
-    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
-    /// </summary>
-    [JSInvokable("DetailCollapse")]
-    public void DetailRowCollapse() => _target = null;
-
-    /// <summary>
     ///     Handles the data processing for the requisition. This method is responsible for creating a reference to the current
     ///     instance of the Requisition class,
     ///     invoking a JavaScript function to manage detail rows, and managing the selection and expansion of rows in the
@@ -386,6 +398,35 @@ public partial class Requisitions
                                                               RequisitionID = 0;
                                                           });
 
+    /// <summary>
+    ///     Asynchronously deletes a document associated with a requisition.
+    /// </summary>
+    /// <param name="args">The ID of the document to be deleted.</param>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method sends a POST request to the 'Requisition/DeleteRequisitionDocument' endpoint of the API.
+    ///     The document ID and user ID are passed as query parameters in the request.
+    ///     If the deletion is successful, the list of requisition documents is updated.
+    ///     This method is safe to call concurrently. If the method is already in progress, subsequent calls will return
+    ///     immediately.
+    /// </remarks>
+    private Task DeleteDocument(int args) => ExecuteMethod(async () =>
+                                                           {
+                                                               Dictionary<string, string> _parameters = new()
+                                                                                                        {
+                                                                                                            {"documentID", args.ToString()},
+                                                                                                            {"user", User}
+                                                                                                        };
+
+                                                               Dictionary<string, object> _response = await General.PostRest("Requisition/DeleteRequisitionDocument", _parameters);
+                                                               if (_response == null)
+                                                               {
+                                                                   return;
+                                                               }
+
+                                                               _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response["Document"]);
+                                                           });
+
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition)
     {
         return ExecuteMethod(async () =>
@@ -424,6 +465,31 @@ public partial class Requisitions
                                  VisibleSpinner = false;
                              });
     }
+
+    /// <summary>
+    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
+    /// </summary>
+    [JSInvokable("DetailCollapse")]
+    public void DetailRowCollapse() => _target = null;
+
+    /// <summary>
+    ///     Initiates the download of a document associated with a requisition.
+    /// </summary>
+    /// <param name="args">The identifier of the document to be downloaded.</param>
+    /// <remarks>
+    ///     This method is asynchronous and may not complete immediately. It first checks if a download action is already in
+    ///     progress,
+    ///     and if not, it sets the selected download to the document corresponding to the provided identifier.
+    ///     It then constructs a query string and invokes a JavaScript function to open the download link in a new browser tab.
+    ///     After the download is initiated, the method resets the action progress indicator.
+    /// </remarks>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    private Task DownloadDocument(int args) => ExecuteMethod(async () =>
+                                                             {
+                                                                 SelectedDownload = DocumentsPanel.SelectedRow;
+                                                                 string _queryString = $"{SelectedDownload.DocumentFileName}^{_target.ID}^{SelectedDownload.OriginalFileName}^1".ToBase64String();
+                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
+                                                             });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return

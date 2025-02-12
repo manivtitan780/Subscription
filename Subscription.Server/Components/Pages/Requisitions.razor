@@ -151,23 +151,16 @@
 									</div>
 								</ContentTemplate>
 							</TabItem>
-							@*<<TabItem>
-							<ChildContent>
-								<TabHeader Text="Documents"/>
-							</ChildContent>
-							<ContentTemplate>
-								<documentspanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@UserRights.EditRequisition" User="@User" Model="@_requisitionDocumentsObject"
-								                @ref="DocumentsPanel"/>
-							</ContentTemplate>
-						</TabItem>
-						<TabItem>
-							<ChildContent>
-								<TabHeader Text="Candidate Activity"/>
-							</ChildContent>
-							<ContentTemplate>
-								<activitypanelrequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID" User="@User"/>
-							</ContentTemplate>
-						</TabItem>*@
+							<TabItem>
+								<ChildContent>
+									<TabHeader Text="Documents"/>
+								</ChildContent>
+								<ContentTemplate>
+									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@HasEditRights" User="@User" Model="@_requisitionDocumentsObject"
+									                @ref="DocumentsPanel"/>
+								</ContentTemplate>
+							</TabItem>
+
 						</TabItems>
 					</SfTab>
 				</DetailTemplate>
