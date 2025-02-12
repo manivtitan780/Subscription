@@ -2,13 +2,14 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-@* @if (HasViewRights) *@
-@* { *@
+@if (HasViewRights)
+{
 	<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Company/SearchCompanies" Name="@(SearchModel.CompanyName)" ValueChange="AutocompleteValueChange">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
 			        Query="_query" @ref="Grid" TValue="Company" Width="100%">
 				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Company"/>
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				@{
 					if (true)
@@ -195,17 +196,10 @@
 	<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State"/>
 	<EditLocation Model="SelectedLocation" @ref="CompanyLocationDialog" Save="SaveLocation" State="State"/>
 	<EditContact Model="SelectedContact" @ref="CompanyContactDialog" Save="SaveContact"/>
-@* } *@
-@* else *@
-@* { *@
-@* 	<div class="noAccess"> *@
-@* 		You *@
-@* 		don't *@
-@* 		have *@
-@* 		rights *@
-@* 		to *@
-@* 		view *@
-@* 		this *@
-@* 		page. *@
-@* 	</div> *@
-@* } *@
+}
+else
+{
+	<div class="noAccess">
+		You don't have rights to view this page.
+	</div>
+}

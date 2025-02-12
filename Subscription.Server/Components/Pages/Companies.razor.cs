@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-11-2025 19:02
+// Last Updated On:     02-11-2025 20:02
 // *****************************************/
 
 #endregion
@@ -24,7 +24,7 @@ public partial class Companies
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
-    private readonly Query _query = new();
+    private Query _query = new();
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
 
@@ -67,20 +67,7 @@ public partial class Companies
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the total count of Companies.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the total count of companies retrieved from the API response in the
-    ///     `General.GetCompanyReadAdaptor()` method.
-    /// </remarks>
-    private static int Count
-    {
-        get;
-        set;
-    }
-
-    public EditContext EditConCompany
+ public EditContext EditConCompany
     {
         get;
         set;
@@ -98,7 +85,7 @@ public partial class Companies
         set;
     }
 
-    private static SfGrid<Company> Grid
+    private SfGrid<Company> Grid
     {
         get;
         set;
@@ -107,7 +94,8 @@ public partial class Companies
     private bool HasRendered
     {
         get;
-    } = false;
+        set;
+    }
 
     private bool HasViewRights
     {
@@ -137,7 +125,7 @@ public partial class Companies
         set;
     }
 
-    private static List<IntValues> NAICS
+    private List<IntValues> NAICS
     {
         get;
         set;
@@ -168,7 +156,7 @@ public partial class Companies
         set;
     }
 
-    private static List<IntValues> Roles
+    private List<IntValues> Roles
     {
         get;
         set;
@@ -179,7 +167,7 @@ public partial class Companies
     ///     to manage
     ///     search criteria for companies.
     /// </summary>
-    private static CompanySearch SearchModel
+    private CompanySearch SearchModel
     {
         get;
         set;
@@ -226,7 +214,7 @@ public partial class Companies
         set;
     } = new();
 
-    private static List<IntValues> State
+    private List<IntValues> State
     {
         get;
         set;
@@ -259,11 +247,11 @@ public partial class Companies
                                                                                                      });
 
     private Task ClearFilter() => ExecuteMethod(async () =>
-                                                      {
-                                                          SearchModel.Clear();
-                                                          SearchModel.User = User;
-                                                          await SaveStorage();
-                                                      });
+                                                {
+                                                    SearchModel.Clear();
+                                                    SearchModel.User = User;
+                                                    await SaveStorage();
+                                                });
 
     /// <summary>
     ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
@@ -285,67 +273,53 @@ public partial class Companies
     /// </summary>
     /// <param name="company"></param>
     /// <returns></returns>
-    private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
-                                                                                            {
-                                                                                                if (_target != null && _target != company.Data)
-                                                                                                {
-                                                                                                    // return when target is equal to args.data
-                                                                                                    await Grid.ExpandCollapseDetailRowAsync(_target);
-                                                                                                }
+    private Task DetailDataBind(DetailDataBoundEventArgs<Company> company)
+    {
+        return ExecuteMethod(async () =>
+                             {
+                                 if (_target != null && _target != company.Data)
+                                 {
+                                     // return when target is equal to args.data
+                                     await Grid.ExpandCollapseDetailRowAsync(_target);
+                                 }
 
-                                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
-                                                                                                if (_index != Grid.SelectedRowIndex)
-                                                                                                {
-                                                                                                    await Grid.SelectRowAsync(_index);
-                                                                                                }
+                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
+                                 if (_index != Grid.SelectedRowIndex)
+                                 {
+                                     await Grid.SelectRowAsync(_index);
+                                 }
 
-                                                                                                _target = company.Data;
+                                 _target = company.Data;
 
-                                                                                                try
-                                                                                                {
-                                                                                                    await Spinner?.ShowAsync()!;
-                                                                                                }
-                                                                                                catch
-                                                                                                {
-                                                                                                    //
-                                                                                                }
+                                 VisibleSpinner = true;
 
-                                                                                                Dictionary<string, string> _parameters = new()
-                                                                                                                                         {
-                                                                                                                                             {"companyID", _target.ID.ToString()},
-                                                                                                                                             {"user", User}
-                                                                                                                                         };
-                                                                                                ReturnCompanyDetails _restResponse =
-                                                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
-                                                                                                                                                    false);
+                                 Dictionary<string, string> _parameters = new()
+                                                                          {
+                                                                              {"companyID", _target.ID.ToString()},
+                                                                              {"user", User}
+                                                                          };
+                                 ReturnCompanyDetails _restResponse = await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
+                                                                                                                      false);
 
-                                                                                                EditConCompany = new(_companyDetails);
-                                                                                                try
-                                                                                                {
-                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company);
-                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts);
-                                                                                                    _companyDocuments =
-                                                                                                        General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents);
-                                                                                                    _companyLocations =
-                                                                                                        General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations);
-                                                                                                    SetupAddress();
-                                                                                                }
-                                                                                                catch (Exception ex)
-                                                                                                {
-                                                                                                    Console.WriteLine(ex.Message);
-                                                                                                }
+                                 EditConCompany = new(_companyDetails);
+                                 try
+                                 {
+                                     _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company);
+                                     _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts) ?? [];
+                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents) ?? [];
+                                     _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations) ?? [];
+                                     SetupAddress();
+                                 }
+                                 catch (Exception ex)
+                                 {
+                                     Console.WriteLine(ex.Message);
+                                 }
 
-                                                                                                _selectedTab = 0;
+                                 _selectedTab = 0;
 
-                                                                                                try
-                                                                                                {
-                                                                                                    await Spinner?.HideAsync()!;
-                                                                                                }
-                                                                                                catch
-                                                                                                {
-                                                                                                    //
-                                                                                                }
-                                                                                            });
+                                 VisibleSpinner = false;
+                             });
+    }
 
     /// <summary>
     ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
@@ -359,7 +333,7 @@ public partial class Companies
     /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     private Task EditCompany() => ExecuteMethod(async () =>
                                                 {
-                                                    await General.DisplaySpinner(Spinner);
+                                                    VisibleSpinner = true;
 
                                                     if (_target == null || _target.ID == 0)
                                                     {
@@ -381,7 +355,7 @@ public partial class Companies
                                                     }
 
                                                     await General.DisplaySpinner(Spinner, false);
-
+                                                    VisibleSpinner = false;
                                                     await CompanyEditDialog.ShowDialog();
                                                 });
 
@@ -389,6 +363,7 @@ public partial class Companies
     {
         return ExecuteMethod(async () =>
                              {
+                                 VisibleSpinner = true;
                                  if (contact == 0)
                                  {
                                      if (SelectedContact == null)
@@ -408,6 +383,7 @@ public partial class Companies
                                  }
 
                                  EditConContact = new(SelectedContact!);
+                                 VisibleSpinner = false;
                                  await CompanyContactDialog.ShowDialog();
                              });
     }
@@ -418,6 +394,7 @@ public partial class Companies
                              {
                                  if (location == 0)
                                  {
+                                     VisibleSpinner = true;
                                      if (SelectedLocation == null)
                                      {
                                          SelectedLocation = new();
@@ -435,6 +412,7 @@ public partial class Companies
                                  }
 
                                  EditConLocation = new(SelectedLocation!);
+                                 VisibleSpinner = false;
                                  await CompanyLocationDialog.ShowDialog();
                              });
     }
@@ -450,35 +428,58 @@ public partial class Companies
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
-    private async Task GetAlphabets(char alphabet)
-    {
-        await ExecuteMethod(async () =>
-                            {
-                                SearchModel.CompanyName = alphabet.ToString();
-                                SearchModel.Page = 1;
-                                await SaveStorage();
-                                await Grid.Refresh();
-                            });
-    }
+    private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
+                                                                          {
+                                                                              SearchModel.CompanyName = alphabet.ToString();
+                                                                              SearchModel.Page = 1;
+                                                                              await SaveStorage();
+                                                                          });
 
-    private async Task GridPageChanging(GridPageChangingEventArgs page)
-    {
-        await ExecuteMethod(async () =>
-                            {
-                                if (page.CurrentPageSize != SearchModel.ItemCount)
-                                {
-                                    SearchModel.ItemCount = page.CurrentPageSize;
-                                    SearchModel.Page = 1;
-                                    await Grid.GoToPageAsync(1);
-                                }
-                                else
-                                {
-                                    SearchModel.Page = page.CurrentPage;
-                                    await Grid.Refresh();
-                                }
+    private async Task GridPageChanging(GridPageChangingEventArgs page) => await ExecuteMethod(async () =>
+                                                                                               {
+                                                                                                   if (page.CurrentPageSize != SearchModel.ItemCount)
+                                                                                                   {
+                                                                                                       SearchModel.ItemCount = page.CurrentPageSize;
+                                                                                                       SearchModel.Page = 1;
+                                                                                                       await Grid.GoToPageAsync(1);
+                                                                                                   }
+                                                                                                   else
+                                                                                                   {
+                                                                                                       SearchModel.Page = page.CurrentPage;
+                                                                                                       //await Grid.Refresh();
+                                                                                                   }
 
-                                await SaveStorage();
-                            });
+                                                                                                   await SaveStorage(false);
+                                                                                               });
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (await SessionStorage.ContainKeyAsync(StorageName))
+            {
+                SearchModel = await SessionStorage.GetItemAsync<CompanySearch>(StorageName);
+            }
+            else
+            {
+                SearchModel.Clear();
+                SearchModel.User = User;
+            }
+
+            _query ??= new();
+            _query = _query.AddParams("SearchModel", SearchModel);
+            HasRendered = true;
+            try
+            {
+                _initializationTaskSource.SetResult(true);
+            }
+            catch
+            {
+                //
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     protected override async Task OnInitializedAsync()
@@ -509,39 +510,20 @@ public partial class Companies
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
                                 }
 
-                                SearchModel.Clear();
-                                SearchModel = await SessionStorage.GetItemAsync<CompanySearch>(StorageName) ?? new()
-                                                                                                               {
-                                                                                                                   CompanyName = "",
-                                                                                                                   ItemCount = 25,
-                                                                                                                   Page = 5,
-                                                                                                                   SortDirection = 1,
-                                                                                                                   SortField = 1,
-                                                                                                                   User = User
-                                                                                                               };
+                                if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
+                                {
+                                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                                    List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
 
-                                _initializationTaskSource.SetResult(true);
-                                await base.OnInitializedAsync();
+                                    Dictionary<string, string> _values = await _service.BatchGet(_keys);
+                                    NAICS = General.DeserializeObject<List<IntValues>>(_values["NAICS"]);
+                                    State = General.DeserializeObject<List<IntValues>>(_values["States"]);
+                                    Roles = General.DeserializeObject<List<IntValues>>(_values["Roles"]);
+                                }
                             });
+        
+        await base.OnInitializedAsync();
     }
-
-    /*
-    private async Task PageNumberClick(PagerItemClickEventArgs page)
-    {
-        SearchModel.Page = page.CurrentPage;
-        await SaveStorage();
-        await Grid.Refresh();
-    }
-
-    private static async Task PageSizeChanged(PageSizeChangedArgs pageSize)
-    {
-        SearchModel.ItemCount = pageSize.CurrentPageSize;
-        SearchModel.Page = 1;
-        await Grid.Refresh();
-    }
-    */
-
-    /*private Task RowSelected(RowSelectEventArgs<Company> company) => null;*/
 
     private async Task SaveCompany() => await ExecuteMethod(async () =>
                                                             {
@@ -571,7 +553,7 @@ public partial class Companies
                                                                 }
                                                                 else
                                                                 {
-                                                                    await Grid.Refresh();
+                                                                    await Grid.Refresh(true);
                                                                 }
 
                                                                 StateHasChanged();
@@ -589,7 +571,7 @@ public partial class Companies
 
                                                                 if (_target == null)
                                                                 {
-                                                                    await Grid.Refresh();
+                                                                    await Grid.Refresh(true);
                                                                 }
                                                             });
 
@@ -618,10 +600,8 @@ public partial class Companies
                                                                  }
                                                                  else
                                                                  {
-                                                                     await Grid.Refresh();
+                                                                     await Grid.Refresh(true);
                                                                  }
-
-                                                                 // StateHasChanged();
                                                              });
 
     private async Task SaveStorage(bool refreshGrid = true)
@@ -914,32 +894,20 @@ public partial class Companies
             await _initializationTaskSource.Task;
             try
             {
+                CompanySearch _searchModel = General.DeserializeObject<CompanySearch>(dm.Params["SearchModel"].ToString());
                 List<Company> _dataSource = [];
 
                 object _companyReturn = null;
                 try
                 {
-                    /*Dictionary<string, object> _restResponse = await General.GetRest<Dictionary<string, object>>("Company/GetGridCompanies", null, SearchModel);*/
+                    (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, _searchModel, false);
+                    _dataSource = _count > 0 ? General.DeserializeObject<List<Company>>(_data) : [];
 
-                    if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
-                    {
-                        RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-                        List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
-
-                        Dictionary<string, string> _values = await _service.BatchGet(_keys);
-                        NAICS = General.DeserializeObject<List<IntValues>>(_values["NAICS"]);
-                        State = General.DeserializeObject<List<IntValues>>(_values["States"]);
-                        Roles = General.DeserializeObject<List<IntValues>>(_values["Roles"]);
-                    }
-
-                    ReturnGrid _return = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
-                    _dataSource = General.DeserializeObject<List<Company>>(_return.Data);
-                    Count = _return.Count;
                     if (_dataSource == null)
                     {
                         _companyReturn = dm.RequiresCounts ? new DataResult
                                                              {
-                                                                 Result = null,
+                                                                 Result = null, 
                                                                  Count = 1
                                                              } : null;
                     }
@@ -948,7 +916,7 @@ public partial class Companies
                         _companyReturn = dm.RequiresCounts ? new DataResult
                                                              {
                                                                  Result = _dataSource,
-                                                                 Count = _return.Count /*_count*/
+                                                                 Count = _count /*_count*/
                                                              } : _dataSource;
                     }
                 }
@@ -974,10 +942,10 @@ public partial class Companies
                     }
                 }
 
-                if (Count > 0)
-                {
-                    await Grid.SelectRowAsync(0);
-                }
+                // if (Count > 0)
+                // {
+                //     await Grid.SelectRowAsync(0);
+                // }
 
                 return _companyReturn;
             }
