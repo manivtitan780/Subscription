@@ -15,11 +15,11 @@
 							@{
 								if (bCon is RequisitionDocuments _con)
 								{
-									<SfButton Content="" IconCss="viewIconInner" @onclick="() => ViewDocumentDialog(_con.ID)" />
+									<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.ID)" />
 									if (EditRights && _con.RequisitionOwner == User)
 									{
-										<SfButton Content="" IconCss="downloadIconInner" @onclick="() => DownloadDocumentDialog(_con.ID)" />
-										<SfButton Content="" IconCss="deleteIconInner" @onclick="() => DeleteDocumentMethod(_con.ID)" />
+										<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)" />
+										<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteDocumentMethod(_con.ID)" />
 									}
 								}
 							}
@@ -50,6 +50,6 @@
 	</div>
 </div>
 <ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px"></ConfirmDialog>
-<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+<SfSpinner @bindbind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
 <ViewPDFDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewPDF" />@**@
 @* <ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" /> *@

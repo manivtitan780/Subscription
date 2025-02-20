@@ -55,13 +55,12 @@ public class RequisitionController : ControllerBase
     ///     Finally, the method returns a new dictionary containing a single key-value pair. The key is "Document" and the value is the _documents list.
     /// </description>
     [HttpPost]
-    public async Task<Dictionary<string, object>> DeleteRequisitionDocument([FromQuery] int documentID, [FromQuery] string user)
+    public async Task<ActionResult<string>> DeleteRequisitionDocument([FromQuery] int documentID, [FromQuery] string user)
     {
-        await Task.Yield();
         await using SqlConnection _connection = new(Start.ConnectionString);
         await _connection.OpenAsync();
-        List<RequisitionDocuments> _documents = new();
-
+        //List<RequisitionDocuments> _documents = [];
+        string _documents = "[]";
         try
         {
             await using SqlCommand _command = new("DeleteRequisitionDocuments", _connection);
@@ -70,28 +69,27 @@ public class RequisitionController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             _reader.NextResult();
-            if (_reader.HasRows)
-            {
                 while (_reader.Read())
                 {
-                    _documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
-                                       $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));
+                    _documents = _reader.NString(0);
+                    /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), 
+                                       _reader.NString(6), $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), 
+                                       _reader.GetString(8)));*/
                 }
-            }
 
             await _reader.CloseAsync();
         }
-        catch
+        catch (Exception ex)
         {
-            //
+            Log.Error(ex, "Error in DeleteRequisitionDocument {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
         }
 
-        return new()
-               {
-                   {
-                       "Document", _documents
-                   }
-               };
+        return Ok(_documents);
     }
 
     /// <summary>

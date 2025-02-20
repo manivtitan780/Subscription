@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-12-2025 15:02
+// Last Updated On:     02-13-2025 16:02
 // *****************************************/
 
 #endregion
@@ -23,7 +23,6 @@ public partial class Requisitions
 
     private List<CandidateActivity> _candidateActivityObject = [];
     private List<KeyValues> _companies = [], _jobOptions = [];
-    private readonly List<KeyValues> _statusSearch = [];
     private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
     private Preferences _preference;
 
@@ -37,6 +36,7 @@ public partial class Requisitions
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
     private List<StatusCode> _statusCodes;
+    private readonly List<KeyValues> _statusSearch = [];
 
     private Requisition _target;
     private List<AppWorkflow> _workflows;
@@ -452,12 +452,12 @@ public partial class Requisitions
                                                                               {"requisitionID", _target.ID.ToString()}
                                                                           };
 
-                                 ReturnRequisitionDetails _response = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters,
-                                                                                                                          null, false);
+                                 (string _requisition, string _activity, string _documents) = await General.ExecuteRest<ReturnRequisitionDetails>
+                                                                                                  ("Requisition/GetRequisitionDetails", _parameters, null, false);
 
-                                 _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_response.Requisition);
-                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity);
-                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response.Documents);
+                                 _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
+                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
+                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
                                  SetSkills();
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;

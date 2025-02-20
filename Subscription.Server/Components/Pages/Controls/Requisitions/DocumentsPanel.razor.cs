@@ -258,6 +258,12 @@ public partial class DocumentsPanel
         set;
     } = "";
 
+    private bool VisibleSpinner
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Asynchronously deletes a document with the specified ID.
     /// </summary>
@@ -312,17 +318,16 @@ public partial class DocumentsPanel
     /// </remarks>
     private async Task ViewDocumentDialog(int documentID)
     {
-        await Task.Yield();
-        await Spinner.ShowAsync();
-        RestClient _restClient = new($"{Start.APIHost}");
-        string _controller = EntityTypeName == EntityType.Requisition ? "Requisition" : "Lead";
-        RestRequest _request = new($"{_controller}/DownloadFile")
-                               {
-                                   RequestFormat = DataFormat.Json
-                               };
-        _request.AddQueryParameter("documentID", documentID);
+        VisibleSpinner = true;
 
-        DocumentDetails _restResponse = await _restClient.GetAsync<DocumentDetails>(_request);
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"documentID", documentID.ToString()}
+                                                 };
+
+        string _controller = EntityTypeName == EntityType.Requisition ? "Requisition" : "Lead";
+        string _response = await General.ExecuteRest<string>($"{_controller}/DownloadFile", _parameters, null, false);
+        DocumentDetails _restResponse = JsonConvert.DeserializeObject<DocumentDetails>(_response);
 
         if (_restResponse != null)
         {
@@ -331,20 +336,12 @@ public partial class DocumentsPanel
             {
                 _requisitionID = _restResponse.EntityID;
                 _documentName = _restResponse.DocumentName;
-                _documentLocation = _restResponse.DocumentLocation;
+                _documentLocation = _location;
                 _internalFileName = _restResponse.InternalFileName;
-                if (_location.EndsWith(".pdf"))
-                {
-                    await DocumentViewPDF.ShowDialog();
-                }
-                else
-                {
-                    // await DocumentViewWord.ShowDialog();
-                }
+                await DocumentViewPDF.ShowDialog();
             }
         }
 
-        await Task.Yield();
-        await Spinner.HideAsync();
+        VisibleSpinner = false;
     }
 }

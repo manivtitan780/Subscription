@@ -98,8 +98,8 @@
 					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%">
 						<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 						<TabAnimationSettings>
-							<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
-							<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+							<TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"></TabAnimationPrevious>
+							<TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"></TabAnimationNext>
 							@* <TabEvents Selected="TabSelected"></TabEvents>SelectedItem="_selectedTab"  *@
 						</TabAnimationSettings>
 						<TabItems>
@@ -156,7 +156,7 @@
 									<TabHeader Text="Documents"/>
 								</ChildContent>
 								<ContentTemplate>
-									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="@HasEditRights" User="@User" Model="@_requisitionDocumentsObject"
+									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User" Model="@_requisitionDocumentsObject"
 									                @ref="DocumentsPanel"/>
 								</ContentTemplate>
 							</TabItem>
