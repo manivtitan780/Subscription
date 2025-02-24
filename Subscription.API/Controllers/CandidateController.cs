@@ -356,7 +356,7 @@ public class CandidateController : ControllerBase
     public async Task<ActionResult<ReturnCandidateDetails>> GetCandidateDetails(int candidateID, string roleID)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _candidate = "";
+        string _candidate = "";
         string? _candRating = "";
         string? _candMPC = "";
 
@@ -373,42 +373,42 @@ public class CandidateController : ControllerBase
             while (await _reader.ReadAsync()) //Candidate Details
             {
                 _candidate = _reader.NString(0);
-                JObject _candidateJson = JObject.Parse(_candidate!);
+                JObject _candidateJson = JObject.Parse(_candidate);
 
                 _candRating = _candidateJson["RateNotes"]?.ToString(); // _reader.NString(28);
                 _candMPC = _candidateJson["MPCNotes"]?.ToString();     //_reader.NString(30);
             }
 
             await _reader.NextResultAsync(); //Notes
-            string? _notes = "[]";
+            string _notes = "[]";
             while (await _reader.ReadAsync())
             {
                 _notes = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Skills
-            string? _skills = "[]";
+            string _skills = "[]";
             while (await _reader.ReadAsync())
             {
                 _skills = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Education
-            string? _education = "[]";
+            string _education = "[]";
             while (await _reader.ReadAsync())
             {
                 _education = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Experience
-            string? _experience = "[]";
+            string _experience = "[]";
             while (await _reader.ReadAsync())
             {
                 _experience = _reader.NString(0);
             }
 
             await _reader.NextResultAsync(); //Activity
-            string? _activity = "[]";
+            string _activity = "[]";
             while (await _reader.ReadAsync())
             {
                 _activity = _reader.NString(0);
@@ -417,7 +417,7 @@ public class CandidateController : ControllerBase
             await _reader.NextResultAsync(); //Managers
 
             await _reader.NextResultAsync(); //Documents
-            string? _documents = "[]";
+            string _documents = "[]";
             while (await _reader.ReadAsync())
             {
                 _documents = _reader.NString(0);
@@ -543,7 +543,7 @@ public class CandidateController : ControllerBase
     public async Task<ActionResult<ReturnGrid>> GetGridCandidates([FromBody] CandidateSearch? searchModel = null)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _candidates = "[]";
+        string _candidates = "[]";
 
         await using SqlCommand _command = new("GetCandidates", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -711,7 +711,7 @@ public class CandidateController : ControllerBase
             await _reader.NextResultAsync();
             while (await _reader.ReadAsync())
             {
-                _emailAddresses.Add(_reader.NString(0)!, _reader.NString(1)!);
+                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
             }
 
             string _stateName = "";
@@ -1261,7 +1261,7 @@ public class CandidateController : ControllerBase
     ///     using a stored procedure. If the operation is successful, the JSON formatted will contain a list
     ///     of documents for the candidate.
     /// </remarks>
-    [HttpPost, RequestSizeLimit(62_914_560)]
+    [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
     public async Task<string?> UploadDocument(IFormFile file)
     {
         string _fileName = file.FileName;
@@ -1280,7 +1280,7 @@ public class CandidateController : ControllerBase
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _returnVal = "[]";
+        string _returnVal = "[]";
         try
         {
             await using SqlCommand _command = new("SaveCandidateDocuments", _connection);

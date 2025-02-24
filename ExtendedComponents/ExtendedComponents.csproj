@@ -13,20 +13,20 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
-    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Charts" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Core" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Data" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.DataForm" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Grid" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Layouts" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Schedule" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="28.2.5" />
-    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="28.2.5" />
+    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Charts" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Core" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Data" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.DataForm" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Layouts" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Schedule" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="28.2.6" />
+    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="28.2.6" />
   </ItemGroup>
 
 </Project>
