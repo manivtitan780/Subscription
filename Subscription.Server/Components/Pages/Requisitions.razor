@@ -156,11 +156,19 @@
 									<TabHeader Text="Documents"/>
 								</ChildContent>
 								<ContentTemplate>
-									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User" Model="@_requisitionDocumentsObject"
-									                @ref="DocumentsPanel"/>
+									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User" 
+													Model="@_requisitionDocumentsObject" @ref="DocumentsPanel"/>
 								</ContentTemplate>
 							</TabItem>
-
+							<TabItem>
+								<ChildContent>
+									<TabHeader Text="Activity"/>
+								</ChildContent>
+								<ContentTemplate>
+									@*<ActivityPanelRequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID"		
+																User="@User"/>*@
+								</ContentTemplate>
+							</TabItem>
 						</TabItems>
 					</SfTab>
 				</DetailTemplate>

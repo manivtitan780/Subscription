@@ -59,6 +59,39 @@ public partial class Requisitions
     }
 
     /// <summary>
+    ///     Gets or sets a new document for the requisition. This property is used to store the details of a new document
+    ///     that is being added to the requisition. If the new document is null, a new instance of RequisitionDocuments is
+    ///     created.
+    ///     If the new document already exists, its data is cleared before adding new data.
+    /// </summary>
+    private RequisitionDocuments NewDocument
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Asynchronously adds a new document to the requisition.
+    ///     This method first checks if a new document instance exists. If not, it creates a new instance.
+    ///     If an instance already exists, it clears the existing data.
+    ///     After preparing the new document, it opens the dialog for adding a new requisition document.
+    /// </summary>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    private Task AddDocument() => ExecuteMethod(async () =>
+                                                {
+                                                    if (NewDocument == null)
+                                                    {
+                                                        NewDocument = new();
+                                                    }
+                                                    else
+                                                    {
+                                                        NewDocument.Clear();
+                                                    }
+
+                                                    await DialogDocument.ShowDialog();
+                                                });
+
+    /// <summary>
     ///     Gets or sets the list of companies associated with the requisition.
     /// </summary>
     /// <value>
@@ -487,7 +520,7 @@ public partial class Requisitions
     private Task DownloadDocument(int args) => ExecuteMethod(async () =>
                                                              {
                                                                  SelectedDownload = DocumentsPanel.SelectedRow;
-                                                                 string _queryString = $"{SelectedDownload.DocumentFileName}^{_target.ID}^{SelectedDownload.OriginalFileName}^1".ToBase64String();
+                                                                 string _queryString = $"{SelectedDownload.Location}^{_target.ID}^{SelectedDownload.InternalFileName}^1".ToBase64String();
                                                                  await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                              });
 

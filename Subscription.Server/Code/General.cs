@@ -29,14 +29,13 @@ public class General()//(Container container)
     public static void SetServiceProvider(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-    }*/
-
-    /*public static async Task SetValues(string someValue)
+    }
+    public static async Task SetValues(string someValue)
     {
         ISessionStorageService _sessionStorage = _serviceProvider.GetService<ISessionStorageService>();
         await _sessionStorage.SetItemAsync("PageStatey", someValue);
         // return Task.CompletedTask;
-    }*/
+    }
     /// <summary>
     ///     Asynchronously executes the provided cancel method, hides the spinner and dialog, and enables the dialog buttons.
     ///     This method is designed to be used as a common cancellation routine for various dialogs in the application.
@@ -82,7 +81,7 @@ public class General()//(Container container)
             await spinner.HideAsync();
             await dialog.HideAsync();
         }
-    }
+    }*/
 
     /// <summary>
     ///     Deserializes a JSON string to an object of a specified type.
@@ -187,12 +186,12 @@ public class General()//(Container container)
             _request.AlwaysMultipartFormData = true;
         }
 
-        if (jsonBody != null)
+        if (jsonBody is not null)
         {
             _request.AddJsonBody(jsonBody);
         }
 
-        if (parameters != null)
+        if (parameters is not null)
         {
             foreach (KeyValuePair<string, string> _parameter in parameters)
             {
@@ -200,7 +199,7 @@ public class General()//(Container container)
             }
         }
 
-        if (fileArray != null)
+        if (fileArray is not null)
         {
             _request.AddFile(parameterName, fileArray, fileName, "application/octet-stream");
         }
@@ -537,12 +536,12 @@ public class General()//(Container container)
                                    AlwaysMultipartFormData = true
                                };
 
-        if (jsonBody != null)
+        if (jsonBody is not null)
         {
             _request.AddJsonBody(jsonBody);
         }
 
-        if (parameters != null)
+        if (parameters is not null)
         {
             foreach (KeyValuePair<string, string> _parameter in parameters)
             {
@@ -550,7 +549,7 @@ public class General()//(Container container)
             }
         }
 
-        if (fileArray != null)
+        if (fileArray is not null)
         {
             _request.AddFile(parameterName, fileArray, fileName);
         }

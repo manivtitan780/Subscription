@@ -43,25 +43,25 @@ public class RequisitionDocuments
 	/// </summary>
 	/// <param name="id">The unique identifier for the Requisition Document.</param>
 	/// <param name="requisitionID">The ID of the requisition associated with the document.</param>
-	/// <param name="documentName">The name of the document.</param>
-	/// <param name="documentFileName">The file name of the document associated with a requisition.</param>
-	/// <param name="documentNotes">The notes for the document in the requisition.</param>
+	/// <param name="name">The name of the document.</param>
+	/// <param name="location">The file name of the document associated with a requisition.</param>
+	/// <param name="notes">The notes for the document in the requisition.</param>
 	/// <param name="updateBy">The username of the user who last updated the requisition document.</param>
-	/// <param name="originalFileName">The original file name of the requisition document.</param>
+	/// <param name="internalFileName">The original file name of the requisition document.</param>
 	/// <param name="requisitionOwner">The owner of the requisition.</param>
 	/// <remarks>
 	///     This constructor initializes the properties of the RequisitionDocuments instance with the provided parameters.
 	///     It also ensures that the Files list is initialized and empty.
 	/// </remarks>
-	public RequisitionDocuments(int id, int requisitionID, string documentName, string documentFileName, string documentNotes, string updateBy, string originalFileName, string requisitionOwner)
+	public RequisitionDocuments(int id, int requisitionID, string name, string location, string notes, string updateBy, string internalFileName, string requisitionOwner)
 	{
 		ID = id;
 		RequisitionID = requisitionID;
-		DocumentName = documentName;
-		DocumentFileName = documentFileName;
-		DocumentNotes = documentNotes;
+		Name = name;
+		Location = location;
+		Notes = notes;
 		UpdateBy = updateBy;
-		OriginalFileName = originalFileName;
+		InternalFileName = internalFileName;
 		RequisitionOwner = requisitionOwner;
 		Files.Clear();
 	}
@@ -76,7 +76,7 @@ public class RequisitionDocuments
 	///     This property is used to construct a query string for downloading the document.
 	///     The query string is Base64 encoded and appended to the base URI to form the download URL.
 	/// </remarks>
-	public string DocumentFileName
+	public string Location
 	{
 		get;
 		set;
@@ -88,7 +88,7 @@ public class RequisitionDocuments
 	/// <value>
 	///     The name of the document.
 	/// </value>
-	public string DocumentName
+	public string Name
 	{
 		get;
 		set;
@@ -103,7 +103,7 @@ public class RequisitionDocuments
 	/// <remarks>
 	///     This property is validated to be not empty and its length should be between 10 and 2000 characters.
 	/// </remarks>
-	public string DocumentNotes
+	public string Notes
 	{
 		get;
 		set;
@@ -146,7 +146,7 @@ public class RequisitionDocuments
 	/// <remarks>
 	///     This property is used when downloading the document to provide the user with the original file name.
 	/// </remarks>
-	public string OriginalFileName
+	public string InternalFileName
 	{
 		get;
 		set;
@@ -204,12 +204,13 @@ public class RequisitionDocuments
 	{
 		ID = 0;
 		RequisitionID = 0;
-		DocumentName = "";
-		DocumentFileName = "";
-		DocumentNotes = "";
+		Name = "";
+		Location = "";
+		Notes = "";
 		UpdateBy = "ADMIN";
-		OriginalFileName = "";
+		InternalFileName = "";
 		RequisitionOwner = "";
+		Files ??= [];
 		Files.Clear();
 	}
 
