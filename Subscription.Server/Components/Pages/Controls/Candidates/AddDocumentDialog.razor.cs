@@ -8,7 +8,7 @@
 // File Name:           AddDocumentDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          12-16-2024 19:12
-// Last Updated On:     02-24-2025 19:02
+// Last Updated On:     02-25-2025 20:02
 // *****************************************/
 
 #endregion
@@ -39,40 +39,6 @@ public partial class AddDocumentDialog
         get;
         set;
     } = new();
-
-    /// <summary>
-    ///     Gets or sets the event callback that is invoked after a document upload is completed.
-    /// </summary>
-    /// <value>
-    ///     The event callback for the action completed event.
-    /// </value>
-    /// <remarks>
-    ///     This event callback is triggered when the upload of a document to the candidate is completed.
-    ///     It uses the Syncfusion Blazor's ActionCompleteEventArgs to provide details about the completed action.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<ActionCompleteEventArgs> AfterUpload
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the event callback that is invoked before a document upload starts.
-    /// </summary>
-    /// <value>
-    ///     The event callback for the before upload event.
-    /// </value>
-    /// <remarks>
-    ///     This event callback is triggered before the upload of a document to the candidate starts.
-    ///     It uses the Syncfusion Blazor's BeforeUploadEventArgs to provide details about the upload that is about to start.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<BeforeUploadEventArgs> BeforeUpload
-    {
-        get;
-        set;
-    }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document upload is cancelled.
@@ -176,23 +142,6 @@ public partial class AddDocumentDialog
     }
 
     /// <summary>
-    ///     Gets or sets the event callback that is invoked when a file is selected for upload.
-    /// </summary>
-    /// <value>
-    ///     The event callback for the file upload event.
-    /// </value>
-    /// <remarks>
-    ///     This event callback is triggered when the user selects a file to upload in the dialog.
-    ///     It uses the Syncfusion Blazor's UploadChangeEventArgs to provide details about the selected file.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<UploadChangeEventArgs> OnFileUpload
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the event callback that is invoked when the document details are saved.
     /// </summary>
     /// <value>
@@ -243,6 +192,12 @@ public partial class AddDocumentDialog
         set;
     }
 
+    private bool VisibleSpinner
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Asynchronously executes the cancellation process for the document dialog.
     /// </summary>
@@ -255,40 +210,13 @@ public partial class AddDocumentDialog
     /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task CancelDocumentDialog(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
-
-    /// <summary>
-    ///     Disables the buttons in the AddDocumentDialog.
-    /// </summary>
-    /// <remarks>
-    ///     This method is used to disable the Cancel and Save buttons in the AddDocumentDialog,
-    ///     preventing any further user interaction with these buttons until they are re-enabled.
-    ///     It is typically called before a document upload starts to prevent any unintended user actions during the upload
-    ///     process.
-    /// </remarks>
-    internal void DisableButtons()
-    {
-        //DialogFooter.DisableButtons();
-    }
-
-    /// <summary>
-    ///     Enables the buttons in the AddDocumentDialog.
-    /// </summary>
-    /// <remarks>
-    ///     This method is used to enable the Cancel and Save buttons in the AddDocumentDialog,
-    ///     allowing any further user interaction with these buttons until they are disabled.
-    ///     It is typically called after a document upload ends during the upload process.
-    /// </remarks>
-    internal void EnableButtons()
-    {
-        //DialogFooter.EnableButtons();
-    }
 
     /// <summary>
     ///     Handles the event when a file is removed from the upload queue.
@@ -323,7 +251,7 @@ public partial class AddDocumentDialog
     private async Task OnFileSelected(SelectedEventArgs file)
     {
         await Task.Yield();
-        if (Model.Files == null)
+        if (Model.Files is null)
         {
             Model.Files = [file.FilesData[0].Name];
         }
@@ -364,10 +292,10 @@ public partial class AddDocumentDialog
     /// </remarks>
     private async Task SaveDocumentDialog(EditContext editContext)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     /// <summary>

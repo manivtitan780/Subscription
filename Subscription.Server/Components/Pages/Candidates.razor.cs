@@ -1406,15 +1406,13 @@ public partial class Candidates
                                                                                                                           {"type", _document.DocumentTypeID.ToString()}
                                                                                                                       };
 
-                                                                             string _response = await General.PostRestParameter<string>("Candidate/UploadDocument", _parameters, null,
+                                                                             string _response = await General.ExecuteRest<string>("Candidate/UploadDocument", _parameters, null, true,
                                                                                                                                         DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                         DialogDocument.FileName);
-                                                                             if (_response.NullOrWhiteSpace() || _response == "[]")
+                                                                             if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                              {
-                                                                                 return;
+                                                                                 _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                                              }
-
-                                                                             _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                                          }
                                                                      });
 
