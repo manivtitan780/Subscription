@@ -38,6 +38,7 @@ public class RequisitionDocuments
 		Clear();
 	}
 
+	/*
 	/// <summary>
 	///     Initializes a new instance of the <see cref="RequisitionDocuments" /> class.
 	/// </summary>
@@ -65,6 +66,7 @@ public class RequisitionDocuments
 		RequisitionOwner = requisitionOwner;
 		Files.Clear();
 	}
+	*/
 
 	/// <summary>
 	///     Gets or sets the file name of the document associated with a requisition.

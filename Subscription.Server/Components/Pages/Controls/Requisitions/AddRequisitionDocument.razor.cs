@@ -13,6 +13,8 @@
 
 #endregion
 
+using FluentValidation;
+
 namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
 /// <summary>
@@ -27,6 +29,7 @@ namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 public partial class AddRequisitionDocument
 {
     private EditContext _editContext;
+    private readonly RequisitionDocumentValidator _candidateDocumentValidator = new();
 
     /// <summary>
     ///     Gets or sets the EditForm instance for the AddRequisitionDocument component.
@@ -301,7 +304,7 @@ public partial class AddRequisitionDocument
     /// </remarks>
     private async Task SaveDocumentDialog(EditContext editContext)
     {
-        await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+        // await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
     }
 
     /// <summary>
@@ -313,4 +316,35 @@ public partial class AddRequisitionDocument
     /// </remarks>
     /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     public async Task ShowDialog() => await Dialog.ShowAsync();
+
+    internal MemoryStream AddedDocument
+    {
+        get;
+        set;
+    } = new();
+
+    internal string FileName
+    {
+        get;
+        set;
+    }
+
+    internal string Mime
+    {
+        get;
+        set;
+    }
+
+    private async Task UploadDocument(UploadChangeEventArgs file)
+    {
+        foreach (UploadFiles _file in file.Files)
+        {
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            await _str.CopyToAsync(AddedDocument);
+            FileName = _file.FileInfo.Name;
+            Mime = _file.FileInfo.MimeContentType;
+            AddedDocument.Position = 0;
+            _str.Close();
+        }
+    }
 }
