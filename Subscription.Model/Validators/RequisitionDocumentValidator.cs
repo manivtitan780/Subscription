@@ -25,8 +25,6 @@ public class RequisitionDocumentValidator : AbstractValidator<RequisitionDocumen
         RuleFor(x => x.Notes).NotEmpty().WithMessage("Document Notes should not be empty.")
                              .Length(10, 2000).WithMessage("Document Notes should be between 10 and 2000 characters.");
 
-        RuleFor(x => x.DocumentTypeID).NotEmpty().WithMessage("Document Type should not be empty.");
-
         RuleFor(x => x.Files).NotEmpty().WithMessage("Select a file to upload.");
     }
 

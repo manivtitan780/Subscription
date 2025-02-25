@@ -46,9 +46,6 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
 						<Template>
-							@*<Upload AutoUpload="true" AfterUpload="AfterUpload" BeforeUpload="BeforeUpload" FileSelected="OnFileSelected" ID="uploadDocument" OnFileUpload="OnFileUpload"
-							        SequentialUpload="@SequentialUpload" OnRemove="OnFileRemoved" Placeholder="Select a Document to upload">
-							</Upload>*@
 							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760" 
 							            SequentialUpload="true" ShowFileList="true">
 								<UploaderEvents FileSelected="OnFileSelected" ValueChange="UploadDocument"></UploaderEvents> @*MaxFileSize = 10MB*@
