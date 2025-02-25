@@ -1,0 +1,42 @@
+﻿@* 
+    Copyright:           Titan-Techs.
+    Location:            Newtown, PA, USA
+    Solution:            Subscription
+    Project:             Subscription.Server
+    File Name:           Candidates.razor.cs
+    Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+
+    Summary:
+    The AddDocumentDialog component is used to display a dialog for adding a new document. It includes form fields for entering the document name, notes, selecting the document type, and uploading a file.
+
+    Remarks:
+    This component uses Syncfusion Blazor components such as SfDialog, SfDataForm, SfButton, and SfUploader to create the dialog and form. The form is validated using FluentValidationValidator.
+*@
+<SfDialog CssClass="dialogPopup" Header="Add New Document" Height="655px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog" />
+		<SfDataForm EditContext="Context" ID="addDocumentForm" OnValidSubmit="SaveDocumentDialog" @ref="AddDocumentForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Save Document</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateDocumentValidator"/>
+			</FormValidator>
+			<div class="divContainerTable">
+				<TextBoxControl @bind-Value="@(Model.Name)" @bind-Value:event="ValueChanged" ID="textName" MaxLength="255" MinLength="1" Multiline="false" Placeholder="Name"
+								ValidationMessage="@(() => Model.Name)" />
+				<TextBoxControl @bind-Value="@(Model.Notes)" @bind-Value:event="ValueChanged" ID="textNotes" MaxLength="2000" MinLength="1" Multiline="true" Placeholder="Notes" Rows="5"
+								ValidationMessage="@(() => Model.Notes)" />
+                <UploaderControl AutoUpload="true" FileSelected="OnFileSelected" ID="uploadDocument" Multiple="false" OnFileUpload="OnFileUpload" OnRemove="OnFileRemoved" Placeholder="Select a Document to upload" SetFlex="false">
+                    @*AfterUpload="AfterUpload" BeforeUpload="BeforeUpload"*@
+					<ValidationMessage For="() => Model.Files" />
+				</UploaderControl>
+			</div>
+			<DialogFooter CancelMethod="CancelDocumentDialog" @ref="FooterDialog" />
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

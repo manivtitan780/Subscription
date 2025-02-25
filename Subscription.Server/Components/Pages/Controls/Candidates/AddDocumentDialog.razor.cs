@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           AddDocumentDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          12-16-2024 19:12
-// Last Updated On:     12-17-2024 15:12
+// Last Updated On:     02-24-2025 19:02
 // *****************************************/
 
 #endregion
@@ -33,6 +33,12 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 public partial class AddDocumentDialog
 {
     private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
+
+    internal MemoryStream AddedDocument
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked after a document upload is completed.
@@ -140,6 +146,18 @@ public partial class AddDocumentDialog
         set;
     }
 
+    internal string FileName
+    {
+        get;
+        set;
+    }
+
+    internal string Mime
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the model representing a candidate document for the dialog.
     /// </summary>
@@ -172,37 +190,6 @@ public partial class AddDocumentDialog
     {
         get;
         set;
-    }
-
-    internal MemoryStream AddedDocument
-    {
-        get;
-        set;
-    } = new();
-    
-    internal string FileName
-    {
-        get;
-        set;
-    }
-    
-    internal string Mime
-    {
-        get;
-        set;
-    }
-    
-    private async Task UploadDocument(UploadChangeEventArgs file)
-    {
-        foreach (UploadFiles _file in file.Files)
-        {
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
-            await _str.CopyToAsync(AddedDocument);
-            FileName = _file.FileInfo.Name;
-            Mime = _file.FileInfo.MimeContentType;
-            AddedDocument.Position = 0;
-            _str.Close();
-        }
     }
 
     /// <summary>
@@ -394,4 +381,17 @@ public partial class AddDocumentDialog
     ///     It uses the ShowAsync method of the Syncfusion Blazor Dialog component.
     /// </remarks>
     public async Task ShowDialog() => await Dialog.ShowAsync();
+
+    private async Task UploadDocument(UploadChangeEventArgs file)
+    {
+        foreach (UploadFiles _file in file.Files)
+        {
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            await _str.CopyToAsync(AddedDocument);
+            FileName = _file.FileInfo.Name;
+            Mime = _file.FileInfo.MimeContentType;
+            AddedDocument.Position = 0;
+            _str.Close();
+        }
+    }
 }

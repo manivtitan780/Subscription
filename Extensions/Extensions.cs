@@ -136,7 +136,7 @@ public static partial class Extensions
     /// <returns>
     ///     A DBNull value if the input is null or zero; otherwise, the input value.
     /// </returns>
-    public static object DBNull(this double? i) => i == null || i == 0 ? System.DBNull.Value : i;
+    public static object DBNull(this double? i) => i is null or 0 ? System.DBNull.Value : i;
 
     /// <summary>
     ///     Converts an integer value to a DBNull value if it is zero.
@@ -382,7 +382,7 @@ public static partial class Extensions
     ///     A string containing only the numeric characters from the input string.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string StripPhoneNumber(this string s) => MyRegex().Replace(s!, string.Empty);
+    public static string StripPhoneNumber(this string s) => MyRegex().Replace(s, string.Empty);
 
     /// <summary>
     ///     Converts a regular string to a Base64 encoded string.
