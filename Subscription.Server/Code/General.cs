@@ -195,7 +195,14 @@ public class General()//(Container container)
         {
             foreach (KeyValuePair<string, string> _parameter in parameters)
             {
-                _request.AddQueryParameter(_parameter.Key, _parameter.Value);
+                if (fileArray is null)
+                {
+                    _request.AddQueryParameter(_parameter.Key, _parameter.Value);
+                }
+                else
+                {
+                    _request.AddParameter(_parameter.Key, _parameter.Value, ParameterType.GetOrPost);
+                }
             }
         }
 

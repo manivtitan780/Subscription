@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-13-2025 16:02
+// Last Updated On:     02-25-2025 15:02
 // *****************************************/
 
 #endregion
@@ -59,39 +59,6 @@ public partial class Requisitions
     }
 
     /// <summary>
-    ///     Gets or sets a new document for the requisition. This property is used to store the details of a new document
-    ///     that is being added to the requisition. If the new document is null, a new instance of RequisitionDocuments is
-    ///     created.
-    ///     If the new document already exists, its data is cleared before adding new data.
-    /// </summary>
-    private RequisitionDocuments NewDocument
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Asynchronously adds a new document to the requisition.
-    ///     This method first checks if a new document instance exists. If not, it creates a new instance.
-    ///     If an instance already exists, it clears the existing data.
-    ///     After preparing the new document, it opens the dialog for adding a new requisition document.
-    /// </summary>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    private Task AddDocument() => ExecuteMethod(async () =>
-                                                {
-                                                    if (NewDocument == null)
-                                                    {
-                                                        NewDocument = new();
-                                                    }
-                                                    else
-                                                    {
-                                                        NewDocument.Clear();
-                                                    }
-
-                                                    await DialogDocument.ShowDialog();
-                                                });
-
-    /// <summary>
     ///     Gets or sets the list of companies associated with the requisition.
     /// </summary>
     /// <value>
@@ -120,6 +87,12 @@ public partial class Requisitions
     /// </summary>
     [Inject]
     private IConfiguration Configuration
+    {
+        get;
+        set;
+    }
+
+    private AddRequisitionDocument DialogDocument
     {
         get;
         set;
@@ -201,6 +174,18 @@ public partial class Requisitions
         get;
         set;
     }
+
+    /// <summary>
+    ///     Gets or sets a new document for the requisition. This property is used to store the details of a new document
+    ///     that is being added to the requisition. If the new document is null, a new instance of RequisitionDocuments is
+    ///     created.
+    ///     If the new document already exists, its data is cleared before adding new data.
+    /// </summary>
+    private RequisitionDocuments NewDocument
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Gets or sets the ID of the requisition. This ID is used to uniquely identify a requisition in the system.
@@ -325,6 +310,27 @@ public partial class Requisitions
         get;
         set;
     }
+
+    /// <summary>
+    ///     Asynchronously adds a new document to the requisition.
+    ///     This method first checks if a new document instance exists. If not, it creates a new instance.
+    ///     If an instance already exists, it clears the existing data.
+    ///     After preparing the new document, it opens the dialog for adding a new requisition document.
+    /// </summary>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    private Task AddDocument() => ExecuteMethod(async () =>
+                                                {
+                                                    if (NewDocument == null)
+                                                    {
+                                                        NewDocument = new();
+                                                    }
+                                                    else
+                                                    {
+                                                        NewDocument.Clear();
+                                                    }
+
+                                                    await DialogDocument.ShowDialog();
+                                                });
 
     /// <summary>
     ///     Initiates the advanced search process for requisitions. This method is invoked when the advanced search option is
@@ -485,8 +491,8 @@ public partial class Requisitions
                                                                               {"requisitionID", _target.ID.ToString()}
                                                                           };
 
-                                 (string _requisition, string _activity, string _documents) = await General.ExecuteRest<ReturnRequisitionDetails>
-                                                                                                  ("Requisition/GetRequisitionDetails", _parameters, null, false);
+                                 (string _requisition, string _activity, string _documents) =
+                                     await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters, null, false);
 
                                  _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
                                  _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
@@ -800,6 +806,44 @@ public partial class Requisitions
         await base.OnInitializedAsync();
     }
 
+    /// <summary>
+    ///     Asynchronously saves the document associated with the requisition.
+    /// </summary>
+    /// <param name="document">
+    ///     The <see cref="EditContext" /> instance that contains the document to be saved.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> that represents the asynchronous operation.
+    /// </returns>
+    /// <remarks>
+    ///     This method uses the REST API to upload the document. The document is converted to a byte array and sent as a file
+    ///     in a multipart form data request. Additional parameters, such as filename, mime type, document name, notes,
+    ///     requisition ID, user, and path are also sent with the request.
+    /// </remarks>
+    private Task SaveDocument(EditContext document) => ExecuteMethod(async () =>
+                                                                     {
+                                                                         if (document.Model is RequisitionDocuments _document)
+                                                                         {
+                                                                             Dictionary<string, string> _parameters = new()
+                                                                                                                      {
+                                                                                                                          {"filename", DialogDocument.FileName},
+                                                                                                                          {"mime", DialogDocument.Mime},
+                                                                                                                          {"name", _document.Name},
+                                                                                                                          {"notes", _document.Notes},
+                                                                                                                          {"requisitionID", _target.ID.ToString()},
+                                                                                                                          {"user", User},
+                                                                                                                          {"path", Start.UploadsPath}
+                                                                                                                      };
+                                                                             string _response = await General.ExecuteRest<string>("Requisition/UploadDocument", _parameters, null, true,
+                                                                                                                                           DialogDocument.AddedDocument.ToStreamByteArray(),
+                                                                                                                                           DialogDocument.FileName);
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                             {
+                                                                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
+                                                                             }
+                                                                         }
+                                                                     });
+
     private async Task SaveStorage(bool refreshGrid = true)
     {
         await SessionStorage.SetItemAsync(StorageName, SearchModel);
@@ -861,7 +905,17 @@ public partial class Requisitions
         _requisitionDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? string.Empty : _skillStringTemp).ToMarkupString();
     }
 
-    private Task SpeedDialItemClicked(SpeedDialItemEventArgs arg) => Task.CompletedTask;
+    private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
+    {
+        switch (args.Item.ID)
+        {
+            case "itemAddDocument":
+                _selectedTab = 1;
+                return AddDocument();
+                break;
+        }
+        return Task.CompletedTask;
+    }
 
     /// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.

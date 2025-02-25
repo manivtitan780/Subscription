@@ -1262,7 +1262,7 @@ public class CandidateController : ControllerBase
     ///     of documents for the candidate.
     /// </remarks>
     [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
-    public async Task<string?> UploadDocument(IFormFile file)
+    public async Task<ActionResult<string>> UploadDocument(IFormFile file)
     {
         string _fileName = file.FileName;
         string _candidateID = Request.Form["candidateID"].ToString();
@@ -1305,8 +1305,9 @@ public class CandidateController : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving candidate document. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
         }
 
-        return _returnVal;
+        return Ok(_returnVal);
     }
 }
