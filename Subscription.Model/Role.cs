@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           Role.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-17-2024 19:04
-// Last Updated On:     12-21-2024 15:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     02-26-2025 15:02
 // *****************************************/
 
 #endregion
@@ -23,8 +23,7 @@ namespace Subscription.Model;
 ///     Each user is assigned one or more roles, and the user's permissions are the union of the permissions of all their
 ///     roles.
 /// </remarks>
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Role
 {
     /// <summary>
@@ -65,7 +64,7 @@ public class Role
     /// <value>
     ///     true if the role can edit requisitions; otherwise, false.
     /// </value>
-    public bool CreateOrEditRequisition
+    public bool CreateOrEditRequisitions
     {
         get;
         set;
@@ -102,6 +101,12 @@ public class Role
     ///     true if the role can edit clients; otherwise, false.
     /// </value>
     public bool EditMyCompanyProfile
+    {
+        get;
+        set;
+    }
+
+    public bool EditRequisitions
     {
         get;
         set;
@@ -210,10 +215,11 @@ public class Role
         RoleName = "";
         CreateOrEditCandidate = false;
         CreateOrEditCompany = false;
-        CreateOrEditRequisition = false;
+        CreateOrEditRequisitions = false;
         DownloadFormatted = false;
         DownloadOriginal = false;
         EditMyCompanyProfile = false;
+        EditRequisitions = false;
         ManageSubmittedCandidates = false;
         ViewAllCandidates = false;
         ViewAllCompanies = false;

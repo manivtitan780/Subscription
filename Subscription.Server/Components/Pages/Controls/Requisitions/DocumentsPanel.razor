@@ -1,10 +1,10 @@
 ﻿<div class="downloadContainerBox" style="height: @Height">
 	<div>
 		<div>
-			<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" Height="410px" ID="gridDownload" @ref="GridDownload" RowHeight="@RowHeight" SelectedRowIndex="0"
-					TValue="RequisitionDocuments" Width="100%">
+			<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" Height="410px" ID="gridDownload" @ref="GridDownload" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="RequisitionDocuments"
+			        Width="100%">
 				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"></GridSelectionSettings>
-				<GridEvents RowSelected="RowSelected" TValue="RequisitionDocuments" />
+				<GridEvents RowSelected="RowSelected" TValue="RequisitionDocuments"/>
 				<GridColumns>
 					<GridColumn Field="@nameof(RequisitionDocuments.Name)" HeaderText="Name" Width="35%"></GridColumn>
 					<GridColumn Field="@nameof(RequisitionDocuments.InternalFileName)" HeaderText="File Name" Width="35%"></GridColumn>
@@ -15,12 +15,14 @@
 							@{
 								if (bCon is RequisitionDocuments _con)
 								{
-									<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.ID)" />
-									if (EditRights && _con.RequisitionOwner == User)
-									{
-										<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)" />
-										<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteDocumentMethod(_con.ID)" />
-									}
+									<div class="buttonContain">
+										<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.ID)"/>
+										@if (EditRights && _con.RequisitionOwner == User)
+										{
+											<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)"/>
+											<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteDocumentMethod(_con.ID)"/>
+										}
+									</div>
 								}
 							}
 						</Template>
@@ -50,6 +52,6 @@
 	</div>
 </div>
 @* <ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px"></ConfirmDialog> *@
-<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
-<ViewPDFDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewPDF" />@**@
+<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+<ViewPDFDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewPDF"/>@**@
 @* <ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" /> *@
