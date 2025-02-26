@@ -69,13 +69,13 @@ public class RequisitionController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             _reader.NextResult();
-                while (_reader.Read())
-                {
-                    _documents = _reader.NString(0);
-                    /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), 
-                                       _reader.NString(6), $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), 
-                                       _reader.GetString(8)));*/
-                }
+            while (_reader.Read())
+            {
+                _documents = _reader.NString(0);
+                /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3),
+                                   _reader.NString(6), $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7),
+                                   _reader.GetString(8)));*/
+            }
 
             await _reader.CloseAsync();
         }
@@ -407,5 +407,95 @@ public class RequisitionController : ControllerBase
         }
 
         return Ok(_requisitions);
+    }
+
+    /// <summary>
+    ///     Asynchronously uploads a document to a specific requisition.
+    /// </summary>
+    /// <param name="file">The file to be uploaded as an IFormFile.</param>
+    /// <returns>A dictionary containing the details of the uploaded document.</returns>
+    /// <remarks>
+    ///     This method receives the file to be uploaded as an IFormFile. It also retrieves additional information such as the
+    ///     requisition ID, the filename, and other details from the form data of the request. The file is saved in a specific
+    ///     directory structure and its details are stored in the database using a stored procedure.
+    /// </remarks>
+    [HttpPost, RequestSizeLimit(62914560)]
+    public async Task<ActionResult<string>> UploadDocument(IFormFile file)
+    {
+        string _fileName = file.FileName; //Request.Form["filename"];
+        string _requisitionID = Request.Form["requisitionID"].ToString();
+        string _internalFileName = Guid.NewGuid().ToString("N");
+        /*
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(Request.Form["path"].ToString(), "Uploads", "Requisition", _requisitionID));
+        }
+        catch
+        {
+            return null;
+        }
+
+        string _destinationFileName = Path.Combine(Request.Form["path"].ToString(), "Uploads", "Requisition", _requisitionID, _internalFileName);
+
+        //await using MemoryStream _stream = new();
+        await using FileStream _fs = System.IO.File.Open(_destinationFileName, FileMode.OpenOrCreate, FileAccess.Write);
+        try
+        {
+            await file.CopyToAsync(_fs);
+            _fs.Flush();
+            _fs.Close();
+        }
+        catch
+        {
+            _fs.Close();
+        }
+        */
+
+        // Create a BlobStorage instance
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        // Create the folder path
+        string _blobPath = $"{Start.AzureBlobContainer}/Requisition/{_requisitionID}/{_internalFileName}";
+
+        await using (Stream stream = file.OpenReadStream())
+        {
+            await _storage.WriteAsync(_blobPath, stream);
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        List<RequisitionDocuments> _documents = new();
+        string _returnVal = "[]";
+
+        try
+        {
+            await using SqlCommand _command = new("SaveRequisitionDocuments", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("RequisitionId", _requisitionID);
+            _command.Varchar("DocumentName", 255, Request.Form["name"].ToString());
+            _command.Varchar("DocumentLocation", 255, _fileName);
+            _command.Varchar("DocumentNotes", 2000, Request.Form["notes"].ToString());
+            _command.Varchar("InternalFileName", 50, _internalFileName);
+            _command.Varchar("DocsUser", 10, Request.Form["user"].ToString());
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            if (_reader.HasRows)
+            {
+                while (_reader.Read())
+                {
+                    _returnVal = _reader.NString(0);
+                    /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
+                                       $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));*/
+                }
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving requisition document. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+
+        return Ok(_returnVal);
     }
 }

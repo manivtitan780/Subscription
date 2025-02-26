@@ -450,9 +450,13 @@ body, form, html {
     line-height: 1.5em;
 }
 
-#gridCompanyTab_content_table .e-detailindentcell, #gridCompany_content_table .e-detailindentcell {
+#gridCompanyTab_content_table .e-detailindentcell, #gridCompany_content_table .e-detailindentcell, #gridRequisitionsTab_content_table .e-detailindentcell, #gridRequisitions_content_table .e-detailindentcell {
     border: none;
     border-top: 1px solid #edebe9;
+}
+
+.e-headercontent.e-lib.e-droppable{
+    border-right-width: 0 !important;    
 }
 
 #gridCompanyTab > .e-gridcontent .e-content {

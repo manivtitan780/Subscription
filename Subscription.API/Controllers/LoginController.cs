@@ -114,9 +114,9 @@ public class LoginController(IConfiguration configuration) : ControllerBase
                 _permissions.Add(nameof(_userRole.EditMyCompanyProfile));
             }
 
-            if (_userRole is {CreateOrEditRequisition: true})
+            if (_userRole is {CreateOrEditRequisitions: true}) 
             {
-                _permissions.Add(nameof(_userRole.CreateOrEditRequisition));
+                _permissions.Add(nameof(_userRole.CreateOrEditRequisitions));
             }
 
             if (_userRole is {ViewOnlyMyCandidates: true})
@@ -127,6 +127,16 @@ public class LoginController(IConfiguration configuration) : ControllerBase
             if (_userRole is {ViewAllCandidates: true})
             {
                 _permissions.Add(nameof(_userRole.ViewAllCandidates));
+            }
+
+            if (_userRole is {ViewRequisitions: true})
+            {
+                _permissions.Add(nameof(_userRole.ViewRequisitions));
+            }
+
+            if (_userRole is {EditRequisitions: true})
+            {
+                _permissions.Add(nameof(_userRole.EditRequisitions));
             }
 
             if (_userRole is {ManageSubmittedCandidates: true})
