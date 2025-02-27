@@ -63,11 +63,11 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     When an item is selected in the DropDown, the value of this field is used as the selected value.
     /// </remarks>
     [Parameter]
-    public string? Key
+    public string Key
     {
         get;
         set;
-    }
+    } = "KeyValue";
 
     [Parameter]
     public IEnumerable<TItem>? Model
@@ -102,11 +102,11 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     The display text is shown in the DropDown's input field and in the dropdown list.
     /// </remarks>
     [Parameter]
-    public string? Text
+    public string Text
     {
         get;
         set;
-    }
+    } = "Text";
 
     /// <summary>
     ///     Gets or sets the selected value in the DropDown.

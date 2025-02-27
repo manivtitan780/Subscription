@@ -17,14 +17,14 @@ namespace ExtendedComponents;
 
 public partial class TextArea : ComponentBase
 {
-    private string? _value;
+    private string _value = "";
 
     [Parameter]
-    public string? ID
+    public string ID
     {
         get;
         set;
-    }
+    } = "";
 
     [Parameter]
     public int MaxLength
@@ -68,7 +68,7 @@ public partial class TextArea : ComponentBase
     ///     current value and invokes the ValueChanged event.
     /// </summary>
     [Parameter]
-    public string? Value
+    public string Value
     {
         get => _value;
         set

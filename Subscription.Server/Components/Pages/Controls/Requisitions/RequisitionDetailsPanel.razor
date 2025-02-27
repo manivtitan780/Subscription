@@ -88,7 +88,7 @@
                 <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupSkillsInfo" LabelText="Skills Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.SkillsRequired)">
                         <Template>
-                            <MultiSelect @bind-Value="Model.SkillsRequired" Model="Skills" ID="multiSkills" Placeholder="Select Skill(s) Required" TItem="IntValues" TValue="string" Text="Value" Key="Key"/>
+                            <MultiSelect @bind-Value="Model.SkillsRequired" Model="Skills" ID="multiSkills" Placeholder="Select Skill(s) Required" TItem="IntValues" TValue="string" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Mandatory)">
@@ -100,29 +100,29 @@
                 <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupPriorityEligibility" LabelText="Priority and Eligibility">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.PriorityID)">
                         <Template>
-                            <DropDown @bind-Value="Model.PriorityID" Model="Priority" ID="dropPriority" TItem="IntValues" TValue="int" Placeholder="Priority" Text="Value" Key="Key"/>
+                            <DropDown @bind-Value="Model.PriorityID" Model="Priority" ID="dropPriority" TItem="IntValues" TValue="int" Placeholder="Priority" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)">
                         <Template>
-                            <DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Value" Key="Key"/>
+                            <DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupExperienceEducation" LabelText="Experience and Education">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)">
                         <Template>
-                            <DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Value" Key="Key"/>
+                            <DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.EducationID)">
                         <Template>
-                            <DropDown @bind-Value="Model.EducationID" Model="Education" ID="dropEducation" TItem="IntValues" TValue="int" Placeholder="Education" Text="Value" Key="Key"/>
+                            <DropDown @bind-Value="Model.EducationID" Model="Education" ID="dropEducation" TItem="IntValues" TValue="int" Placeholder="Education" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.JobOptionID)">
                         <Template>
-                            <DropDown @bind-Value="Model.JobOptionID" Model="JobOptions" ID="dropJobOptions" TItem="KeyValues" TValue="string" Placeholder="Job Options" Text="Value" Key="Key"/>
+                            <DropDown @bind-Value="Model.JobOptionID" Model="JobOptions" ID="dropJobOptions" TItem="KeyValues" TValue="string" Placeholder="Job Options" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                 </FormGroup>
