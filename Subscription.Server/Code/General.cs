@@ -216,7 +216,7 @@ public class General()//(Container container)
         {
             response = await _client.ExecuteAsync<T>(_request);
         }
-        catch (Exception ex)
+        catch //(Exception ex)
         {
             response = null;
         }
