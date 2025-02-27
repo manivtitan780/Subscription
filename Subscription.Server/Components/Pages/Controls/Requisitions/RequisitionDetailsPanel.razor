@@ -1,5 +1,4 @@
-﻿@using Position = Syncfusion.Blazor.Popups.Position
-<SfDialog Header="@(Title + " Requisition")" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
+﻿<SfDialog Header="@(Title + " Requisition")" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
     <ChildContent>
         <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
         <DialogPositionData X="right" Y="center"/>
@@ -54,6 +53,158 @@
                     <FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
                         <Template>
                             <DropDown @bind-Value="Model.StateID" Model="States" ID="dropLocState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="KeyValue"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupPositionInfo" LabelText="Position Information">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.PositionTitle)">
+                        <Template>
+                            <TextBox @bind-Value="Model.PositionTitle" ID="textTitle" MaxLength="200" Placeholder="Position Title / Role"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
+                        <Template>
+                            <SfRichTextEditor @bind-Value="Model.Description" ID="textPositionDescription" CssClass="@CssClassName">
+                                <RichTextEditorToolbarSettings Items="_tools1"/>
+                            </SfRichTextEditor>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Positions)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.Positions" ID="numericPositions" Max="500" Placeholder="No. of Positions" TValue="int"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpectedStart)">
+                        <Template>
+                            @* <DatePicker @bind-Value="Model.ExpectedStart" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" Placeholder="Start Date"/> *@
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.DueDate)">
+                        <Template>
+                            @* <DatePicker @bind-Value="Model.DueDate" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" Placeholder="Due Date"/> *@
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupSkillsInfo" LabelText="Skills Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.SkillsRequired)">
+                        <Template>
+                            <MultiSelect @bind-Value="Model.SkillsRequired" Model="Skills" ID="multiSkills" Placeholder="Select Skill(s) Required" TItem="IntValues" TValue="string" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Mandatory)">
+                        <Template>
+                            <TextArea @bind-Value="Model.Mandatory" ID="textKeywords" MaxLength="2000" Placeholder="Keywords (comma separated)" Rows="5"></TextArea>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupPriorityEligibility" LabelText="Priority and Eligibility">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.PriorityID)">
+                        <Template>
+                            <DropDown @bind-Value="Model.PriorityID" Model="Priority" ID="dropPriority" TItem="IntValues" TValue="int" Placeholder="Priority" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)">
+                        <Template>
+                            <DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupExperienceEducation" LabelText="Experience and Education">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)">
+                        <Template>
+                            <DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.EducationID)">
+                        <Template>
+                            <DropDown @bind-Value="Model.EducationID" Model="Education" ID="dropEducation" TItem="IntValues" TValue="int" Placeholder="Education" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.JobOptionID)">
+                        <Template>
+                            <DropDown @bind-Value="Model.JobOptionID" Model="JobOptions" ID="dropJobOptions" TItem="KeyValues" TValue="string" Placeholder="Job Options" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupRecruiters" LabelText="Recruiters">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.AssignedTo)">
+                        <Template>
+                            <MultiSelect @bind-Value="Model.AssignedTo" Model="Recruiters" ID="multiAssigned" Placeholder="Recruiters Assigned To" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)">
+                        <Template>
+                            @* <Switch @bind-Value="Model.ExpensesPaid" ID="checkedExpenses" OffLabel="NO" OnLabel="YES" Placeholder="Expenses Paid?"/> *@
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)">
+                        <Template>
+                            @* <Switch @bind-Value="Model.SecurityClearance" ID="checkedSecurity" OffLabel="NO" OnLabel="YES" Placeholder="Security Clearance?"/> *@
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.OFCCP)">
+                        <Template>
+                            @* <Switch @bind-Value="Model.OFCCP" ID="checkedOFCCP" OffLabel="NO" OnLabel="YES" Placeholder="OFCCP Compliance Required?"/> *@
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Duration)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Duration" ID="textDuration" MaxLength="4" Placeholder="Duration"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.DurationCode)">
+                        <Template>
+                            <DropDown @bind-Value="Model.DurationCode" Model="DurationCode" ID="dropDurationCode" TItem="KeyValues" TValue="string" Placeholder="Duration Code" Text="Value" Key="Key"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpRateLow)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.ExpRateLow" ID="numericPayRateFrom" Max="10000" Placeholder="Pay Rate/Hr From" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpRateHigh)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.ExpRateHigh" ID="numericPayRateTo" Max="10000" Placeholder="Pay Rate/Hr To" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.PlacementFee)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.PlacementFee" ID="numericPlacementFee" Max="100" Placeholder="Placement Fee" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupSalaryInfo" LabelText="Salary Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.SalaryLow)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.SalaryLow" ID="numericSalaryLow" Max="10000000" Placeholder="Min. Salary" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.SalaryHigh)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.SalaryHigh" ID="numericSalaryHigh" Max="10000000" Placeholder="Max. Salary" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupLoadRateInfo" LabelText="Load Rate Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpLoadLow)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.ExpLoadLow" ID="numericLoadLow" Max="7300" Placeholder="Min. Load Rate" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpLoadHigh)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.ExpLoadHigh" ID="numericLoadHigh" Max="7300" Placeholder="Max. Load Rate" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupBenefitsInfo" LabelText="Benefits">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.BenefitNotes)">
+                        <Template>
+                            <TextArea @bind-Value="Model.BenefitNotes" ID="textBenefits" MaxLength="8000" Placeholder="Benefits" Rows="5"></TextArea>
                         </Template>
                     </FormItem>
                 </FormGroup>
