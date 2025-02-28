@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-25-2025 15:02
+// Last Updated On:     02-28-2025 19:02
 // *****************************************/
 
 #endregion
@@ -27,9 +27,11 @@ public partial class Requisitions
     private Preferences _preference;
 
     private Query _query = new();
+    private List<KeyValues> _recruiters;
     private MarkupString _requisitionDetailSkills = string.Empty.ToMarkupString();
 
-    private RequisitionDetails _requisitionDetailsObject = new(), _requisitionDetailsObjectClone = new();
+    private RequisitionDetails _requisitionDetailsObject = new();
+    private RequisitionDetails _requisitionDetailsObjectClone = new();
     private List<RequisitionDocuments> _requisitionDocumentsObject = [];
 
     private List<Role> _roles;
@@ -306,6 +308,76 @@ public partial class Requisitions
     }
 
     private bool VisibleSpinner
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the title of the requisition. The title is used to distinguish between "Add" and "Edit" modes in the
+    ///     requisition form.
+    ///     When a new requisition is being added, the title is set to "Add". When an existing requisition is being edited, the
+    ///     title is set to "Edit".
+    /// </summary>
+    private static string Title
+    {
+        get;
+        set;
+    } = "Edit";
+
+    /// <summary>
+    ///     Asynchronously saves the requisition details.
+    /// </summary>
+    /// <param name="arg">The edit context of the requisition details.</param>
+    /// <remarks>
+    ///     This method performs the following steps:
+    ///     1. Creates a new REST client and request.
+    ///     2. Adds the cloned requisition details object to the request body in JSON format.
+    ///     3. Adds the user ID, JSON file path, and email address to the request as query parameters.
+    ///     4. Sends the request to the server.
+    ///     5. Updates the requisition details object with the cloned object.
+    ///     6. If the requisition ID is greater than 0, updates the target's title, company, job options, status, and priority
+    ///     color.
+    ///     7. If the requisition ID is not greater than 0, clears the search model data and refreshes the grid.
+    ///     8. Triggers a state change to update the UI.
+    /// </remarks>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    private Task SaveRequisition(EditContext arg) => ExecuteMethod(async () =>
+                                                                   {
+                                                                       Dictionary<string, string> _parameters = new()
+                                                                                                                {
+                                                                                                                    {"user", User},
+                                                                                                                    {"jsonPath", ""},
+                                                                                                                    {"emailAddress", ""}
+                                                                                                                };
+
+                                                                       await General.PostRest<int>("Requisition/SaveRequisition", _parameters, _requisitionDetailsObjectClone);
+
+                                                                       _requisitionDetailsObject = _requisitionDetailsObjectClone.Copy();
+
+                                                                       if (_requisitionDetailsObject.RequisitionID > 0)
+                                                                       {
+                                                                           _target.Title = $"{_requisitionDetailsObject.PositionTitle} ({_candidateActivityObject.Count})";
+                                                                           _target.Company = _requisitionDetailsObject.CompanyName;
+                                                                           _target.JobOptions = _requisitionDetailsObject.JobOptions;
+                                                                           _target.Status = _requisitionDetailsObject.Status;
+                                                                           _target.PriorityColor = _requisitionDetailsObject.Priority.ToUpperInvariant() switch
+                                                                                                   {
+                                                                                                       "HIGH" => _preference.HighPriorityColor,
+                                                                                                       "LOW" => _preference.LowPriorityColor,
+                                                                                                       _ => _preference.NormalPriorityColor
+                                                                                                   };
+                                                                       }
+                                                                       else
+                                                                       {
+                                                                           SearchModel.Clear();
+                                                                           await Grid.Refresh();
+                                                                       }
+
+                                                                       StateHasChanged();
+                                                                   });
+
+    public RequisitionDetailsPanel DetailsRequisition
     {
         get;
         set;
@@ -726,7 +798,7 @@ public partial class Requisitions
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
 
-                                /*while (_recruiters == null)
+                                while (_recruiters == null)
                                 {
                                     List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[CacheObjects.Users.ToString()]);
                                     if (_users == null)
@@ -735,11 +807,11 @@ public partial class Requisitions
                                     }
 
                                     _recruiters = [];
-                                    foreach (User _user in _users.Where(user => user.Role is "Recruiter" or "Recruiter & Sales Manager"))
+                                    foreach (UserList _user in _users.Where(user => user.Role is 2 or 4 or 5 or 6))
                                     {
-                                        _recruiters?.Add(new(_user.UserName, _user.UserName));
+                                        _recruiters.Add(new() {KeyValue = _user.UserName, Text = _user.UserName});
                                     }
-                                }*/
+                                }
 
                                 Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Skills.ToString()]);
 
@@ -835,8 +907,8 @@ public partial class Requisitions
                                                                                                                           {"path", Start.UploadsPath}
                                                                                                                       };
                                                                              string _response = await General.ExecuteRest<string>("Requisition/UploadDocument", _parameters, null, true,
-                                                                                                                                           DialogDocument.AddedDocument.ToStreamByteArray(),
-                                                                                                                                           DialogDocument.FileName);
+                                                                                                                                  DialogDocument.AddedDocument.ToStreamByteArray(),
+                                                                                                                                  DialogDocument.FileName);
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
@@ -909,13 +981,59 @@ public partial class Requisitions
     {
         switch (args.Item.ID)
         {
+            case "itemEditRequisition":
+                _selectedTab = 0;
+                return EditRequisition(false);
             case "itemAddDocument":
                 _selectedTab = 1;
                 return AddDocument();
-                break;
         }
+
         return Task.CompletedTask;
     }
+    /// <summary>
+    ///     Initiates the process of editing a requisition. This method is asynchronous.
+    /// </summary>
+    /// <param name="isAdd">
+    ///     A boolean value that determines whether a new requisition is being added or an existing one is being edited.
+    ///     If true, a new requisition is being added. If false, an existing requisition is being edited.
+    /// </param>
+    /// <remarks>
+    ///     This method performs several actions:
+    ///     - It shows a spinner to indicate that a process is running.
+    ///     - It sets the title of the dialog box based on whether a new requisition is being added or an existing one is being
+    ///     edited.
+    ///     - It creates a new requisition or clears the data of an existing one based on the value of the isAdd parameter.
+    ///     - It triggers a state change in the component.
+    ///     - It shows the dialog box for editing the requisition.
+    ///     - It hides the spinner once the process is complete.
+    /// </remarks>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    private Task EditRequisition(bool isAdd) => ExecuteMethod(async () =>
+                                                              {
+                                                                  VisibleSpinner = true;
+
+                                                                  if (isAdd)
+                                                                  {
+                                                                      Title = "Add";
+                                                                      if (_requisitionDetailsObjectClone == null)
+                                                                      {
+                                                                          _requisitionDetailsObjectClone = new();
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          _requisitionDetailsObjectClone.Clear();
+                                                                      }
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      Title = "Edit";
+                                                                      _requisitionDetailsObjectClone = _requisitionDetailsObject.Copy();
+                                                                  }
+
+                                                                  await DetailsRequisition.ShowDialog();
+                                                                  VisibleSpinner = false;
+                                                              });
 
     /// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
