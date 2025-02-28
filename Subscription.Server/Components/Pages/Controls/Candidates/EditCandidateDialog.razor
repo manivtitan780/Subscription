@@ -172,7 +172,6 @@
 				</FormGroup>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupPreferencesInfo" LabelText="Preferences/Clearances">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Relocate)" LabelText="Willing to Relocate:" ID="checkedRelocate" EditorType="FormEditorType.Switch"/>
-					
 					<FormItem ColumnSpan="1" Field="@nameof(Model.RelocationNotes)">
 						<Template>
 							<TextBox @bind-Value="Model.RelocationNotes" ID="textRelocationNotes" MaxLength="255" Placeholder="Relocation Notes" Readonly="@(!Model.Relocate)"/>

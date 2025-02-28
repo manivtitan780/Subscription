@@ -76,11 +76,14 @@
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpectedStart)">
                         <Template>
-                            @* <DatePicker @bind-Value="Model.ExpectedStart" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" Placeholder="Start Date"/> *@
+                            <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
+                                          Placeholder="Start Date" />
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.DueDate)">
                         <Template>
+                            <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))"
+                                          Placeholder="Start Date"/>
                             @* <DatePicker @bind-Value="Model.DueDate" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" Placeholder="Due Date"/> *@
                         </Template>
                     </FormItem>
@@ -129,26 +132,14 @@
                 <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupRecruiters" LabelText="Recruiters">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.AssignedTo)">
                         <Template>
-                            <MultiSelect @bind-Value="Model.AssignedTo" Model="Recruiters" ID="multiAssigned" Placeholder="Recruiters Assigned To" TItem="KeyValues" TValue="string" Text="Value" Key="Key"/>
+                            <MultiSelect @bind-Value="Model.AssignedTo" Model="Recruiters" ID="multiAssigned" Placeholder="Recruiters Assigned To" TItem="KeyValues" TValue="string" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)">
-                        <Template>
-                            @* <Switch @bind-Value="Model.ExpensesPaid" ID="checkedExpenses" OffLabel="NO" OnLabel="YES" Placeholder="Expenses Paid?"/> *@
-                        </Template>
-                    </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)">
-                        <Template>
-                            @* <Switch @bind-Value="Model.SecurityClearance" ID="checkedSecurity" OffLabel="NO" OnLabel="YES" Placeholder="Security Clearance?"/> *@
-                        </Template>
-                    </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.OFCCP)">
-                        <Template>
-                            @* <Switch @bind-Value="Model.OFCCP" ID="checkedOFCCP" OffLabel="NO" OnLabel="YES" Placeholder="OFCCP Compliance Required?"/> *@
-                        </Template>
-                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)" LabelText="Expenses Paid?:" ID="checkedExpenses" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)" LabelText="Security Clearance?:" ID="checkedSecurity" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.OFCCP)" LabelText="OFFCP Compliance Required?:" ID="checkedOFFCP" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Duration)">

@@ -423,23 +423,6 @@ public partial class RequisitionDetailsPanel
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the list of toolbar items for the RequisitionDetailsPanel.
-    /// </summary>
-    /// <value>
-    ///     The list of toolbar items.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to manage the toolbar items in the RequisitionDetailsPanel. Each item in the list represents
-    ///     a specific tool in the toolbar.
-    /// </remarks>
-    [Parameter]
-    public List<ToolbarItemModel> Tools
-    {
-        get;
-        set;
-    }
-
     private bool VisibleSpinner
     {
         get;
