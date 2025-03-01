@@ -209,22 +209,6 @@ public partial class EditCandidateDialog
     }
 
 	/// <summary>
-	///     Gets or sets the event callback that is triggered when the State ID changes.
-	/// </summary>
-	/// <value>
-	///     The event callback of type <see cref="EventCallback{ChangeEventArgs}" />.
-	/// </value>
-	/// <remarks>
-	///     This event callback is used to handle the changes in the State ID during the candidate editing process.
-	/// </remarks>
-	[Parameter]
-    public EventCallback<ChangeEventArgs<int, IntValues>> StateIDChanged
-    {
-        get;
-        set;
-    }
-
-	/// <summary>
 	///     Gets or sets the list of states associated with the candidate.
 	/// </summary>
 	/// <value>
