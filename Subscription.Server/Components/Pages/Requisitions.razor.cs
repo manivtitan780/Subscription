@@ -858,19 +858,19 @@ public partial class Requisitions
                                 }
 
                                 List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[CacheObjects.CompanyContacts.ToString()]);
-                                if (_companyContacts != null && _companyContacts.Count != 0)
-                                {
-                                    foreach (Company _company in Companies)
-                                    {
-                                        foreach (CompanyContacts _companyContact in _companyContacts.Where(companyContact => _company.ID == companyContact.CompanyID))
+                                // if (_companyContacts != null && _companyContacts.Count != 0)
+                                // {
+                                //     foreach (Company _company in Companies)
+                                //     {
+                                        foreach (CompanyContacts _companyContact in _companyContacts)//.Where(companyContact => _company.ID == companyContact.CompanyID))
                                         {
-                                            CompanyContacts.Add(new() {CompanyID = _company.ID, ID = _companyContact.ID, FirstName = $"{_companyContact.FirstName} {_companyContact.LastName}"});
-                                            break;
+                                            CompanyContacts.Add(new() {CompanyID = _companyContact.CompanyID, ID = _companyContact.ID, FirstName = $"{_companyContact.FirstName} {_companyContact.LastName}"});
+                                            // break;
                                         }
-                                    }
-
-                                    CompanyContacts = _companyContacts;
-                                }
+                                    // }
+                                //
+                                //     CompanyContacts = _companyContacts;
+                                // }
 
                                 _workflows = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                             });
@@ -990,7 +990,7 @@ public partial class Requisitions
         }
 
         return Task.CompletedTask;
-    }
+    } 
     /// <summary>
     ///     Initiates the process of editing a requisition. This method is asynchronous.
     /// </summary>

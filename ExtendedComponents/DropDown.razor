@@ -2,7 +2,7 @@
            @typeparam TItem
 
 <label class="e-form-label" for="@ID">@($"{Placeholder}:")</label>
-<SfDropDownList AllowFiltering="@AllowFilter" DataSource="@Model" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="@ID" @ref="_drop" ShowClearButton="@ShowClearButton" TItem="TItem"
+<SfDropDownList AllowFiltering="@AllowFilter" DataSource="@Model" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="@ID" @ref="_drop" Query="@Query" ShowClearButton="@ShowClearButton" TItem="TItem"
                 TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression" Width="@Width" Placeholder="@Placeholder">
     <DropDownListEvents TItem="TItem" TValue="TValue" ValueChange="@DropDownValueChange"/>
     <DropDownListFieldSettings Text="@Text" Value="@Key"/>

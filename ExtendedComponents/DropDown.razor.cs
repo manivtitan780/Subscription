@@ -13,6 +13,8 @@
 
 #endregion
 
+using Syncfusion.Blazor.Data;
+
 namespace ExtendedComponents;
 
 public partial class DropDown<TValue, TItem> : ComponentBase
@@ -189,6 +191,13 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         get;
         set;
     } = "98%";
+
+    [Parameter]
+    public Query Query
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Asynchronously refreshes the data in the DropDown control.

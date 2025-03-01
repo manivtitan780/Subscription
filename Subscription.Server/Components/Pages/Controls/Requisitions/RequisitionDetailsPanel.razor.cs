@@ -1,4 +1,4 @@
-﻿#region Header
+﻿    #region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
@@ -8,14 +8,18 @@
 // File Name:           RequisitionDetailsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-26-2025 16:02
-// Last Updated On:     02-26-2025 16:02
+// Last Updated On:     02-28-2025 20:02
 // *****************************************/
 
 #endregion
 
-using FluentValidation;
+#region Using
+
+using StackExchange.Redis;
 
 using Syncfusion.Blazor.Calendars;
+
+#endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
@@ -33,7 +37,7 @@ public partial class RequisitionDetailsPanel
 {
     private bool _actionProgress;
 
-    private EditContext _editContext;
+    //private EditContext _editContext;
 
     /// <summary>
     ///     Gets or sets the filtered list of company contacts associated with the requisition.
@@ -46,6 +50,8 @@ public partial class RequisitionDetailsPanel
     ///     It is used in the RequisitionDetailsPanel for displaying only the relevant contacts to the user.
     /// </remarks>
     private List<CompanyContacts> _filteredCompanyContacts = [];
+
+    private readonly RequisitionDetailsValidator _requisitionDetailsValidator = new();
 
     /// <summary>
     ///     Represents a collection of toolbar items used in the RequisitionDetailsPanel.
@@ -72,7 +78,6 @@ public partial class RequisitionDetailsPanel
     ];
 
     private bool _zipChanging;
-    private readonly RequisitionDetailsValidator _requisitionDetailsValidator = new();
 
     /*/// <summary>
     ///     Gets or sets the AutoCompleteButton control used in the RequisitionDetailsPanel.
@@ -135,6 +140,13 @@ public partial class RequisitionDetailsPanel
         set;
     }
 
+    private List<CompanyContacts> CompanyContactsFiltered
+    {
+        get;
+        set;
+    } = [];
+
+    /*
     /// <summary>
     ///     Gets or sets the query for contact details in the requisition.
     /// </summary>
@@ -142,6 +154,13 @@ public partial class RequisitionDetailsPanel
     ///     The query for contact details.
     /// </value>
     private Query ContactQuery
+    {
+        get;
+        set;
+    }
+    */
+
+    private EditContext Context
     {
         get;
         set;
@@ -238,21 +257,6 @@ public partial class RequisitionDetailsPanel
     }
 
     /// <summary>
-    ///     Gets or sets the FooterDialog property, which represents a dialog footer in the admin controls of the application.
-    /// </summary>
-    /// <value>
-    ///     The FooterDialog property gets/sets the value of a DialogFooter object.
-    /// </value>
-    /// <remarks>
-    ///     This property is used for managing the Cancel and Save buttons in the dialog.
-    /// </remarks>
-    internal DialogFooter FooterDialog
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
     ///     Gets or sets the job options for the requisition details panel.
     /// </summary>
     /// <value>
@@ -322,7 +326,7 @@ public partial class RequisitionDetailsPanel
     {
         get;
     } = [new() {KeyValue = 0, Text = "Low"}, new() {KeyValue = 1, Text = "Medium"}, new() {KeyValue = 2, Text = "High"}];
-        
+
     /// <summary>
     ///     Gets or sets the list of recruiters associated with the requisition.
     /// </summary>
@@ -382,19 +386,6 @@ public partial class RequisitionDetailsPanel
     }
 
     /// <summary>
-    ///     Gets or sets the event callback that is triggered when the StateID changes.
-    /// </summary>
-    /// <value>
-    ///     The event callback containing the change event arguments, which includes the old and new StateID values.
-    /// </value>
-    [Parameter]
-    public EventCallback<ChangeEventArgs<int, IntValues>> StateIDChanged
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the list of states for the RequisitionDetailsPanel.
     /// </summary>
     /// <value>
@@ -429,23 +420,20 @@ public partial class RequisitionDetailsPanel
         set;
     }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
-
     /// <summary>
     ///     Handles the cancellation of the dialog.
     /// </summary>
     /// <param name="args">The mouse event arguments associated with the cancellation event.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
-    private Task CancelDialog(MouseEventArgs args)
+    private async Task CancelDialog(MouseEventArgs args)
     {
-        return Task.CompletedTask;
-        /*return General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);*/
+        VisibleSpinner = true;
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
     }
-
+    
+    /*return General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);*/
     ///// <summary>
     /////     Gets or sets the Redis service used for caching data.
     ///// </summary>
@@ -482,21 +470,15 @@ public partial class RequisitionDetailsPanel
         await Task.Yield();
         if (!company.Value.NullOrWhiteSpace())
         {
-            ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = company.Value});
+            //ContactQuery = new Query().Where(new WhereFilter {Field = "CompanyID", Operator = "equal", value = company.Value});
+            CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == company.Value).ToList();
             if (company.ItemData != null)
             {
                 Model.CompanyName = company.ItemData.CompanyName;
-                //IMemoryCache _memoryCache = Start.MemCache;
-                //using RestClient _client = new(Start.ApiHost);
-                //RestRequest _request = new("Redis/GetKey");
-                //_request.AddQueryParameter("key", "Companies");
-                Dictionary<string, string> _params = new()
-                                                     {
-                                                         {"key", "Companies"}
-                                                     };
-                string _returnValue = await General.GetRest<string>("Redis/GetKey", _params); //_client.ExecuteGetAsync<string>(_request);
+                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
 
-                //RestResponse<string> _returnValue = await _client.ExecuteGetAsync<string>(_request);
+                RedisValue _cacheValues = await _service.GetAsync("Companies");
+                string _returnValue = _cacheValues.ToString();
 
                 List<Company> _companyList = null;
                 if (!_returnValue.NullOrWhiteSpace())
@@ -504,8 +486,6 @@ public partial class RequisitionDetailsPanel
                     _companyList = General.DeserializeObject<List<Company>>(_returnValue);
                 }
 
-                //List<Company> _companyList = await Redis.GetAsync<List<Company>>("Companies");
-                //_memoryCache.TryGetValue("Companies", out List<Company> _companyList);
                 if (_companyList is {Count: > 0})
                 {
                     Company _company = _companyList.First(x => x.ID == company.ItemData.ID);
@@ -515,6 +495,7 @@ public partial class RequisitionDetailsPanel
                 }
             }
         }
+        StateHasChanged();
     }
 
     /// <summary>
@@ -586,6 +567,8 @@ public partial class RequisitionDetailsPanel
         _editContext?.NotifyFieldChanged(_editContext.Field(nameof(Model.DueDate)));
         StateHasChanged();
     }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     /// <summary>
     ///     Handles the field changed event of the EditContext.
@@ -690,7 +673,8 @@ public partial class RequisitionDetailsPanel
     {
         if (!firstRender && Model is {CompanyID: > 0})
         {
-            ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = Model.CompanyID});
+            //ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = Model.CompanyID});
+            CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == Model.CompanyID).ToList();
         }
 
         base.OnAfterRender(firstRender);
@@ -722,22 +706,23 @@ public partial class RequisitionDetailsPanel
     /// <returns>
     ///     A task that represents the asynchronous operation.
     /// </returns>
-    private async Task OpenDialog(BeforeOpenEventArgs args)
+    private async Task DialogOpen(BeforeOpenEventArgs args)
     {
         await Task.Yield();
         if (!_actionProgress)
         {
             _actionProgress = true;
-            ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = Model.CompanyID});
-            _editContext = EditRequisitionForm.EditContext;
-            _editContext?.Validate();
-            if (_editContext != null)
+            //ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = Model.CompanyID});
+            CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == Model.CompanyID).ToList();
+            Context = EditRequisitionForm.EditContext;
+            Context?.Validate();
+            if (Context != null)
             {
-                _editContext.OnFieldChanged += EditContext_OnFieldChanged;
+                Context.OnFieldChanged += Context_OnFieldChanged;
             }
 
             FieldIdentifier _fieldIdentifier = new(Model, nameof(Model.Description));
-            IEnumerable<string> _errorMessages = _editContext?.GetValidationMessages(_fieldIdentifier);
+            IEnumerable<string> _errorMessages = Context?.GetValidationMessages(_fieldIdentifier);
             CssClassName = _errorMessages != null && _errorMessages.Any() ? "error" : "success";
             StateHasChanged();
             _actionProgress = false;
@@ -751,12 +736,22 @@ public partial class RequisitionDetailsPanel
     /// <returns>
     ///     A task that represents the asynchronous operation.
     /// </returns>
-    private Task SaveDialog(EditContext editContext)
+    private async Task SaveRequisitionDialog(EditContext editContext)
     {
-        return Task.CompletedTask;
-        // return General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+        VisibleSpinner = true;
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
     }
 
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
+
+    // return General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
     /// <summary>
     ///     Asynchronously shows the dialog of the requisition details panel.
     /// </summary>
@@ -765,6 +760,7 @@ public partial class RequisitionDetailsPanel
     /// </returns>
     public Task ShowDialog() => Dialog.ShowAsync();
 
+    /*
     /// <summary>
     ///     Handles the opening of a tooltip.
     /// </summary>
@@ -776,6 +772,7 @@ public partial class RequisitionDetailsPanel
     {
         args.Cancel = !args.HasText;
     }
+    */
 
     /// <summary>
     ///     Handles the change of the Zip code in the RequisitionDetailsPanel.

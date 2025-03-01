@@ -3,8 +3,8 @@
         <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
         <DialogPositionData X="right" Y="center"/>
         <DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
-        <DialogEvents OnOpen="OpenDialog"/>
-        <SfDataForm EditContext="Context" ID="requisitionEditForm" OnValidSubmit="SaveDialog" @ref="EditRequisitionForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+        <DialogEvents OnOpen="DialogOpen"/>
+        <SfDataForm EditContext="Context" ID="requisitionEditForm" OnValidSubmit="SaveRequisitionDialog" @ref="EditRequisitionForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
                 <SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
             </FormButtons>
@@ -15,12 +15,14 @@
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupCompanyInfo" LabelText="Company Information">
                     <FormItem ColumnSpan="3" Field="@nameof(Model.CompanyID)">
                         <Template>
-                            <DropDown @bind-Value="Model.CompanyID" Model="Companies" ID="dropCompany" TItem="Company" TValue="int" Placeholder="Company Name" Text="CompanyName" Key="ID"/>
+                            <DropDown @bind-Value="Model.CompanyID" Model="Companies" ID="dropCompany" TItem="Company" TValue="int" Placeholder="Company Name" Text="CompanyName" Key="ID" 
+                                      DropDownValueChange="CompanyChanged"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="3" Field="@nameof(Model.ContactID)">
                         <Template>
-                            <DropDown @bind-Value="Model.ContactID" Model="CompanyContacts" ID="dropCompanyContact" TItem="CompanyContacts" TValue="int" Placeholder="Contact Name" Text="ContactName" Key="ID"/>
+                            <DropDown @bind-Value="Model.ContactID" Model="CompanyContactsFiltered" ID="dropCompanyContact" TItem="CompanyContacts"  TValue="int" Placeholder="Contact Name"
+                                      Text="FirstName" Key="ID"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.CompanyCity)">
@@ -64,6 +66,7 @@
                     </FormItem>
                     <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
                         <Template>
+                            <label class="e-form-label" for="textPositionDescription">Position Description:</label>
                             <SfRichTextEditor @bind-Value="Model.Description" ID="textPositionDescription" CssClass="@CssClassName">
                                 <RichTextEditorToolbarSettings Items="_tools1"/>
                             </SfRichTextEditor>
@@ -76,12 +79,14 @@
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpectedStart)">
                         <Template>
-                            <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
+                            <label class="e-form-label" for="dateStart">Expected Start Date:</label>
+                            <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))"
                                           Placeholder="Start Date" />
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.DueDate)">
                         <Template>
+                            <label class="e-form-label" for="dateDue">Expected Due Date:</label>
                             <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))"
                                           Placeholder="Start Date"/>
                             @* <DatePicker @bind-Value="Model.DueDate" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" Placeholder="Due Date"/> *@
