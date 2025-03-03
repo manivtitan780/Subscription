@@ -1,4 +1,4 @@
-﻿<SfDialog Header="@(Title + " Requisition")" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
+﻿<SfDialog CssClass="dialogPopup" Header="@(Title + " Requisition")" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
     <ChildContent>
         <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
         <DialogPositionData X="right" Y="center"/>
@@ -6,6 +6,7 @@
         <DialogEvents OnOpen="DialogOpen"/>
         <SfDataForm EditContext="Context" ID="requisitionEditForm" OnValidSubmit="SaveRequisitionDialog" @ref="EditRequisitionForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">Save Requisition</SfButton>
                 <SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
             </FormButtons>
             <FormValidator>
@@ -15,14 +16,14 @@
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupCompanyInfo" LabelText="Company Information">
                     <FormItem ColumnSpan="3" Field="@nameof(Model.CompanyID)">
                         <Template>
-                            <DropDown @bind-Value="Model.CompanyID" Model="Companies" ID="dropCompany" TItem="Company" TValue="int" Placeholder="Company Name" Text="CompanyName" Key="ID" 
-                                      DropDownValueChange="CompanyChanged"/>
+                            <DropDown @bind-Value="Model.CompanyID" DropDownValueChange="CompanyChanged" Model="Companies" ID="dropCompany" TItem="Company" TValue="int" Placeholder="Company Name" 
+                                      Text="CompanyName" Key="ID" />
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="3" Field="@nameof(Model.ContactID)">
                         <Template>
-                            <DropDown @bind-Value="Model.ContactID" Model="CompanyContactsFiltered" ID="dropCompanyContact" TItem="CompanyContacts"  TValue="int" Placeholder="Contact Name"
-                                      Text="FirstName" Key="ID"/>
+                            <DropDown @bind-Value="Model.ContactID" DataBound="ContactDataBound" Model="CompanyContactsFiltered" ID="dropCompanyContact" TItem="CompanyContacts"  TValue="int" 
+                                      Placeholder="Contact Name" Text="ContactName" Key="ID"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.CompanyCity)">
@@ -64,14 +65,6 @@
                             <TextBox @bind-Value="Model.PositionTitle" ID="textTitle" MaxLength="200" Placeholder="Position Title / Role"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
-                        <Template>
-                            <label class="e-form-label" for="textPositionDescription">Position Description:</label>
-                            <SfRichTextEditor @bind-Value="Model.Description" ID="textPositionDescription" CssClass="@CssClassName">
-                                <RichTextEditorToolbarSettings Items="_tools1"/>
-                            </SfRichTextEditor>
-                        </Template>
-                    </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Positions)">
                         <Template>
                             <NumericTextBox @bind-Value="Model.Positions" ID="numericPositions" Max="500" Placeholder="No. of Positions" TValue="int"/>
@@ -80,16 +73,26 @@
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpectedStart)">
                         <Template>
                             <label class="e-form-label" for="dateStart">Expected Start Date:</label>
-                            <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))"
-                                          Placeholder="Start Date" />
+                            <SfDatePicker @bind-Value="Model.ExpectedStart" Format="MM/dd/yyyy" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
+                                          OpenOnFocus="true" Placeholder="Start Date" TValue="DateTime">
+                            </SfDatePicker>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.DueDate)">
                         <Template>
                             <label class="e-form-label" for="dateDue">Expected Due Date:</label>
-                            <SfDatePicker TValue="DateTime" @bind-Value="Model.ExpectedStart" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))"
-                                          Placeholder="Start Date"/>
+                            <SfDatePicker @bind-Value="Model.ExpectedStart" Format="MM/dd/yyyy" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
+                                          OpenOnFocus="true" Placeholder="Start Date" TValue="DateTime">
+                            </SfDatePicker>
                             @* <DatePicker @bind-Value="Model.DueDate" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" Placeholder="Due Date"/> *@
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
+                        <Template>
+                            <label class="e-form-label" for="textPositionDescription">Position Description:</label>
+                            <SfRichTextEditor @bind-Value="Model.Description" ID="textPositionDescription" CssClass="@CssClassName" Height="300px">
+                                <RichTextEditorToolbarSettings Items="_tools1"/>
+                            </SfRichTextEditor>
                         </Template>
                     </FormItem>
                 </FormGroup>
@@ -142,11 +145,11 @@
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)" LabelText="Expenses Paid?:" ID="checkedExpenses" EditorType="FormEditorType.Switch"/>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)" LabelText="Security Clearance?:" ID="checkedSecurity" EditorType="FormEditorType.Switch"/>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.OFCCP)" LabelText="OFFCP Compliance Required?:" ID="checkedOFFCP" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)" LabelText="Expenses Paid?" ID="checkedExpenses" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)" LabelText="Security Clearance?" ID="checkedSecurity" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.OFCCP)" LabelText="OFFCP Compliance Required?" ID="checkedOFFCP" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
-                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
+                <FormGroup ColumnCount="5" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Hourly Rate Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Duration)">
                         <Template>
                             <TextBox @bind-Value="Model.Duration" ID="textDuration" MaxLength="4" Placeholder="Duration"/>
@@ -154,7 +157,7 @@
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.DurationCode)">
                         <Template>
-                            <DropDown @bind-Value="Model.DurationCode" Model="DurationCode" ID="dropDurationCode" TItem="KeyValues" TValue="string" Placeholder="Duration Code" Text="Value" Key="Key"/>
+                            <DropDown @bind-Value="Model.DurationCode" Model="DurationCode" ID="dropDurationCode" TItem="KeyValues" TValue="string" Placeholder="Duration Code" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpRateLow)">
@@ -173,7 +176,7 @@
                         </Template>
                     </FormItem>
                 </FormGroup>
-                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupSalaryInfo" LabelText="Salary Information">
+                <FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupSalaryInfo" LabelText="Salary/Load Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.SalaryLow)">
                         <Template>
                             <NumericTextBox @bind-Value="Model.SalaryLow" ID="numericSalaryLow" Max="10000000" Placeholder="Min. Salary" TValue="decimal"/>
@@ -184,8 +187,6 @@
                             <NumericTextBox @bind-Value="Model.SalaryHigh" ID="numericSalaryHigh" Max="10000000" Placeholder="Max. Salary" TValue="decimal"/>
                         </Template>
                     </FormItem>
-                </FormGroup>
-                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupLoadRateInfo" LabelText="Load Rate Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpLoadLow)">
                         <Template>
                             <NumericTextBox @bind-Value="Model.ExpLoadLow" ID="numericLoadLow" Max="7300" Placeholder="Min. Load Rate" TValue="decimal"/>

@@ -498,4 +498,140 @@ public class RequisitionController : ControllerBase
 
         return Ok(_returnVal);
     }
+    
+        /// <summary>
+    ///     Saves a requisition to the database.
+    /// </summary>
+    /// <param name="requisition">The details of the requisition to be saved.</param>
+    /// <param name="user">The user who is performing the save operation.</param>
+    /// <param name="jsonPath">The path to the JSON file containing the requisition details.</param>
+    /// <param name="emailAddress">The email address to which notifications will be sent. Defaults to "maniv@titan-techs.com".</param>
+    /// <returns>
+    ///     An integer indicating the status of the save operation. Returns -1 if the requisition is null, and 0
+    ///     otherwise.
+    /// </returns>
+    [HttpPost]
+    public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, [FromQuery] string user, string jsonPath, [FromQuery] string emailAddress = "maniv@titan-techs.com")
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        string _reqCode = "";
+        try
+        {
+            await using SqlCommand _command = new("SaveRequisition", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("RequisitionId", requisition.RequisitionID, true);
+            _command.Int("Company", requisition.CompanyID);
+            _command.Int("HiringMgr", requisition.ContactID);
+            _command.Varchar("City", 50, requisition.City);
+            _command.Int("StateId", requisition.StateID);
+            _command.Varchar("Zip", 10, requisition.ZipCode);
+            _command.TinyInt("IsHot", requisition.PriorityID);
+            _command.Varchar("Title", 200, requisition.PositionTitle);
+            _command.Varchar("Description", -1, requisition.Description);
+            _command.Int("Positions", requisition.Positions);
+            _command.DateTime("ExpStart", requisition.ExpectedStart);
+            _command.DateTime("Due", requisition.DueDate);
+            _command.Int("Education", requisition.EducationID);
+            _command.Varchar("Skills", 2000, requisition.SkillsRequired);
+            _command.Varchar("OptionalRequirement", 8000, requisition.Optional);
+            _command.Char("JobOption", 1, requisition.JobOptionID);
+            _command.Int("ExperienceID", requisition.ExperienceID);
+            _command.Int("Eligibility", requisition.EligibilityID);
+            _command.Varchar("Duration", 50, requisition.Duration);
+            _command.Char("DurationCode", 1, requisition.DurationCode);
+            _command.Decimal("ExpRateLow", 9, 2, requisition.ExpRateLow);
+            _command.Decimal("ExpRateHigh", 9, 2, requisition.ExpRateHigh);
+            _command.Decimal("ExpLoadLow", 9, 2, requisition.ExpLoadLow);
+            _command.Decimal("ExpLoadHigh", 9, 2, requisition.ExpLoadHigh);
+            _command.Decimal("SalLow", 9, 2, requisition.SalaryLow);
+            _command.Decimal("SalHigh", 9, 2, requisition.SalaryHigh);
+            _command.Bit("ExpPaid", requisition.ExpensesPaid);
+            _command.Char("Status", 3, requisition.StatusCode);
+            _command.Bit("Security", requisition.SecurityClearance);
+            _command.Decimal("PlacementFee", 8, 2, requisition.PlacementFee);
+            _command.Varchar("BenefitsNotes", -1, requisition.BenefitNotes);
+            _command.Bit("OFCCP", requisition.OFCCP);
+            _command.Varchar("User", 10, user);
+            _command.Varchar("Assign", 550, requisition.AssignedTo);
+            _command.Varchar("MandatoryRequirement", 8000, requisition.Mandatory);
+            //_returnValue = await GetGridRequisitions(_requisitionSearch, false);
+
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+            _reader.Read();
+            if (_reader.HasRows)
+            {
+                _reqCode = _reader.NString(0);
+            }
+
+            await _reader.NextResultAsync();
+            List<EmailTemplates> _templates = new();
+            Dictionary<string, string> _emailAddresses = new();
+            Dictionary<string, string> _emailCC = new();
+
+            while (await _reader.ReadAsync())
+            {
+                _templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
+            }
+
+            await _reader.NextResultAsync();
+            string _stateName = "";
+            while (await _reader.ReadAsync())
+            {
+                _stateName = _reader.GetString(0);
+            }
+
+            await _reader.CloseAsync();
+
+            if (_templates.Count > 0)
+            {
+                EmailTemplates _templateSingle = _templates[0];
+                if (!_templateSingle.CC.NullOrWhiteSpace())
+                {
+                    string[] _ccArray = _templateSingle.CC.Split(",");
+                    foreach (string _cc in _ccArray)
+                    {
+                        _emailCC.Add(_cc, _cc);
+                    }
+                }
+
+                _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                         .Replace("$REQ_ID$", _reqCode)
+                                                         .Replace("$REQ_TITLE$", requisition.PositionTitle)
+                                                         .Replace("$COMPANY$", requisition.CompanyName)
+                                                         .Replace("$DESCRIPTION$", requisition.Description)
+                                                         .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
+                                                         .Replace("$LOGGED_USER$", user);
+                _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                          .Replace("$REQ_ID$", _reqCode)
+                                                          .Replace("$REQ_TITLE$", requisition.PositionTitle)
+                                                          .Replace("$COMPANY$", requisition.CompanyName)
+                                                          .Replace("$DESCRIPTION$", requisition.Description)
+                                                          .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
+                                                          .Replace("$LOGGED_USER$", user);
+
+                /*GMailSend _send = new();
+                GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving requisition. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally 
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(0);
+    }
+
 }
