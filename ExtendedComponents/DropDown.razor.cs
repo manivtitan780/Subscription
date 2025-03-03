@@ -6,14 +6,18 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           DropDown.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-13-2024 19:12
-// Last Updated On:     12-13-2024 21:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     03-02-2025 19:03
 // *****************************************/
 
 #endregion
 
+#region Using
+
 using Syncfusion.Blazor.Data;
+
+#endregion
 
 namespace ExtendedComponents;
 
@@ -24,6 +28,13 @@ public partial class DropDown<TValue, TItem> : ComponentBase
 
     [Parameter]
     public bool AllowFilter
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<DataBoundEventArgs> DataBound
     {
         get;
         set;
@@ -84,6 +95,13 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         get;
         set;
     }
+
+    [Parameter]
+    public Query Query
+    {
+        get;
+        set;
+    } = new();
 
     [Parameter]
     public bool ShowClearButton
@@ -192,12 +210,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         set;
     } = "98%";
 
-    [Parameter]
-    public Query Query
-    {
-        get;
-        set;
-    } = new();
+    protected override Task OnInitializedAsync() => base.OnInitializedAsync();
 
     /// <summary>
     ///     Asynchronously refreshes the data in the DropDown control.
@@ -208,9 +221,4 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     /// </remarks>
     // ReSharper disable once UnusedMember.Global
     public Task? Refresh() => _drop?.RefreshDataAsync();
-
-    protected override Task OnInitializedAsync()
-    {
-        return base.OnInitializedAsync();
-    }
 }

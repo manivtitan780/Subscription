@@ -6,17 +6,16 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           CompanyContacts.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          02-11-2024 20:02
-// Last Updated On:     04-25-2024 19:04
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     03-01-2025 19:03
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Model;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CompanyContacts
 {
     public string City
@@ -32,6 +31,12 @@ public class CompanyContacts
     }
 
     public string CompanyName
+    {
+        get;
+        set;
+    }
+
+    public string ContactName
     {
         get;
         set;
@@ -223,6 +228,7 @@ public class CompanyContacts
         StateID = 0;
         State = "";
         ZipCode = "";
+        ContactName = "";
     }
 
     public CompanyContacts Copy() => MemberwiseClone() as CompanyContacts;

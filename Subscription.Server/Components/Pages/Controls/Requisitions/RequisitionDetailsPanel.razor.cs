@@ -1,4 +1,4 @@
-﻿    #region Header
+﻿#region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
@@ -8,7 +8,7 @@
 // File Name:           RequisitionDetailsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-26-2025 16:02
-// Last Updated On:     02-28-2025 20:02
+// Last Updated On:     03-03-2025 15:03
 // *****************************************/
 
 #endregion
@@ -18,6 +18,8 @@
 using StackExchange.Redis;
 
 using Syncfusion.Blazor.Calendars;
+
+using FocusEventArgs = Syncfusion.Blazor.Calendars.FocusEventArgs;
 
 #endregion
 
@@ -140,25 +142,11 @@ public partial class RequisitionDetailsPanel
         set;
     }
 
-    private List<CompanyContacts> CompanyContactsFiltered
+    private IEnumerable<CompanyContacts> CompanyContactsFiltered
     {
         get;
         set;
     } = [];
-
-    /*
-    /// <summary>
-    ///     Gets or sets the query for contact details in the requisition.
-    /// </summary>
-    /// <value>
-    ///     The query for contact details.
-    /// </value>
-    private Query ContactQuery
-    {
-        get;
-        set;
-    }
-    */
 
     private EditContext Context
     {
@@ -185,7 +173,7 @@ public partial class RequisitionDetailsPanel
     /// <summary>
     ///     Gets or sets the Dialog property, which represents a dialog in the RequisitionDetailsPanel.
     /// </summary>
-    /// <value>
+    /// <value> 
     ///     The Dialog property gets/sets the value of a SfDialog object.
     /// </value>
     /// <remarks>
@@ -205,7 +193,7 @@ public partial class RequisitionDetailsPanel
     private List<KeyValues> DurationCode
     {
         get;
-    } = [new() {KeyValue = "D", Text = "Days"}, new() {KeyValue = "W", Text = "Weeks"}];
+    } = [new() {KeyValue = "D", Text = "Days"}, new() {KeyValue = "W", Text = "Weeks"}, new() {KeyValue = "M", Text = "Months"}, new() {KeyValue = "Y", Text = "Years"}];
 
     /// <summary>
     ///     Gets or sets the EditForm for the RequisitionDetailsPanel.
@@ -432,7 +420,7 @@ public partial class RequisitionDetailsPanel
         await Dialog.HideAsync();
         VisibleSpinner = false;
     }
-    
+
     /*return General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);*/
     ///// <summary>
     /////     Gets or sets the Redis service used for caching data.
@@ -461,16 +449,14 @@ public partial class RequisitionDetailsPanel
     ///     A Task that represents the asynchronous operation.
     /// </returns>
     /// <remarks>
-    ///     This method updates the ContactQuery based on the new company's ID. If the company data is not null, it also
+    ///     This method updates the CompanyContactsFiltered based on the new company's ID. If the company data is not null, it also
     ///     updates the Model's company-related properties.
     ///     It uses the memory cache to retrieve the company list and find the new company's details.
     /// </remarks>
     private async Task CompanyChanged(ChangeEventArgs<int, Company> company)
     {
-        await Task.Yield();
         if (!company.Value.NullOrWhiteSpace())
         {
-            //ContactQuery = new Query().Where(new WhereFilter {Field = "CompanyID", Operator = "equal", value = company.Value});
             CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == company.Value).ToList();
             if (company.ItemData != null)
             {
@@ -489,16 +475,57 @@ public partial class RequisitionDetailsPanel
                 if (_companyList is {Count: > 0})
                 {
                     Company _company = _companyList.First(x => x.ID == company.ItemData.ID);
-                    /*Model.CompanyCity = _company.City;
+                    Model.CompanyCity = _company.City;
                     Model.CompanyState = _company.State;
-                    Model.CompanyZip = _company.ZipCode;*/
+                    Model.CompanyZip = _company.ZipCode;
                 }
             }
         }
-        StateHasChanged();
     }
 
+    private void ContactDataBound(DataBoundEventArgs args) => Model.ContactID = CompanyContactsFiltered.Any() ? CompanyContactsFiltered.First().ID : 0;
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
     /// <summary>
+    ///     Asynchronously opens the dialog of the requisition details panel.
+    /// </summary>
+    /// <param name="args">The arguments for the BeforeOpen event of the dialog.</param>
+    /// <remarks>
+    ///     This method performs several actions:
+    ///     - Yields the current task, allowing other tasks to execute.
+    ///     - If no action is in progress, it sets the action progress flag and updates the CompanyContactsFiltered based on the CompanyID
+    ///     of the Model.
+    ///     - It validates the edit context of the RequisitionForm and subscribes to the OnFieldChanged event.
+    ///     - It checks for validation messages for the Description field of the Model and sets the CssClassName accordingly.
+    ///     - Finally, it signals the component to re-render and resets the action progress flag.
+    /// </remarks>
+    /// <returns>
+    ///     A task that represents the asynchronous operation.
+    /// </returns>
+    private async Task DialogOpen(BeforeOpenEventArgs args)
+    {
+        await Task.Yield();
+        if (!_actionProgress)
+        {
+            _actionProgress = true;
+            CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == Model.CompanyID).ToList();
+            Context = EditRequisitionForm.EditContext;
+            Context?.Validate();
+            if (Context != null)
+            {
+                Context.OnFieldChanged += Context_OnFieldChanged;
+            }
+
+            FieldIdentifier _fieldIdentifier = new(Model, nameof(Model.Description));
+            IEnumerable<string> _errorMessages = Context?.GetValidationMessages(_fieldIdentifier);
+            CssClassName = _errorMessages != null && _errorMessages.Any() ? "error" : "success";
+            StateHasChanged();
+            _actionProgress = false;
+        }
+    }
+
+    /*/// <summary>
     ///     Handles the event when the contact changes.
     /// </summary>
     /// <param name="contact">The change event arguments containing the old and new contact.</param>
@@ -507,11 +534,12 @@ public partial class RequisitionDetailsPanel
     /// </returns>
     private void ContactChanged(ChangeEventArgs<int, CompanyContacts> contact)
     {
-        if (contact is {ItemData: not null})
+        /*if (contact is {ItemData: not null})
         {
             Model.ContactName = $"{contact.ItemData.FirstName} {contact.ItemData.LastName}";
-        }
+        }#1#
     }
+    */
 
     /// <summary>
     ///     Handles the change of value in a dropdown.
@@ -564,11 +592,9 @@ public partial class RequisitionDetailsPanel
             Model.ExpectedStart = args.Value.AddDays(-7);
         }
 
-        _editContext?.NotifyFieldChanged(_editContext.Field(nameof(Model.DueDate)));
+        Context?.NotifyFieldChanged(Context.Field(nameof(Model.DueDate)));
         StateHasChanged();
     }
-
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     /// <summary>
     ///     Handles the field changed event of the EditContext.
@@ -589,7 +615,7 @@ public partial class RequisitionDetailsPanel
         }
 
         FieldIdentifier _fieldIdentifier = new(Model, nameof(Model.Description));
-        IEnumerable<string> _errorMessages = _editContext.GetValidationMessages(_fieldIdentifier);
+        IEnumerable<string> _errorMessages = Context.GetValidationMessages(_fieldIdentifier);
         CssClassName = _errorMessages.Any() ? "error" : "success";
         StateHasChanged();
     }
@@ -615,7 +641,7 @@ public partial class RequisitionDetailsPanel
             Model.DueDate = args.Value.AddDays(7);
         }
 
-        _editContext?.NotifyFieldChanged(_editContext.Field(nameof(Model.DueDate)));
+        Context?.NotifyFieldChanged(Context.Field(nameof(Model.DueDate)));
         StateHasChanged();
     }
 
@@ -653,10 +679,7 @@ public partial class RequisitionDetailsPanel
     /// <returns>
     ///     A Task that represents the asynchronous operation.
     /// </returns>
-    private async Task NumbersOnly(object args)
-    {
-        await JsRuntime.InvokeVoidAsync("onCreate", "textDuration", true);
-    }
+    private async Task NumbersOnly(object args) => await JsRuntime.InvokeVoidAsync("onCreate", "textDuration", true);
 
     /// <summary>
     ///     Executes after the component has been rendered.
@@ -667,13 +690,11 @@ public partial class RequisitionDetailsPanel
     /// </param>
     /// <remarks>
     ///     If this is not the first render and the Model's CompanyID is greater than 0,
-    ///     it sets the ContactQuery to a new Query where the ClientID is equal to the Model's CompanyID.
     /// </remarks>
     protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender && Model is {CompanyID: > 0})
         {
-            //ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = Model.CompanyID});
             CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == Model.CompanyID).ToList();
         }
 
@@ -685,48 +706,13 @@ public partial class RequisitionDetailsPanel
     /// </summary>
     /// <param name="arg">The argument passed to the creation event.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private async Task OnCreate(object arg)
-    {
-        await JsRuntime.InvokeVoidAsync("onCreate", "autoLocZip", true);
-    }
+    private async Task OnCreate(object arg) => await JsRuntime.InvokeVoidAsync("onCreate", "autoLocZip", true);
 
-    /// <summary>
-    ///     Asynchronously opens the dialog of the requisition details panel.
-    /// </summary>
-    /// <param name="args">The arguments for the BeforeOpen event of the dialog.</param>
-    /// <remarks>
-    ///     This method performs several actions:
-    ///     - Yields the current task, allowing other tasks to execute.
-    ///     - If no action is in progress, it sets the action progress flag and updates the ContactQuery based on the CompanyID
-    ///     of the Model.
-    ///     - It validates the edit context of the RequisitionForm and subscribes to the OnFieldChanged event.
-    ///     - It checks for validation messages for the Description field of the Model and sets the CssClassName accordingly.
-    ///     - Finally, it signals the component to re-render and resets the action progress flag.
-    /// </remarks>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
-    private async Task DialogOpen(BeforeOpenEventArgs args)
+    protected override void OnParametersSet()
     {
-        await Task.Yield();
-        if (!_actionProgress)
-        {
-            _actionProgress = true;
-            //ContactQuery = new Query().Where(new WhereFilter {Field = "ClientID", Operator = "equal", value = Model.CompanyID});
-            CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == Model.CompanyID).ToList();
-            Context = EditRequisitionForm.EditContext;
-            Context?.Validate();
-            if (Context != null)
-            {
-                Context.OnFieldChanged += Context_OnFieldChanged;
-            }
-
-            FieldIdentifier _fieldIdentifier = new(Model, nameof(Model.Description));
-            IEnumerable<string> _errorMessages = Context?.GetValidationMessages(_fieldIdentifier);
-            CssClassName = _errorMessages != null && _errorMessages.Any() ? "error" : "success";
-            StateHasChanged();
-            _actionProgress = false;
-        }
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
     }
 
     /// <summary>
@@ -742,13 +728,6 @@ public partial class RequisitionDetailsPanel
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
         VisibleSpinner = false;
-    }
-
-    protected override void OnParametersSet()
-    {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
-        base.OnParametersSet();
     }
 
     // return General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
@@ -819,7 +798,7 @@ public partial class RequisitionDetailsPanel
                 {
                     Model.City = _zip.City;
                     Model.StateID = _zip.StateID;
-                    _editContext?.NotifyFieldChanged(_editContext.Field(nameof(Model.City)));
+                    Context?.NotifyFieldChanged(Context.Field(nameof(Model.City)));
                 }
             }
 
