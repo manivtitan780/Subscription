@@ -1,0 +1,82 @@
+﻿<div class="activityContainerBox">
+	<div>
+		<div>
+			<SfGrid AllowPaging="false" DataSource="Model" EnableHover="true" EnableStickyHeader="true" Height="230px" ID="gridActivity" @ref="GridActivity" RowHeight="@RowHeight" TValue="CandidateActivity" Width="100%">
+				<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
+				<GridEvents DataBound="GridBound" RowSelected="RowSelected" TValue="CandidateActivity" />
+				<GridColumns>
+					<GridColumn Field="@nameof(CandidateActivity.Requisition)" HeaderText="Requisition" Width="30%" />
+					<GridColumn Field="@nameof(CandidateActivity.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" />
+					<GridColumn HeaderText="Status" Width="20%">
+						<Template Context="aCon">
+							@{
+								if (aCon is CandidateActivity _con)
+								{
+									<span>@($"{_con.Status} [{_con.UpdatedBy}]")</span>
+								}
+							}
+						</Template>
+					</GridColumn>
+					<GridColumn HeaderText="Date Updated" Width="20%">
+						<Template Context="aCon">
+							@{
+								if (aCon is CandidateActivity _con)
+								{
+									<span>@_con.UpdatedDate.CultureDate()</span>
+								}
+							}
+						</Template>
+					</GridColumn>
+					<GridColumn HeaderText="Candidate Updated By" Width="20%">
+						<Template Context="aCon">
+							@{
+								if (aCon is CandidateActivity _con)
+								{
+									<span>@($"{_con.CandidateUpdatedBy}")</span>
+								}
+							}
+						</Template>
+					</GridColumn>
+					<GridColumn Width="10%">
+						<Template Context="bCon">
+							@{
+								if (bCon is CandidateActivity _con && !IsRequisition)
+								{
+									if (_con.DoRoleHaveRight)
+									{
+										<SfButton Content="" IconCss="editIconInner" @onclick="() => EditActivityDialog(_con.ID)" />
+									}
+
+									if (_con.StatusCode != "PEN" && (_con.UpdatedBy == User || RoleID == 1))
+									{
+										<SfButton Content="" IconCss="undoIconInner" @onclick="() => UndoActivity(_con.ID)" />
+									}
+								}
+							}
+						</Template>
+					</GridColumn>
+				</GridColumns>
+				<GridTemplates Context="context">
+					<DetailTemplate>
+						@{
+							CandidateActivity _activity = context as CandidateActivity;
+						}
+
+						@if (_activity != null)
+						{
+							if (_activity.Notes.NullOrWhiteSpace())
+							{
+								<div class="blankActivityNotes">There are no Notes for this Activity.</div>
+							}
+							else
+							{
+								<div class="activityNotes">@_activity.Notes.Replace("\n", "<br/>").ToMarkupString()</div>
+							}
+						}
+					</DetailTemplate>
+				</GridTemplates>
+			</SfGrid>
+		</div>
+	</div>
+</div>
+<ConfirmDialog Delete="() => UndoCandidateActivity.InvokeAsync(_selectedID)" Entity="Education" Height="184px" IsUndoActivity="true" @ref="DialogConfirm" Width="505px"></ConfirmDialog>

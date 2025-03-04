@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-10-2025 20:02
+// Last Updated On:     03-03-2025 21:03
 // *****************************************/
 
 #endregion
@@ -33,6 +33,8 @@ public partial class Candidates
 
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [], _workflow = [];
 
+    private Query _query = new();
+
     //private CandidateRatingMPC _ratingMPC = new();
     private List<Role> _roles;
     private int _selectedTab;
@@ -47,7 +49,11 @@ public partial class Candidates
         new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
     ];
 
-    private Query _query = new();
+    private ActivityPanel ActivityPanel
+    {
+        get;
+        set;
+    }
 
     /// <summary>
     ///     Represents the address of the candidate.
@@ -430,6 +436,14 @@ public partial class Candidates
         get;
     } = new();
 
+    /// <summary>
+    ///     Gets or sets a list of KeyValues instances representing the next steps for the candidate.
+    /// </summary>
+    private List<KeyValues> NextSteps
+    {
+        get;
+    } = [];
+
     private NotesPanel NotesPanel
     {
         get;
@@ -493,6 +507,12 @@ public partial class Candidates
         set;
     }
 
+    private int RoleID
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the search model used for filtering candidates.
     /// </summary>
@@ -501,6 +521,19 @@ public partial class Candidates
     ///     It includes properties such as Name and Page for pagination and filtering.
     /// </remarks>
     private CandidateSearch SearchModel
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the selected activity for the candidate.
+    /// </summary>
+    /// <value>
+    ///     The selected activity is of type <see cref="CandidateActivity" /> and it represents the current
+    ///     activity selected for the candidate.
+    /// </value>
+    private CandidateActivity SelectedActivity
     {
         get;
         set;
@@ -863,6 +896,48 @@ public partial class Candidates
                                                                 string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.Location}^0".ToBase64String();
                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                             });
+
+    /// <summary>
+    ///     Asynchronously edits the activity with the specified ID.
+    ///     If the action is not in progress or is a speed dial, it sets the selected activity to the selected row of the
+    ///     ActivityPanel,
+    ///     clears the NextSteps list and adds a new "No Change" option. Then, it iterates through the workflows to find the
+    ///     next steps
+    ///     based on the status code of the selected activity. If a next step is found, it is added to the NextSteps list.
+    ///     After all operations are done, it resets the action progress and shows the DialogActivity.
+    /// </summary>
+    /// <param name="id">The ID of the activity to be edited.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    private Task EditActivity(int id) => ExecuteMethod(async () =>
+                                                       {
+                                                           await Task.Yield();
+                                                           SelectedActivity = ActivityPanel.SelectedRow;
+                                                           NextSteps.Clear();
+                                                           NextSteps.Add(new() {Text = "No Change", KeyValue = "0"});
+                                                           try
+                                                           {
+                                                               /*foreach (string[] _next in _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                                                                    .Select(flow => flow.Next.Split(',')))
+                                                               {
+                                                                   foreach (string _nextString in _next)
+                                                                   {
+                                                                       foreach (KeyValues _status in _statusCodes.Where(status => status.Code == _nextString && status.AppliesToCode == "SCN"))
+                                                                       {
+                                                                           //NextSteps.Add(new(_status.Status, _nextString));
+                                                                           break;
+                                                                       }
+                                                                   }
+
+                                                                   break;
+                                                               }*/
+                                                           }
+                                                           catch
+                                                           {
+                                                               //Ignore this error. No need to log this error.
+                                                           }
+
+                                                           // return DialogActivity.ShowDialog();
+                                                       });
 
     /// <summary>
     ///     Asynchronously edits the details of a candidate. If the candidate is not selected or is new,
@@ -1407,8 +1482,8 @@ public partial class Candidates
                                                                                                                       };
 
                                                                              string _response = await General.ExecuteRest<string>("Candidate/UploadDocument", _parameters, null, true,
-                                                                                                                                        DialogDocument.AddedDocument.ToStreamByteArray(),
-                                                                                                                                        DialogDocument.FileName);
+                                                                                                                                  DialogDocument.AddedDocument.ToStreamByteArray(),
+                                                                                                                                  DialogDocument.FileName);
                                                                              if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                              {
                                                                                  _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
@@ -1441,7 +1516,7 @@ public partial class Candidates
                                                                                                                             {"candidateID", _target.ID.ToString()},
                                                                                                                             {"user", User}
                                                                                                                         };
-                                                                               string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters, 
+                                                                               string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters,
                                                                                                                                     _candidateEducation);
                                                                                if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                {
@@ -1989,5 +2064,10 @@ public partial class Candidates
                 _semaphoreSlim.Release();
             }
         }
+    }
+
+    private Task UndoActivity(int arg)
+    {
+        return null;
     }
 }
