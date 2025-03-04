@@ -627,7 +627,7 @@ public partial class Requisitions
 
     private string GetLocation(string location)
     {
-        if (_states == null || location.ToInt32() == 0)
+        /*if (_states == null || location.ToInt32() == 0)
         {
             return location;
         }
@@ -637,7 +637,31 @@ public partial class Requisitions
             return _intValues.Text;
         }
 
-        return location;
+        return location;*/
+        string _location = string.Empty;
+        if (_requisitionDetailsObject != null)
+        {
+            if (_requisitionDetailsObject.City.NotNullOrWhiteSpace())
+            {
+                _location = _requisitionDetailsObject.City;
+            }
+            
+            if (_requisitionDetailsObject.StateID.ToInt32() != 0)
+            {
+                foreach (IntValues _intValues in _states.Where(intValues => _requisitionDetailsObject.StateID.ToInt32() == intValues.KeyValue))
+                {
+                    _location = $"{_location}, {_intValues.Text}";
+                    break;
+                }
+            }
+            
+            if (_requisitionDetailsObject.ZipCode.NotNullOrWhiteSpace())
+            {
+                _location = $"{_location}, {_requisitionDetailsObject.ZipCode}";
+            }
+        }
+
+        return _location;
     }
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
@@ -933,7 +957,7 @@ public partial class Requisitions
                                                                                                                     {"emailAddress", ""}
                                                                                                                 };
 
-                                                                       await General.PostRest<int>("Requisition/SaveRequisition", _parameters, _requisitionDetailsObjectClone);
+                                                                       _ = await General.ExecuteRest<int>("Requisition/SaveRequisition", _parameters, _requisitionDetailsObjectClone);
 
                                                                        _requisitionDetailsObject = _requisitionDetailsObjectClone.Copy();
 

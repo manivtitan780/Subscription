@@ -115,7 +115,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     The callback receives the new selected value as an argument.
     /// </remarks>
     [Parameter]
-    public EventCallback<TValue?> ValueChanged
+    public EventCallback<TValue> ValueChanged
     {
         get;
         set;

@@ -114,7 +114,7 @@
 											<PanelDisplayText Label="Contact Name" Text="@(_requisitionDetailsObject.ContactName)"/>
 											<PanelDisplayText Label="Job Title" Text="@(_requisitionDetailsObject.PositionTitle)"/>
 											<PanelDisplayText Label="No. of Positions" Text="@(_requisitionDetailsObject.Positions.ToString())"/>
-											<PanelDisplayText Label="Location" Text="@GetLocation(_requisitionDetailsObject.Location)"/>
+											<PanelDisplayText Label="Project Location" Text="@GetLocation(_requisitionDetailsObject.Location)"/>
 											<PanelDisplayText Label="Duration" Text="@(_requisitionDetailsObject.Duration + " " + GetDurationCode(_requisitionDetailsObject.DurationCode))"/>
 											<PanelDisplayText Label="Expected Start Date" Text="@(_requisitionDetailsObject.ExpectedStart.CultureDate())"/>
 											<PanelDisplayText Label="Due Date" Text="@(_requisitionDetailsObject.DueDate.CultureDate())"/>
