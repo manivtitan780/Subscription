@@ -18,6 +18,16 @@ namespace Subscription.Model;
 
 public class KeyValues
 {
+	public KeyValues()
+	{
+	}
+
+	public KeyValues(string text, string keyValue)
+	{
+		Text = text;
+		KeyValue = keyValue;
+	}
+
 	public string KeyValue
 	{
 		get;
