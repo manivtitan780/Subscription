@@ -1,4 +1,4 @@
-﻿<SfDialog CssClass="dialogPopup" Header="Edit Activity" Height="@(IsShow ? "98vh" : "460px")" IsModal="true" MinHeight="@(IsShow ? "98vh" : "460px")" @ref="Dialog" Target="#divTarget" Visible="false" Width="640px">
+﻿<SfDialog CssClass="dialogPopup" Header="Edit Activity" Height="@(IsShow ? "98vh" : "516px")" IsModal="true" MinHeight="@(IsShow ? "98vh" : "500px")" @ref="Dialog" Target="#divTarget" Visible="false" Width="500px">
 	<ChildContent>
 		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -11,7 +11,7 @@
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator/>
-				// Validator="_candidateEducationValidator"/>
+				@*Validator="_candidateEducationValidator"/>*@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Activity Information">
@@ -22,7 +22,8 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.NewStatusCode)">
 						<Template>
-							<DropDown @bind-Value="Model.NewStatusCode" Model="ModelSteps" ID="dropStatus" TItem="KeyValues" TValue="string" Placeholder="Status" Text="Text" Key="KeyValue"/>
+							<DropDown @bind-Value="Model.NewStatusCode" Model="ModelSteps" ID="dropStatus" TItem="KeyValues" TValue="string" Placeholder="Status" Text="Text" Key="KeyValue"
+									  DropDownValueChange="ChangeStatus"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)">
@@ -31,17 +32,37 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInterview" LabelText="Interview Information" @ref="InterviewGroup" style="display: none;">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.ShowCalendar)" LabelText="Show Calendar?" ID="checkedCalendar" EditorType="FormEditorType.Switch"/>
-					<FormItem ColumnSpan="1" Field="@nameof(Model.DateTimeInterview)">
-						<Template>
-							<label class="e-form-label" for="dateInterview">Interview Date/Time:</label>
-							<SfDateTimePicker @bind-Value="Model.DateTimeInterview" Format="MM/dd/yyyy hh:mm" ID="dateInterview" Max="@(DateTime.Today.AddMonths(6))"
-							                  Min="@(DateTime.Today.AddMonths(-3))" OpenOnFocus="true" Placeholder="Interview Date/Time" TValue="DateTime">
-							</SfDateTimePicker>
-						</Template>
-					</FormItem>
-				</FormGroup>
+				@{
+					if (IsShow)
+					{
+						<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInterview" LabelText="Interview Information">
+							<FormItem ColumnSpan="1" Field="@nameof(Model.ShowCalendar)" LabelText="Show Calendar?" ID="checkedCalendar" EditorType="FormEditorType.Switch" />
+							<FormItem ColumnSpan="1" Field="@nameof(Model.DateTimeInterview)">
+								<Template>
+									<label class="e-form-label" for="dateInterview">Interview Date/Time:</label>
+									<SfDateTimePicker @bind-Value="Model.DateTimeInterview" Format="MM/dd/yyyy hh:mm" ID="dateInterview" Max="@(DateTime.Today.AddMonths(6))"
+													  Min="@(DateTime.Today.AddMonths(-3))" OpenOnFocus="true" Placeholder="Interview Date/Time" TValue="DateTime">
+									</SfDateTimePicker>
+								</Template>
+							</FormItem>
+							<FormItem ColumnSpan="1" Field="@nameof(Model.TypeOfInterview)">
+								<Template>
+									<DropDown @bind-Value="Model.TypeOfInterview" Model="InterviewTypes" ID="dropTypeofInterview" TItem="KeyValues" TValue="string" Placeholder="Interview Type" Text="Text" Key="KeyValue"/>
+								</Template>
+							</FormItem>
+							<FormItem ColumnSpan="1" Field="@nameof(Model.PhoneNumber)">
+								<Template>
+									<MaskedTextBox @bind-Value="Model.PhoneNumber" ID="textPhone" Mask="(000) 000-0000" Placeholder="Phone Number"/>
+								</Template>
+							</FormItem>
+								<FormItem ColumnSpan="1" Field="@nameof(Model.InterviewDetails)">
+								<Template>
+									<TextArea @bind-Value="Model.InterviewDetails" ID="textInterviewDetails" MaxLength="2000" Placeholder="Interview Details"></TextArea>
+								</Template>
+							</FormItem>
+						</FormGroup>
+					}
+				}
 			</FormItems>
 		</SfDataForm>
 	</ChildContent>

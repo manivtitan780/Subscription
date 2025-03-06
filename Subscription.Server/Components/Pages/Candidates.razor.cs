@@ -31,7 +31,8 @@ public partial class Candidates
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
 
-    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [], _workflow = [];
+    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [];
+    private List<AppWorkflow> _workflow = [];
 
     private Query _query = new();
 
@@ -655,6 +656,12 @@ public partial class Candidates
         set;
     }
 
+    private EditActivityDialog DialogActivity
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     This method is used to add a new document to the candidate's profile.
     ///     It first checks if a new document instance exists, if not, it creates a new one.
@@ -866,6 +873,7 @@ public partial class Candidates
                                  _formattedExists = _target.FormattedResume;
                                  _originalExists = _target.OriginalResume;
 
+                                 await Task.Delay(100);
                                  VisibleSpin = false;
                              });
     }
@@ -936,7 +944,7 @@ public partial class Candidates
                                                                //Ignore this error. No need to log this error.
                                                            }
 
-                                                           // return DialogActivity.ShowDialog();
+                                                           await DialogActivity.ShowDialog();
                                                        });
 
     /// <summary>
@@ -1384,7 +1392,7 @@ public partial class Candidates
                                 _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()]);
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
                                 _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
-                                _workflow = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Workflow.ToString()]);
+                                _workflow = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
                             });
@@ -2069,5 +2077,10 @@ public partial class Candidates
     private Task UndoActivity(int arg)
     {
         return null;
+    }
+
+    private Task SaveActivity(EditContext arg)
+    {
+        return Task.CompletedTask;
     }
 }
