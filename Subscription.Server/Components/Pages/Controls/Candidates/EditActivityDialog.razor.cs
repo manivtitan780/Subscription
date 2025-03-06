@@ -8,7 +8,7 @@
 // File Name:           EditActivityDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-04-2025 20:03
-// Last Updated On:     03-04-2025 20:03
+// Last Updated On:     03-06-2025 15:03
 // *****************************************/
 
 #endregion
@@ -39,6 +39,12 @@ public partial class EditActivityDialog
     /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private EditContext Context
     {
         get;
         set;
@@ -76,23 +82,6 @@ public partial class EditActivityDialog
     }
 
     /// <summary>
-    ///     Gets or sets the DialogFooter instance used in the EditActivityDialog.
-    /// </summary>
-    /// <value>
-    ///     The DialogFooter instance.
-    /// </value>
-    /// <remarks>
-    ///     The DialogFooter instance is used to manage the Cancel and Save buttons in the EditActivityDialog.
-    ///     It is referenced in the `CancelDialog` and `SaveActivityDialog` methods, where it is passed to the
-    ///     `CallCancelMethod` and `CallSaveMethod` of the `General` class respectively.
-    /// </remarks>
-    private DialogFooter FooterDialog
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the list of interview types available for selection in the activity dialog.
     /// </summary>
     /// <value>
@@ -100,16 +89,10 @@ public partial class EditActivityDialog
     ///     represents a type of interview with a key as the interview type name and a value as its short form.
     ///     The list includes types such as "In-Person Interview", "Telephonic Interview", "Others", and "None".
     /// </value>
-    private List<KeyValues> InterviewTypes
+    private IEnumerable<KeyValues> InterviewTypes
     {
         get;
-    } =
-    [
-        new() {Text = "In-Person Interview", KeyValue = "I"},
-        new() {Text = "Telephonic Interview", KeyValue = "P"},
-        new() {Text = "Others", KeyValue = "O"},
-        new() {Text = "None", KeyValue = ""}
-    ];
+    } = [new() {Text = "In-Person Interview", KeyValue = "I"}, new() {Text = "Telephonic Interview", KeyValue = "P"}, new() {Text = "Others", KeyValue = "O"}, new() {Text = "None", KeyValue = ""}];
 
     /// <summary>
     ///     Gets or sets a value indicating whether the dialog is for a candidate.
@@ -288,18 +271,6 @@ public partial class EditActivityDialog
         set;
     }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
-
-    private FormGroup InterviewGroup
-    {
-        get;
-        set;
-    }
-
     /// <summary>
     ///     Cancels the current dialog operation.
     /// </summary>
@@ -311,8 +282,22 @@ public partial class EditActivityDialog
     /// </remarks>
     private async Task CancelActivityDialog(MouseEventArgs args)
     {
+        VisibleSpinner = true;
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
         //await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
     }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
+
 
     /// <summary>
     ///     Changes the status of the activity.
@@ -332,8 +317,6 @@ public partial class EditActivityDialog
         {
             IsShow = Status.Any(workflow => workflow.Step == status.Value && workflow.Schedule);
         }
-
-        StateHasChanged();
     }
 
     /// <summary>
@@ -364,7 +347,7 @@ public partial class EditActivityDialog
     ///     It validates the `EditContext` of the `EditActivityForm`, ensuring that the form is in a valid state before the
     ///     dialog is opened.
     /// </remarks>
-    private void OpenDialog() => EditActivityForm.EditContext?.Validate();
+    private void OpenDialog() => Context.Validate();
 
     /// <summary>
     ///     Asynchronously saves the changes made in the EditActivityDialog.
@@ -383,6 +366,10 @@ public partial class EditActivityDialog
     /// </remarks>
     private async Task SaveActivityDialog(EditContext editContext)
     {
+        VisibleSpinner = true;
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
         //await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
     }
 

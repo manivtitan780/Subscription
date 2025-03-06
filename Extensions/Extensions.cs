@@ -202,6 +202,9 @@ public static partial class Extensions
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string FormatPhoneNumber(this string s) => s.ToInt64() > 0 ? $"{s.ToInt64():(###) ###-####}" : "";
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string StripAndFormatPhoneNumber(this string s) => s.StripPhoneNumber().FormatPhoneNumber();
 
     /// <summary>
     ///     Converts a Base64 encoded string to a regular string.
