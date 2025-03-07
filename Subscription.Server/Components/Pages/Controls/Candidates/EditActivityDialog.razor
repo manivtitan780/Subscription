@@ -40,14 +40,16 @@
 							<FormItem ColumnSpan="1" Field="@nameof(Model.DateTimeInterview)">
 								<Template>
 									<label class="e-form-label" for="dateInterview">Interview Date/Time:</label>
-									<SfDateTimePicker @bind-Value="Model.DateTimeInterview" Format="MM/dd/yyyy hh:mm" ID="dateInterview" Max="@(DateTime.Today.AddMonths(6))"
-													  Min="@(DateTime.Today.AddMonths(-3))" OpenOnFocus="true" Placeholder="Interview Date/Time" TValue="DateTime">
+									<SfDateTimePicker @bind-Value="Model.DateTimeInterview" TimeFormat="hh:mm tt" MinTime="new DateTime(2000, 1, 1, 8, 0, 0)"
+													  MaxTime="new DateTime(2000, 1, 1, 20, 0, 0)" Format="MM/dd/yyyy hh:mm tt" ID="dateInterview" 
+													  Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" OpenOnFocus="true" Placeholder="Interview Date/Time" TValue="DateTime">
 									</SfDateTimePicker>
 								</Template>
 							</FormItem>
 							<FormItem ColumnSpan="1" Field="@nameof(Model.TypeOfInterview)">
 								<Template>
-									<DropDown @bind-Value="Model.TypeOfInterview" Model="InterviewTypes" ID="dropTypeofInterview" TItem="KeyValues" TValue="string" Placeholder="Interview Type" Text="Text" Key="KeyValue"/>
+									<DropDown @bind-Value="Model.TypeOfInterview" Model="InterviewTypes" ID="dropTypeofInterview" TItem="KeyValues" TValue="string" Placeholder="Interview Type" 
+											  Text="Text" Key="KeyValue"/>
 								</Template>
 							</FormItem>
 							<FormItem ColumnSpan="1" Field="@nameof(Model.PhoneNumber)">

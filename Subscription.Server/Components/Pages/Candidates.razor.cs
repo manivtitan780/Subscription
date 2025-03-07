@@ -31,7 +31,8 @@ public partial class Candidates
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
 
-    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [], _statusCodes = [];
+    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [];
+    private List<StatusCode> _statusCodes = [];
     private List<AppWorkflow> _workflow = [];
 
     private Query _query = new();
@@ -924,20 +925,20 @@ public partial class Candidates
                                                            NextSteps.Add(new() {Text = "No Change", KeyValue = "0"});
                                                            try
                                                            {
-                                                               /*foreach (string[] _next in _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                               foreach (string[] _next in _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
                                                                                                     .Select(flow => flow.Next.Split(',')))
                                                                {
                                                                    foreach (string _nextString in _next)
                                                                    {
-                                                                       foreach (KeyValues _status in _statusCodes.Where(status => status.Code == _nextString && status.AppliesToCode == "SCN"))
+                                                                       foreach (StatusCode _status in _statusCodes.Where(status => status.Code == _nextString && status.AppliesToCode == "SCN"))
                                                                        {
-                                                                           //NextSteps.Add(new(_status.Status, _nextString));
+                                                                           NextSteps.Add(new(_status.Status, _nextString));
                                                                            break;
                                                                        }
                                                                    }
 
                                                                    break;
-                                                               }*/
+                                                               }
                                                            }
                                                            catch
                                                            {
@@ -1391,7 +1392,7 @@ public partial class Candidates
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
                                 _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()]);
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
-                                _statusCodes = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
+                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
                                 _workflow = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
