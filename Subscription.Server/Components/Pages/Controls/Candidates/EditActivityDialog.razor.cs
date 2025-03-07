@@ -312,7 +312,7 @@ public partial class EditActivityDialog
     /// </remarks>
     private void ChangeStatus(ChangeEventArgs<string, KeyValues> status)
     {
-        IsShow = false;
+        //IsShow = false;
         if (Status != null)
         {
             IsShow = Status.Any(workflow => workflow.Step == status.Value && workflow.Schedule);

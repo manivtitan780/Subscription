@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     03-03-2025 21:03
+// Last Updated On:     03-07-2025 15:03
 // *****************************************/
 
 #endregion
@@ -32,8 +32,6 @@ public partial class Candidates
     private bool _formattedExists, _originalExists;
 
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [];
-    private List<StatusCode> _statusCodes = [];
-    private List<AppWorkflow> _workflow = [];
 
     private Query _query = new();
 
@@ -42,6 +40,7 @@ public partial class Candidates
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+    private List<StatusCode> _statusCodes = [];
 
     private Candidate _target;
 
@@ -50,6 +49,8 @@ public partial class Candidates
         new() {Name = "Original", TooltipText = "Show Original Resume"},
         new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
     ];
+
+    private List<AppWorkflow> _workflow = [];
 
     private ActivityPanel ActivityPanel
     {
@@ -207,6 +208,12 @@ public partial class Candidates
     /// </summary>
     [Inject]
     private IConfiguration Configuration
+    {
+        get;
+        set;
+    }
+
+    private EditActivityDialog DialogActivity
     {
         get;
         set;
@@ -657,12 +664,6 @@ public partial class Candidates
         set;
     }
 
-    private EditActivityDialog DialogActivity
-    {
-        get;
-        set;
-    }
-
     /// <summary>
     ///     This method is used to add a new document to the candidate's profile.
     ///     It first checks if a new document instance exists, if not, it creates a new one.
@@ -926,7 +927,7 @@ public partial class Candidates
                                                            try
                                                            {
                                                                foreach (string[] _next in _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
-                                                                                                    .Select(flow => flow.Next.Split(',')))
+                                                                                                   .Select(flow => flow.Next.Split(',')))
                                                                {
                                                                    foreach (string _nextString in _next)
                                                                    {
@@ -1411,6 +1412,43 @@ public partial class Candidates
     ///     "Candidates/DownloadResume" endpoint to retrieve the original resume.
     /// </remarks>
     private Task OriginalClick(MouseEventArgs arg) => GetResumeOnClick("Original");
+
+    /// <summary>
+    ///     Asynchronously saves the activity of a candidate.
+    /// </summary>
+    /// <param name="activity">The context of the activity to be saved.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method creates a new RestClient and RestRequest to send a POST request to the
+    ///     "Candidates/SaveCandidateActivity" endpoint.
+    ///     The activity model is serialized into JSON format and added to the body of the request.
+    ///     Additional parameters such as candidateID, user, roleID, isCandidateScreen, jsonPath, emailAddress, and uploadPath
+    ///     are added to the request.
+    ///     If the response is not null, it deserializes the "Activity" from the response into a List of CandidateActivity
+    ///     objects.
+    /// </remarks>
+    private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
+                                                                     {
+                                                                         Dictionary<string, string> _parameters = new()
+                                                                                                                  {
+                                                                                                                      {"candidateID", _target.ID.ToString()},
+                                                                                                                      {"user", User},
+                                                                                                                      {"roleID", RoleID.ToString()},
+                                                                                                                      {"isCandidateScreen", true.ToString()},
+                                                                                                                      {"jsonPath", ""},
+                                                                                                                      {"emailAddress", ""},
+                                                                                                                      {"uploadPath", ""}
+                                                                                                                  };
+
+                                                                         Dictionary<string, object> _response = await General.PostRest("Candidate/SaveCandidateActivity", _parameters, 
+                                                                                                                                       activity.Model);
+                                                                         if (_response == null)
+                                                                         {
+                                                                             return;
+                                                                         }
+
+                                                                         _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
+                                                                     });
 
     /// <summary>
     ///     Asynchronously saves the candidate details.
@@ -1992,6 +2030,8 @@ public partial class Candidates
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
+    private Task UndoActivity(int arg) => null;
+
     public class CandidateAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
@@ -2073,15 +2113,5 @@ public partial class Candidates
                 _semaphoreSlim.Release();
             }
         }
-    }
-
-    private Task UndoActivity(int arg)
-    {
-        return null;
-    }
-
-    private Task SaveActivity(EditContext arg)
-    {
-        return Task.CompletedTask;
     }
 }
