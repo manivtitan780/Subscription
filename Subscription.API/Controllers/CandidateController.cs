@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.API
 // File Name:           CandidateController.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-28-2024 19:12
-// Last Updated On:     01-14-2025 20:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     03-07-2025 15:03
 // *****************************************/
 
 #endregion
@@ -784,6 +784,172 @@ public class CandidateController : ControllerBase
         }
 
         return Ok(0);
+    }
+
+    /// <summary>
+    ///     Saves a candidate's activity to the database.
+    /// </summary>
+    /// <param name="activity">The activity of the candidate to be saved.</param>
+    /// <param name="candidateID">The ID of the candidate.</param>
+    /// <param name="user">The user who is performing the save operation.</param>
+    /// <param name="roleID">The role ID of the user, default is "RS".</param>
+    /// <param name="isCandidateScreen">
+    ///     A flag indicating whether the operation is performed from the candidate screen, default
+    ///     is true.
+    /// </param>
+    /// <param name="emailAddress">The email address to which notifications will be sent, default is "maniv@titan-techs.com".</param>
+    /// <param name="uploadPath">The path where files will be uploaded, default is an empty string.</param>
+    /// <param name="jsonPath">The path where JSON files will be stored, default is an empty string.</param>
+    /// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to save the activity,
+    ///     and returns a dictionary containing the result of the operation.
+    ///     If the operation is successful, the dictionary will contain a list of activities for the candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<Dictionary<string, object>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
+                                                                        string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")
+    {
+        await Task.Delay(1);
+        string _activities = "[]";
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await _connection.OpenAsync();
+        try
+        {
+            await using SqlCommand _command = new("SaveCandidateActivity", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("SubmissionId", activity.ID);
+            _command.Int("CandidateID", candidateID);
+            _command.Int("RequisitionID", activity.RequisitionID);
+            _command.Varchar("Notes", 1000, activity.Notes);
+            _command.Char("Status", 3, activity.NewStatusCode.NullOrWhiteSpace() ? activity.StatusCode : activity.NewStatusCode);
+            _command.Varchar("User", 10, user);
+            _command.Bit("ShowCalendar", activity.ShowCalendar);
+            _command.Date("DateTime", activity.DateTimeInterview == DateTime.MinValue ? DBNull.Value : activity.DateTimeInterview);
+            _command.Char("Type", 1, activity.TypeOfInterview);
+            _command.Varchar("PhoneNumber", 20, activity.PhoneNumber);
+            _command.Varchar("InterviewDetails", 2000, activity.InterviewDetails);
+            _command.Bit("UpdateSchedule", false);
+            _command.Bit("CandScreen", isCandidateScreen);
+            _command.Char("RoleID", 2, roleID);
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
+            {
+                _activities = _reader.NString(0);
+                /*_activities.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
+                                    _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9), _reader.GetString(10),
+                                    _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14), _reader.GetString(15),
+                                    _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18), _reader.NDateTime(19), _reader.GetString(20),
+                                    _reader.NString(21), _reader.NString(22), _reader.GetBoolean(23)));*/
+            }
+
+            await _reader.NextResultAsync();
+            string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _company = ""; //, _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "";
+            //bool _firstTime = false;
+            await _reader.ReadAsync();
+            _firstName = _reader.NString(0);
+            _lastName = _reader.NString(1);
+            _reqCode = _reader.NString(2);
+            _reqTitle = _reader.NString(3);
+            //_original = _reader.NString(4);
+            //_originalInternal = _reader.NString(5);
+            //_formatted = _reader.NString(6);
+            //_formattedInternal = _reader.NString(7);
+            //_firstTime = _reader.GetBoolean(8);
+            _company = _reader.GetString(8);
+
+            List<EmailTemplates> _templates = new();
+            Dictionary<string, string> _emailAddresses = new();
+            Dictionary<string, string> _emailCC = new();
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
+            }
+
+            await _reader.CloseAsync();
+
+            if (_templates.Count > 0)
+            {
+                EmailTemplates _templateSingle = _templates[0];
+                if (!_templateSingle.CC.NullOrWhiteSpace())
+                {
+                    string[] _ccArray = _templateSingle.CC.Split(",");
+                    foreach (string _cc in _ccArray)
+                    {
+                        _emailCC.Add(_cc, _cc);
+                    }
+                }
+
+                _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                         .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
+                                                         .Replace("$FIRST_NAME$", _firstName)
+                                                         .Replace("$LAST_NAME$", _lastName)
+                                                         .Replace("$REQ_ID$", _reqCode)
+                                                         .Replace("$REQ_TITLE$", _reqTitle)
+                                                         .Replace("$COMPANY$", _company)
+                                                         .Replace("$SUBMISSION_NOTES$", activity.Notes)
+                                                         .Replace("$SUBMISSION_STATUS$", activity.Status)
+                                                         .Replace("$LOGGED_USER$", user);
+
+                _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                          .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
+                                                          .Replace("$FIRST_NAME$", _firstName)
+                                                          .Replace("$LAST_NAME$", _lastName)
+                                                          .Replace("$REQ_ID$", _reqCode)
+                                                          .Replace("$REQ_TITLE$", _reqTitle)
+                                                          .Replace("$COMPANY$", _company)
+                                                          .Replace("$SUBMISSION_NOTES$", activity.Notes)
+                                                          .Replace("$SUBMISSION_STATUS$", activity.Status)
+                                                          .Replace("$LOGGED_USER$", user);
+
+                List<string> _attachments = new();
+                //string _pathDest = "";
+                //if (_firstTime)
+                //{
+                //    string _path = "";
+                //    if (!_formatted.NullOrWhiteSpace())
+                //    {
+                //        _path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formattedInternal);
+                //        _pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formatted);
+                //    }
+                //    else
+                //    {
+                //        _path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _originalInternal);
+                //        _pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _original);
+                //    }
+
+                //    if (!_path.NullOrWhiteSpace() && !_pathDest.NullOrWhiteSpace() && System.IO.File.Exists(_path))
+                //    {
+                //        System.IO.File.Copy(_path, _pathDest, true);
+                //        _attachments.Add(_pathDest);
+                //    }
+                //}
+
+                //GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, _attachments);
+            }
+        }
+        catch
+        {
+            //
+        }
+
+        await _connection.CloseAsync();
+
+        return new()
+               {
+                   {
+                       "Activity", _activities
+                   }
+               };
     }
 
     /// <summary>
