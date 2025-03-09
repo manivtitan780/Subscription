@@ -13,6 +13,10 @@
 
 #endregion
 
+using System.Runtime.CompilerServices;
+
+using FluentValidation;
+
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 /// <summary>
@@ -26,6 +30,8 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditActivityDialog
 {
+    private EditActivityValidator _candidateEducationValidator;
+
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the cancel action is triggered.
     /// </summary>

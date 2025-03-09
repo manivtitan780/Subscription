@@ -34,9 +34,13 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class LoginController(IConfiguration configuration) : ControllerBase
 {
-    public string GenerateToken(string username, List<string> permissions)
+    public string GenerateToken(string username, List<string> permissions, string roleName = "RC")
     {
-        List<Claim> _claims = [new(ClaimTypes.Name, username)];
+        List<Claim> _claims =
+        [
+            new(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, roleName)
+        ];
         _claims.AddRange(permissions.Select(permission => new Claim("Permission", permission)));
 
         SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(configuration["JWTSecretKey"] ?? "SomeKey"));
@@ -154,7 +158,7 @@ public class LoginController(IConfiguration configuration) : ControllerBase
                 _permissions.Add(nameof(_userRole.DownloadFormatted));
             }
 
-            return GenerateToken(userName, _permissions);
+            return GenerateToken(userName, _permissions, _userRole.RoleName);
         }
 
         return "";

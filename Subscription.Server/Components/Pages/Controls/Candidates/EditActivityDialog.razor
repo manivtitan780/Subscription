@@ -6,12 +6,12 @@
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
 		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveActivityDialog" @ref="EditActivityForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Education</SfButton>
+				<SfButton CssClass="e-primary" type="submit">Update Activity</SfButton>
 				<SfButton CssClass="e-secondary" OnClick="CancelActivityDialog" type="button">Cancel</SfButton>
 			</FormButtons>
 			<FormValidator>
-				<FluentValidationValidator/>
-				@*Validator="_candidateEducationValidator"/>*@
+				<FluentValidationValidator Validator="_candidateEducationValidator"/>
+				@*/>*@
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Activity Information">
