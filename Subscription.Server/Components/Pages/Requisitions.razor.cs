@@ -330,6 +330,12 @@ public partial class Requisitions
         set;
     }
 
+    public ActivityPanelRequisition ActivityPanel
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Asynchronously adds a new document to the requisition.
     ///     This method first checks if a new document instance exists. If not, it creates a new instance.
@@ -510,8 +516,8 @@ public partial class Requisitions
                                                                               {"requisitionID", _target.ID.ToString()}
                                                                           };
 
-                                 (string _requisition, string _activity, string _documents) =
-                                     await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters, null, false);
+                                 (string _requisition, string _activity, string _documents) = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters, 
+                                                                                                                                                  null, false);
 
                                  _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
                                  _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
@@ -520,6 +526,7 @@ public partial class Requisitions
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
 
+                                 await Task.Delay(100);
                                  VisibleSpinner = false;
                              });
     }
@@ -1059,6 +1066,11 @@ public partial class Requisitions
         return Task.CompletedTask;
     }
 
+    private int RoleID
+    {
+        get;
+        set;
+    } = 5;
     /// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
@@ -1190,4 +1202,79 @@ public partial class Requisitions
             }
         }
     }
+    /// <summary>
+    ///     Asynchronously undoes a candidate activity based on the provided activity ID.
+    /// </summary>
+    /// <param name="activityID">The ID of the candidate activity to undo.</param>
+    /// <remarks>
+    ///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint of the API.
+    ///     The request includes the activity ID, the user ID (or "JOLLY" if the user ID is null or whitespace), and a flag
+    ///     indicating that this is not a candidate screen.
+    ///     If the API response is not null, it deserializes the "Activity" field of the response into a list of
+    ///     CandidateActivity objects.
+    /// </remarks>
+    /// <returns>
+    ///     A task that represents the asynchronous operation.
+    /// </returns>
+    private Task UndoActivity(int activityID) => ExecuteMethod(async () =>
+                                                               {
+                                                                   /*Dictionary<string, string> _parameters = new()
+                                                                                                            {
+                                                                                                                {"submissionID", activityID.ToString()},
+                                                                                                                {"user", General.GetUserName(LoginCookyUser)},
+                                                                                                                {"isCandidateScreen", "false"}
+                                                                                                            };
+
+                                                                   Dictionary<string, object> _response = await General.PostRest("Candidates/UndoCandidateActivity", _parameters);
+                                                                   if (_response == null)
+                                                                   {
+                                                                       return;
+                                                                   }
+
+                                                                   _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);*/
+                                                                   await Task.CompletedTask;
+                                                               });
+
+     /// <summary>
+    ///     Initiates the editing process for an activity associated with a requisition.
+    ///     This method is asynchronous and can be awaited. It first checks if an edit is already in progress,
+    ///     if not, it sets the selected activity for editing, clears the next steps, and populates it with the possible
+    ///     next steps based on the current status of the activity. It then shows the dialog for editing the activity.
+    /// </summary>
+    /// <param name="args">
+    ///     The identifier of the activity to be edited.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    private Task EditActivity(int args) => ExecuteMethod(async () =>
+                                                         {
+                                                             /*SelectedActivity = ActivityPanel.SelectedRow;
+                                                             NextSteps.Clear();
+                                                             NextSteps.Add(new("No Change", ""));
+                                                             try
+                                                             {
+                                                                 foreach (string[] _next in _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                                                                      .Select(flow => flow.Next.Split(',')))
+                                                                 {
+                                                                     foreach (string _nextString in _next)
+                                                                     {
+                                                                         foreach (StatusCode _status in _statusCodes.Where(status => status.Code == _nextString && status.AppliesToCode == "SCN"))
+                                                                         {
+                                                                             NextSteps.Add(new(_status.Status, _nextString));
+                                                                             break;
+                                                                         }
+                                                                     }
+
+                                                                     break;
+                                                                 }
+                                                             }
+                                                             catch
+                                                             {
+                                                                 //
+                                                             }
+
+                                                             await DialogActivity.ShowDialog();*/
+                                                             await Task.CompletedTask;
+                                                         });
 }
