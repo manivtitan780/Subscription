@@ -30,7 +30,11 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditActivityDialog
 {
-    private EditActivityValidator _candidateEducationValidator;
+    private EditActivityValidator CandidateActivityValidator
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the cancel action is triggered.
