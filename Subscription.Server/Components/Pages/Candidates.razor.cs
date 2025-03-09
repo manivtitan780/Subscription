@@ -1357,6 +1357,7 @@ public partial class Candidates
                                 {
                                     IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
                                     User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     if (User.NullOrWhiteSpace())
                                     {
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
@@ -1379,7 +1380,7 @@ public partial class Candidates
                                 [
                                     CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(),
                                     CacheObjects.TaxTerms.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.StatusCodes.ToString(), CacheObjects.Workflow.ToString(),
-                                    CacheObjects.Communications.ToString(), CacheObjects.DocumentTypes.ToString()
+                                    CacheObjects.Communications.ToString(), CacheObjects.DocumentTypes.ToString(), CacheObjects.Users.ToString()
                                 ];
 
                                 RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
@@ -1397,9 +1398,30 @@ public partial class Candidates
                                 _workflow = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
+                                /*
+                                List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[CacheObjects.Users.ToString()]);
+                                
+                                foreach (UserList _user in _users.Where(user => user.UserName == User))
+                                {
+                                    RoleID = _user.Role;
+                                    break;
+                                }
+                                
+                                foreach (Role role in _roles.Where(role => role.ID == RoleID))
+                                {
+                                    RoleName = role.RoleName;
+                                    break;
+                                }
+                            */
                             });
 
         await base.OnInitializedAsync();
+    }
+
+    private string RoleName
+    {
+        get;
+        set;
     }
 
     /// <summary>
@@ -1433,21 +1455,19 @@ public partial class Candidates
                                                                                                                   {
                                                                                                                       {"candidateID", _target.ID.ToString()},
                                                                                                                       {"user", User},
-                                                                                                                      {"roleID", RoleID.ToString()},
+                                                                                                                      {"roleID", RoleName},
                                                                                                                       {"isCandidateScreen", true.ToString()},
                                                                                                                       {"jsonPath", ""},
                                                                                                                       {"emailAddress", ""},
                                                                                                                       {"uploadPath", ""}
                                                                                                                   };
 
-                                                                         Dictionary<string, object> _response = await General.PostRest("Candidate/SaveCandidateActivity", _parameters, 
-                                                                                                                                       activity.Model);
-                                                                         if (_response == null)
+                                                                         string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters, 
+                                                                                                                              activity.Model);
+                                                                         if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                          {
-                                                                             return;
+                                                                             _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                          }
-
-                                                                         _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
                                                                      });
 
     /// <summary>

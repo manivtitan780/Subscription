@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     03-07-2025 15:03
+// Last Updated On:     03-07-2025 20:03
 // *****************************************/
 
 #endregion
@@ -807,14 +807,12 @@ public class CandidateController : ControllerBase
     ///     If the operation is successful, the dictionary will contain a list of activities for the candidate.
     /// </remarks>
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
-                                                                        string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")
+    public async Task<ActionResult<string>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
+                                                                  string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")
     {
-        await Task.Delay(1);
         string _activities = "[]";
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
         try
         {
             await using SqlCommand _command = new("SaveCandidateActivity", _connection);
@@ -833,6 +831,7 @@ public class CandidateController : ControllerBase
             _command.Bit("UpdateSchedule", false);
             _command.Bit("CandScreen", isCandidateScreen);
             _command.Char("RoleID", 2, roleID);
+            await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             while (await _reader.ReadAsync())
             {
@@ -845,10 +844,12 @@ public class CandidateController : ControllerBase
             }
 
             await _reader.NextResultAsync();
-            string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _company = ""; //, _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "";
+            // string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _company = ""; //, _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "";
             //bool _firstTime = false;
             await _reader.ReadAsync();
-            _firstName = _reader.NString(0);
+            (string _firstName, string _lastName, string _reqCode, string _reqTitle, string _company) = (_reader.NString(0), _reader.NString(1), _reader.NString(2), _reader.NString(3),
+                                                                                                         _reader.NString(8));
+            /*_firstName = _reader.NString(0);
             _lastName = _reader.NString(1);
             _reqCode = _reader.NString(2);
             _reqTitle = _reader.NString(3);
@@ -857,9 +858,9 @@ public class CandidateController : ControllerBase
             //_formatted = _reader.NString(6);
             //_formattedInternal = _reader.NString(7);
             //_firstTime = _reader.GetBoolean(8);
-            _company = _reader.GetString(8);
+            _company = _reader.GetString(8);*/
 
-            List<EmailTemplates> _templates = new();
+            List<EmailTemplates> _templates = [];
             Dictionary<string, string> _emailAddresses = new();
             Dictionary<string, string> _emailCC = new();
 
@@ -877,7 +878,7 @@ public class CandidateController : ControllerBase
 
             await _reader.CloseAsync();
 
-            if (_templates.Count > 0)
+            if (_templates.Count != 0)
             {
                 EmailTemplates _templateSingle = _templates[0];
                 if (!_templateSingle.CC.NullOrWhiteSpace())
@@ -911,7 +912,7 @@ public class CandidateController : ControllerBase
                                                           .Replace("$SUBMISSION_STATUS$", activity.Status)
                                                           .Replace("$LOGGED_USER$", user);
 
-                List<string> _attachments = new();
+                List<string> _attachments = [];
                 //string _pathDest = "";
                 //if (_firstTime)
                 //{
@@ -937,19 +938,18 @@ public class CandidateController : ControllerBase
                 //GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, _attachments);
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error saving candidate activity. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
             //
         }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
 
-        await _connection.CloseAsync();
-
-        return new()
-               {
-                   {
-                       "Activity", _activities
-                   }
-               };
+        return Ok(_activities);
     }
 
     /// <summary>
