@@ -920,7 +920,6 @@ public partial class Candidates
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task EditActivity(int id) => ExecuteMethod(async () =>
                                                        {
-                                                           await Task.Yield();
                                                            SelectedActivity = ActivityPanel.SelectedRow;
                                                            NextSteps.Clear();
                                                            NextSteps.Add(new() {Text = "No Change", KeyValue = "0"});
