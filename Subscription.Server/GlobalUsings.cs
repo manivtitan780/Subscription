@@ -62,6 +62,7 @@ global using FluentStorage.Blobs;
 global using FluentStorage.Azure.Blobs;
 
 global using Subscription.Model.Return;
+global using Subscription.Server.Components.Pages.Controls.Admin;
 
 global using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
 

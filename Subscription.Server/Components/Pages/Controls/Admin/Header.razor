@@ -1,0 +1,45 @@
+<div id="navBar">
+	<img alt="Logo" src="images/logo.png" style="height: 50px; width: 63px;" />
+	<label class="labelHeader">PSS</label>
+	<SfMenu TValue="MenuItem">
+		<MenuEvents ItemSelected="MenuSelected" TValue="MenuItem"></MenuEvents>
+		<MenuItems>
+			<MenuItem Text="Dashboard" Url="@($"{_baseURL}home")"></MenuItem>
+			<MenuItem Hidden="@(RoleID != "AD")" Text="Admin">
+				<MenuItems>
+					<MenuItem Disabled="@(Page == "User")" IconCss="e-menu-icons e-menu-user" Text="Users" Url="@($"{_baseURL}Admin/User")" />
+					<MenuItem Disabled="@(Page == "Title")" IconCss="e-menu-icons e-menu-title" Text="Titles" Url="@($"{_baseURL}Admin/Title")" />
+					<MenuItem Disabled="@(Page == "Document Type")" IconCss="e-menu-icons e-menu-document" Text="Document Types" Url="@($"{_baseURL}Admin/Document")" />
+					<MenuItem Disabled="@(Page == "Education")" IconCss="e-menu-icons e-menu-education" Text="Education" Url="@($"{_baseURL}Admin/Education")" />
+					<MenuItem Disabled="@(Page == "Eligibility")" IconCss="e-menu-icons e-menu-eligibility" Text="Eligibilities" Url="@($"{_baseURL}Admin/Eligibility")" />
+					<MenuItem Disabled="@(Page == "Experience")" IconCss="e-menu-icons e-menu-experience" Text="Experiences" Url="@($"{_baseURL}Admin/Experience")" />
+					<MenuItem Disabled="@(Page == "Job Option")" IconCss="e-menu-icons e-menu-job" Text="Job Options" Url="@($"{_baseURL}Admin/JobOptions")" />
+					<MenuItem Disabled="@(Page == "Lead Industry")" IconCss="e-menu-icons e-menu-leadIndustry" Text="Lead Industries" Url="@($"{_baseURL}Admin/LeadIndustry")" />
+					<MenuItem Disabled="@(Page == "Lead Source")" IconCss="e-menu-icons e-menu-leadSource" Text="Lead Sources" Url="@($"{_baseURL}Admin/LeadSource")" />
+					<MenuItem Disabled="@(Page == "Lead Status")" IconCss="e-menu-icons e-menu-leadStatus" Text="Lead Statuses" Url="@($"{_baseURL}Admin/LeadStatus")" />
+					<MenuItem Disabled="@(Page == "Roles")" IconCss="e-menu-icons e-menu-roles" Text="Roles" Url="@($"{_baseURL}Admin/Roles")" />
+					<MenuItem Disabled="@(Page == "Skills")" IconCss="e-menu-icons e-menu-skills" Text="Skills" Url="@($"{_baseURL}Admin/Skills")" />
+					<MenuItem Disabled="@(Page == "State")" IconCss="e-menu-icons e-menu-state" Text="States" Url="@($"{_baseURL}Admin/States")" />
+					<MenuItem Disabled="@(Page == "Status Code")" IconCss="e-menu-icons e-menu-statusCode" Text="Status Codes" Url="@($"{_baseURL}Admin/StatusCodes")" />
+					<MenuItem Disabled="@(Page == "Tax Term")" IconCss="e-menu-icons e-menu-tax" Text="Tax Terms" Url="@($"{_baseURL}Admin/TaxTerm")" />
+					<MenuItem Disabled="@(Page == "Template")" IconCss="e-menu-icons e-menu-template" Text="Templates" Url="@($"{_baseURL}Admin/Template")" />
+					<MenuItem Disabled="@(Page == "Variable Commission")" IconCss="e-menu-icons e-menu-commission" Text="Variable Commission" Url="javascript:void()" />
+					<MenuItem Disabled="@(Page == "Workflow")" IconCss="e-menu-icons e-menu-workflow" Text="Workflows" Url="@($"{_baseURL}Admin/Workflow")" />
+				</MenuItems>
+			</MenuItem>
+			<MenuItem Text="General">
+				<MenuItems>
+					<MenuItem Disabled="@(Page == "Candidate")" Hidden="!ViewCandidate" IconCss="e-menu-icons e-menu-user" Text="Candidate" Url="@($"{_baseURL}candidate")" />
+					<MenuItem Disabled="@(Page == "Requisition")" Hidden="!ViewRequisition" IconCss="e-menu-icons e-menu-job" Text="Requisitions" Url="@($"{_baseURL}requisition")" />
+					<MenuItem Disabled="@(Page == "Company")" Hidden="!ViewCompany" IconCss="e-menu-icons e-menu-leadIndustry" Text="Companies" Url="@($"{_baseURL}company")" />
+					<MenuItem Disabled="@(Page == "Leads")" IconCss="e-menu-icons e-menu-leads" Text="Leads" Url="@($"{_baseURL}lead")" />
+				</MenuItems>
+			</MenuItem>
+			<MenuItem Hidden="@(RoleID != "AD")" Text="Preferences" Url="javascript:void()"></MenuItem>
+			<MenuItem Text="Sign Out" Url="javascript:void()"></MenuItem>
+		</MenuItems>
+	</SfMenu>
+
+	@*<VariableCommissionDialog @ref="VariableDialog" />
+	<PreferencesDialog @ref="PreferenceDialog"></PreferencesDialog>*@
+</div>

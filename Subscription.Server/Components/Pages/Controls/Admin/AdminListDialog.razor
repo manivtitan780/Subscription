@@ -1,0 +1,17 @@
+﻿<SfDialog Header="@HeaderString" Height="300px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+    <ChildContent>
+        <SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+        <DialogPositionData X="right" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"></DialogAnimationSettings>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <EditForm Model="@Model" OnValidSubmit="SaveAdminList" @ref="EditAdminForm">
+            <FluentValidationValidator/>
+            <div class="divContainerTable">
+                @*<TextBoxControl @bind-Value="@(Model.Text)" @bind-Value:event="ValueChanged" ID="textText" MaxLength="100" MinLength="1" Multiline="false" Placeholder="@Placeholder"
+                                ValidationMessage="@(() => Model.Text)" />$1$Readonly="@(!HeaderString.Contains("Add"))"#1#
+                <SwitchControl @bind-BindValue="@(Model.IsEnabled)" ID="checkedEnabled" OffLabel="INACTIVE" OnLabel="ACTIVE" Placeholder="Status?" />*@
+            </div>
+            <DialogFooter Cancel="Cancel" CancelMethod="CancelAdminList" @ref="FooterDialog" Save="Save" />
+        </EditForm>
+    </ChildContent>
+</SfDialog>

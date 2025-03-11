@@ -1,0 +1,13 @@
+﻿<div class="divGridToolBar">
+	<div style="display: flex">
+		<div style="flex: 1; text-align: left">
+			<h1 class="h1Admin">@HeaderContentPlural</h1>
+		</div>
+		<div class="divRightControls">
+			<SfButton Content="Refresh" CssClass="topToolButton" IconCss="refreshButton" @onclick="RefreshGrid" />
+			<SfButton Content="@($"Add {HeaderContentSingular}")" CssClass="topToolButton" IconCss="newButton" @onclick="Add" style="@($"display: {ShowNewButton}")" />
+			@*<AutoCompleteButton EnablePersistence="true" ID="@($"auto{Entity}")" PlaceholderText="@($"Select a {HeaderContentSingular}")" @ref="AutoCompleteControl" Ref="AutoCompleteControl"
+								TypeInstance="typeof(DropDownAdaptor)" ValueChange="ValueChange" />*@
+		</div>
+	</div>
+</div>

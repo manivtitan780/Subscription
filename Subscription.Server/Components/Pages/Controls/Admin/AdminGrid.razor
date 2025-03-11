@@ -1,0 +1,54 @@
+﻿<div id="divMainGrid">
+	<div id="divHeader" style="display: grid; grid-template-columns: 2fr 1fr;">
+		<div style="line-height: 50px; margin-left: 10px; font-size: 24px; font-weight: bold; text-transform: uppercase">@HeaderContentPlural</div>
+		<div style="text-align: right; line-height: 50px;">
+			<SfAutoComplete CssClass="rightMargin" AllowCustom="true" EnablePersistence="false" Highlight="true" HtmlAttributes="@_htmlAttribute" ID="autoFilter" MinLength="3" Placeholder="Select&hellip;"
+			                @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="200px" @bind-Value="@Name" Query="@Query">
+				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(DropDownAdaptor)" Key="Key"></SfDataManager>
+				<AutoCompleteFieldSettings Text="Text" Value="KeyValue"></AutoCompleteFieldSettings>
+				<AutoCompleteEvents Created="Created" TItem="KeyValues" TValue="string" ValueChange="ValueChange"/>
+			</SfAutoComplete>
+		</div>
+	</div>
+	<div id="divGrid">
+		@GridContent
+	</div>
+</div>
+
+@*
+@typeparam TValue
+<PageHeader/>
+
+<div class="gridHolder">
+	<AdminGridHeader Add="AddMethod" AutocompleteMethod="@AutocompleteMethod" AutocompleteParameterName="@AutocompleteParameter" Entity="@Entity" HeaderContentPlural="@HeaderContentPlural"
+	                 HeaderContentSingular="@HeaderContentSingular" RefreshGrid="RefreshGrid" ValueChange="FilterGrid"/>
+	<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" EnableHover="true" EnableStickyHeader="true"
+	        ID="Grid" Query="@Query" @ref="Grid" TValue="TValue" Width="100%">
+		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+		<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@AdaptorInstance" Key="ID"/>
+		<GridEvents DataBound="DataHandler" RowSelected="RowSelected" TValue="TValue"/>$1$OnActionBegin="ActionBegin"#1#
+		@{
+			if (EnableVirtualization)
+			{
+				<GridPageSettings PageSize="50"/>
+			}
+		}
+		<GridColumns>
+			@ChildContent
+		</GridColumns>
+	</SfGrid>
+	@#1#{
+		if (ShowConfirm)
+		{
+			<ConfirmDialog Delete="ToggleMethod" Entity="@Entity" Height="@Height" @ref="DialogConfirm" ToggleStatus="true" ToggleValue="@ToggleValue" Width="@Width"/>
+		}
+	}#1#
+	$1$<div class="divGridFooter">
+		<div>
+			Items
+			<b>1</b> to
+			<b>@Count</b> of
+			<b>@Count</b> rows
+		</div>
+	</div>#1#
+</div>*@
