@@ -16,6 +16,7 @@ errorlog*.txt
 *.userosscache
 *.sln.docstates
 *.zip
+*.7z
 ShowMe.txt
 appsettings.json
 Database/*

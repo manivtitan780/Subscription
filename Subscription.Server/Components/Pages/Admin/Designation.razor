@@ -2,9 +2,9 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<AdminGrid AdaptorInstance="@typeof(AdminDesignationAdaptor)" AddMethod="() => EditDesignationAsync()" AutocompleteMethod="Admin_SearchDesignation" AutocompleteParameter="@("@Designation")" Count="@Count"
-           DataHandler="DataHandler" Entity="Title" FilterGrid="FilterGrid" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Key="ID" Page="Designation" @ref="AdminGrid"
-           RefreshGrid="RefreshGrid" RoleID="@RoleID" ToggleMethod="() => ToggleStatusAsync(_selectedID)" ToggleValue="_toggleValue" Width="346px">
+<AdminGrid AddMethod="() => EditDesignationAsync()" AutocompleteMethod="Admin_SearchDesignation" AutocompleteParameter="@("@Designation")" 
+           DataHandler="DataHandler" Entity="Title" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Key="ID" Page="Designation" @ref="AdminGrid"
+           RefreshGrid="RefreshGrid" RoleID="@RoleID" ToggleMethod="() => ToggleStatusAsync(_selectedID)" ToggleValue="_toggleValue" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" Query="_query"
 		        @ref="Grid" TValue="AdminList" Width="100%">

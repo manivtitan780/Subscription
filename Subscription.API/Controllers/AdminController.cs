@@ -85,4 +85,45 @@ public class AdminController : ControllerBase
 
         return Ok(_generalItems);
     }
+
+    /// <summary>
+    ///     Retrieves a list of search options from the database using a specified stored procedure.
+    /// </summary>
+    /// <param name="methodName">The name of the stored procedure to be executed.</param>
+    /// <param name="paramName">The name of the parameter to be passed to the stored procedure.</param>
+    /// <param name="filter">The filter to be applied on the search options.</param>
+    /// <returns>A list of strings representing the search options.</returns>
+    /// <remarks>
+    ///     This method establishes a connection to the database using a connection string from the configuration.
+    ///     It then creates a SQL command using the provided method name and sets the command type to stored procedure.
+    ///     It adds a varchar parameter to the command with the provided parameter name and filter.
+    ///     After executing the command, it reads the result into a list of strings and returns this list.
+    /// </remarks>
+    [HttpGet]
+    public async Task<ActionResult<string>> GetSearch(string methodName = "", string paramName = "", string filter = "")
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(methodName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Varchar(paramName, 100, filter);
+
+        string? _listOptions = "[]";
+        try
+        {
+            _connection.Open();
+            _listOptions = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (SqlException ex)
+        {
+            Log.Error(ex, "Error saving education. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving education.");
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_listOptions ?? "[]");
+    }
+
 }

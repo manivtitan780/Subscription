@@ -20,23 +20,6 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 public partial class AdminGrid
 {
     /// <summary>
-    ///     Gets or sets the Type of the data adaptor for the grid.
-    /// </summary>
-    /// <value>
-    ///     The Type of the data adaptor.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to specify the data adaptor for the Syncfusion Grid component. The data adaptor is
-    ///     responsible for handling data operations like sorting, paging, filtering etc.
-    /// </remarks>
-    [Parameter]
-    public Type AdaptorInstance
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the event callback for the add method.
     /// </summary>
     /// <value>
@@ -106,23 +89,6 @@ public partial class AdminGrid
     }
 
     /// <summary>
-    ///     Gets or sets the total number of rows in the grid.
-    /// </summary>
-    /// <value>
-    ///     The total number of rows in the grid.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to display the total count of rows in the grid footer.
-    ///     It is updated whenever the grid data is refreshed or filtered.
-    /// </remarks>
-    [Parameter]
-    public int Count
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the event callback for handling data-bound events.
     /// </summary>
     /// <value>
@@ -134,22 +100,6 @@ public partial class AdminGrid
     /// </remarks>
     [Parameter]
     public EventCallback<object> DataHandler
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ConfirmDialog component used for confirming user actions in the admin grid.
-    /// </summary>
-    /// <value>
-    ///     The ConfirmDialog component.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to display a dialog for confirming various user actions such as deletion, cancellation, and
-    ///     activity toggling.
-    /// </remarks>
-    public ConfirmDialog DialogConfirm
     {
         get;
         set;
@@ -195,24 +145,6 @@ public partial class AdminGrid
         get;
         set;
     }
-
-    /// <summary>
-    ///     Gets or sets the event callback for the filter method.
-    /// </summary>
-    /// <value>
-    ///     The event callback for the filter method.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to specify the event that is triggered when the filter method is invoked.
-    ///     The event handler is responsible for handling the logic associated with the filtering of data in the grid.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<ChangeEventArgs<string, KeyValues>> FilterGrid
-    {
-        get;
-        set;
-    }
-
 
     /// <summary>
     ///     Gets or sets the plural form of the header content for the admin grid.
@@ -474,7 +406,8 @@ public partial class AdminGrid
         if (firstRender)
         {
             Query ??= new();
-            Query.AddParams("EndPoint", AutocompleteMethod);
+            Query.AddParams("MethodName", AutocompleteMethod);
+            Query.AddParams("ParameterName", AutocompleteParameter);
         }
     }
 
@@ -499,7 +432,11 @@ public partial class AdminGrid
         ///     parameter name stored in the '_method' and '_parameterName' fields respectively, along with the DataManagerRequest
         ///     object.
         /// </remarks>
-        public override Task<object> ReadAsync(DataManagerRequest dm, string key = null) => General.GetAutocompleteAsync(dm.Params["EndPoint"].ToString(), dm);
+        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+        {
+            object _dataSource = await General.GetAutocompleteAsync("Admin/GetSearch", dm, dm.Params["MethodName"].ToString(), dm.Params["ParameterName"].ToString());
+            return _dataSource;
+        }
     }
 
 }

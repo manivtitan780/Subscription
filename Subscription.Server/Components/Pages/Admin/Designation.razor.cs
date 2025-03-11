@@ -305,7 +305,7 @@ public partial class Designation
         return ExecuteMethod(async () =>
                              {
                                  FilterSet(designation.Value);
-                                 await Grid.Refresh();
+                                 await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
@@ -316,8 +316,10 @@ public partial class Designation
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
-    private static void FilterSet(string value)
+    private void FilterSet(string value)
     {
+        _query ??= new();
+        _query.AddParams("Filter", value);
         //Filter = General.FilterSet(Filter, value);
     }
 
@@ -332,6 +334,8 @@ public partial class Designation
         _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
+                                _query ??= new();
+                                _query.AddParams("Filter", string.Empty);
                                 /*General.CheckStart(NavManager, Configuration);
                                 LoginCookyUser = await NavManager.RedirectInner(LocalStorage, Crypto);
                                 RoleID = LoginCookyUser.RoleID;
@@ -462,7 +466,7 @@ public partial class Designation
                 Dictionary<string, string> _parameters = new()
                                                         {
                                                             {"methodName", "Admin_GetDesignations"},
-                                                            {"filter", ""}
+                                                            {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                         };
                 string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
                 List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
@@ -472,7 +476,6 @@ public partial class Designation
                                               Count = _adminList.Count
                                           }
                                           : _adminList;
-                //object _returnValue = await General.GetReadAsync("Admin_GetDesignations", Filter, dm, false);
             }
             catch (Exception ex)
             {

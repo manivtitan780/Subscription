@@ -17,7 +17,7 @@ using System.Configuration;
 
 namespace Subscription.Server.Code;
 
-public class General()//(Container container)
+public class General() //(Container container)
 {
     // private Container _container = container;
 
@@ -33,7 +33,7 @@ public class General()//(Container container)
     public static async Task SetValues(string someValue)
     {
         ISessionStorageService _sessionStorage = _serviceProvider.GetService<ISessionStorageService>();
-        await _sessionStorage.SetItemAsync("PageStatey", someValue);
+        await _sessionStorage.SetItemAsync("PageState", someValue);
         // return Task.CompletedTask;
     }
     /// <summary>
@@ -224,24 +224,7 @@ public class General()//(Container container)
         return response!.IsSuccessful ? response.Data : default;
     }
 
-    /// <summary>
-    ///     Asynchronously retrieves autocomplete data for a specific method and parameter.
-    /// </summary>
-    /// <param name="endpoint">The endpoint to connect to, to fetch the list of items to display.</param>
-    /// <param name="dm">The DataManagerRequest object containing additional request parameters.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation. The task result contains a list of autocomplete options
-    ///     in the form of KeyValues objects if any matches are found, or an empty list if no matches are found.
-    ///     If the DataManagerRequest object requires counts, the task result is a DataResult object containing the
-    ///     autocomplete options and their count.
-    /// </returns>
-    /// <remarks>
-    ///     This method makes an asynchronous request to the 'Admin/GetSearchDropDown' endpoint of the API,
-    ///     passing the method name, parameter name, and filter value as query parameters.
-    ///     The response is a list of strings which are then converted into KeyValues objects and returned.
-    ///     If an exception occurs during the operation, an empty list or a DataResult object with a count of 0 is returned.
-    /// </remarks>
-    internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm)
+    internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm, string methodName = "", string paramName = "")
     {
         List<KeyValues> _dataSource = [];
 
@@ -260,6 +243,12 @@ public class General()//(Container container)
                                                      {
                                                          {"filter", dm.Where[0].value.ToString()}
                                                      };
+            if (methodName.NotNullOrWhiteSpace())
+            {
+                _parameters.Add("methodName", methodName);
+                _parameters.Add("paramName", paramName);
+            }
+
             string _response = await ExecuteRest<string>(endpoint, _parameters, null, false);
 
             if (_response.NotNullOrWhiteSpace() && _response != "[]")
