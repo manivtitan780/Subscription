@@ -1,6 +1,6 @@
-﻿<SfDialog Header="@HeaderString" Height="300px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+﻿<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="300px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
     <ChildContent>
-        <SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000" />
         <DialogPositionData X="right" Y="center"></DialogPositionData>
         <DialogAnimationSettings Effect="DialogEffect.SlideRight"></DialogAnimationSettings>
         <DialogEvents OnOpen="OpenDialog"></DialogEvents>

@@ -160,6 +160,12 @@ public partial class AdminListDialog
         set;
     }
 
+    private bool VisibleSpinner
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.
     /// </summary>
