@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack.Client
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           AdminGrid.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          1-5-2024 16:13
-// Last Updated On:     1-27-2024 16:11
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          03-10-2025 14:03
+// Last Updated On:     03-11-2025 20:03
 // *****************************************/
 
 #endregion
@@ -19,6 +19,19 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 
 public partial class AdminGrid
 {
+    private Dictionary<string, object> _htmlAttribute = new()
+                                                        {
+                                                            {"maxlength", 30},
+                                                            {"autocomplete", "off"}
+                                                            //{"autocomplete", $"hoohoo_{new string(Enumerable.Range(0, 3).Select(_ => "abcdefghijklmnopqrstuvwxyz"[_random.Next(26)]).ToArray())}"}
+                                                        };
+
+    private SfAutoComplete<string, KeyValues> Acb
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the event callback for the add method.
     /// </summary>
@@ -89,17 +102,15 @@ public partial class AdminGrid
     }
 
     /// <summary>
-    ///     Gets or sets the event callback for handling data-bound events.
+    ///     Gets or sets the event callback that is triggered when the AutoComplete component is created.
     /// </summary>
-    /// <value>
-    ///     The event callback for handling data-bound events.
-    /// </value>
     /// <remarks>
-    ///     This property is used to specify the event that is triggered when the grid data is bound.
-    ///     The event handler is responsible for handling the logic associated with the data binding of the grid.
+    ///     The Created property is an event callback that gets triggered when the AutoComplete component is created. The
+    ///     Created event callback can be used to perform any custom actions or initializations when the AutoComplete component
+    ///     is created.
     /// </remarks>
     [Parameter]
-    public EventCallback<object> DataHandler
+    public EventCallback<object> Created
     {
         get;
         set;
@@ -122,13 +133,6 @@ public partial class AdminGrid
         set;
     }
 
-    private Dictionary<string, object> _htmlAttribute = new()
-                                                        {
-                                                            {"maxlength", 30},
-                                                            {"autocomplete", "off"}
-                                                            //{"autocomplete", $"hoohoo_{new string(Enumerable.Range(0, 3).Select(_ => "abcdefghijklmnopqrstuvwxyz"[_random.Next(26)]).ToArray())}"}
-                                                        };
-
     /// <summary>
     ///     Gets or sets the entity name for the grid.
     /// </summary>
@@ -141,6 +145,13 @@ public partial class AdminGrid
     /// </remarks>
     [Parameter]
     public string Entity
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public RenderFragment GridContent
     {
         get;
         set;
@@ -197,19 +208,8 @@ public partial class AdminGrid
         set;
     } = "140px";
 
-    /// <summary>
-    ///     Gets or sets the key field name for the data source.
-    /// </summary>
-    /// <value>
-    ///     The name of the key field.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to specify the key field name for the data source of the Syncfusion Grid component.
-    ///     The key field is a unique identifier for each data row and is used for operations like editing, deleting, and
-    ///     selecting rows.
-    /// </remarks>
     [Parameter]
-    public string Key
+    public string Name
     {
         get;
         set;
@@ -231,6 +231,13 @@ public partial class AdminGrid
         get;
         set;
     }
+
+    [Parameter]
+    public Query Query
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Gets or sets the event callback for the refresh grid action.
@@ -266,54 +273,18 @@ public partial class AdminGrid
         set;
     }
 
-
     /// <summary>
-    ///     Gets or sets a value indicating whether the confirmation dialog is shown.
+    ///     Gets or sets the event callback that is triggered when the value of the AutoCompleteButton changes.
     /// </summary>
     /// <value>
-    ///     <c>true</c> if the confirmation dialog is shown; otherwise, <c>false</c>. The default is <c>true</c>.
+    ///     An event callback that includes the ChangeEventArgs with the new value and the associated KeyValues.
     /// </value>
     /// <remarks>
-    ///     This property is used to control the visibility of the confirmation dialog in the admin grid.
-    ///     When set to <c>true</c>, a confirmation dialog is displayed for certain actions requiring user confirmation.
+    ///     This property is used to handle the change event of the AutoCompleteButton.
+    ///     It provides the new value and the associated KeyValues to the event handler.
     /// </remarks>
     [Parameter]
-    public bool ShowConfirm
-    {
-        get;
-        set;
-    } = true;
-
-    /// <summary>
-    ///     Gets or sets the event callback for the toggle method.
-    /// </summary>
-    /// <value>
-    ///     The event callback for the toggle method.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to specify the event that is triggered when the toggle method is invoked.
-    ///     The event handler is responsible for handling the logic associated with the toggling of certain features or
-    ///     elements in the grid.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<MouseEventArgs> ToggleMethod
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the toggle value for the AdminGrid component.
-    /// </summary>
-    /// <value>
-    ///     The toggle value for the AdminGrid component.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to control the toggle state of certain features in the AdminGrid component.
-    ///     The value is a byte, where specific values correspond to different states.
-    /// </remarks>
-    [Parameter]
-    public byte ToggleValue
+    public EventCallback<ChangeEventArgs<string, KeyValues>> ValueChange
     {
         get;
         set;
@@ -336,72 +307,7 @@ public partial class AdminGrid
         set;
     } = "346px";
 
-    private bool HasRendered
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public Query Query
-    {
-        get;
-        set;
-    } = new();
-
-    private SfAutoComplete<string,KeyValues> Acb
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public string Name
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the event callback that is triggered when the value of the AutoCompleteButton changes.
-    /// </summary>
-    /// <value>
-    ///     An event callback that includes the ChangeEventArgs with the new value and the associated KeyValues.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to handle the change event of the AutoCompleteButton.
-    ///     It provides the new value and the associated KeyValues to the event handler.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<ChangeEventArgs<string, KeyValues>> ValueChange
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public RenderFragment GridContent
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the event callback that is triggered when the AutoComplete component is created.
-    /// </summary>
-    /// <remarks>
-    ///     The Created property is an event callback that gets triggered when the AutoComplete component is created. The
-    ///     Created event callback can be used to perform any custom actions or initializations when the AutoComplete component
-    ///     is created.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<object> Created
-    {
-        get;
-        set;
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
@@ -409,6 +315,7 @@ public partial class AdminGrid
             Query.AddParams("MethodName", AutocompleteMethod);
             Query.AddParams("ParameterName", AutocompleteParameter);
         }
+        base.OnAfterRender(firstRender);
     }
 
     /// <summary>
@@ -438,5 +345,4 @@ public partial class AdminGrid
             return _dataSource;
         }
     }
-
 }

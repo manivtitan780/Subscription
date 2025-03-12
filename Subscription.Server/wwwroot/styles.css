@@ -286,6 +286,10 @@ body, form, html {
     color: var(--c-wh);
 }
 
+.e-topButton{
+    border-radius: 5px;
+}
+
 .buttonContain .e-icon-btn {
     border: 1px solid var(--c-bbb);
     border-radius: 50%;

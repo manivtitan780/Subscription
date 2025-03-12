@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     03-07-2025 15:03
+// Last Updated On:     03-11-2025 20:03
 // *****************************************/
 
 #endregion
@@ -517,6 +517,12 @@ public partial class Candidates
     }
 
     private int RoleID
+    {
+        get;
+        set;
+    }
+
+    private string RoleName
     {
         get;
         set;
@@ -1399,13 +1405,13 @@ public partial class Candidates
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
                                 /*
                                 List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[CacheObjects.Users.ToString()]);
-                                
+
                                 foreach (UserList _user in _users.Where(user => user.UserName == User))
                                 {
                                     RoleID = _user.Role;
                                     break;
                                 }
-                                
+
                                 foreach (Role role in _roles.Where(role => role.ID == RoleID))
                                 {
                                     RoleName = role.RoleName;
@@ -1415,12 +1421,6 @@ public partial class Candidates
                             });
 
         await base.OnInitializedAsync();
-    }
-
-    private string RoleName
-    {
-        get;
-        set;
     }
 
     /// <summary>
@@ -1461,7 +1461,7 @@ public partial class Candidates
                                                                                                                       {"uploadPath", ""}
                                                                                                                   };
 
-                                                                         string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters, 
+                                                                         string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
                                                                                                                               activity.Model);
                                                                          if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                          {

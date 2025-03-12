@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack.Client
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           AdminListDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          1-5-2024 16:13
-// Last Updated On:     1-27-2024 16:14
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          03-10-2025 14:03
+// Last Updated On:     03-11-2025 20:03
 // *****************************************/
 
 #endregion
@@ -26,6 +26,8 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 /// </remarks>
 public partial class AdminListDialog
 {
+    private readonly AdminListValidator _adminListValidator = new();
+
     /// <summary>
     ///     Gets or sets the Cancel event callback that is triggered when the Cancel operation is performed in the
     ///     AdminListDialog.
@@ -36,6 +38,12 @@ public partial class AdminListDialog
     /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private EditContext Context
     {
         get;
         set;
@@ -70,17 +78,7 @@ public partial class AdminListDialog
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the FooterDialog property of the AdminListDialog.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to control the footer section of the AdminListDialog, which includes the Save and Cancel
-    ///     buttons.
-    ///     The FooterDialog is of type <see cref="DialogFooter" />, a custom component that encapsulates the footer
-    ///     functionality.
-    ///     The value of this property is bound to the DialogFooter component in the Razor markup.
-    /// </remarks>
-    private DialogFooter FooterDialog
+    private SfDataForm EditAdminListForm
     {
         get;
         set;
@@ -164,7 +162,7 @@ public partial class AdminListDialog
     {
         get;
         set;
-    }
+    } = false;
 
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.
@@ -172,12 +170,23 @@ public partial class AdminListDialog
     /// <param name="args">The mouse event arguments associated with the cancel action.</param>
     /// <remarks>
     ///     This method is invoked when the user clicks on the Cancel button in the AdminListDialog.
-   /// </remarks>
+    /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task CancelAdminList(MouseEventArgs args)
     {
-        await Task.CompletedTask;
-        //return General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+        VisibleSpinner = true;
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        VisibleSpinner = true;
+    }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
     }
 
     /// <summary>
@@ -188,7 +197,7 @@ public partial class AdminListDialog
     ///     This method is invoked when the dialog is about to be opened. It yields control back to the caller before
     ///     validating the EditForm's context.
     /// </remarks>
-    private void OpenDialog(BeforeOpenEventArgs arg) => EditAdminForm.EditContext?.Validate();
+    private void OpenDialog(BeforeOpenEventArgs arg) => Context.Validate();
 
     /// <summary>
     ///     Asynchronously saves the administrative list in the AdminListDialog.
@@ -200,8 +209,10 @@ public partial class AdminListDialog
     /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task SaveAdminList(EditContext editContext)
     {
-        await Task.CompletedTask;
-        //return General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+        VisibleSpinner = true;
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
     }
 
     /// <summary>

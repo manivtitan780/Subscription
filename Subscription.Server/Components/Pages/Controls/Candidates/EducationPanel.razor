@@ -34,7 +34,7 @@
 						if (bCon is CandidateEducation _con && _con.UpdatedBy == UserName && !IsRequisition && EditRights)
 						{
 							<div class="buttonContain">
-								<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditEducationDialog(_con.ID)"/>
+								<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditEducationDialog(_con.ID)" />
 								<SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteEducationMethod(_con.ID)"/>
 							</div>
 						}

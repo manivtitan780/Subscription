@@ -1,17 +1,38 @@
-﻿<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="300px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+﻿<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="323px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
     <ChildContent>
-        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000" />
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
         <DialogPositionData X="right" Y="center"></DialogPositionData>
-        <DialogAnimationSettings Effect="DialogEffect.SlideRight"></DialogAnimationSettings>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
         <DialogEvents OnOpen="OpenDialog"></DialogEvents>
-        <EditForm Model="@Model" OnValidSubmit="SaveAdminList" @ref="EditAdminForm">
+        <SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveAdminList" @ref="EditAdminListForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">@($"Save {Placeholder}")</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelAdminList" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_adminListValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="@($"{Placeholder} Information")">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Text)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Text" ID="@($"text{Placeholder.Replace(" ", "")}")" MaxLength="255" Placeholder="@Placeholder"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.IsEnabled)" LabelText="@($"{Placeholder} is enabled")" ID="checkedEnabled" EditorType="FormEditorType.Switch"/>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
+
+
+        @*<EditForm Model="@Model" OnValidSubmit="SaveAdminList" @ref="EditAdminForm">
             <FluentValidationValidator/>
             <div class="divContainerTable">
-                @*<TextBoxControl @bind-Value="@(Model.Text)" @bind-Value:event="ValueChanged" ID="textText" MaxLength="100" MinLength="1" Multiline="false" Placeholder="@Placeholder"
-                                ValidationMessage="@(() => Model.Text)" />$1$Readonly="@(!HeaderString.Contains("Add"))"#1#
-                <SwitchControl @bind-BindValue="@(Model.IsEnabled)" ID="checkedEnabled" OffLabel="INACTIVE" OnLabel="ACTIVE" Placeholder="Status?" />*@
+                $1$<TextBoxControl @bind-Value="@(Model.Text)" @bind-Value:event="ValueChanged" ID="textText" MaxLength="100" MinLength="1" Multiline="false" Placeholder="@Placeholder"
+                                ValidationMessage="@(() => Model.Text)" />$2$Readonly="@(!HeaderString.Contains("Add"))"#2#
+                <SwitchControl @bind-BindValue="@(Model.IsEnabled)" ID="checkedEnabled" OffLabel="INACTIVE" OnLabel="ACTIVE" Placeholder="Status?" />#1#
             </div>
-            <DialogFooter Cancel="Cancel" CancelMethod="CancelAdminList" @ref="FooterDialog" Save="Save" />
-        </EditForm>
+            <DialogFooter Cancel="Cancel" CancelMethod="CancelAdminList" @ref="FooterDialog" Save="Save"/>
+        </EditForm>*@
     </ChildContent>
 </SfDialog>

@@ -215,15 +215,16 @@ public partial class Designation
         set;
     }
 
-    /// <summary>
-    ///     Handles the data for the Designation page. It counts the number of records in the current view of the grid.
-    ///     If there are records, it selects the first row.
-    /// </summary>
-    /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task DataHandler()
+    private bool VisibleSpinner
     {
-        return Task.CompletedTask;
-        //return ExecuteMethod(async () => Count = await General.SetCountAndSelect(AdminGrid.Grid));
+        get;
+        set;
+    }
+
+    private SfSpinner Spinner
+    {
+        get;
+        set;
     }
 
     /// <summary>
@@ -242,41 +243,41 @@ public partial class Designation
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditDesignationAsync(int id = 0)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                 if (_selectedList.Any() && _selectedList.First().ID != id)
-                                 {
-                                     int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                     await Grid.SelectRowAsync(_index);
-                                 }
+    private Task EditDesignationAsync(int id = 0) => ExecuteMethod(async () =>
+                                                                   {
+                                                                       VisibleSpinner = true;
+                                                                       if (id != 0)
+                                                                       {
+                                                                           List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                           {
+                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                               await Grid.SelectRowAsync(_index);
+                                                                           }
+                                                                       }
 
-                                 if (id == 0)
-                                 {
-                                     Title = "Add";
-                                     if (DesignationRecordClone == null)
-                                     {
-                                         DesignationRecordClone = new();
-                                     }
-                                     else
-                                     {
-                                         DesignationRecordClone.Clear();
-                                     }
-                                 }
-                                 else
-                                 {
-                                     Title = "Edit";
-                                     DesignationRecordClone = DesignationRecord.Copy();
-                                 }
+                                                                       if (id == 0)
+                                                                       {
+                                                                           Title = "Add";
+                                                                           if (DesignationRecordClone == null)
+                                                                           {
+                                                                               DesignationRecordClone = new();
+                                                                           }
+                                                                           else
+                                                                           {
+                                                                               DesignationRecordClone.Clear();
+                                                                           }
+                                                                       }
+                                                                       else
+                                                                       {
+                                                                           Title = "Edit";
+                                                                           DesignationRecordClone = DesignationRecord.Copy();
+                                                                       }
 
-                                 DesignationRecordClone.Entity = "Title";
-
-                                 StateHasChanged();
-                                 await AdminDialog.ShowDialog();
-                             });
-    }
+                                                                       VisibleSpinner = false;
+                                                                       DesignationRecordClone.Entity = "Title";
+                                                                       await AdminDialog.ShowDialog();
+                                                                   });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -356,13 +357,13 @@ public partial class Designation
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh();
+    private Task RefreshGrid() => Grid.Refresh(true);
 
     /// <summary>
     ///     Handles the event of a row being selected in the Designation grid.
     /// </summary>
     /// <param name="designation">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectEventArgs<AdminList> designation) => DesignationRecord = designation.Data;
+    private void RowSelected(RowSelectingEventArgs<AdminList> designation) => DesignationRecord = designation.Data;
 
     /// <summary>
     ///     Saves the changes made to the designation record.
@@ -374,11 +375,48 @@ public partial class Designation
     ///     made to the DesignationRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveDesignation(EditContext context)
+    private Task SaveDesignation(EditContext context) => ExecuteMethod(async () =>
+                                                                       {
+                                                                           
+                                                                               Dictionary<string, string> _parameters = new()
+                                                                                                                        {
+                                                                                                                            {"methodName", "Admin_SaveDesignation"},
+                                                                                                                            {"parameterName", "Designation"},
+                                                                                                                            {"containDescription", "false"},
+                                                                                                                            {"isString", "false"}
+                                                                                                                        };
+                                                                               string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
+                                                                                                                                    DesignationRecordClone);
+                                                                               if (DesignationRecordClone != null)
+                                                                               {
+                                                                                   DesignationRecord = DesignationRecordClone.Copy();
+                                                                               }
+
+                                                                               await Grid.Refresh(true);
+
+                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                               await Grid.SelectRowAsync(_index);
+                                                                       });
+
+    /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    ///     This service is injected into the component and used in methods like <see cref="DeleteEducationMethod" /> to
+    ///     confirm actions before proceeding.
+    /// </remarks>
+    [Inject]
+    private SfDialogService DialogService
     {
-        /*return ExecuteMethod(() => General.SaveAdminListAsync("Admin_SaveDesignation", "Designation", false, false, DesignationRecordClone, AdminGrid.Grid,
-                                                              DesignationRecord, JsRuntime));*/
-        return Task.CompletedTask;
+        get;
+        set;
     }
 
     /// <summary>
@@ -390,22 +428,36 @@ public partial class Designation
     ///     set to 1.
     /// </param>
     /// <returns>A Task representing the asynchronous operation.</returns>
-    private Task ToggleMethod(int id, bool enabled)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 _selectedID = id;
-                                 _toggleValue = enabled ? (byte)2 : (byte)1;
-                                 List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                 if (_selectedList.Any() && _selectedList.First().ID != id)
-                                 {
-                                     int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                     await Grid.SelectRowAsync(_index);
-                                 }
+    private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
+                                                                     {
+                                                                         _selectedID = id;
+                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;
+                                                                         List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                         if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                         {
+                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                             await Grid.SelectRowAsync(_index);
+                                                                         }
 
-                                 // await AdminGrid.DialogConfirm.ShowDialog();
-                             });
-    }
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Title?" : "Enable Title?",
+                                                                                                              General.DialogOptions("Are you sure you want to <strong>" 
+                                                                                                                                    + (enabled ? "disable" : "enable") + "</strong> " +
+                                                                                                                                    "this <i>Title</i>?")))
+                                                                         {
+                                                                             Dictionary<string, string> _parameters = new()
+                                                                                                                        {
+                                                                                                                            {"methodName", "Admin_ToggleDesignationStatus"},
+                                                                                                                            {"id", id.ToString()}
+                                                                                                                        };
+                                                                               _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                               
+                                                                               await Grid.Refresh(true);
+
+                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                               await Grid.SelectRowAsync(_index);
+                                                                         }
+                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
+                                                                     });
 
     /// <summary>
     ///     Toggles the status of a designation asynchronously.
@@ -485,6 +537,14 @@ public partial class Designation
             {
                 _semaphoreSlim.Release();
             }
+        }
+    }
+
+    private async Task DataBound(object arg)
+    {
+        if (Grid.TotalItemCount > 0)
+        {
+            await Grid.SelectRowAsync(0);
         }
     }
 }

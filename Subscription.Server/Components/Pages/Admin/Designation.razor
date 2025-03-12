@@ -3,14 +3,16 @@
 
 <PageHeader/>
 <AdminGrid AddMethod="() => EditDesignationAsync()" AutocompleteMethod="Admin_SearchDesignation" AutocompleteParameter="@("@Designation")" 
-           DataHandler="DataHandler" Entity="Title" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Key="ID" Page="Designation" @ref="AdminGrid"
-           RefreshGrid="RefreshGrid" RoleID="@RoleID" ToggleMethod="() => ToggleStatusAsync(_selectedID)" ToggleValue="_toggleValue" ValueChange="FilterGrid" Width="346px">
+           Entity="Title" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Page="Designation" @ref="AdminGrid"
+           RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" Query="_query"
 		        @ref="Grid" TValue="AdminList" Width="100%">
 			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(AdminDesignationAdaptor)" Key="ID"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AdminList"/>
 			<GridColumns>
 				<GridColumn Field="Text" HeaderText="Designation" Width="50%">
 					<Template Context="aCon">
