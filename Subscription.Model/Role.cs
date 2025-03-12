@@ -58,6 +58,11 @@ public class Role
         set;
     }
 
+    public bool AdminScreens
+    {
+        get;
+        set;
+    }
     /// <summary>
     ///     Gets or sets a value indicating whether the role has permission to edit requisitions.
     /// </summary>

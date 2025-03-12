@@ -158,6 +158,11 @@ public class LoginController(IConfiguration configuration) : ControllerBase
                 _permissions.Add(nameof(_userRole.DownloadFormatted));
             }
 
+            if (_userRole is {AdminScreens: true})
+            {
+                _permissions.Add(nameof(_userRole.AdminScreens));
+            }
+
             return GenerateToken(userName, _permissions, _userRole.RoleName);
         }
 

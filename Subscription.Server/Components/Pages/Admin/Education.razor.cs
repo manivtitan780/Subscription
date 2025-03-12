@@ -1,13 +1,13 @@
-﻿#region Header
+#region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           Designation.razor.cs
+// File Name:           Education.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-10-2025 14:03
+// Created On:          03-12-2025 19:03
 // Last Updated On:     03-12-2025 19:03
 // *****************************************/
 
@@ -15,30 +15,9 @@
 
 namespace Subscription.Server.Components.Pages.Admin;
 
-/// <summary>
-///     The Designation class is a part of the ProfSvc_AppTrack.Pages.Admin namespace.
-///     It is used to manage the designations in the administrative context of the application.
-///     This class includes properties for managing the local storage of the browser, user's login session, navigation
-///     across the application, and user's permissions.
-///     It also includes methods for handling data, editing designations, filtering the grid based on the provided
-///     designation, saving the changes made to the designation record, and toggling the status of an AdminList item.
-/// </summary>
-public partial class Designation
+public partial class Education : ComponentBase
 {
     private static TaskCompletionSource<bool> _initializationTaskSource;
-
-    /*
-    /// <summary>
-    ///     Gets or sets the AdminGrid property of the Designation class.
-    ///     This property is of type AdminGrid{AdminList} and is used to manage the administrative list in the grid format.
-    ///     It provides functionalities such as selecting, filtering, and refreshing the grid.
-    /// </summary>
-    private AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
-    */
 
     private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -73,30 +52,6 @@ public partial class Designation
     }
 
     /// <summary>
-    ///     Gets or sets the DesignationRecord property of the Designation class.
-    ///     The DesignationRecord property represents a single title in the application.
-    ///     It is used to hold the data of the selected title in the title grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private AdminList DesignationRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Designation record. This property is used to hold a copy of a Designation record for
-    ///     operations like editing or adding a title.
-    ///     When adding a new title, a new instance of Title is created and assigned to this property.
-    ///     When editing an existing title, a copy of the Title record to be edited is created and assigned to this property.
-    /// </summary>
-    private AdminList DesignationRecordClone
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
     /// </summary>
     /// <value>
@@ -116,6 +71,36 @@ public partial class Designation
         get;
         set;
     }
+
+    private string EducationAuto
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the EducationRecord property of the Education class.
+    ///     The EducationRecord property represents a single title in the application.
+    ///     It is used to hold the data of the selected title in the title grid.
+    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private AdminList EducationRecord
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Education record. This property is used to hold a copy of a Education record for
+    ///     operations like editing or adding a title.
+    ///     When adding a new title, a new instance of Title is created and assigned to this property.
+    ///     When editing an existing title, a copy of the Title record to be edited is created and assigned to this property.
+    /// </summary>
+    private AdminList EducationRecordClone
+    {
+        get;
+        set;
+    } = new();
 
     /// <summary>
     ///     Gets or sets the filter value for the application titles in the administrative context.
@@ -159,29 +144,16 @@ public partial class Designation
         get;
         set;
     }
-    
-    /// <summary>
-    ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
-    ///     browser.
-    ///     It is used in this class to retrieve and store title-specific data, such as the "autoTitle" item and the
-    ///     `LoginCookyUser` object.
-    /// </summary>
-    [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
 
     /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Designation class.
+    ///     Gets or sets the ILogger instance used for logging in the Education class.
     /// </summary>
     /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Designation class.
+    ///     This property is used to log information about the execution of tasks and methods within the Education class.
     ///     It is injected at runtime by the dependency injection system.
     /// </remarks>
     [Inject]
-    private ILogger<Designation> Logger
+    private ILogger<Education> Logger
     {
         get;
         set;
@@ -228,6 +200,19 @@ public partial class Designation
         set;
     }
 
+    /// <summary>
+    ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
+    ///     browser.
+    ///     It is used in this class to retrieve and store title-specific data, such as the "autoTitle" item and the
+    ///     `LoginCookyUser` object.
+    /// </summary>
+    [Inject]
+    private ISessionStorageService SessionStorage
+    {
+        get;
+        set;
+    }
+
     private SfSpinner Spinner
     {
         get;
@@ -235,7 +220,7 @@ public partial class Designation
     }
 
     /// <summary>
-    ///     Gets or sets the title of the Designation Dialog in the administrative context.
+    ///     Gets or sets the title of the Education Dialog in the administrative context.
     ///     The title changes based on the action being performed on the title record - "Add" when a new title is being added,
     ///     and "Edit" when an existing title's details are being modified.
     /// </summary>
@@ -266,56 +251,56 @@ public partial class Designation
     }
 
     /// <summary>
-    ///     Asynchronously edits the designation with the given ID. If the ID is 0, a new designation is created.
+    ///     Asynchronously edits the Education with the given ID. If the ID is 0, a new Education is created.
     /// </summary>
-    /// <param name="id">The ID of the designation to edit. If this parameter is 0, a new designation is created.</param>
+    /// <param name="id">The ID of the Education to edit. If this parameter is 0, a new Education is created.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method performs the following steps:
     ///     - Retrieves the selected records from the grid.
     ///     - If the first selected record's ID does not match the given ID, it selects the row with the given ID in the grid.
-    ///     - If the ID is 0, it sets the title to "Add" and initializes a new designation record clone if it does not exist,
+    ///     - If the ID is 0, it sets the title to "Add" and initializes a new Education record clone if it does not exist,
     ///     or clears its data if it does.
-    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current designation record to the clone.
-    ///     - Sets the entity of the designation record clone to "Title".
+    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current Education record to the clone.
+    ///     - Sets the entity of the Education record clone to "Title".
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditDesignationAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+    private Task EditEducationAsync(int id = 0) => ExecuteMethod(async () =>
+                                                                 {
+                                                                     VisibleSpinner = true;
+                                                                     if (id != 0)
+                                                                     {
+                                                                         List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                         if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                         {
+                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                             await Grid.SelectRowAsync(_index);
+                                                                         }
+                                                                     }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (DesignationRecordClone == null)
-                                                                           {
-                                                                               DesignationRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               DesignationRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           DesignationRecordClone = DesignationRecord.Copy();
-                                                                       }
+                                                                     if (id == 0)
+                                                                     {
+                                                                         Title = "Add";
+                                                                         if (EducationRecordClone == null)
+                                                                         {
+                                                                             EducationRecordClone = new();
+                                                                         }
+                                                                         else
+                                                                         {
+                                                                             EducationRecordClone.Clear();
+                                                                         }
+                                                                     }
+                                                                     else
+                                                                     {
+                                                                         Title = "Edit";
+                                                                         EducationRecordClone = EducationRecord.Copy();
+                                                                     }
 
-                                                                       VisibleSpinner = false;
-                                                                       DesignationRecordClone.Entity = "Title";
-                                                                       await AdminDialog.ShowDialog();
-                                                                   });
+                                                                     VisibleSpinner = false;
+                                                                     EducationRecordClone.Entity = "Title";
+                                                                     await AdminDialog.ShowDialog();
+                                                                 });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -328,38 +313,33 @@ public partial class Designation
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
-    private string DesignationAuto
-    {
-        get;
-        set;
-    }
     /// <summary>
-    ///     Handles the filtering of the grid based on the provided designation.
-    ///     This method is triggered when a designation is selected in the grid.
-    ///     It sets the filter value to the selected designation and refreshes the grid to update the displayed data.
+    ///     Handles the filtering of the grid based on the provided Education.
+    ///     This method is triggered when a Education is selected in the grid.
+    ///     It sets the filter value to the selected Education and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="designation">The selected designation in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="Education">The selected Education in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> designation)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> Education)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(designation.Value.NullOrWhiteSpace() ? string.Empty : designation.Value);
+                                 await FilterSet(Education.Value.NullOrWhiteSpace() ? string.Empty : Education.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
     /// <summary>
-    ///     Sets the filter value for the Designation component.
+    ///     Sets the filter value for the Education component.
     ///     This method is used to update the static Filter property with the passed value.
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
     private async Task FilterSet(string value)
     {
-        DesignationAuto = value;
+        EducationAuto = value;
         _query ??= new();
         _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoTitle", value);
@@ -371,9 +351,9 @@ public partial class Designation
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoTitle");
 
-            DesignationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            EducationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
             _query ??= new();
-            _query.AddParams("Filter", DesignationAuto);
+            _query.AddParams("Filter", EducationAuto);
 
             try
             {
@@ -385,6 +365,7 @@ public partial class Designation
             }
         }
     }
+
     /// <summary>
     ///     This method is called when the component is initialized.
     ///     It retrieves the user's login information from the local storage and checks the user's role.
@@ -397,7 +378,7 @@ public partial class Designation
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
-                                
+
                                 if (_claims == null)
                                 {
                                     NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
@@ -422,49 +403,49 @@ public partial class Designation
     }
 
     /// <summary>
-    ///     Refreshes the grid component of the Designation page.
+    ///     Refreshes the grid component of the Education page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     private Task RefreshGrid() => Grid.Refresh(true);
 
     /// <summary>
-    ///     Handles the event of a row being selected in the Designation grid.
+    ///     Handles the event of a row being selected in the Education grid.
     /// </summary>
-    /// <param name="designation">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> designation) => DesignationRecord = designation.Data;
+    /// <param name="Education">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<AdminList> Education) => EducationRecord = Education.Data;
 
     /// <summary>
-    ///     Saves the changes made to the designation record.
+    ///     Saves the changes made to the Education record.
     /// </summary>
     /// <param name="context">The context for the form being edited.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     /// <remarks>
     ///     This method calls the General.SaveAdminListAsync method, passing in the necessary parameters to save the changes
-    ///     made to the DesignationRecordClone.
+    ///     made to the EducationRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveDesignation(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"methodName", "Admin_SaveDesignation"},
-                                                                                                                        {"parameterName", "Designation"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                DesignationRecordClone);
-                                                                           if (DesignationRecordClone != null)
-                                                                           {
-                                                                               DesignationRecord = DesignationRecordClone.Copy();
-                                                                           }
+    private Task SaveEducation(EditContext context) => ExecuteMethod(async () =>
+                                                                     {
+                                                                         Dictionary<string, string> _parameters = new()
+                                                                                                                  {
+                                                                                                                      {"methodName", "Admin_SaveEducation"},
+                                                                                                                      {"parameterName", "Education"},
+                                                                                                                      {"containDescription", "false"},
+                                                                                                                      {"isString", "false"}
+                                                                                                                  };
+                                                                         string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
+                                                                                                                              EducationRecordClone);
+                                                                         if (EducationRecordClone != null)
+                                                                         {
+                                                                             EducationRecord = EducationRecordClone.Copy();
+                                                                         }
 
-                                                                           await Grid.Refresh(true);
+                                                                         await Grid.Refresh(true);
 
-                                                                           int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);
-                                                                       });
+                                                                         int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                         await Grid.SelectRowAsync(_index);
+                                                                     });
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -493,7 +474,7 @@ public partial class Designation
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
-                                                                                                                          {"methodName", "Admin_ToggleDesignationStatus"},
+                                                                                                                          {"methodName", "Admin_ToggleEducationStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
                                                                              _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
@@ -507,36 +488,36 @@ public partial class Designation
                                                                      });
 
     /// <summary>
-    ///     Toggles the status of a designation asynchronously.
+    ///     Toggles the status of a Education asynchronously.
     /// </summary>
-    /// <param name="designationID">The ID of the designation whose status is to be toggled.</param>
+    /// <param name="EducationID">The ID of the Education whose status is to be toggled.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
-    ///     This method posts a toggle request to the "Admin_ToggleDesignationStatus" endpoint with the provided designation
+    ///     This method posts a toggle request to the "Admin_ToggleEducationStatus" endpoint with the provided Education
     ///     ID.
     ///     The status toggle operation is not performed if it is already in progress.
-    ///     After the status is toggled, the method refreshes the grid and selects the row with the toggled designation.
+    ///     After the status is toggled, the method refreshes the grid and selects the row with the toggled Education.
     /// </remarks>
-    private Task ToggleStatusAsync(int designationID) =>
-        //return ExecuteMethod(() => General.PostToggleAsync("Admin_ToggleDesignationStatus", designationID, "ADMIN", false, AdminGrid.Grid, runtime: JsRuntime));
+    private Task ToggleStatusAsync(int EducationID) =>
+        //return ExecuteMethod(() => General.PostToggleAsync("Admin_ToggleEducationStatus", EducationID, "ADMIN", false, AdminGrid.Grid, runtime: JsRuntime));
         Task.CompletedTask;
 
     /// <summary>
-    ///     The AdminDesignationAdaptor class is a data adaptor for the Admin Designation page.
+    ///     The AdminEducationAdaptor class is a data adaptor for the Admin Education page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
     /// <remarks>
-    ///     This class is used to handle data operations for the Admin Designation page.
+    ///     This class is used to handle data operations for the Admin Education page.
     ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
     ///     The ReadAsync method is used to asynchronously fetch data from the server.
     ///     It uses the General.GetReadAsync method to perform the actual data fetching.
     /// </remarks>
-    public class AdminDesignationAdaptor : DataAdaptor
+    public class AdminEducationAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         /// <summary>
-        ///     Asynchronously fetches data for the Admin Designation page from the server.
+        ///     Asynchronously fetches data for the Admin Education page from the server.
         /// </summary>
         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
         /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
@@ -562,7 +543,7 @@ public partial class Designation
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetDesignations"},
+                                                             {"methodName", "Admin_GetEducation"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
                 string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
