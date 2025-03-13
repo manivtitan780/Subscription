@@ -3,7 +3,7 @@
 
 <PageHeader/>
 <AdminGrid AddMethod="() => EditEducationAsync()" AutocompleteMethod="Admin_SearchEducation" AutocompleteParameter="@("@Education")" Name="@EducationAuto"
-           Entity="Title" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Page="Education" @ref="AdminGrid"
+           Entity="Education" HeaderContentPlural="Education" HeaderContentSingular="Education" Height="140px" Page="Education" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
@@ -45,7 +45,7 @@
 								<div class="buttonContain">
 									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditEducationAsync(_con.ID)" title="Edit Title"/>
 									<SfButton Content="" IconCss="e-icons e-repeat" @onclick="() => ToggleMethod(_con.ID, _con.IsEnabled)"
-									          title="@($"{(_con.IsEnabled ? "Disable" : "Enable")} Title")"/>
+									          title="@($"{(_con.IsEnabled ? "Disable" : "Enable")} Education")"/>
 								</div>
 							}
 						}
@@ -56,4 +56,4 @@
 	</GridContent>
 </AdminGrid>
 
-<AdminListDialog HeaderString="@($"{Title} Title")" Model="EducationRecordClone" Placeholder="Title" @ref="AdminDialog" Save="SaveEducation"/>
+<AdminListDialog HeaderString="@($"{Title} Education")" Model="EducationRecordClone" Placeholder="Education" @ref="AdminDialog" Save="SaveEducation"/>

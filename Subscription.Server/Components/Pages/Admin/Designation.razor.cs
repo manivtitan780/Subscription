@@ -107,8 +107,6 @@ public partial class Designation
     /// <remarks>
     ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    ///     This service is injected into the component and used in methods like <see cref="DeleteEducationMethod" /> to
-    ///     confirm actions before proceeding.
     /// </remarks>
     [Inject]
     private SfDialogService DialogService
@@ -128,20 +126,6 @@ public partial class Designation
     }
 
     private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the JavaScript runtime instance. The JavaScript runtime provides a mechanism for running JavaScript in
-    ///     the context of the component.
-    ///     This property is injected into the component and is used to call JavaScript functions from .NET code.
-    ///     For example, it is used in the 'Save' method to scroll to a specific row in the grid, and in the
-    ///     'ToggleStatusAsync' method to toggle the status of a title.
-    /// </summary>
-    [Inject]
-    private IJSRuntime JsRuntime
     {
         get;
         set;
@@ -505,21 +489,6 @@ public partial class Designation
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
-    /// <summary>
-    ///     Toggles the status of a designation asynchronously.
-    /// </summary>
-    /// <param name="designationID">The ID of the designation whose status is to be toggled.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method posts a toggle request to the "Admin_ToggleDesignationStatus" endpoint with the provided designation
-    ///     ID.
-    ///     The status toggle operation is not performed if it is already in progress.
-    ///     After the status is toggled, the method refreshes the grid and selects the row with the toggled designation.
-    /// </remarks>
-    private Task ToggleStatusAsync(int designationID) =>
-        //return ExecuteMethod(() => General.PostToggleAsync("Admin_ToggleDesignationStatus", designationID, "ADMIN", false, AdminGrid.Grid, runtime: JsRuntime));
-        Task.CompletedTask;
 
     /// <summary>
     ///     The AdminDesignationAdaptor class is a data adaptor for the Admin Designation page.

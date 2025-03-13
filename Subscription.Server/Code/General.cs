@@ -119,7 +119,9 @@ public class General() //(Container container)
                {
                    ChildContent = content => { content.AddContent(0, contentText.ToMarkupString()); },
                    CloseOnEscape = true,
-                   AnimationSettings = new() {Effect = DialogEffect.Fade, Duration = 300}
+                   AnimationSettings = new() {Effect = DialogEffect.Fade, Duration = 300},
+                   PrimaryButtonOptions = new() {Content = "Yes"},
+                   CancelButtonOptions = new() {Content = "No"}
                };
     }
 

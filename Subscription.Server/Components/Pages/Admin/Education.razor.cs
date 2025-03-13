@@ -319,13 +319,13 @@ public partial class Education : ComponentBase
     ///     It sets the filter value to the selected Education and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="Education">The selected Education in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="education">The selected Education in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> Education)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> education)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(Education.Value.NullOrWhiteSpace() ? string.Empty : Education.Value);
+                                 await FilterSet(education.Value.NullOrWhiteSpace() ? string.Empty : education.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
@@ -412,8 +412,8 @@ public partial class Education : ComponentBase
     /// <summary>
     ///     Handles the event of a row being selected in the Education grid.
     /// </summary>
-    /// <param name="Education">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> Education) => EducationRecord = Education.Data;
+    /// <param name="education">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<AdminList> education) => EducationRecord = education.Data;
 
     /// <summary>
     ///     Saves the changes made to the Education record.
@@ -467,11 +467,12 @@ public partial class Education : ComponentBase
                                                                              await Grid.SelectRowAsync(_index);
                                                                          }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Title?" : "Enable Title?",
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Education?" : "Enable Education?",
                                                                                                               General.DialogOptions("Are you sure you want to <strong>"
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Title</i>?")))
+                                                                                                                                    "this <i>Education</i>?")))
                                                                          {
+                                                                             
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
                                                                                                                           {"methodName", "Admin_ToggleEducationStatus"},
@@ -486,21 +487,6 @@ public partial class Education : ComponentBase
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
-    /// <summary>
-    ///     Toggles the status of a Education asynchronously.
-    /// </summary>
-    /// <param name="EducationID">The ID of the Education whose status is to be toggled.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method posts a toggle request to the "Admin_ToggleEducationStatus" endpoint with the provided Education
-    ///     ID.
-    ///     The status toggle operation is not performed if it is already in progress.
-    ///     After the status is toggled, the method refreshes the grid and selects the row with the toggled Education.
-    /// </remarks>
-    private Task ToggleStatusAsync(int EducationID) =>
-        //return ExecuteMethod(() => General.PostToggleAsync("Admin_ToggleEducationStatus", EducationID, "ADMIN", false, AdminGrid.Grid, runtime: JsRuntime));
-        Task.CompletedTask;
 
     /// <summary>
     ///     The AdminEducationAdaptor class is a data adaptor for the Admin Education page.

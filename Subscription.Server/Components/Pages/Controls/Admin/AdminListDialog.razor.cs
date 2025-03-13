@@ -177,7 +177,7 @@ public partial class AdminListDialog
         VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        VisibleSpinner = true;
+        VisibleSpinner = false;
     }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
