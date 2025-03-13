@@ -545,7 +545,7 @@ public partial class Designation
                                            }
                            : _adminList;
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }

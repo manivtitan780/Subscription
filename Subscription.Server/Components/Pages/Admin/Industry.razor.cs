@@ -5,26 +5,26 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           Eligibility.razor.cs
+// File Name:           Industry.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-13-2025 16:03
-// Last Updated On:     03-13-2025 16:03
+// Created On:          03-13-2025 19:03
+// Last Updated On:     03-13-2025 19:03
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Admin;
 
-public partial class Eligibility : ComponentBase
+public partial class Industry : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+        private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
-    ///     Gets or sets the 'AdminListDialog' instance used for managing Eligibility information in the administrative context.
-    ///     This dialog is used for both creating new Eligibility and editing existing Eligibility.
+    ///     Gets or sets the 'AdminListDialog' instance used for managing Industry information in the administrative context.
+    ///     This dialog is used for both creating new Industry and editing existing Industry.
     /// </summary>
     private AdminListDialog AdminDialog
     {
@@ -51,31 +51,31 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
-    private string EligibilityAuto
+    private string IndustryAuto
     {
         get;
         set;
     }
 
     /// <summary>
-    ///     Gets or sets the EligibilityRecord property of the Eligibility class.
-    ///     The EligibilityRecord property represents a single Eligibility in the application.
-    ///     It is used to hold the data of the selected Eligibility in the Eligibility grid.
+    ///     Gets or sets the IndustryRecord property of the Industry class.
+    ///     The IndustryRecord property represents a single Industry in the application.
+    ///     It is used to hold the data of the selected Industry in the Industry grid.
     ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private AdminList EligibilityRecord
+    private AdminList IndustryRecord
     {
         get;
         set;
     } = new();
 
     /// <summary>
-    ///     Gets or sets the clone of a Eligibility record. This property is used to hold a copy of a Eligibility record for
-    ///     operations like editing or adding a Eligibility.
-    ///     When adding a new Eligibility, a new instance of Eligibility is created and assigned to this property.
-    ///     When editing an existing Eligibility, a copy of the Eligibility record to be edited is created and assigned to this property.
+    ///     Gets or sets the clone of a Industry record. This property is used to hold a copy of a Industry record for
+    ///     operations like editing or adding a Industry.
+    ///     When adding a new Industry, a new instance of Industry is created and assigned to this property.
+    ///     When editing an existing Industry, a copy of the Industry record to be edited is created and assigned to this property.
     /// </summary>
-    private AdminList EligibilityRecordClone
+    private AdminList IndustryRecordClone
     {
         get;
         set;
@@ -101,8 +101,8 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the filter value for the application Eligibility in the administrative context.
-    ///     This static property is used to filter the Eligibility based on certain criteria in the administrative context.
+    ///     Gets or sets the filter value for the application Industry in the administrative context.
+    ///     This static property is used to filter the Industry based on certain criteria in the administrative context.
     /// </summary>
     private static string Filter
     {
@@ -119,7 +119,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store Industry-specific data, such as the "autoIndustry" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -130,21 +130,21 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Eligibility class.
+    ///     Gets or sets the ILogger instance used for logging in the Industry class.
     /// </summary>
     /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Eligibility class.
+    ///     This property is used to log information about the execution of tasks and methods within the Industry class.
     ///     It is injected at runtime by the dependency injection system.
     /// </remarks>
     [Inject]
-    private ILogger<Eligibility> Logger
+    private ILogger<Industry> Logger
     {
         get;
         set;
     }
 
     /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Eligibility.
+    ///     Gets or sets the `LoginCooky` object for the current Industry.
     ///     This object contains information about the user's login session, including their ID, name, email address, role,
     ///     last login date, and login IP.
     ///     It is used to manage user authentication and authorization within the application.
@@ -187,7 +187,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store Industry-specific data, such as the "autoIndustry" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -204,9 +204,9 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the Eligibility of the Eligibility Dialog in the administrative context.
-    ///     The Eligibility changes based on the action being performed on the Eligibility record - "Add" when a new Eligibility is being added,
-    ///     and "Edit" when an existing Eligibility's details are being modified.
+    ///     Gets or sets the Industry of the Industry Dialog in the administrative context.
+    ///     The Industry changes based on the action being performed on the Industry record - "Add" when a new Industry is being added,
+    ///     and "Edit" when an existing Industry's details are being modified.
     /// </summary>
     private string Title
     {
@@ -235,22 +235,22 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Asynchronously edits the eligibility with the given ID. If the ID is 0, a new eligibility is created.
+    ///     Asynchronously edits the industry with the given ID. If the ID is 0, a new industry is created.
     /// </summary>
-    /// <param name="id">The ID of the eligibility to edit. If this parameter is 0, a new eligibility is created.</param>
+    /// <param name="id">The ID of the industry to edit. If this parameter is 0, a new industry is created.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method performs the following steps:
     ///     - Retrieves the selected records from the grid.
     ///     - If the first selected record's ID does not match the given ID, it selects the row with the given ID in the grid.
-    ///     - If the ID is 0, it sets the title to "Add" and initializes a new eligibility record clone if it does not exist,
+    ///     - If the ID is 0, it sets the title to "Add" and initializes a new industry record clone if it does not exist,
     ///     or clears its data if it does.
-    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current eligibility record to the clone.
-    ///     - Sets the entity of the eligibility record clone to "Eligibility".
+    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current industry record to the clone.
+    ///     - Sets the entity of the industry record clone to "Industry".
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditEligibilityAsync(int id = 0) => ExecuteMethod(async () =>
+    private Task EditIndustryAsync(int id = 0) => ExecuteMethod(async () =>
                                                                    {
                                                                        VisibleSpinner = true;
                                                                        if (id != 0)
@@ -266,23 +266,23 @@ public partial class Eligibility : ComponentBase
                                                                        if (id == 0)
                                                                        {
                                                                            Title = "Add";
-                                                                           if (EligibilityRecordClone == null)
+                                                                           if (IndustryRecordClone == null)
                                                                            {
-                                                                               EligibilityRecordClone = new();
+                                                                               IndustryRecordClone = new();
                                                                            }
                                                                            else
                                                                            {
-                                                                               EligibilityRecordClone.Clear();
+                                                                               IndustryRecordClone.Clear();
                                                                            }
                                                                        }
                                                                        else
                                                                        {
                                                                            Title = "Edit";
-                                                                           EligibilityRecordClone = EligibilityRecord.Copy();
+                                                                           IndustryRecordClone = IndustryRecord.Copy();
                                                                        }
 
                                                                        VisibleSpinner = false;
-                                                                       EligibilityRecordClone.Entity = "Eligibility";
+                                                                       IndustryRecordClone.Entity = "Industry";
                                                                        await AdminDialog.ShowDialog();
                                                                    });
 
@@ -298,46 +298,46 @@ public partial class Eligibility : ComponentBase
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
     /// <summary>
-    ///     Handles the filtering of the grid based on the provided eligibility.
-    ///     This method is triggered when a eligibility is selected in the grid.
-    ///     It sets the filter value to the selected eligibility and refreshes the grid to update the displayed data.
+    ///     Handles the filtering of the grid based on the provided industry.
+    ///     This method is triggered when a industry is selected in the grid.
+    ///     It sets the filter value to the selected industry and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="eligibility">The selected eligibility in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="industry">The selected industry in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> eligibility)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> industry)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(eligibility.Value.NullOrWhiteSpace() ? string.Empty : eligibility.Value);
+                                 await FilterSet(industry.Value.NullOrWhiteSpace() ? string.Empty : industry.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
     /// <summary>
-    ///     Sets the filter value for the Eligibility component.
+    ///     Sets the filter value for the Industry component.
     ///     This method is used to update the static Filter property with the passed value.
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
     private async Task FilterSet(string value)
     {
-        EligibilityAuto = value;
+        IndustryAuto = value;
         _query ??= new();
         _query.AddParams("Filter", value);
-        await LocalStorage.SetItemAsStringAsync("autoEligibility", value);
+        await LocalStorage.SetItemAsStringAsync("autoIndustry", value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            string _result = await LocalStorage.GetItemAsStringAsync("autoEligibility");
+            string _result = await LocalStorage.GetItemAsStringAsync("autoIndustry");
 
-            EligibilityAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            IndustryAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
             _query ??= new();
-            _query.AddParams("Filter", EligibilityAuto);
+            _query.AddParams("Filter", IndustryAuto);
 
             try
             {
@@ -387,43 +387,43 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Refreshes the grid component of the Eligibility page.
+    ///     Refreshes the grid component of the Industry page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     private Task RefreshGrid() => Grid.Refresh(true);
 
     /// <summary>
-    ///     Handles the event of a row being selected in the Eligibility grid.
+    ///     Handles the event of a row being selected in the Industry grid.
     /// </summary>
-    /// <param name="eligibility">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> eligibility) => EligibilityRecord = eligibility.Data;
+    /// <param name="industry">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<AdminList> industry) => IndustryRecord = industry.Data;
 
     /// <summary>
-    ///     Saves the changes made to the eligibility record.
+    ///     Saves the changes made to the industry record.
     /// </summary>
     /// <param name="context">The context for the form being edited.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     /// <remarks>
     ///     This method calls the General.SaveAdminListAsync method, passing in the necessary parameters to save the changes
-    ///     made to the EligibilityRecordClone.
+    ///     made to the IndustryRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveEligibility(EditContext context) => ExecuteMethod(async () =>
+    private Task SaveIndustry(EditContext context) => ExecuteMethod(async () =>
                                                                        {
                                                                            Dictionary<string, string> _parameters = new()
                                                                                                                     {
-                                                                                                                        {"methodName", "Admin_SaveEligibility"},
-                                                                                                                        {"parameterName", "Eligibility"},
+                                                                                                                        {"methodName", "Admin_SaveIndustry"},
+                                                                                                                        {"parameterName", "Industry"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Eligibility.ToString()}
+                                                                                                                        {"cacheName", CacheObjects.LeadIndustries.ToString()}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                EligibilityRecordClone);
-                                                                           if (EligibilityRecordClone != null)
+                                                                                                                                IndustryRecordClone);
+                                                                           if (IndustryRecordClone != null)
                                                                            {
-                                                                               EligibilityRecord = EligibilityRecordClone.Copy();
+                                                                               IndustryRecord = IndustryRecordClone.Copy();
                                                                            }
 
                                                                            await Grid.Refresh(true);
@@ -452,14 +452,14 @@ public partial class Eligibility : ComponentBase
                                                                              await Grid.SelectRowAsync(_index);
                                                                          }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Eligibility?" : "Enable Eligibility?",
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Industry?" : "Enable Industry?",
                                                                                                               General.DialogOptions("Are you sure you want to <strong>"
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Eligibility</i>?")))
+                                                                                                                                    "this <i>Industry</i>?")))
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
-                                                                                                                          {"methodName", "Admin_ToggleEligibilityStatus"},
+                                                                                                                          {"methodName", "Admin_ToggleIndustryStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
                                                                              _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
@@ -473,21 +473,21 @@ public partial class Eligibility : ComponentBase
                                                                      });
 
     /// <summary>
-    ///     The AdminEligibilityAdaptor class is a data adaptor for the Admin Eligibility page.
+    ///     The AdminIndustryAdaptor class is a data adaptor for the Admin Industry page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
     /// <remarks>
-    ///     This class is used to handle data operations for the Admin Eligibility page.
+    ///     This class is used to handle data operations for the Admin Industry page.
     ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
     ///     The ReadAsync method is used to asynchronously fetch data from the server.
     ///     It uses the General.GetReadAsync method to perform the actual data fetching.
     /// </remarks>
-    public class AdminEligibilityAdaptor : DataAdaptor
+    public class AdminIndustryAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         /// <summary>
-        ///     Asynchronously fetches data for the Admin Eligibility page from the server.
+        ///     Asynchronously fetches data for the Admin Industry page from the server.
         /// </summary>
         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
         /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
@@ -513,7 +513,7 @@ public partial class Eligibility : ComponentBase
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetEligibility"},
+                                                             {"methodName", "Admin_GetIndustries"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
                 string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);

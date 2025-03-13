@@ -5,17 +5,17 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           Eligibility.razor.cs
+// File Name:           Status.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-13-2025 16:03
-// Last Updated On:     03-13-2025 16:03
+// Created On:          03-13-2025 19:03
+// Last Updated On:     03-13-2025 19:03
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Admin;
 
-public partial class Eligibility : ComponentBase
+public partial class Status : ComponentBase
 {
     private static TaskCompletionSource<bool> _initializationTaskSource;
 
@@ -23,8 +23,8 @@ public partial class Eligibility : ComponentBase
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
-    ///     Gets or sets the 'AdminListDialog' instance used for managing Eligibility information in the administrative context.
-    ///     This dialog is used for both creating new Eligibility and editing existing Eligibility.
+    ///     Gets or sets the 'AdminListDialog' instance used for managing Status information in the administrative context.
+    ///     This dialog is used for both creating new Status and editing existing Status.
     /// </summary>
     private AdminListDialog AdminDialog
     {
@@ -51,36 +51,6 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
-    private string EligibilityAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the EligibilityRecord property of the Eligibility class.
-    ///     The EligibilityRecord property represents a single Eligibility in the application.
-    ///     It is used to hold the data of the selected Eligibility in the Eligibility grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private AdminList EligibilityRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Eligibility record. This property is used to hold a copy of a Eligibility record for
-    ///     operations like editing or adding a Eligibility.
-    ///     When adding a new Eligibility, a new instance of Eligibility is created and assigned to this property.
-    ///     When editing an existing Eligibility, a copy of the Eligibility record to be edited is created and assigned to this property.
-    /// </summary>
-    private AdminList EligibilityRecordClone
-    {
-        get;
-        set;
-    } = new();
-
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
     /// </summary>
@@ -100,9 +70,39 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
+    private string StatusAuto
+    {
+        get;
+        set;
+    }
+
     /// <summary>
-    ///     Gets or sets the filter value for the application Eligibility in the administrative context.
-    ///     This static property is used to filter the Eligibility based on certain criteria in the administrative context.
+    ///     Gets or sets the StatusRecord property of the Status class.
+    ///     The StatusRecord property represents a single Status in the application.
+    ///     It is used to hold the data of the selected Status in the Status grid.
+    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private AdminList StatusRecord
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Status record. This property is used to hold a copy of a Status record for
+    ///     operations like editing or adding a Status.
+    ///     When adding a new Status, a new instance of Status is created and assigned to this property.
+    ///     When editing an existing Status, a copy of the Status record to be edited is created and assigned to this property.
+    /// </summary>
+    private AdminList StatusRecordClone
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the filter value for the application Status in the administrative context.
+    ///     This static property is used to filter the Status based on certain criteria in the administrative context.
     /// </summary>
     private static string Filter
     {
@@ -119,7 +119,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store Status-specific data, such as the "autoStatus" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -130,21 +130,21 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Eligibility class.
+    ///     Gets or sets the ILogger instance used for logging in the Status class.
     /// </summary>
     /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Eligibility class.
+    ///     This property is used to log information about the execution of tasks and methods within the Status class.
     ///     It is injected at runtime by the dependency injection system.
     /// </remarks>
     [Inject]
-    private ILogger<Eligibility> Logger
+    private ILogger<Status> Logger
     {
         get;
         set;
     }
 
     /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Eligibility.
+    ///     Gets or sets the `LoginCooky` object for the current Status.
     ///     This object contains information about the user's login session, including their ID, name, email address, role,
     ///     last login date, and login IP.
     ///     It is used to manage user authentication and authorization within the application.
@@ -187,7 +187,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store Status-specific data, such as the "autoStatus" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -204,9 +204,9 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the Eligibility of the Eligibility Dialog in the administrative context.
-    ///     The Eligibility changes based on the action being performed on the Eligibility record - "Add" when a new Eligibility is being added,
-    ///     and "Edit" when an existing Eligibility's details are being modified.
+    ///     Gets or sets the Status of the Status Dialog in the administrative context.
+    ///     The Status changes based on the action being performed on the Status record - "Add" when a new Status is being added,
+    ///     and "Edit" when an existing Status's details are being modified.
     /// </summary>
     private string Title
     {
@@ -235,22 +235,22 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Asynchronously edits the eligibility with the given ID. If the ID is 0, a new eligibility is created.
+    ///     Asynchronously edits the status with the given ID. If the ID is 0, a new status is created.
     /// </summary>
-    /// <param name="id">The ID of the eligibility to edit. If this parameter is 0, a new eligibility is created.</param>
+    /// <param name="id">The ID of the status to edit. If this parameter is 0, a new status is created.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method performs the following steps:
     ///     - Retrieves the selected records from the grid.
     ///     - If the first selected record's ID does not match the given ID, it selects the row with the given ID in the grid.
-    ///     - If the ID is 0, it sets the title to "Add" and initializes a new eligibility record clone if it does not exist,
+    ///     - If the ID is 0, it sets the title to "Add" and initializes a new status record clone if it does not exist,
     ///     or clears its data if it does.
-    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current eligibility record to the clone.
-    ///     - Sets the entity of the eligibility record clone to "Eligibility".
+    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current status record to the clone.
+    ///     - Sets the entity of the status record clone to "Status".
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditEligibilityAsync(int id = 0) => ExecuteMethod(async () =>
+    private Task EditStatusAsync(int id = 0) => ExecuteMethod(async () =>
                                                                    {
                                                                        VisibleSpinner = true;
                                                                        if (id != 0)
@@ -266,23 +266,23 @@ public partial class Eligibility : ComponentBase
                                                                        if (id == 0)
                                                                        {
                                                                            Title = "Add";
-                                                                           if (EligibilityRecordClone == null)
+                                                                           if (StatusRecordClone == null)
                                                                            {
-                                                                               EligibilityRecordClone = new();
+                                                                               StatusRecordClone = new();
                                                                            }
                                                                            else
                                                                            {
-                                                                               EligibilityRecordClone.Clear();
+                                                                               StatusRecordClone.Clear();
                                                                            }
                                                                        }
                                                                        else
                                                                        {
                                                                            Title = "Edit";
-                                                                           EligibilityRecordClone = EligibilityRecord.Copy();
+                                                                           StatusRecordClone = StatusRecord.Copy();
                                                                        }
 
                                                                        VisibleSpinner = false;
-                                                                       EligibilityRecordClone.Entity = "Eligibility";
+                                                                       StatusRecordClone.Entity = "Status";
                                                                        await AdminDialog.ShowDialog();
                                                                    });
 
@@ -298,46 +298,46 @@ public partial class Eligibility : ComponentBase
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
     /// <summary>
-    ///     Handles the filtering of the grid based on the provided eligibility.
-    ///     This method is triggered when a eligibility is selected in the grid.
-    ///     It sets the filter value to the selected eligibility and refreshes the grid to update the displayed data.
+    ///     Handles the filtering of the grid based on the provided status.
+    ///     This method is triggered when a status is selected in the grid.
+    ///     It sets the filter value to the selected status and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="eligibility">The selected eligibility in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="status">The selected status in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> eligibility)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> status)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(eligibility.Value.NullOrWhiteSpace() ? string.Empty : eligibility.Value);
+                                 await FilterSet(status.Value.NullOrWhiteSpace() ? string.Empty : status.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
     /// <summary>
-    ///     Sets the filter value for the Eligibility component.
+    ///     Sets the filter value for the Status component.
     ///     This method is used to update the static Filter property with the passed value.
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
     private async Task FilterSet(string value)
     {
-        EligibilityAuto = value;
+        StatusAuto = value;
         _query ??= new();
         _query.AddParams("Filter", value);
-        await LocalStorage.SetItemAsStringAsync("autoEligibility", value);
+        await LocalStorage.SetItemAsStringAsync("autoStatus", value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            string _result = await LocalStorage.GetItemAsStringAsync("autoEligibility");
+            string _result = await LocalStorage.GetItemAsStringAsync("autoStatus");
 
-            EligibilityAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            StatusAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
             _query ??= new();
-            _query.AddParams("Filter", EligibilityAuto);
+            _query.AddParams("Filter", StatusAuto);
 
             try
             {
@@ -387,43 +387,43 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Refreshes the grid component of the Eligibility page.
+    ///     Refreshes the grid component of the Status page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     private Task RefreshGrid() => Grid.Refresh(true);
 
     /// <summary>
-    ///     Handles the event of a row being selected in the Eligibility grid.
+    ///     Handles the event of a row being selected in the Status grid.
     /// </summary>
-    /// <param name="eligibility">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> eligibility) => EligibilityRecord = eligibility.Data;
+    /// <param name="status">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<AdminList> status) => StatusRecord = status.Data;
 
     /// <summary>
-    ///     Saves the changes made to the eligibility record.
+    ///     Saves the changes made to the status record.
     /// </summary>
     /// <param name="context">The context for the form being edited.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     /// <remarks>
     ///     This method calls the General.SaveAdminListAsync method, passing in the necessary parameters to save the changes
-    ///     made to the EligibilityRecordClone.
+    ///     made to the StatusRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveEligibility(EditContext context) => ExecuteMethod(async () =>
+    private Task SaveStatus(EditContext context) => ExecuteMethod(async () =>
                                                                        {
                                                                            Dictionary<string, string> _parameters = new()
                                                                                                                     {
-                                                                                                                        {"methodName", "Admin_SaveEligibility"},
-                                                                                                                        {"parameterName", "Eligibility"},
+                                                                                                                        {"methodName", "Admin_SaveLeadStatus"},
+                                                                                                                        {"parameterName", "LeadStatus"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Eligibility.ToString()}
+                                                                                                                        {"cacheName", CacheObjects.LeadStatus.ToString()}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                EligibilityRecordClone);
-                                                                           if (EligibilityRecordClone != null)
+                                                                                                                                StatusRecordClone);
+                                                                           if (StatusRecordClone != null)
                                                                            {
-                                                                               EligibilityRecord = EligibilityRecordClone.Copy();
+                                                                               StatusRecord = StatusRecordClone.Copy();
                                                                            }
 
                                                                            await Grid.Refresh(true);
@@ -452,14 +452,14 @@ public partial class Eligibility : ComponentBase
                                                                              await Grid.SelectRowAsync(_index);
                                                                          }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Eligibility?" : "Enable Eligibility?",
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Lead Status?" : "Enable Lead Status?",
                                                                                                               General.DialogOptions("Are you sure you want to <strong>"
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Eligibility</i>?")))
+                                                                                                                                    "this <i>Lead Status</i>?")))
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
-                                                                                                                          {"methodName", "Admin_ToggleEligibilityStatus"},
+                                                                                                                          {"methodName", "Admin_ToggleLeadStatusStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
                                                                              _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
@@ -473,21 +473,21 @@ public partial class Eligibility : ComponentBase
                                                                      });
 
     /// <summary>
-    ///     The AdminEligibilityAdaptor class is a data adaptor for the Admin Eligibility page.
+    ///     The AdminStatusAdaptor class is a data adaptor for the Admin Status page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
     /// <remarks>
-    ///     This class is used to handle data operations for the Admin Eligibility page.
+    ///     This class is used to handle data operations for the Admin Status page.
     ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
     ///     The ReadAsync method is used to asynchronously fetch data from the server.
     ///     It uses the General.GetReadAsync method to perform the actual data fetching.
     /// </remarks>
-    public class AdminEligibilityAdaptor : DataAdaptor
+    public class AdminStatusAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         /// <summary>
-        ///     Asynchronously fetches data for the Admin Eligibility page from the server.
+        ///     Asynchronously fetches data for the Admin Status page from the server.
         /// </summary>
         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
         /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
@@ -513,7 +513,7 @@ public partial class Eligibility : ComponentBase
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetEligibility"},
+                                                             {"methodName", "Admin_GetLeadStatuses"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
                 string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
@@ -525,7 +525,7 @@ public partial class Eligibility : ComponentBase
                                            }
                            : _adminList;
             }
-            catch
+            catch (Exception ex)
             {
                 return null;
             }

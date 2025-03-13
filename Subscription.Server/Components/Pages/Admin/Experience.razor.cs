@@ -5,17 +5,17 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           Eligibility.razor.cs
+// File Name:           Experience.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-13-2025 16:03
-// Last Updated On:     03-13-2025 16:03
+// Created On:          03-13-2025 19:03
+// Last Updated On:     03-13-2025 19:03
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Admin;
 
-public partial class Eligibility : ComponentBase
+public partial class Experience : ComponentBase
 {
     private static TaskCompletionSource<bool> _initializationTaskSource;
 
@@ -23,8 +23,8 @@ public partial class Eligibility : ComponentBase
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
-    ///     Gets or sets the 'AdminListDialog' instance used for managing Eligibility information in the administrative context.
-    ///     This dialog is used for both creating new Eligibility and editing existing Eligibility.
+    ///     Gets or sets the 'AdminListDialog' instance used for managing Experience information in the administrative context.
+    ///     This dialog is used for both creating new Experience and editing existing Experience.
     /// </summary>
     private AdminListDialog AdminDialog
     {
@@ -51,36 +51,6 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
-    private string EligibilityAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the EligibilityRecord property of the Eligibility class.
-    ///     The EligibilityRecord property represents a single Eligibility in the application.
-    ///     It is used to hold the data of the selected Eligibility in the Eligibility grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private AdminList EligibilityRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Eligibility record. This property is used to hold a copy of a Eligibility record for
-    ///     operations like editing or adding a Eligibility.
-    ///     When adding a new Eligibility, a new instance of Eligibility is created and assigned to this property.
-    ///     When editing an existing Eligibility, a copy of the Eligibility record to be edited is created and assigned to this property.
-    /// </summary>
-    private AdminList EligibilityRecordClone
-    {
-        get;
-        set;
-    } = new();
-
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
     /// </summary>
@@ -100,9 +70,39 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
+    private string ExperienceAuto
+    {
+        get;
+        set;
+    }
+
     /// <summary>
-    ///     Gets or sets the filter value for the application Eligibility in the administrative context.
-    ///     This static property is used to filter the Eligibility based on certain criteria in the administrative context.
+    ///     Gets or sets the ExperienceRecord property of the Experience class.
+    ///     The ExperienceRecord property represents a single Experience in the application.
+    ///     It is used to hold the data of the selected Experience in the Experience grid.
+    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private AdminList ExperienceRecord
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Experience record. This property is used to hold a copy of a Experience record for
+    ///     operations like editing or adding a Experience.
+    ///     When adding a new Experience, a new instance of Experience is created and assigned to this property.
+    ///     When editing an existing Experience, a copy of the Experience record to be edited is created and assigned to this property.
+    /// </summary>
+    private AdminList ExperienceRecordClone
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the filter value for the application Experience in the administrative context.
+    ///     This static property is used to filter the Experience based on certain criteria in the administrative context.
     /// </summary>
     private static string Filter
     {
@@ -119,7 +119,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store Experience-specific data, such as the "autoExperience" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -130,21 +130,21 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Eligibility class.
+    ///     Gets or sets the ILogger instance used for logging in the Experience class.
     /// </summary>
     /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Eligibility class.
+    ///     This property is used to log information about the execution of tasks and methods within the Experience class.
     ///     It is injected at runtime by the dependency injection system.
     /// </remarks>
     [Inject]
-    private ILogger<Eligibility> Logger
+    private ILogger<Experience> Logger
     {
         get;
         set;
     }
 
     /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Eligibility.
+    ///     Gets or sets the `LoginCooky` object for the current Experience.
     ///     This object contains information about the user's login session, including their ID, name, email address, role,
     ///     last login date, and login IP.
     ///     It is used to manage user authentication and authorization within the application.
@@ -187,7 +187,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store Experience-specific data, such as the "autoExperience" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -204,9 +204,9 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the Eligibility of the Eligibility Dialog in the administrative context.
-    ///     The Eligibility changes based on the action being performed on the Eligibility record - "Add" when a new Eligibility is being added,
-    ///     and "Edit" when an existing Eligibility's details are being modified.
+    ///     Gets or sets the Experience of the Experience Dialog in the administrative context.
+    ///     The Experience changes based on the action being performed on the Experience record - "Add" when a new Experience is being added,
+    ///     and "Edit" when an existing Experience's details are being modified.
     /// </summary>
     private string Title
     {
@@ -235,22 +235,22 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Asynchronously edits the eligibility with the given ID. If the ID is 0, a new eligibility is created.
+    ///     Asynchronously edits the experience with the given ID. If the ID is 0, a new experience is created.
     /// </summary>
-    /// <param name="id">The ID of the eligibility to edit. If this parameter is 0, a new eligibility is created.</param>
+    /// <param name="id">The ID of the experience to edit. If this parameter is 0, a new experience is created.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method performs the following steps:
     ///     - Retrieves the selected records from the grid.
     ///     - If the first selected record's ID does not match the given ID, it selects the row with the given ID in the grid.
-    ///     - If the ID is 0, it sets the title to "Add" and initializes a new eligibility record clone if it does not exist,
+    ///     - If the ID is 0, it sets the title to "Add" and initializes a new experience record clone if it does not exist,
     ///     or clears its data if it does.
-    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current eligibility record to the clone.
-    ///     - Sets the entity of the eligibility record clone to "Eligibility".
+    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current experience record to the clone.
+    ///     - Sets the entity of the experience record clone to "Experience".
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditEligibilityAsync(int id = 0) => ExecuteMethod(async () =>
+    private Task EditExperienceAsync(int id = 0) => ExecuteMethod(async () =>
                                                                    {
                                                                        VisibleSpinner = true;
                                                                        if (id != 0)
@@ -266,23 +266,23 @@ public partial class Eligibility : ComponentBase
                                                                        if (id == 0)
                                                                        {
                                                                            Title = "Add";
-                                                                           if (EligibilityRecordClone == null)
+                                                                           if (ExperienceRecordClone == null)
                                                                            {
-                                                                               EligibilityRecordClone = new();
+                                                                               ExperienceRecordClone = new();
                                                                            }
                                                                            else
                                                                            {
-                                                                               EligibilityRecordClone.Clear();
+                                                                               ExperienceRecordClone.Clear();
                                                                            }
                                                                        }
                                                                        else
                                                                        {
                                                                            Title = "Edit";
-                                                                           EligibilityRecordClone = EligibilityRecord.Copy();
+                                                                           ExperienceRecordClone = ExperienceRecord.Copy();
                                                                        }
 
                                                                        VisibleSpinner = false;
-                                                                       EligibilityRecordClone.Entity = "Eligibility";
+                                                                       ExperienceRecordClone.Entity = "Experience";
                                                                        await AdminDialog.ShowDialog();
                                                                    });
 
@@ -298,46 +298,46 @@ public partial class Eligibility : ComponentBase
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
     /// <summary>
-    ///     Handles the filtering of the grid based on the provided eligibility.
-    ///     This method is triggered when a eligibility is selected in the grid.
-    ///     It sets the filter value to the selected eligibility and refreshes the grid to update the displayed data.
+    ///     Handles the filtering of the grid based on the provided experience.
+    ///     This method is triggered when a experience is selected in the grid.
+    ///     It sets the filter value to the selected experience and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="eligibility">The selected eligibility in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="experience">The selected experience in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> eligibility)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> experience)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(eligibility.Value.NullOrWhiteSpace() ? string.Empty : eligibility.Value);
+                                 await FilterSet(experience.Value.NullOrWhiteSpace() ? string.Empty : experience.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
     /// <summary>
-    ///     Sets the filter value for the Eligibility component.
+    ///     Sets the filter value for the Experience component.
     ///     This method is used to update the static Filter property with the passed value.
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
     private async Task FilterSet(string value)
     {
-        EligibilityAuto = value;
+        ExperienceAuto = value;
         _query ??= new();
         _query.AddParams("Filter", value);
-        await LocalStorage.SetItemAsStringAsync("autoEligibility", value);
+        await LocalStorage.SetItemAsStringAsync("autoExperience", value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            string _result = await LocalStorage.GetItemAsStringAsync("autoEligibility");
+            string _result = await LocalStorage.GetItemAsStringAsync("autoExperience");
 
-            EligibilityAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            ExperienceAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
             _query ??= new();
-            _query.AddParams("Filter", EligibilityAuto);
+            _query.AddParams("Filter", ExperienceAuto);
 
             try
             {
@@ -387,43 +387,43 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Refreshes the grid component of the Eligibility page.
+    ///     Refreshes the grid component of the Experience page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     private Task RefreshGrid() => Grid.Refresh(true);
 
     /// <summary>
-    ///     Handles the event of a row being selected in the Eligibility grid.
+    ///     Handles the event of a row being selected in the Experience grid.
     /// </summary>
-    /// <param name="eligibility">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> eligibility) => EligibilityRecord = eligibility.Data;
+    /// <param name="experience">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<AdminList> experience) => ExperienceRecord = experience.Data;
 
     /// <summary>
-    ///     Saves the changes made to the eligibility record.
+    ///     Saves the changes made to the experience record.
     /// </summary>
     /// <param name="context">The context for the form being edited.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     /// <remarks>
     ///     This method calls the General.SaveAdminListAsync method, passing in the necessary parameters to save the changes
-    ///     made to the EligibilityRecordClone.
+    ///     made to the ExperienceRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveEligibility(EditContext context) => ExecuteMethod(async () =>
+    private Task SaveExperience(EditContext context) => ExecuteMethod(async () =>
                                                                        {
                                                                            Dictionary<string, string> _parameters = new()
                                                                                                                     {
-                                                                                                                        {"methodName", "Admin_SaveEligibility"},
-                                                                                                                        {"parameterName", "Eligibility"},
+                                                                                                                        {"methodName", "Admin_SaveExperience"},
+                                                                                                                        {"parameterName", "Experience"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Eligibility.ToString()}
+                                                                                                                        {"cacheName", CacheObjects.Experience.ToString()}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                EligibilityRecordClone);
-                                                                           if (EligibilityRecordClone != null)
+                                                                                                                                ExperienceRecordClone);
+                                                                           if (ExperienceRecordClone != null)
                                                                            {
-                                                                               EligibilityRecord = EligibilityRecordClone.Copy();
+                                                                               ExperienceRecord = ExperienceRecordClone.Copy();
                                                                            }
 
                                                                            await Grid.Refresh(true);
@@ -452,14 +452,14 @@ public partial class Eligibility : ComponentBase
                                                                              await Grid.SelectRowAsync(_index);
                                                                          }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Eligibility?" : "Enable Eligibility?",
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Experience?" : "Enable Experience?",
                                                                                                               General.DialogOptions("Are you sure you want to <strong>"
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Eligibility</i>?")))
+                                                                                                                                    "this <i>Experience</i>?")))
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
-                                                                                                                          {"methodName", "Admin_ToggleEligibilityStatus"},
+                                                                                                                          {"methodName", "Admin_ToggleExperienceStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
                                                                              _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
@@ -473,21 +473,21 @@ public partial class Eligibility : ComponentBase
                                                                      });
 
     /// <summary>
-    ///     The AdminEligibilityAdaptor class is a data adaptor for the Admin Eligibility page.
+    ///     The AdminExperienceAdaptor class is a data adaptor for the Admin Experience page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
     /// <remarks>
-    ///     This class is used to handle data operations for the Admin Eligibility page.
+    ///     This class is used to handle data operations for the Admin Experience page.
     ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
     ///     The ReadAsync method is used to asynchronously fetch data from the server.
     ///     It uses the General.GetReadAsync method to perform the actual data fetching.
     /// </remarks>
-    public class AdminEligibilityAdaptor : DataAdaptor
+    public class AdminExperienceAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         /// <summary>
-        ///     Asynchronously fetches data for the Admin Eligibility page from the server.
+        ///     Asynchronously fetches data for the Admin Experience page from the server.
         /// </summary>
         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
         /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
@@ -513,7 +513,7 @@ public partial class Eligibility : ComponentBase
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetEligibility"},
+                                                             {"methodName", "Admin_GetExperience"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
                 string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);

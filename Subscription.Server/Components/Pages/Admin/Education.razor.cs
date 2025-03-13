@@ -542,7 +542,7 @@ public partial class Education : ComponentBase
                                            }
                            : _adminList;
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }
