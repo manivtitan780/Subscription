@@ -1,0 +1,59 @@
+@page "/Admin/Source"
+@layout SubscriptionLayout
+
+<PageHeader/>
+<AdminGrid AddMethod="() => EditSourceAsync()" AutocompleteMethod="Admin_SearchLeadSource" AutocompleteParameter="@("LeadSource")" Name="@SourceAuto"
+           Entity="LeadSource" HeaderContentPlural="Lead Sources" HeaderContentSingular="Lead Source" Height="140px" Page="Source" @ref="AdminGrid"
+           RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+	<GridContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" Query="_query"
+		        @ref="Grid" TValue="AdminList" Width="100%">
+			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
+			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
+			<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(AdminSourceAdaptor)" Key="ID"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AdminList"/>
+			<GridColumns>
+				<GridColumn Field="Text" HeaderText="Source" Width="50%">
+					<Template Context="aCon">
+						@{
+							if (aCon is AdminList _con)
+							{
+								<span class="point" @onclick="() => EditSourceAsync(_con.ID)">@_con.Text</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(AdminList.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn Field="@nameof(AdminList.Enabled)" HeaderText="Status" Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is AdminList _con)
+							{
+								<span>@(_con.IsEnabled ? "Active" : "Inactive")</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(AdminList.UpdatedDate)" Format="d" HeaderText="Last Updated" Width="15%"/>
+				<GridColumn Field="@nameof(AdminList.CreatedDate)" HeaderText="Created" Width="15%"/>
+				<GridColumn Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is AdminList _con)
+							{
+								<div class="buttonContain">
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditSourceAsync(_con.ID)" title="Edit Title"/>
+									<SfButton Content="" IconCss="e-icons e-repeat" @onclick="() => ToggleMethod(_con.ID, _con.IsEnabled)"
+									          title="@($"{(_con.IsEnabled ? "Disable" : "Enable")} Title")"/>
+								</div>
+							}
+						}
+					</Template>
+				</GridColumn>
+			</GridColumns>
+		</SfGrid>
+	</GridContent>
+</AdminGrid>
+
+<AdminListDialog HeaderString="@($"{Title} Lead Source")" Model="SourceRecordClone" Placeholder="Lead Source" @ref="AdminDialog" Save="SaveSource"/>

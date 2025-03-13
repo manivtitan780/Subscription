@@ -5,7 +5,7 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           Status.razor.cs
+// File Name:           Source.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
 // Last Updated On:     03-13-2025 19:03
@@ -15,7 +15,7 @@
 
 namespace Subscription.Server.Components.Pages.Admin;
 
-public partial class Status : ComponentBase
+public partial class Source : ComponentBase
 {
     private static TaskCompletionSource<bool> _initializationTaskSource;
 
@@ -23,8 +23,8 @@ public partial class Status : ComponentBase
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
-    ///     Gets or sets the 'AdminListDialog' instance used for managing Status information in the administrative context.
-    ///     This dialog is used for both creating new Status and editing existing Status.
+    ///     Gets or sets the 'AdminListDialog' instance used for managing Source information in the administrative context.
+    ///     This dialog is used for both creating new Source and editing existing Source.
     /// </summary>
     private AdminListDialog AdminDialog
     {
@@ -70,39 +70,9 @@ public partial class Status : ComponentBase
         set;
     }
 
-    private string StatusAuto
-    {
-        get;
-        set;
-    }
-
     /// <summary>
-    ///     Gets or sets the StatusRecord property of the Status class.
-    ///     The StatusRecord property represents a single Status in the application.
-    ///     It is used to hold the data of the selected Status in the Status grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private AdminList StatusRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Status record. This property is used to hold a copy of a Status record for
-    ///     operations like editing or adding a Status.
-    ///     When adding a new Status, a new instance of Status is created and assigned to this property.
-    ///     When editing an existing Status, a copy of the Status record to be edited is created and assigned to this property.
-    /// </summary>
-    private AdminList StatusRecordClone
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the filter value for the application Status in the administrative context.
-    ///     This static property is used to filter the Status based on certain criteria in the administrative context.
+    ///     Gets or sets the filter value for the application Source in the administrative context.
+    ///     This static property is used to filter the Source based on certain criteria in the administrative context.
     /// </summary>
     private static string Filter
     {
@@ -119,7 +89,7 @@ public partial class Status : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Status-specific data, such as the "autoStatus" item and the
+    ///     It is used in this class to retrieve and store Source-specific data, such as the "autoSource" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -130,21 +100,21 @@ public partial class Status : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Status class.
+    ///     Gets or sets the ILogger instance used for logging in the Source class.
     /// </summary>
     /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Status class.
+    ///     This property is used to log information about the execution of tasks and methods within the Source class.
     ///     It is injected at runtime by the dependency injection system.
     /// </remarks>
     [Inject]
-    private ILogger<Status> Logger
+    private ILogger<Source> Logger
     {
         get;
         set;
     }
 
     /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Status.
+    ///     Gets or sets the `LoginCooky` object for the current Source.
     ///     This object contains information about the user's login session, including their ID, name, email address, role,
     ///     last login date, and login IP.
     ///     It is used to manage user authentication and authorization within the application.
@@ -187,7 +157,7 @@ public partial class Status : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Status-specific data, such as the "autoStatus" item and the
+    ///     It is used in this class to retrieve and store Source-specific data, such as the "autoSource" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -197,6 +167,36 @@ public partial class Status : ComponentBase
         set;
     }
 
+    private string SourceAuto
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the SourceRecord property of the Source class.
+    ///     The SourceRecord property represents a single Source in the application.
+    ///     It is used to hold the data of the selected Source in the Source grid.
+    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private AdminList SourceRecord
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Source record. This property is used to hold a copy of a Source record for
+    ///     operations like editing or adding a Source.
+    ///     When adding a new Source, a new instance of Source is created and assigned to this property.
+    ///     When editing an existing Source, a copy of the Source record to be edited is created and assigned to this property.
+    /// </summary>
+    private AdminList SourceRecordClone
+    {
+        get;
+        set;
+    } = new();
+
     private SfSpinner Spinner
     {
         get;
@@ -204,9 +204,9 @@ public partial class Status : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the Status of the Status Dialog in the administrative context.
-    ///     The Status changes based on the action being performed on the Status record - "Add" when a new Status is being added,
-    ///     and "Edit" when an existing Status's details are being modified.
+    ///     Gets or sets the Source of the Source Dialog in the administrative context.
+    ///     The Source changes based on the action being performed on the Source record - "Add" when a new Source is being added,
+    ///     and "Edit" when an existing Source's details are being modified.
     /// </summary>
     private string Title
     {
@@ -235,56 +235,56 @@ public partial class Status : ComponentBase
     }
 
     /// <summary>
-    ///     Asynchronously edits the status with the given ID. If the ID is 0, a new status is created.
+    ///     Asynchronously edits the source with the given ID. If the ID is 0, a new source is created.
     /// </summary>
-    /// <param name="id">The ID of the status to edit. If this parameter is 0, a new status is created.</param>
+    /// <param name="id">The ID of the source to edit. If this parameter is 0, a new source is created.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method performs the following steps:
     ///     - Retrieves the selected records from the grid.
     ///     - If the first selected record's ID does not match the given ID, it selects the row with the given ID in the grid.
-    ///     - If the ID is 0, it sets the title to "Add" and initializes a new status record clone if it does not exist,
+    ///     - If the ID is 0, it sets the title to "Add" and initializes a new source record clone if it does not exist,
     ///     or clears its data if it does.
-    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current status record to the clone.
-    ///     - Sets the entity of the status record clone to "Status".
+    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current source record to the clone.
+    ///     - Sets the entity of the source record clone to "Source".
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditStatusAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+    private Task EditSourceAsync(int id = 0) => ExecuteMethod(async () =>
+                                                              {
+                                                                  VisibleSpinner = true;
+                                                                  if (id != 0)
+                                                                  {
+                                                                      List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                      if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                      {
+                                                                          int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                          await Grid.SelectRowAsync(_index);
+                                                                      }
+                                                                  }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (StatusRecordClone == null)
-                                                                           {
-                                                                               StatusRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               StatusRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           StatusRecordClone = StatusRecord.Copy();
-                                                                       }
+                                                                  if (id == 0)
+                                                                  {
+                                                                      Title = "Add";
+                                                                      if (SourceRecordClone == null)
+                                                                      {
+                                                                          SourceRecordClone = new();
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          SourceRecordClone.Clear();
+                                                                      }
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      Title = "Edit";
+                                                                      SourceRecordClone = SourceRecord.Copy();
+                                                                  }
 
-                                                                       VisibleSpinner = false;
-                                                                       StatusRecordClone.Entity = "Status";
-                                                                       await AdminDialog.ShowDialog();
-                                                                   });
+                                                                  VisibleSpinner = false;
+                                                                  SourceRecordClone.Entity = "Source";
+                                                                  await AdminDialog.ShowDialog();
+                                                              });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -298,46 +298,46 @@ public partial class Status : ComponentBase
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
     /// <summary>
-    ///     Handles the filtering of the grid based on the provided status.
-    ///     This method is triggered when a status is selected in the grid.
-    ///     It sets the filter value to the selected status and refreshes the grid to update the displayed data.
+    ///     Handles the filtering of the grid based on the provided source.
+    ///     This method is triggered when a source is selected in the grid.
+    ///     It sets the filter value to the selected source and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="status">The selected status in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="source">The selected source in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> status)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> source)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(status.Value.NullOrWhiteSpace() ? string.Empty : status.Value);
+                                 await FilterSet(source.Value.NullOrWhiteSpace() ? string.Empty : source.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
     /// <summary>
-    ///     Sets the filter value for the Status component.
+    ///     Sets the filter value for the Source component.
     ///     This method is used to update the static Filter property with the passed value.
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
     private async Task FilterSet(string value)
     {
-        StatusAuto = value;
+        SourceAuto = value;
         _query ??= new();
         _query.AddParams("Filter", value);
-        await LocalStorage.SetItemAsStringAsync("autoStatus", value);
+        await LocalStorage.SetItemAsStringAsync("autoSource", value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            string _result = await LocalStorage.GetItemAsStringAsync("autoStatus");
+            string _result = await LocalStorage.GetItemAsStringAsync("autoSource");
 
-            StatusAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            SourceAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
             _query ??= new();
-            _query.AddParams("Filter", StatusAuto);
+            _query.AddParams("Filter", SourceAuto);
 
             try
             {
@@ -387,50 +387,50 @@ public partial class Status : ComponentBase
     }
 
     /// <summary>
-    ///     Refreshes the grid component of the Status page.
+    ///     Refreshes the grid component of the Source page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     private Task RefreshGrid() => Grid.Refresh(true);
 
     /// <summary>
-    ///     Handles the event of a row being selected in the Status grid.
+    ///     Handles the event of a row being selected in the Source grid.
     /// </summary>
-    /// <param name="status">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> status) => StatusRecord = status.Data;
+    /// <param name="source">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<AdminList> source) => SourceRecord = source.Data;
 
     /// <summary>
-    ///     Saves the changes made to the status record.
+    ///     Saves the changes made to the source record.
     /// </summary>
     /// <param name="context">The context for the form being edited.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     /// <remarks>
     ///     This method calls the General.SaveAdminListAsync method, passing in the necessary parameters to save the changes
-    ///     made to the StatusRecordClone.
+    ///     made to the SourceRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveStatus(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"methodName", "Admin_SaveLeadStatus"},
-                                                                                                                        {"parameterName", "LeadStatus"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.LeadStatus.ToString()}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                StatusRecordClone);
-                                                                           if (StatusRecordClone != null)
-                                                                           {
-                                                                               StatusRecord = StatusRecordClone.Copy();
-                                                                           }
+    private Task SaveSource(EditContext context) => ExecuteMethod(async () =>
+                                                                  {
+                                                                      Dictionary<string, string> _parameters = new()
+                                                                                                               {
+                                                                                                                   {"methodName", "Admin_SaveLeadSource"},
+                                                                                                                   {"parameterName", "LeadSource"},
+                                                                                                                   {"containDescription", "false"},
+                                                                                                                   {"isString", "false"},
+                                                                                                                   {"cacheName", CacheObjects.LeadSources.ToString()}
+                                                                                                               };
+                                                                      string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
+                                                                                                                           SourceRecordClone);
+                                                                      if (SourceRecordClone != null)
+                                                                      {
+                                                                          SourceRecord = SourceRecordClone.Copy();
+                                                                      }
 
-                                                                           await Grid.Refresh(true);
+                                                                      await Grid.Refresh(true);
 
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                      /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                      await Grid.SelectRowAsync(_index);*/
+                                                                  });
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -452,14 +452,14 @@ public partial class Status : ComponentBase
                                                                              await Grid.SelectRowAsync(_index);
                                                                          }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Lead Status?" : "Enable Lead Status?",
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Lead Source?" : "Enable Lead Source?",
                                                                                                               General.DialogOptions("Are you sure you want to <strong>"
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Lead Status</i>?")))
+                                                                                                                                    "this <i>Lead Source</i>?")))
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
-                                                                                                                          {"methodName", "Admin_ToggleLeadStatusStatus"},
+                                                                                                                          {"methodName", "Admin_ToggleLeadSourceStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
                                                                              _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
@@ -473,21 +473,21 @@ public partial class Status : ComponentBase
                                                                      });
 
     /// <summary>
-    ///     The AdminStatusAdaptor class is a data adaptor for the Admin Status page.
+    ///     The AdminSourceAdaptor class is a data adaptor for the Admin Source page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
     /// <remarks>
-    ///     This class is used to handle data operations for the Admin Status page.
+    ///     This class is used to handle data operations for the Admin Source page.
     ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
     ///     The ReadAsync method is used to asynchronously fetch data from the server.
     ///     It uses the General.GetReadAsync method to perform the actual data fetching.
     /// </remarks>
-    public class AdminStatusAdaptor : DataAdaptor
+    public class AdminSourceAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         /// <summary>
-        ///     Asynchronously fetches data for the Admin Status page from the server.
+        ///     Asynchronously fetches data for the Admin Source page from the server.
         /// </summary>
         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
         /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
@@ -513,7 +513,7 @@ public partial class Status : ComponentBase
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetLeadStatuses"},
+                                                             {"methodName", "Admin_GetLeadSources"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
                 string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
