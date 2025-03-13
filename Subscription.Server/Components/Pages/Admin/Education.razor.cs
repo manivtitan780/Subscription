@@ -135,7 +135,7 @@ public partial class Education : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store title-specific data, such as the "autoTitle" item and the
+    ///     It is used in this class to retrieve and store title-specific data, such as the "autoEducation" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -203,7 +203,7 @@ public partial class Education : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store title-specific data, such as the "autoTitle" item and the
+    ///     It is used in this class to retrieve and store title-specific data, such as the "autoEducation" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -342,14 +342,14 @@ public partial class Education : ComponentBase
         EducationAuto = value;
         _query ??= new();
         _query.AddParams("Filter", value);
-        await LocalStorage.SetItemAsStringAsync("autoTitle", value);
+        await LocalStorage.SetItemAsStringAsync("autoEducation", value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            string _result = await LocalStorage.GetItemAsStringAsync("autoTitle");
+            string _result = await LocalStorage.GetItemAsStringAsync("autoEducation");
 
             EducationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
             _query ??= new();
@@ -432,7 +432,8 @@ public partial class Education : ComponentBase
                                                                                                                       {"methodName", "Admin_SaveEducation"},
                                                                                                                       {"parameterName", "Education"},
                                                                                                                       {"containDescription", "false"},
-                                                                                                                      {"isString", "false"}
+                                                                                                                      {"isString", "false"},
+                                                                                                                      {"cacheName", CacheObjects.Education.ToString()}
                                                                                                                   };
                                                                          string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                               EducationRecordClone);

@@ -2,7 +2,7 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<AdminGrid AddMethod="() => EditEducationAsync()" AutocompleteMethod="Admin_SearchEducation" AutocompleteParameter="@("@Education")" Name="@EducationAuto"
+<AdminGrid AddMethod="() => EditEducationAsync()" AutocompleteMethod="Admin_SearchEducation" AutocompleteParameter="@("Education")" Name="@EducationAuto"
            Entity="Education" HeaderContentPlural="Education" HeaderContentSingular="Education" Height="140px" Page="Education" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>

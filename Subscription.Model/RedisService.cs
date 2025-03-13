@@ -155,6 +155,11 @@ public class RedisService
         return createItems;
     }
 
+    public async Task CreateAsync(string key, string items)
+    {
+        await _db.StringSetAsync(key, items, when: When.Always);
+    }
+
     /// <summary>
     ///     Asynchronously refreshes the value associated with the specified key in the Redis database.
     /// </summary>

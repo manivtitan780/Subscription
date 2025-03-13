@@ -126,34 +126,8 @@ public class AdminController : ControllerBase
         return Ok(_listOptions ?? "[]");
     }
 
-    /// <summary>
-    ///     Saves the administrative list to the database.
-    /// </summary>
-    /// <param name="methodName">The name of the stored procedure to be executed.</param>
-    /// <param name="parameterName">The name of the parameter to be passed to the stored procedure.</param>
-    /// <param name="containDescription">A flag indicating whether the list contains a description.</param>
-    /// <param name="isString">
-    ///     A flag indicating whether the provided code is a string. If false, the code is treated as an
-    ///     integer.
-    /// </param>
-    /// <param name="adminList">The administrative list to be saved.</param>
-    /// <returns>A string value indicating the return code of the operation.</returns>
-    /// <remarks>
-    ///     This method establishes a connection to the database using a connection string from the configuration.
-    ///     It then creates a SQL command using the provided method name and sets the command type to stored procedure.
-    ///     Depending on the 'isString' flag, it either adds an integer parameter 'ID' or a character parameter 'Code' to the
-    ///     command.
-    ///     It also adds a varchar parameter with the provided parameter name and the text from the admin list.
-    ///     If 'containDescription' is true, it adds another varchar parameter 'Desc' with the text from the admin list.
-    ///     It also adds a varchar parameter 'User' with the value 'ADMIN' and a bit parameter 'Enabled' with the enabled
-    ///     status from the admin list.
-    ///     After executing the command, it reads the return code from the first column of the first row in the result set and
-    ///     returns this value.
-    ///     If an exception occurs during the execution of the command, it is caught and ignored, and an empty string is
-    ///     returned.
-    /// </remarks>
     [HttpPost]
-    public async Task<ActionResult<string>> SaveAdminList(string methodName, string parameterName, bool containDescription, bool isString, [FromBody] AdminList adminList)
+    public async Task<ActionResult<string>> SaveAdminList([FromBody] AdminList adminList, string methodName, string parameterName, bool containDescription, bool isString, string cacheName = "")
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
@@ -181,8 +155,14 @@ public class AdminController : ControllerBase
             await _con.OpenAsync();
 
             _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+            
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
         }
-        catch (SqlException ex)
+        catch (Exception ex)
         {
             Log.Error(ex, "Error saving " + parameterName + ". {ExceptionMessage}", ex.Message);
             return StatusCode(500, $"Error toggling {parameterName}.");

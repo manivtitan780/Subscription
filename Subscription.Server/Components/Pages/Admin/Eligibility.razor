@@ -1,9 +1,9 @@
-@page "/Admin/Title"
+@page "/Admin/Eligibility"
 @layout SubscriptionLayout
 
 <PageHeader/>
-<AdminGrid AddMethod="() => EditDesignationAsync()" AutocompleteMethod="Admin_SearchDesignation" AutocompleteParameter="@("Designation")" Name="@DesignationAuto"
-           Entity="Title" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Page="Designation" @ref="AdminGrid"
+<AdminGrid AddMethod="() => EditEligibilityAsync()" AutocompleteMethod="Admin_SearchEligibility" AutocompleteParameter="@("Eligibility")" Name="@EligibilityAuto"
+           Entity="Eligibility" HeaderContentPlural="Eligibilities" HeaderContentSingular="Eligibility" Height="140px" Page="Eligibility" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
@@ -11,15 +11,15 @@
 		        @ref="Grid" TValue="AdminList" Width="100%">
 			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
-			<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(AdminDesignationAdaptor)" Key="ID"/>
+			<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(AdminEligibilityAdaptor)" Key="ID"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AdminList"/>
 			<GridColumns>
-				<GridColumn Field="Text" HeaderText="Designation" Width="50%">
+				<GridColumn Field="Text" HeaderText="Eligibility" Width="50%">
 					<Template Context="aCon">
 						@{
 							if (aCon is AdminList _con)
 							{
-								<span class="point" @onclick="() => EditDesignationAsync(_con.ID)">@_con.Text</span>
+								<span class="point" @onclick="() => EditEligibilityAsync(_con.ID)">@_con.Text</span>
 							}
 						}
 					</Template>
@@ -43,7 +43,7 @@
 							if (aCon is AdminList _con)
 							{
 								<div class="buttonContain">
-									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditDesignationAsync(_con.ID)" title="Edit Title"/>
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditEligibilityAsync(_con.ID)" title="Edit Title"/>
 									<SfButton Content="" IconCss="e-icons e-repeat" @onclick="() => ToggleMethod(_con.ID, _con.IsEnabled)"
 									          title="@($"{(_con.IsEnabled ? "Disable" : "Enable")} Title")"/>
 								</div>
@@ -56,4 +56,4 @@
 	</GridContent>
 </AdminGrid>
 
-<AdminListDialog HeaderString="@($"{Title} Title")" Model="DesignationRecordClone" Placeholder="Title" @ref="AdminDialog" Save="SaveDesignation"/>
+<AdminListDialog HeaderString="@($"{Title} Eligibility")" Model="EligibilityRecordClone" Placeholder="Eligibility" @ref="AdminDialog" Save="SaveEligibility"/>
