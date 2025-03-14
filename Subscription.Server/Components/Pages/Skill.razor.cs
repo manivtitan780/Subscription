@@ -525,7 +525,7 @@ public partial class Skill : ComponentBase
                                            }
                            : _adminList;
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }
