@@ -210,8 +210,6 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         set;
     } = "98%";
 
-    protected override Task OnInitializedAsync() => base.OnInitializedAsync();
-
     /// <summary>
     ///     Asynchronously refreshes the data in the DropDown control.
     /// </summary>

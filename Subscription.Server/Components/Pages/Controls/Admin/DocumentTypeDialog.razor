@@ -1,0 +1,26 @@
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="275px" IsModal="true" MinHeight="200px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+    <ChildContent>
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="right" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveDocumentType" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">Save Document Type</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelDocumentType" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_documentTypesValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Document Type">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Text)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Text" ID="textDocumentType" MaxLength="255" Placeholder="Document Type"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
+    </ChildContent>
+</SfDialog>

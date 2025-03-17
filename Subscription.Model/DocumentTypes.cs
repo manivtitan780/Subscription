@@ -48,10 +48,10 @@ public class DocumentTypes
 	{
 		KeyValue = keyValue;
 		Text = text;
-		LastUpdatedDate = DateTime.Now;
+		LastUpdatedDate = DateTime.Now.CultureDate();
 	}
 
-	public DateTime LastUpdatedDate
+	public string LastUpdatedDate
 	{
 		get;
 		set;
@@ -71,7 +71,7 @@ public class DocumentTypes
 	{
 		KeyValue = keyValue;
 		Text = keyValue.ToString();
-		LastUpdatedDate = DateTime.Now;
+		LastUpdatedDate = DateTime.Now.CultureDate();
 	}
 
 	/// <summary>
@@ -117,7 +117,7 @@ public class DocumentTypes
 	{
 		KeyValue = 0;
 		Text = "";
-		LastUpdatedDate = DateTime.Now;
+		LastUpdatedDate = DateTime.Now.CultureDate();
 	}
 
 	/// <summary>

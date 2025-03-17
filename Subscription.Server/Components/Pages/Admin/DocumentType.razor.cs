@@ -4,7 +4,7 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class DocumentType : ComponentBase
 {
-        private static TaskCompletionSource<bool> _initializationTaskSource;
+    private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
@@ -215,6 +215,12 @@ public partial class DocumentType : ComponentBase
         set;
     }
 
+    private DocumentTypeDialog DocumentTypeDialog
+    {
+        get;
+        set;
+    }
+
     private async Task DataBound(object arg)
     {
         if (Grid.TotalItemCount > 0)
@@ -240,40 +246,39 @@ public partial class DocumentType : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditDocumentTypeAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<DocumentTypes> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().KeyValue != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                                    {
+                                                                        VisibleSpinner = true;
+                                                                        if (id != 0)
+                                                                        {
+                                                                            List<DocumentTypes> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                            if (_selectedList.Count == 0 || _selectedList.First().KeyValue != id)
+                                                                            {
+                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                                await Grid.SelectRowAsync(_index);
+                                                                            }
+                                                                        }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (DocumentTypeRecordClone == null)
-                                                                           {
-                                                                               DocumentTypeRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               DocumentTypeRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           DocumentTypeRecordClone = DocumentTypeRecord.Copy();
-                                                                       }
+                                                                        if (id == 0)
+                                                                        {
+                                                                            Title = "Add";
+                                                                            if (DocumentTypeRecordClone == null)
+                                                                            {
+                                                                                DocumentTypeRecordClone = new();
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                DocumentTypeRecordClone.Clear();
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            Title = "Edit";
+                                                                            DocumentTypeRecordClone = DocumentTypeRecord.Copy();
+                                                                        }
 
-                                                                       VisibleSpinner = false;
-                                                                       //DocumentTypeRecordClone.Entity = "DocumentType";
-                                                                       //await AdminDialog.ShowDialog();
-                                                                   });
+                                                                        VisibleSpinner = false;
+                                                                        await DocumentTypeDialog.ShowDialog();
+                                                                    });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -299,7 +304,8 @@ public partial class DocumentType : ComponentBase
         return ExecuteMethod(async () =>
                              {
                                  await FilterSet(documentType.Value.NullOrWhiteSpace() ? string.Empty : documentType.Value);
-                                 await Grid.Refresh(true);
+                                 await SetDataSource();
+                                 //await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
@@ -318,6 +324,12 @@ public partial class DocumentType : ComponentBase
         await LocalStorage.SetItemAsStringAsync("autoDocumentType", value);
     }
 
+    private List<DocumentTypes> DataSource
+    {
+        get;
+        set;
+    } = [];
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -330,6 +342,7 @@ public partial class DocumentType : ComponentBase
 
             try
             {
+                await SetDataSource();
                 _initializationTaskSource.SetResult(true);
             }
             catch
@@ -339,7 +352,18 @@ public partial class DocumentType : ComponentBase
         }
     }
 
-    /// <summary>
+    private async Task SetDataSource()
+    {
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetDocumentTypes"},
+                                                     {"filter", DocumentTypeAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
+    }
+
+/// <summary>
     ///     This method is called when the component is initialized.
     ///     It retrieves the user's login information from the local storage and checks the user's role.
     ///     If the user's role is not "AD" (Administrator), it redirects the user to the home page.
@@ -402,10 +426,6 @@ public partial class DocumentType : ComponentBase
                                                                        {
                                                                            Dictionary<string, string> _parameters = new()
                                                                                                                     {
-                                                                                                                        {"methodName", "Admin_SaveDocumentType"},
-                                                                                                                        {"parameterName", "DocumentType"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"},
                                                                                                                         {"cacheName", CacheObjects.DocumentTypes.ToString()}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveDocumentType", _parameters,
@@ -415,62 +435,13 @@ public partial class DocumentType : ComponentBase
                                                                                DocumentTypeRecord = DocumentTypeRecordClone.Copy();
                                                                            }
 
-                                                                           await Grid.Refresh(true);
+                                                                           DataSource = General.DeserializeObject<List<DocumentTypes>>(_response);
+                                                                           //await Grid.Refresh(false);
 
                                                                            /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
                                                                            await Grid.SelectRowAsync(_index);*/
                                                                        });
 
-    /// <summary>
-    ///     Toggles the status of an DocumentType item and shows a confirmation dialog.
-    /// </summary>
-    /// <param name="id">The ID of the DocumentType item to toggle.</param>
-    /// <param name="enabled">
-    ///     The new status to set for the DocumentType item. If true, the status is set to 2, otherwise it is
-    ///     set to 1.
-    /// </param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
-                                                                     {
-                                                                         /*_selectedID = id;
-                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;*/
-                                                                         List<DocumentTypes> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                         if (_selectedList.Count == 0 || _selectedList.First().KeyValue != id)
-                                                                         {
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
-                                                                         }
-
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Document Type?" : "Enable Document Type?",
-                                                                                                              General.DialogOptions("Are you sure you want to <strong>"
-                                                                                                                                    + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Document Type</i>?")))
-                                                                         {
-                                                                             Dictionary<string, string> _parameters = new()
-                                                                                                                      {
-                                                                                                                          {"methodName", "Admin_ToggleDocumentTypeStatus"},
-                                                                                                                          {"id", id.ToString()}
-                                                                                                                      };
-                                                                             _ = await General.ExecuteRest<string>("Admin/ToggleDocumentType", _parameters);
-
-                                                                             await Grid.Refresh(true);
-
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
-                                                                         }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
-                                                                     });
-
-    /// <summary>
-    ///     The AdminDocumentTypeAdaptor class is a data adaptor for the Admin DocumentType page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin DocumentType page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
     public class AdminDocumentTypeAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
@@ -502,11 +473,11 @@ public partial class DocumentType : ComponentBase
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetDocumentType"},
+                                                             {"methodName", "Admin_GetDocumentTypes"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetDocumentType", _parameters, null, false);
-                List<DocumentType> _documentType = JsonConvert.DeserializeObject<List<DocumentType>>(_returnValue);
+                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+                List<DocumentTypes> _documentType = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
                 return dm.RequiresCounts ? new DataResult
                                            {
                                                Result = _documentType,
@@ -514,7 +485,7 @@ public partial class DocumentType : ComponentBase
                                            }
                            : _documentType;
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }

@@ -25,17 +25,17 @@ namespace Subscription.Model.Validators;
 ///     must not already exist in the system.
 ///     The class uses the FluentValidation library to define and enforce these rules.
 /// </remarks>
-public class DocumentTypeValidator : AbstractValidator<DocumentTypes>
+public class DocumentTypesValidator : AbstractValidator<DocumentTypes>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="DocumentTypeValidator" /> class.
+    ///     Initializes a new instance of the <see cref="DocumentTypesValidator" /> class.
     /// </summary>
     /// <remarks>
     ///     This constructor sets up the validation rules for instances of the DocumentType class.
     ///     The rules include: the DocumentType must not be empty, its length must be between 2 and 50 characters,
     ///     and it must not already exist in the system.
     /// </remarks>
-    public DocumentTypeValidator()
+    public DocumentTypesValidator()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 

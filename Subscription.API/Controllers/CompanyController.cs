@@ -310,7 +310,7 @@ public class CompanyController : ControllerBase
         try
         {
             await _connection.OpenAsync();
-            _returnCode = (await _command.ExecuteScalarAsync()).ToInt32();
+            _returnCode = (await _command.ExecuteScalarAsync())!.ToInt32();
         }
         catch (Exception ex)
         {

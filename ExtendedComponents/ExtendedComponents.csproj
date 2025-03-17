@@ -29,4 +29,8 @@
     <PackageReference Include="Syncfusion.Blazor.Spinner" Version="28.2.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="ExampleJsInterop.cs" />
+  </ItemGroup>
+
 </Project>

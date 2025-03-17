@@ -8,7 +8,7 @@
 // File Name:           AdminController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 15:03
-// Last Updated On:     03-11-2025 20:03
+// Last Updated On:     03-16-2025 19:03
 // *****************************************/
 
 #endregion
@@ -155,27 +155,61 @@ public class AdminController : ControllerBase
             await _con.OpenAsync();
 
             _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-            
+
             if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
                 await _service.CreateAsync(cacheName, _returnCode);
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving " + parameterName + ". {ExceptionMessage}", ex.Message);
-            return StatusCode(500, $"Error toggling {parameterName}.");
+            return StatusCode(500, $"Error saving {parameterName}.");
         }
         finally
         {
             await _con.CloseAsync();
         }
-       
 
         return Ok(_returnCode);
-    }    
-    
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveDocumentType([FromBody] DocumentTypes documentType, string cacheName = "")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveDocumentType", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", documentType.KeyValue.DBNull());
+
+        _command.Varchar("DocumentType", 100, documentType.Text);
+
+        try
+        {
+            await _con.OpenAsync();
+
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving Document Type. {ExceptionMessage}", ex.Message);
+        }
+        finally
+        {
+            await _con.CloseAsync();
+        }
+
+        return Ok(_returnCode);
+    }
+
     /// <summary>
     ///     Toggles the administrative list based on the provided method name, ID, and username.
     /// </summary>
@@ -204,6 +238,7 @@ public class AdminController : ControllerBase
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         _con.Open();
+        string _returnCode = "[]";
         try
         {
             await using SqlCommand _command = new(methodName, _con);
@@ -222,22 +257,22 @@ public class AdminController : ControllerBase
             }
 
             _command.Varchar("User", 10, userName);
-            await _command.ExecuteNonQueryAsync();
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
         }
         catch (SqlException ex)
         {
-            Log.Error(ex, "Error toggling "+ methodName + ". {ExceptionMessage}", ex.Message);
+            Log.Error(ex, "Error toggling " + methodName + ". {ExceptionMessage}", ex.Message);
             return StatusCode(500, $"Error toggling {methodName}.");
         }
         finally
         {
             await _con.CloseAsync();
         }
+
         {
             // ignored
         }
 
-        return Ok(id);
+        return Ok(_returnCode);
     }
-
 }

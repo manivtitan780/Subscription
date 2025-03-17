@@ -191,8 +191,8 @@ public static partial class Extensions
 	///     A decimal value that is equivalent to the value contained in the object. If the object is null, or does not
 	///     represent a valid decimal value, the method returns the nullValue.
 	/// </returns>
-	public static decimal ToDecimal(this object o, decimal nullValue = 0) => o != null && decimal.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
-																										   out decimal _out) ? _out : nullValue;
+	public static decimal ToDecimal(this object o, decimal nullValue = 0) => decimal.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																							  out decimal _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the object representation of a value to its double equivalent.
@@ -203,8 +203,8 @@ public static partial class Extensions
 	///     A double value that is equivalent to the value contained in the object. If the object is null, or does not
 	///     represent a valid double value, the method returns the nullValue.
 	/// </returns>
-	public static double ToDouble(this object o, double nullValue = 0) => o != null && double.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
-																									   out double _out) ? _out : nullValue;
+	public static double ToDouble(this object o, double nullValue = 0) => double.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																						  out double _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the string representation of a short integer value to its short integer equivalent.
@@ -218,8 +218,8 @@ public static partial class Extensions
 	///     A short integer value that is equivalent to the short integer value contained in the string. If the string is
 	///     null or empty, or does not represent a valid short integer value, the method returns the nullValue.
 	/// </returns>
-	public static short ToInt16(this object o, short nullValue = 0) => o != null && short.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
-																								   out short _out) ? _out : nullValue;
+	public static short ToInt16(this object o, short nullValue = 0) => short.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																					  out short _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the object representation of a number to its 32-bit signed integer equivalent.
@@ -230,8 +230,8 @@ public static partial class Extensions
 	///     A 32-bit signed integer that is equivalent to the number contained in the object. If the object is null or
 	///     does not represent a valid number, the method returns nullValue.
 	/// </returns>
-	public static int ToInt32(this object? o, int nullValue = 0) => o != null && int.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
-																							  out int _out) ? _out : nullValue;
+	public static int ToInt32(this object o, int nullValue = 0) => int.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																				out int _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the given object to a long integer (Int64).
@@ -243,8 +243,8 @@ public static partial class Extensions
 	///     The long integer (Int64) representation of the object or nullValue if the object is null or cannot be
 	///     converted.
 	/// </returns>
-	public static long ToInt64(this object o, int nullValue = 0) => o != null && long.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
-																							   out long _out) ? _out : nullValue;
+	public static long ToInt64(this object o, int nullValue = 0) => long.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+																				  out long _out) ? _out : nullValue;
 
 	/// <summary>
 	///     Converts the given string to a MarkupString.

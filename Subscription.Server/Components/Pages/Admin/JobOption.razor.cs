@@ -5,31 +5,31 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           Eligibility.razor.cs
+// File Name:           JobOption.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-13-2025 16:03
-// Last Updated On:     03-13-2025 16:03
+// Created On:          03-16-2025 19:03
+// Last Updated On:     03-17-2025 15:03
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Admin;
 
-public partial class Eligibility : ComponentBase
+public partial class JobOption : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+        private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    /// <summary>
-    ///     Gets or sets the 'AdminListDialog' instance used for managing Eligibility information in the administrative context.
-    ///     This dialog is used for both creating new Eligibility and editing existing Eligibility.
+    /*/// <summary>
+    ///     Gets or sets the 'JobOptionsDialog' instance used for managing JobOption information in the administrative context.
+    ///     This dialog is used for both creating new JobOption and editing existing JobOption.
     /// </summary>
-    private AdminListDialog AdminDialog
+    private JobOptionsDialog AdminDialog
     {
         get;
         set;
-    }
+    }*/
 
     public AdminGrid AdminGrid
     {
@@ -43,31 +43,31 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
-    private string EligibilityAuto
+    private string JobOptionAuto
     {
         get;
         set;
     }
 
     /// <summary>
-    ///     Gets or sets the EligibilityRecord property of the Eligibility class.
-    ///     The EligibilityRecord property represents a single Eligibility in the application.
-    ///     It is used to hold the data of the selected Eligibility in the Eligibility grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    ///     Gets or sets the JobOptionRecord property of the JobOption class.
+    ///     The JobOptionRecord property represents a single JobOption in the application.
+    ///     It is used to hold the data of the selected JobOption in the JobOption grid.
+    ///     The data is encapsulated in a JobOptions object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private AdminList EligibilityRecord
+    private JobOptions JobOptionRecord
     {
         get;
         set;
     } = new();
 
     /// <summary>
-    ///     Gets or sets the clone of a Eligibility record. This property is used to hold a copy of a Eligibility record for
-    ///     operations like editing or adding a Eligibility.
-    ///     When adding a new Eligibility, a new instance of Eligibility is created and assigned to this property.
-    ///     When editing an existing Eligibility, a copy of the Eligibility record to be edited is created and assigned to this property.
+    ///     Gets or sets the clone of a JobOption record. This property is used to hold a copy of a JobOption record for
+    ///     operations like editing or adding a JobOption.
+    ///     When adding a new JobOption, a new instance of JobOption is created and assigned to this property.
+    ///     When editing an existing JobOption, a copy of the JobOption record to be edited is created and assigned to this property.
     /// </summary>
-    private AdminList EligibilityRecordClone
+    private JobOptions JobOptionRecordClone
     {
         get;
         set;
@@ -92,7 +92,7 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
-    private SfGrid<AdminList> Grid
+    private SfGrid<JobOptions> Grid
     {
         get;
         set;
@@ -101,7 +101,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store JobOption-specific data, such as the "autoJobOption" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -143,7 +143,7 @@ public partial class Eligibility : ComponentBase
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
-    ///     It is used in this class to retrieve and store Eligibility-specific data, such as the "autoEligibility" item and the
+    ///     It is used in this class to retrieve and store JobOption-specific data, such as the "autoJobOption" item and the
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
@@ -160,9 +160,9 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Gets or sets the Eligibility of the Eligibility Dialog in the administrative context.
-    ///     The Eligibility changes based on the action being performed on the Eligibility record - "Add" when a new Eligibility is being added,
-    ///     and "Edit" when an existing Eligibility's details are being modified.
+    ///     Gets or sets the JobOption of the JobOption Dialog in the administrative context.
+    ///     The JobOption changes based on the action being performed on the JobOption record - "Add" when a new JobOption is being added,
+    ///     and "Edit" when an existing JobOption's details are being modified.
     /// </summary>
     private string Title
     {
@@ -182,7 +182,7 @@ public partial class Eligibility : ComponentBase
         set;
     }
 
-    private List<AdminList> DataSource
+    private List<JobOptions> DataSource
     {
         get;
         set;
@@ -197,55 +197,55 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Asynchronously edits the eligibility with the given ID. If the ID is 0, a new eligibility is created.
+    ///     Asynchronously edits the JobOption with the given ID. If the ID is 0, a new JobOption is created.
     /// </summary>
-    /// <param name="id">The ID of the eligibility to edit. If this parameter is 0, a new eligibility is created.</param>
+    /// <param name="id">The ID of the JobOption to edit. If this parameter is 0, a new JobOption is created.</param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method performs the following steps:
     ///     - Retrieves the selected records from the grid.
     ///     - If the first selected record's ID does not match the given ID, it selects the row with the given ID in the grid.
-    ///     - If the ID is 0, it sets the title to "Add" and initializes a new eligibility record clone if it does not exist,
+    ///     - If the ID is 0, it sets the title to "Add" and initializes a new JobOption record clone if it does not exist,
     ///     or clears its data if it does.
-    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current eligibility record to the clone.
-    ///     - Sets the entity of the eligibility record clone to "Eligibility".
+    ///     - If the ID is not 0, it sets the title to "Edit" and copies the current JobOption record to the clone.
+    ///     - Sets the entity of the JobOption record clone to "JobOption".
     ///     - Triggers a state change.
     ///     - Shows the admin dialog.
     /// </remarks>
-    private Task EditEligibilityAsync(int id = 0) => ExecuteMethod(async () =>
+    private Task EditJobOptionAsync(string id = "") => ExecuteMethod(async () =>
                                                                    {
                                                                        VisibleSpinner = true;
-                                                                       if (id != 0)
+                                                                       if (id.NotNullOrWhiteSpace())
                                                                        {
-                                                                           List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                           List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                           if (_selectedList.Count == 0 || _selectedList.First().Code != id)
                                                                            {
                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                                await Grid.SelectRowAsync(_index);
                                                                            }
                                                                        }
 
-                                                                       if (id == 0)
+                                                                       if (id.NotNullOrWhiteSpace())
                                                                        {
                                                                            Title = "Add";
-                                                                           if (EligibilityRecordClone == null)
+                                                                           if (JobOptionRecordClone == null)
                                                                            {
-                                                                               EligibilityRecordClone = new();
+                                                                               JobOptionRecordClone = new();
                                                                            }
                                                                            else
                                                                            {
-                                                                               EligibilityRecordClone.Clear();
+                                                                               JobOptionRecordClone.Clear();
                                                                            }
                                                                        }
                                                                        else
                                                                        {
                                                                            Title = "Edit";
-                                                                           EligibilityRecordClone = EligibilityRecord.Copy();
+                                                                           JobOptionRecordClone = JobOptionRecord.Copy();
                                                                        }
 
                                                                        VisibleSpinner = false;
-                                                                       EligibilityRecordClone.Entity = "Eligibility";
-                                                                       await AdminDialog.ShowDialog();
+                                                                       /*JobOptionRecordClone.Entity = "JobOption";
+                                                                       await AdminDialog.ShowDialog();*/
                                                                    });
 
     /// <summary>
@@ -260,18 +260,18 @@ public partial class Eligibility : ComponentBase
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
     /// <summary>
-    ///     Handles the filtering of the grid based on the provided eligibility.
-    ///     This method is triggered when a eligibility is selected in the grid.
-    ///     It sets the filter value to the selected eligibility and refreshes the grid to update the displayed data.
+    ///     Handles the filtering of the grid based on the provided JobOption.
+    ///     This method is triggered when a JobOption is selected in the grid.
+    ///     It sets the filter value to the selected JobOption and refreshes the grid to update the displayed data.
     ///     The method ensures that the grid is not refreshed multiple times simultaneously by using a toggling flag.
     /// </summary>
-    /// <param name="eligibility">The selected eligibility in the grid, encapsulated in a ChangeEventArgs object.</param>
+    /// <param name="JobOption">The selected JobOption in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> eligibility)
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> JobOption)
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(eligibility.Value.NullOrWhiteSpace() ? string.Empty : eligibility.Value);
+                                 await FilterSet(JobOption.Value.NullOrWhiteSpace() ? string.Empty : JobOption.Value);
                                  await SetDataSource();
                                  //await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
@@ -279,24 +279,24 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Sets the filter value for the Eligibility component.
+    ///     Sets the filter value for the JobOption component.
     ///     This method is used to update the static Filter property with the passed value.
     ///     The passed value is processed by the General.FilterSet method before being assigned to the Filter property.
     /// </summary>
     /// <param name="value">The value to be set as the filter.</param>
     private async Task FilterSet(string value)
     {
-        EligibilityAuto = value;
-        await LocalStorage.SetItemAsStringAsync("autoEligibility", value);
+        JobOptionAuto = value;
+        await LocalStorage.SetItemAsStringAsync("autoJobOption", value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            string _result = await LocalStorage.GetItemAsStringAsync("autoEligibility");
+            string _result = await LocalStorage.GetItemAsStringAsync("autoJobOption");
 
-            EligibilityAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            JobOptionAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
 
             try
             {
@@ -347,49 +347,49 @@ public partial class Eligibility : ComponentBase
     }
 
     /// <summary>
-    ///     Refreshes the grid component of the Eligibility page.
+    ///     Refreshes the grid component of the JobOption page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
-    ///     Handles the event of a row being selected in the Eligibility grid.
+    ///     Handles the event of a row being selected in the JobOption grid.
     /// </summary>
-    /// <param name="eligibility">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<AdminList> eligibility) => EligibilityRecord = eligibility.Data;
+    /// <param name="JobOption">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<JobOptions> JobOption) => JobOptionRecord = JobOption.Data;
 
     /// <summary>
-    ///     Saves the changes made to the eligibility record.
+    ///     Saves the changes made to the JobOption record.
     /// </summary>
     /// <param name="context">The context for the form being edited.</param>
     /// <returns>A Task that represents the asynchronous operation.</returns>
     /// <remarks>
-    ///     This method calls the General.SaveAdminListAsync method, passing in the necessary parameters to save the changes
-    ///     made to the EligibilityRecordClone.
+    ///     This method calls the General.SaveJobOptionsAsync method, passing in the necessary parameters to save the changes
+    ///     made to the JobOptionRecordClone.
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
-    private Task SaveEligibility(EditContext context) => ExecuteMethod(async () =>
+    private Task SaveJobOption(EditContext context) => ExecuteMethod(async () =>
                                                                        {
                                                                            Dictionary<string, string> _parameters = new()
                                                                                                                     {
-                                                                                                                        {"methodName", "Admin_SaveEligibility"},
-                                                                                                                        {"parameterName", "Eligibility"},
+                                                                                                                        {"methodName", "Admin_SaveJobOption"},
+                                                                                                                        {"parameterName", "JobOption"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Eligibility.ToString()}
+                                                                                                                        {"cacheName", CacheObjects.JobOptions.ToString()}
                                                                                                                     };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                EligibilityRecordClone);
-                                                                           if (EligibilityRecordClone != null)
+                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveJobOptions", _parameters,
+                                                                                                                                JobOptionRecordClone);
+                                                                           if (JobOptionRecordClone != null)
                                                                            {
-                                                                               EligibilityRecord = EligibilityRecordClone.Copy();
+                                                                               JobOptionRecord = JobOptionRecordClone.Copy();
                                                                            }
 
                                                                            //await Grid.Refresh(true);
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
-                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                               DataSource = General.DeserializeObject<List<JobOptions>>(_response);
                                                                            }
 
                                                                            /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
@@ -400,47 +400,47 @@ public partial class Eligibility : ComponentBase
     {
         Dictionary<string, string> _parameters = new()
                                                  {
-                                                     {"methodName", "Admin_GetEligibility"},
-                                                     {"filter", EligibilityAuto ?? string.Empty}
+                                                     {"methodName", "Admin_GetJobOptions"},
+                                                     {"filter", JobOptionAuto ?? string.Empty}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        DataSource = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);
     }
     /// <summary>
-    ///     Toggles the status of an AdminList item and shows a confirmation dialog.
+    ///     Toggles the status of an JobOptions item and shows a confirmation dialog.
     /// </summary>
-    /// <param name="id">The ID of the AdminList item to toggle.</param>
+    /// <param name="id">The ID of the JobOptions item to toggle.</param>
     /// <param name="enabled">
-    ///     The new status to set for the AdminList item. If true, the status is set to 2, otherwise it is
+    ///     The new status to set for the JobOptions item. If true, the status is set to 2, otherwise it is
     ///     set to 1.
     /// </param>
     /// <returns>A Task representing the asynchronous operation.</returns>
-    private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
+    private Task ToggleMethod(string id, bool enabled) => ExecuteMethod(async () =>
                                                                      {
                                                                          /*_selectedID = id;
                                                                          _toggleValue = enabled ? (byte)2 : (byte)1;*/
-                                                                         List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                         if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                         List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                         if (_selectedList.Count == 0 || _selectedList.First().Code != id)
                                                                          {
                                                                              int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                              await Grid.SelectRowAsync(_index);
                                                                          }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable Eligibility?" : "Enable Eligibility?",
+                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable JobOption?" : "Enable JobOption?",
                                                                                                               General.DialogOptions("Are you sure you want to <strong>"
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>Eligibility</i>?")))
+                                                                                                                                    "this <i>JobOption</i>?")))
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
-                                                                                                                          {"methodName", "Admin_ToggleEligibilityStatus"},
+                                                                                                                          {"methodName", "Admin_ToggleJobOptionStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
-                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleJobOptions", _parameters);
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
-                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                                 DataSource = General.DeserializeObject<List<JobOptions>>(_response);
                                                                              }
                                                                              /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                              await Grid.SelectRowAsync(_index);*/
@@ -450,21 +450,21 @@ public partial class Eligibility : ComponentBase
 
     /*
     /// <summary>
-    ///     The AdminEligibilityAdaptor class is a data adaptor for the Admin Eligibility page.
+    ///     The AdminJobOptionAdaptor class is a data adaptor for the Admin JobOption page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
     /// <remarks>
-    ///     This class is used to handle data operations for the Admin Eligibility page.
+    ///     This class is used to handle data operations for the Admin JobOption page.
     ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
     ///     The ReadAsync method is used to asynchronously fetch data from the server.
     ///     It uses the General.GetReadAsync method to perform the actual data fetching.
     /// </remarks>
-    public class AdminEligibilityAdaptor : DataAdaptor
+    public class AdminJobOptionAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         /// <summary>
-        ///     Asynchronously fetches data for the Admin Eligibility page from the server.
+        ///     Asynchronously fetches data for the Admin JobOption page from the server.
         /// </summary>
         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
         /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
@@ -490,17 +490,17 @@ public partial class Eligibility : ComponentBase
             {
                 Dictionary<string, string> _parameters = new()
                                                          {
-                                                             {"methodName", "Admin_GetEligibility"},
+                                                             {"methodName", "Admin_GetJobOption"},
                                                              {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
                                                          };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+                string _returnValue = await General.ExecuteRest<string>("Admin/GetJobOptions", _parameters, null, false);
+                List<JobOptions> _JobOptions = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);
                 return dm.RequiresCounts ? new DataResult
                                            {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
+                                               Result = _JobOptions,
+                                               Count = _JobOptions.Count
                                            }
-                           : _adminList;
+                           : _JobOptions;
             }
             catch
             {

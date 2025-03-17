@@ -24,18 +24,18 @@ namespace Subscription.Model;
 /// </remarks>
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public class JobOption
+public class JobOptions
 {
 	/// <summary>
-	///     Initializes a new instance of the <see cref="JobOption" /> class.
+	///     Initializes a new instance of the <see cref="JobOptions" /> class.
 	/// </summary>
-	public JobOption()
+	public JobOptions()
 	{
 		Clear();
 	}
 
 	/// <summary>
-	///     Initializes a new instance of the <see cref="JobOption" /> class.
+	///     Initializes a new instance of the <see cref="JobOptions" /> class.
 	/// </summary>
 	/// <param name="code">The code for the job option.</param>
 	/// <param name="option">The option for the job.</param>
@@ -53,7 +53,7 @@ public class JobOption
 	/// <param name="percentText">The text for the percent of the job option. Default is "Percent".</param>
 	/// <param name="costPercent">The cost percent for the job option. Default is 0.</param>
 	/// <param name="showPercent">A value indicating whether to show percent for the job option. Default is false.</param>
-	public JobOption(string code, string option, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
+	public JobOptions(string code, string option, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
 					 bool exp = false, bool placeFee = false, bool benefits = false, bool showHours = false, string rateText = "Rate", string percentText = "Percent", decimal costPercent = 0,
 					 bool showPercent = false)
 	{
@@ -369,5 +369,5 @@ public class JobOption
 	/// <remarks>
 	///     This method uses the MemberwiseClone method to create a shallow copy of the current object.
 	/// </remarks>
-	public JobOption Copy() => MemberwiseClone() as JobOption;
+	public JobOptions Copy() => MemberwiseClone() as JobOptions;
 }
