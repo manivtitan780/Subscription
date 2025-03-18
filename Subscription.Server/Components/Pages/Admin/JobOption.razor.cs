@@ -8,7 +8,7 @@
 // File Name:           JobOption.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-16-2025 19:03
-// Last Updated On:     03-17-2025 15:03
+// Last Updated On:     03-18-2025 16:03
 // *****************************************/
 
 #endregion
@@ -17,25 +17,9 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class JobOption : ComponentBase
 {
-        private static TaskCompletionSource<bool> _initializationTaskSource;
+    private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
-
-    /*/// <summary>
-    ///     Gets or sets the 'JobOptionsDialog' instance used for managing JobOption information in the administrative context.
-    ///     This dialog is used for both creating new JobOption and editing existing JobOption.
-    /// </summary>
-    private JobOptionsDialog AdminDialog
-    {
-        get;
-        set;
-    }*/
-
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
 
     private bool AdminScreens
     {
@@ -43,7 +27,48 @@ public partial class JobOption : ComponentBase
         set;
     }
 
+    private List<JobOptions> DataSource
+    {
+        get;
+        set;
+    } = [];
+
+    /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    /// </remarks>
+    [Inject]
+    private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
+
+    private SfGrid<JobOptions> Grid
+    {
+        get;
+        set;
+    }
+
     private string JobOptionAuto
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the 'JobOptionsDialog' instance used for managing JobOption information in the administrative context.
+    ///     This dialog is used for both creating new JobOption and editing existing JobOption.
+    /// </summary>
+    private JobOptionDialog JobOptionDialog
     {
         get;
         set;
@@ -72,31 +97,6 @@ public partial class JobOption : ComponentBase
         get;
         set;
     } = new();
-
-    /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    /// </remarks>
-    [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
-
-    private SfGrid<JobOptions> Grid
-    {
-        get;
-        set;
-    }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -182,12 +182,6 @@ public partial class JobOption : ComponentBase
         set;
     }
 
-    private List<JobOptions> DataSource
-    {
-        get;
-        set;
-    } = [];
-
     private async Task DataBound(object arg)
     {
         if (Grid.TotalItemCount > 0)
@@ -213,40 +207,40 @@ public partial class JobOption : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditJobOptionAsync(string id = "") => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id.NotNullOrWhiteSpace())
-                                                                       {
-                                                                           List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().Code != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                                     {
+                                                                         VisibleSpinner = true;
+                                                                         if (id.NotNullOrWhiteSpace())
+                                                                         {
+                                                                             List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                             if (_selectedList.Count == 0 || _selectedList.First().Code != id)
+                                                                             {
+                                                                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                                 await Grid.SelectRowAsync(_index);
+                                                                             }
+                                                                         }
 
-                                                                       if (id.NotNullOrWhiteSpace())
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (JobOptionRecordClone == null)
-                                                                           {
-                                                                               JobOptionRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               JobOptionRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           JobOptionRecordClone = JobOptionRecord.Copy();
-                                                                       }
+                                                                         if (id.NotNullOrWhiteSpace())
+                                                                         {
+                                                                             Title = "Add";
+                                                                             if (JobOptionRecordClone == null)
+                                                                             {
+                                                                                 JobOptionRecordClone = new();
+                                                                             }
+                                                                             else
+                                                                             {
+                                                                                 JobOptionRecordClone.Clear();
+                                                                             }
+                                                                         }
+                                                                         else
+                                                                         {
+                                                                             Title = "Edit";
+                                                                             JobOptionRecordClone = JobOptionRecord.Copy();
+                                                                         }
 
-                                                                       VisibleSpinner = false;
-                                                                       /*JobOptionRecordClone.Entity = "JobOption";
-                                                                       await AdminDialog.ShowDialog();*/
-                                                                   });
+                                                                         VisibleSpinner = false;
+                                                                         /*JobOptionRecordClone.Entity = "JobOption";*/
+                                                                         await JobOptionDialog.ShowDialog();
+                                                                     });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -370,31 +364,31 @@ public partial class JobOption : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveJobOption(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"methodName", "Admin_SaveJobOption"},
-                                                                                                                        {"parameterName", "JobOption"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.JobOptions.ToString()}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveJobOptions", _parameters,
-                                                                                                                                JobOptionRecordClone);
-                                                                           if (JobOptionRecordClone != null)
-                                                                           {
-                                                                               JobOptionRecord = JobOptionRecordClone.Copy();
-                                                                           }
+                                                                     {
+                                                                         Dictionary<string, string> _parameters = new()
+                                                                                                                  {
+                                                                                                                      {"methodName", "Admin_SaveJobOption"},
+                                                                                                                      {"parameterName", "JobOption"},
+                                                                                                                      {"containDescription", "false"},
+                                                                                                                      {"isString", "false"},
+                                                                                                                      {"cacheName", CacheObjects.JobOptions.ToString()}
+                                                                                                                  };
+                                                                         string _response = await General.ExecuteRest<string>("Admin/SaveJobOptions", _parameters,
+                                                                                                                              JobOptionRecordClone);
+                                                                         if (JobOptionRecordClone != null)
+                                                                         {
+                                                                             JobOptionRecord = JobOptionRecordClone.Copy();
+                                                                         }
 
-                                                                           //await Grid.Refresh(true);
-                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                           {
-                                                                               DataSource = General.DeserializeObject<List<JobOptions>>(_response);
-                                                                           }
+                                                                         //await Grid.Refresh(true);
+                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                         {
+                                                                             DataSource = General.DeserializeObject<List<JobOptions>>(_response);
+                                                                         }
 
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                         /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                         await Grid.SelectRowAsync(_index);*/
+                                                                     });
 
     private async Task SetDataSource()
     {
@@ -406,6 +400,7 @@ public partial class JobOption : ComponentBase
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);
     }
+
     /// <summary>
     ///     Toggles the status of an JobOptions item and shows a confirmation dialog.
     /// </summary>
@@ -416,37 +411,37 @@ public partial class JobOption : ComponentBase
     /// </param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task ToggleMethod(string id, bool enabled) => ExecuteMethod(async () =>
-                                                                     {
-                                                                         /*_selectedID = id;
-                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;*/
-                                                                         List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                         if (_selectedList.Count == 0 || _selectedList.First().Code != id)
-                                                                         {
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
-                                                                         }
+                                                                        {
+                                                                            /*_selectedID = id;
+                                                                            _toggleValue = enabled ? (byte)2 : (byte)1;*/
+                                                                            List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                            if (_selectedList.Count == 0 || _selectedList.First().Code != id)
+                                                                            {
+                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                                await Grid.SelectRowAsync(_index);
+                                                                            }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable JobOption?" : "Enable JobOption?",
-                                                                                                              General.DialogOptions("Are you sure you want to <strong>"
-                                                                                                                                    + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>JobOption</i>?")))
-                                                                         {
-                                                                             Dictionary<string, string> _parameters = new()
-                                                                                                                      {
-                                                                                                                          {"methodName", "Admin_ToggleJobOptionStatus"},
-                                                                                                                          {"id", id.ToString()}
-                                                                                                                      };
-                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleJobOptions", _parameters);
+                                                                            if (await DialogService.ConfirmAsync(null, enabled ? "Disable JobOption?" : "Enable JobOption?",
+                                                                                                                 General.DialogOptions("Are you sure you want to <strong>"
+                                                                                                                                       + (enabled ? "disable" : "enable") + "</strong> " +
+                                                                                                                                       "this <i>JobOption</i>?")))
+                                                                            {
+                                                                                Dictionary<string, string> _parameters = new()
+                                                                                                                         {
+                                                                                                                             {"methodName", "Admin_ToggleJobOptionStatus"},
+                                                                                                                             {"id", id}
+                                                                                                                         };
+                                                                                string _response = await General.ExecuteRest<string>("Admin/ToggleJobOptions", _parameters);
 
-                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                             {
-                                                                                 DataSource = General.DeserializeObject<List<JobOptions>>(_response);
-                                                                             }
-                                                                             /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);*/
-                                                                         }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
-                                                                     });
+                                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                                {
+                                                                                    DataSource = General.DeserializeObject<List<JobOptions>>(_response);
+                                                                                }
+                                                                                /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                                await Grid.SelectRowAsync(_index);*/
+                                                                            }
+                                                                            // await AdminGrid.DialogConfirm.ShowDialog();
+                                                                        });
 
     /*
     /// <summary>

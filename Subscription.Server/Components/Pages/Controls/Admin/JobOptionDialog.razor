@@ -13,10 +13,10 @@
                 <FluentValidationValidator Validator="_adminListValidator"/>
             </FormValidator>
             <FormItems>
-                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="@($"{Placeholder} Information")">
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Code)">
                         <Template>
-                            <TextBox @bind-Value="Model.Code" ID="textCode" MaxLength="255" Placeholder="Code"/>
+                            <TextBox @bind-Value="Model.Code" ID="textCode" MaxLength="2" Placeholder="Code"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Option)">
@@ -49,7 +49,14 @@
                             <NumericTextBox @bind-Value="Model.CostPercent" ID="numericCostPercent" Max="100" Placeholder="Cost Percent" TValue="decimal"/>
                         </Template>
                     </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupCheck" LabelText="Display Options">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Rate)" LabelText="Benefits required?" ID="checkedRate" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Exp)" LabelText="Benefits required?" ID="checkedExp" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.PlaceFee)" LabelText="Benefits required?" ID="checkedPlaceFee" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Benefits)" LabelText="Benefits required?" ID="checkedBenefits" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ShowHours)" LabelText="Benefits required?" ID="checkedShowHours" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ShowPercent)" LabelText="Benefits required?" ID="checkedShowPercent" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
             </FormItems>
         </SfDataForm>
