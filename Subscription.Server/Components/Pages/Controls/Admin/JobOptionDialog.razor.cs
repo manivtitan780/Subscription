@@ -1,32 +1,23 @@
-﻿#region Header
+#region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           AdminListDialog.razor.cs
+// File Name:           JobOptionDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-10-2025 14:03
-// Last Updated On:     03-11-2025 20:03
+// Created On:          03-17-2025 19:03
+// Last Updated On:     03-17-2025 19:03
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Admin;
 
-/// <summary>
-///     Represents a dialog control for administrative list management in the application.
-///     This dialog provides functionalities for handling administrative tasks such as saving and cancelling operations.
-/// </summary>
-/// <remarks>
-///     The dialog control includes parameters for handling events like Save and Cancel, and properties like HeaderString,
-///     Placeholder, and Model for customization.
-///     It is used in various parts of the application like Designation and Education pages.
-/// </remarks>
-public partial class AdminListDialog
+public partial class JobOptionDialog : ComponentBase
 {
-    private readonly AdminListValidator _adminListValidator = new();
+        private readonly JobOptionsValidator _adminListValidator = new();
 
     /// <summary>
     ///     Gets or sets the Cancel event callback that is triggered when the Cancel operation is performed in the
@@ -63,7 +54,22 @@ public partial class AdminListDialog
         set;
     }
 
-    private SfDataForm EditAdminListForm
+    /// <summary>
+    ///     Gets or sets the EditForm component for the AdminListDialog.
+    /// </summary>
+    /// <remarks>
+    ///     This property represents the EditForm component in the dialog, which is used for editing the details of the
+    ///     AdminList.
+    ///     The form includes a TextBoxControl for input and a SwitchControl for toggling the status of the AdminList.
+    ///     The form's Model is bound to the AdminList and its OnValidSubmit event is bound to the SaveAdminList method.
+    /// </remarks>
+    private EditForm EditAdminForm
+    {
+        get;
+        set;
+    }
+
+    private SfDataForm EditJobOptionsForm
     {
         get;
         set;
@@ -92,7 +98,7 @@ public partial class AdminListDialog
     ///     The value of this property is bound to the Model attribute of the EditForm component.
     /// </remarks>
     [Parameter]
-    public AdminList Model
+    public JobOptions Model
     {
         get;
         set;
@@ -149,6 +155,13 @@ public partial class AdminListDialog
         set;
     } = false;
 
+    [Parameter]
+    public List<KeyValues> TaxTerms
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.
     /// </summary>
@@ -157,7 +170,7 @@ public partial class AdminListDialog
     ///     This method is invoked when the user clicks on the Cancel button in the AdminListDialog.
     /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task CancelAdminList(MouseEventArgs args)
+    private async Task CancelJobOptions(MouseEventArgs args)
     {
         VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
@@ -192,7 +205,7 @@ public partial class AdminListDialog
     ///     It also controls the spinner animation and the dialog buttons during the save operation.
     /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task SaveAdminList(EditContext editContext)
+    private async Task SaveJobOptions(EditContext editContext)
     {
         VisibleSpinner = true;
         await Save.InvokeAsync(editContext);

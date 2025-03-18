@@ -23,16 +23,5 @@
                 </FormGroup>
             </FormItems>
         </SfDataForm>
-
-
-        @*<EditForm Model="@Model" OnValidSubmit="SaveAdminList" @ref="EditAdminForm">
-            <FluentValidationValidator/>
-            <div class="divContainerTable">
-                $1$<TextBoxControl @bind-Value="@(Model.Text)" @bind-Value:event="ValueChanged" ID="textText" MaxLength="100" MinLength="1" Multiline="false" Placeholder="@Placeholder"
-                                ValidationMessage="@(() => Model.Text)" />$2$Readonly="@(!HeaderString.Contains("Add"))"#2#
-                <SwitchControl @bind-BindValue="@(Model.IsEnabled)" ID="checkedEnabled" OffLabel="INACTIVE" OnLabel="ACTIVE" Placeholder="Status?" />#1#
-            </div>
-            <DialogFooter Cancel="Cancel" CancelMethod="CancelAdminList" @ref="FooterDialog" Save="Save"/>
-        </EditForm>*@
     </ChildContent>
 </SfDialog>

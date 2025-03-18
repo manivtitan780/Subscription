@@ -356,8 +356,8 @@ public partial class JobOption : ComponentBase
     /// <summary>
     ///     Handles the event of a row being selected in the JobOption grid.
     /// </summary>
-    /// <param name="JobOption">The selected row data encapsulated in a RowSelectEventArgs object.</param>
-    private void RowSelected(RowSelectingEventArgs<JobOptions> JobOption) => JobOptionRecord = JobOption.Data;
+    /// <param name="jobOption">The selected row data encapsulated in a RowSelectEventArgs object.</param>
+    private void RowSelected(RowSelectingEventArgs<JobOptions> jobOption) => JobOptionRecord = jobOption.Data;
 
     /// <summary>
     ///     Saves the changes made to the JobOption record.

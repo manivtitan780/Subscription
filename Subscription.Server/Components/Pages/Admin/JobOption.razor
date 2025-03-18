@@ -2,19 +2,17 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<AdminGrid AddMethod="() => EditJobOptionAsync()" AutocompleteMethod="Admin_SearchJobOption" AutocompleteParameter="@("JobOption")" Name="@JobOptionAuto"
-           Entity="JobOption" HeaderContentPlural="Job Options" HeaderContentSingular="JobOption" Height="140px" Page="JobOption" RefreshGrid="RefreshGrid" RoleID="@RoleID"
-           ValueChange="FilterGrid" Width="346px">
+<AdminGrid AddMethod="() => EditJobOptionAsync()" AutocompleteMethod="Admin_SearchJobOption" AutocompleteParameter="@("JobOption")" Name="@JobOptionAuto" Entity="JobOption" HeaderContentPlural="Job Options"
+		   HeaderContentSingular="JobOption" Height="140px" Page="JobOption" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" EnableHover="true" EnableStickyHeader="true" DataSource="@DataSource" Height="100%" ID="gridCompany"
 		        TValue="JobOptions" @ref="Grid" Width="100%">
 			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
-			@* <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(AdminJobOptionAdaptor)" Key="ID"/> *@
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="JobOptions"/>
 			<GridColumns>
-				<GridColumn Field="Text" HeaderText="JobOption" Width="30%">
+				<GridColumn Field="Text" HeaderText="Job Option" Width="30%">
 					<Template Context="aCon">
 						@{
 							if (aCon is JobOptions _con)
@@ -27,20 +25,6 @@
 				<GridColumn Field="@nameof(JobOptions.Code)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 				<GridColumn Field="@nameof(JobOptions.Description)" HeaderText="Description" Width="45%"/>
 				<GridColumn Field="@nameof(JobOptions.UpdatedDate)" HeaderText="Last Updated" Width="15%"/>
-				@*
-				<GridColumn Field="@nameof(AdminList.Enabled)" HeaderText="Status" Width="10%">
-					<Template Context="aCon">
-						@{
-							if (aCon is AdminList _con)
-							{
-								<span>@(_con.IsEnabled ? "Active" : "Inactive")</span>
-							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn Field="@nameof(AdminList.UpdatedDate)" Format="d" HeaderText="Last Updated" Width="15%"/>
-				<GridColumn Field="@nameof(AdminList.CreatedDate)" HeaderText="Created" Width="15%"/>
-				*@
 				<GridColumn Width="10%">
 					<Template Context="aCon">
 						@{
@@ -48,8 +32,6 @@
 							{
 								<div class="buttonContain">
 									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditJobOptionAsync(_con.Code)" title="Edit Title"/>
-									@*<SfButton Content="" IconCss="e-icons e-repeat" @onclick="() => ToggleMethod(_con.Code, _con.IsEnabled)"
-									          title="@($"{(_con.IsEnabled ? "Disable" : "Enable")} Title")"/>*@
 								</div>
 							}
 						}

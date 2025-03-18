@@ -16,24 +16,24 @@
 namespace Subscription.Model.Validators;
 
 /// <summary>
-///     Represents a validator for the <see cref="ProfSvc_Classes.JobOption" /> class.
+///     Represents a validator for the <see cref="JobOptions" /> class.
 /// </summary>
 /// <remarks>
-///     This class is responsible for validating the properties of a <see cref="ProfSvc_Classes.JobOption" /> instance.
-///     It extends the <see cref="AbstractValidator{T}" /> class, where T is a <see cref="ProfSvc_Classes.JobOption" />.
+///     This class is responsible for validating the properties of a <see cref="JobOptions" /> instance.
+///     It extends the <see cref="AbstractValidator{T}" /> class, where T is a <see cref="JobOptions" />.
 ///     The validation rules are defined in the constructor of this class.
 /// </remarks>
-public class JobOptionValidator : AbstractValidator<JobOptions>
+public class JobOptionsValidator : AbstractValidator<JobOptions>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="JobOptionValidator" /> class.
+    ///     Initializes a new instance of the <see cref="JobOptionsValidator" /> class.
     /// </summary>
     /// <remarks>
     ///     This constructor sets up the validation rules for the <see cref="JobOptions" /> class.
     ///     The rules are defined for each property of the <see cref="JobOptions" /> class.
     ///     If a rule is violated, a corresponding message is returned.
     /// </remarks>
-    public JobOptionValidator()
+    public JobOptionsValidator()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 

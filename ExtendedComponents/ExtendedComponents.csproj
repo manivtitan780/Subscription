@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.3" />
     <PackageReference Include="Syncfusion.Blazor.Buttons" Version="28.2.11" />
     <PackageReference Include="Syncfusion.Blazor.Charts" Version="28.2.11" />
     <PackageReference Include="Syncfusion.Blazor.Core" Version="28.2.11" />
