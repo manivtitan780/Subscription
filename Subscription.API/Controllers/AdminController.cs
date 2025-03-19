@@ -154,12 +154,25 @@ public class AdminController : ControllerBase
         {
             await _con.OpenAsync();
 
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (_reader.Read())
+            {
+                _returnCode = _reader.NString(0, "[]");
+            }
 
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            string _cacheValue = "[]";
+            await _reader.NextResultAsync();
+            while (_reader.Read())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+            
+            /*_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";*/
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
             {
                 RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                await _service.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
@@ -250,7 +263,7 @@ public class AdminController : ControllerBase
             // ignored
         }
 
-        return jobOption.KeyValue;
+        return Ok(_returnCode);
     }
 
     /// <summary>

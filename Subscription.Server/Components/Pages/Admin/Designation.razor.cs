@@ -8,7 +8,7 @@
 // File Name:           Designation.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 14:03
-// Last Updated On:     03-12-2025 19:03
+// Last Updated On:     03-19-2025 18:03
 // *****************************************/
 
 #endregion
@@ -25,7 +25,7 @@ namespace Subscription.Server.Components.Pages.Admin;
 /// </summary>
 public partial class Designation
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+    // private static TaskCompletionSource<bool> _initializationTaskSource;
 
     /*
     /// <summary>
@@ -40,7 +40,6 @@ public partial class Designation
     }
     */
 
-    private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
@@ -65,8 +64,7 @@ public partial class Designation
         set;
     }
 
-    [Inject]
-    private IConfiguration Configuration
+    private string DesignationAuto
     {
         get;
         set;
@@ -143,45 +141,6 @@ public partial class Designation
         get;
         set;
     }
-    
-    /// <summary>
-    ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
-    ///     browser.
-    ///     It is used in this class to retrieve and store title-specific data, such as the "autoTitle" item and the
-    ///     `LoginCookyUser` object.
-    /// </summary>
-    [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Designation class.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Designation class.
-    ///     It is injected at runtime by the dependency injection system.
-    /// </remarks>
-    [Inject]
-    private ILogger<Designation> Logger
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current title.
-    ///     This object contains information about the user's login session, including their ID, name, email address, role,
-    ///     last login date, and login IP.
-    ///     It is used to manage user authentication and authorization within the application.
-    /// </summary>
-    private LoginCooky LoginCookyUser
-    {
-        get;
-        set;
-    }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -207,6 +166,19 @@ public partial class Designation
     }
 
     private string RoleName
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
+    ///     browser.
+    ///     It is used in this class to retrieve and store title-specific data, such as the "autoTitle" item and the
+    ///     `LoginCookyUser` object.
+    /// </summary>
+    [Inject]
+    private ISessionStorageService SessionStorage
     {
         get;
         set;
@@ -312,11 +284,6 @@ public partial class Designation
     /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
 
-    private string DesignationAuto
-    {
-        get;
-        set;
-    }
     /// <summary>
     ///     Handles the filtering of the grid based on the provided designation.
     ///     This method is triggered when a designation is selected in the grid.
@@ -331,7 +298,6 @@ public partial class Designation
                              {
                                  await FilterSet(designation.Value.NullOrWhiteSpace() ? string.Empty : designation.Value);
                                  await Grid.Refresh(true);
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -344,8 +310,6 @@ public partial class Designation
     private async Task FilterSet(string value)
     {
         DesignationAuto = value;
-        _query ??= new();
-        _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoTitle", value);
     }
 
@@ -356,12 +320,10 @@ public partial class Designation
             string _result = await LocalStorage.GetItemAsStringAsync("autoTitle");
 
             DesignationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-            _query ??= new();
-            _query.AddParams("Filter", DesignationAuto);
 
             try
             {
-                _initializationTaskSource.SetResult(true);
+                await SetDataSource();
             }
             catch
             {
@@ -369,7 +331,7 @@ public partial class Designation
             }
         }
     }
-    
+
     /// <summary>
     ///     This method is called when the component is initialized.
     ///     It retrieves the user's login information from the local storage and checks the user's role.
@@ -378,11 +340,10 @@ public partial class Designation
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
-                                
+
                                 if (_claims == null)
                                 {
                                     NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
@@ -402,7 +363,6 @@ public partial class Designation
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -411,7 +371,7 @@ public partial class Designation
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh(true);
+    private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
     ///     Handles the event of a row being selected in the Designation grid.
@@ -446,11 +406,32 @@ public partial class Designation
                                                                                DesignationRecord = DesignationRecordClone.Copy();
                                                                            }
 
-                                                                           await Grid.Refresh(true);
+                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                           {
+                                                                               await FilterSet(string.Empty);
+                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                           }
 
-                                                                           int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);
+                                                                           // int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                           // await Grid.SelectRowAsync(_index);
                                                                        });
+
+    private async Task SetDataSource()
+    {
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetDesignations"},
+                                                     {"filter", DesignationAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+    }
+
+    private List<AdminList> DataSource
+    {
+        get;
+        set;
+    } = [];
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -482,77 +463,19 @@ public partial class Designation
                                                                                                                           {"methodName", "Admin_ToggleDesignationStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
-                                                                             _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
 
-                                                                             await Grid.Refresh(true);
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                             {
+                                                                                 await FilterSet(string.Empty);
+                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                             }
 
+                                                                             /*
                                                                              int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                              await Grid.SelectRowAsync(_index);
+                                                                         */
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
-    /// <summary>
-    ///     The AdminDesignationAdaptor class is a data adaptor for the Admin Designation page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin Designation page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminDesignationAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin Designation page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetDesignations"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
-                                           }
-                           : _adminList;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
 }

@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Eligibility : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+    // private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
@@ -273,8 +273,6 @@ public partial class Eligibility : ComponentBase
                              {
                                  await FilterSet(eligibility.Value.NullOrWhiteSpace() ? string.Empty : eligibility.Value);
                                  await SetDataSource();
-                                 //await Grid.Refresh(true);
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -301,7 +299,7 @@ public partial class Eligibility : ComponentBase
             try
             {
                 await SetDataSource();
-                _initializationTaskSource.SetResult(true);
+                // _initializationTaskSource.SetResult(true);
             }
             catch
             {
@@ -318,7 +316,7 @@ public partial class Eligibility : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
+        // _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -342,7 +340,6 @@ public partial class Eligibility : ComponentBase
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -389,6 +386,7 @@ public partial class Eligibility : ComponentBase
                                                                            //await Grid.Refresh(true);
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
+                                                                               await FilterSet(string.Empty);
                                                                                DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                            }
 
@@ -417,8 +415,6 @@ public partial class Eligibility : ComponentBase
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
                                                                      {
-                                                                         /*_selectedID = id;
-                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;*/
                                                                          List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
                                                                          if (_selectedList.Count == 0 || _selectedList.First().ID != id)
                                                                          {
@@ -447,70 +443,5 @@ public partial class Eligibility : ComponentBase
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
-    /*
-    /// <summary>
-    ///     The AdminEligibilityAdaptor class is a data adaptor for the Admin Eligibility page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin Eligibility page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminEligibilityAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin Eligibility page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetEligibility"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
-                                           }
-                           : _adminList;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
-*/
+    
 }

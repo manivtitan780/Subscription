@@ -392,6 +392,7 @@ public partial class JobOption : ComponentBase
                                                                          //await Grid.Refresh(true);
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
+                                                                             await FilterSet(string.Empty);
                                                                              DataSource = General.DeserializeObject<List<JobOptions>>(_response);
                                                                          }
 
@@ -409,112 +410,4 @@ public partial class JobOption : ComponentBase
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);
     }
-
-    /// <summary>
-    ///     Toggles the status of an JobOptions item and shows a confirmation dialog.
-    /// </summary>
-    /// <param name="id">The ID of the JobOptions item to toggle.</param>
-    /// <param name="enabled">
-    ///     The new status to set for the JobOptions item. If true, the status is set to 2, otherwise it is
-    ///     set to 1.
-    /// </param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    private Task ToggleMethod(string id, bool enabled) => ExecuteMethod(async () =>
-                                                                        {
-                                                                            /*_selectedID = id;
-                                                                            _toggleValue = enabled ? (byte)2 : (byte)1;*/
-                                                                            List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                            if (_selectedList.Count == 0 || _selectedList.First().KeyValue != id)
-                                                                            {
-                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                                await Grid.SelectRowAsync(_index);
-                                                                            }
-
-                                                                            if (await DialogService.ConfirmAsync(null, enabled ? "Disable JobOption?" : "Enable JobOption?",
-                                                                                                                 General.DialogOptions("Are you sure you want to <strong>"
-                                                                                                                                       + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                       "this <i>JobOption</i>?")))
-                                                                            {
-                                                                                Dictionary<string, string> _parameters = new()
-                                                                                                                         {
-                                                                                                                             {"methodName", "Admin_ToggleJobOptionStatus"},
-                                                                                                                             {"id", id}
-                                                                                                                         };
-                                                                                string _response = await General.ExecuteRest<string>("Admin/ToggleJobOptions", _parameters);
-
-                                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                                {
-                                                                                    DataSource = General.DeserializeObject<List<JobOptions>>(_response);
-                                                                                }
-                                                                                /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                                await Grid.SelectRowAsync(_index);*/
-                                                                            }
-                                                                            // await AdminGrid.DialogConfirm.ShowDialog();
-                                                                        });
-
-    /*
-    /// <summary>
-    ///     The AdminJobOptionAdaptor class is a data adaptor for the Admin JobOption page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin JobOption page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminJobOptionAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin JobOption page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetJobOption"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetJobOptions", _parameters, null, false);
-                List<JobOptions> _JobOptions = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _JobOptions,
-                                               Count = _JobOptions.Count
-                                           }
-                           : _JobOptions;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
-*/
 }
