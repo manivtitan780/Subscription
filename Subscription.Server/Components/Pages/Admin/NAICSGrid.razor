@@ -1,0 +1,46 @@
+@page "/Admin/NAICS"
+@layout SubscriptionLayout
+
+<PageHeader/>
+<AdminGrid AddMethod="() => EditNAICSAsync()" AutocompleteMethod="Admin_SearchNAICS" AutocompleteParameter="@("NAICS")" Name="@NAICSAuto"
+           Entity="NAICS" HeaderContentPlural="Eligibilities" HeaderContentSingular="NAICS" Height="140px" Page="NAICS" @ref="AdminGrid"
+           RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+	<GridContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%"
+		        ID="gridCompany" @ref="Grid" TValue="NAICS" Width="100%">
+			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
+			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="NAICS"/>
+			<GridColumns>
+				<GridColumn Field="Text" HeaderText="NAICS" Width="50%">
+					<Template Context="aCon">
+						@{
+							if (aCon is NAICS _con)
+							{
+								<span class="point" @onclick="() => EditNAICSAsync(_con.ID)">@_con.Title</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(NAICS.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn Field="@nameof(NAICS.UpdatedDate)" HeaderText="Last Updated" Width="15%"/>
+				<GridColumn Field="@nameof(NAICS.CreatedDate)" HeaderText="Created" Width="15%"/>
+				<GridColumn Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is NAICS _con)
+							{
+								<div class="buttonContain">
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditNAICSAsync(_con.ID)" title="Edit Title"/>
+								</div>
+							}
+						}
+					</Template>
+				</GridColumn>
+			</GridColumns>
+		</SfGrid>
+	</GridContent>
+</AdminGrid>
+
+@*<NAICSDialog HeaderString="@($"{Title} NAICS")" Model="NAICSRecordClone" Placeholder="NAICS" @ref="AdminDialog" Save="SaveNAICS"/>*@

@@ -8,7 +8,7 @@
 // File Name:           Source.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
-// Last Updated On:     03-13-2025 19:03
+// Last Updated On:     03-19-2025 21:03
 // *****************************************/
 
 #endregion
@@ -17,9 +17,6 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Source : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
-
-    private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
@@ -44,12 +41,11 @@ public partial class Source : ComponentBase
         set;
     }
 
-    [Inject]
-    private IConfiguration Configuration
+    private List<AdminList> DataSource
     {
         get;
         set;
-    }
+    } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -70,16 +66,6 @@ public partial class Source : ComponentBase
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the filter value for the application Source in the administrative context.
-    ///     This static property is used to filter the Source based on certain criteria in the administrative context.
-    /// </summary>
-    private static string Filter
-    {
-        get;
-        set;
-    }
-
     private SfGrid<AdminList> Grid
     {
         get;
@@ -94,32 +80,6 @@ public partial class Source : ComponentBase
     /// </summary>
     [Inject]
     private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Source class.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Source class.
-    ///     It is injected at runtime by the dependency injection system.
-    /// </remarks>
-    [Inject]
-    private ILogger<Source> Logger
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Source.
-    ///     This object contains information about the user's login session, including their ID, name, email address, role,
-    ///     last login date, and login IP.
-    ///     It is used to manage user authentication and authorization within the application.
-    /// </summary>
-    private LoginCooky LoginCookyUser
     {
         get;
         set;
@@ -310,7 +270,7 @@ public partial class Source : ComponentBase
         return ExecuteMethod(async () =>
                              {
                                  await FilterSet(source.Value.NullOrWhiteSpace() ? string.Empty : source.Value);
-                                 await Grid.Refresh(true);
+                                 await SetDataSource();
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
@@ -324,8 +284,6 @@ public partial class Source : ComponentBase
     private async Task FilterSet(string value)
     {
         SourceAuto = value;
-        _query ??= new();
-        _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoSource", value);
     }
 
@@ -336,12 +294,10 @@ public partial class Source : ComponentBase
             string _result = await LocalStorage.GetItemAsStringAsync("autoSource");
 
             SourceAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-            _query ??= new();
-            _query.AddParams("Filter", SourceAuto);
 
             try
             {
-                _initializationTaskSource.SetResult(true);
+                await SetDataSource();
             }
             catch
             {
@@ -358,7 +314,6 @@ public partial class Source : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -382,7 +337,6 @@ public partial class Source : ComponentBase
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -391,7 +345,7 @@ public partial class Source : ComponentBase
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh(true);
+    private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
     ///     Handles the event of a row being selected in the Source grid.
@@ -426,11 +380,26 @@ public partial class Source : ComponentBase
                                                                           SourceRecord = SourceRecordClone.Copy();
                                                                       }
 
-                                                                      await Grid.Refresh(true);
+                                                                      if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                      {
+                                                                          await FilterSet(string.Empty);
+                                                                          DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                      }
 
                                                                       /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
                                                                       await Grid.SelectRowAsync(_index);*/
                                                                   });
+
+    private async Task SetDataSource()
+    {
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetLeadSources"},
+                                                     {"filter", SourceAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+    }
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -462,77 +431,12 @@ public partial class Source : ComponentBase
                                                                                                                           {"methodName", "Admin_ToggleLeadSourceStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
-                                                                             _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
-
-                                                                             await Grid.Refresh(true);
-
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
+                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                             {
+                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                             }
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
-    /// <summary>
-    ///     The AdminSourceAdaptor class is a data adaptor for the Admin Source page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin Source page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminSourceAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin Source page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetLeadSources"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
-                                           }
-                           : _adminList;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
 }

@@ -28,4 +28,26 @@ public class NAICS
         get;
         set;
     }
+
+    public string CreatedDate
+    {
+        get;
+        set;
+    }
+
+    public string UpdatedDate
+    {
+        get;
+        set;
+    }
+    
+    public void Clear()
+    {
+        ID = 0;
+        Title = string.Empty;
+        CreatedDate = DateTime.Today.CultureDate();
+        UpdatedDate = DateTime.Today.CultureDate();
+    }
+    
+    public NAICS Copy() => MemberwiseClone() as NAICS;
 }
