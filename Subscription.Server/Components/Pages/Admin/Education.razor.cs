@@ -17,9 +17,6 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Education : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
-
-    private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
@@ -44,27 +41,12 @@ public partial class Education : ComponentBase
         set;
     }
 
-    [Inject]
-    private IConfiguration Configuration
+    private List<AdminList> DataSource
     {
         get;
         set;
-    }
+    } = [];
 
-    /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    ///     This service is injected into the component and used in methods like <see cref="DeleteEducationMethod" /> to
-    ///     confirm actions before proceeding.
-    /// </remarks>
     [Inject]
     private SfDialogService DialogService
     {
@@ -102,31 +84,7 @@ public partial class Education : ComponentBase
         set;
     } = new();
 
-    /// <summary>
-    ///     Gets or sets the filter value for the application titles in the administrative context.
-    ///     This static property is used to filter the titles based on certain criteria in the administrative context.
-    /// </summary>
-    private static string Filter
-    {
-        get;
-        set;
-    }
-
     private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the JavaScript runtime instance. The JavaScript runtime provides a mechanism for running JavaScript in
-    ///     the context of the component.
-    ///     This property is injected into the component and is used to call JavaScript functions from .NET code.
-    ///     For example, it is used in the 'Save' method to scroll to a specific row in the grid, and in the
-    ///     'ToggleStatusAsync' method to toggle the status of a title.
-    /// </summary>
-    [Inject]
-    private IJSRuntime JsRuntime
     {
         get;
         set;
@@ -140,32 +98,6 @@ public partial class Education : ComponentBase
     /// </summary>
     [Inject]
     private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Education class.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Education class.
-    ///     It is injected at runtime by the dependency injection system.
-    /// </remarks>
-    [Inject]
-    private ILogger<Education> Logger
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current title.
-    ///     This object contains information about the user's login session, including their ID, name, email address, role,
-    ///     last login date, and login IP.
-    ///     It is used to manage user authentication and authorization within the application.
-    /// </summary>
-    private LoginCooky LoginCookyUser
     {
         get;
         set;
@@ -298,7 +230,7 @@ public partial class Education : ComponentBase
                                                                      }
 
                                                                      VisibleSpinner = false;
-                                                                     EducationRecordClone.Entity = "Title";
+                                                                     EducationRecordClone.Entity = "Education";
                                                                      await AdminDialog.ShowDialog();
                                                                  });
 
@@ -326,8 +258,7 @@ public partial class Education : ComponentBase
         return ExecuteMethod(async () =>
                              {
                                  await FilterSet(education.Value.NullOrWhiteSpace() ? string.Empty : education.Value);
-                                 await Grid.Refresh(true);
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
+                                 await SetDataSource();
                              });
     }
 
@@ -340,8 +271,6 @@ public partial class Education : ComponentBase
     private async Task FilterSet(string value)
     {
         EducationAuto = value;
-        _query ??= new();
-        _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoEducation", value);
     }
 
@@ -352,12 +281,10 @@ public partial class Education : ComponentBase
             string _result = await LocalStorage.GetItemAsStringAsync("autoEducation");
 
             EducationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-            _query ??= new();
-            _query.AddParams("Filter", EducationAuto);
 
             try
             {
-                _initializationTaskSource.SetResult(true);
+                await SetDataSource();
             }
             catch
             {
@@ -374,7 +301,6 @@ public partial class Education : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -398,7 +324,6 @@ public partial class Education : ComponentBase
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -407,7 +332,7 @@ public partial class Education : ComponentBase
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh(true);
+    private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
     ///     Handles the event of a row being selected in the Education grid.
@@ -442,11 +367,28 @@ public partial class Education : ComponentBase
                                                                              EducationRecord = EducationRecordClone.Copy();
                                                                          }
 
-                                                                         await Grid.Refresh(true);
+                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                         {
+                                                                             await FilterSet(string.Empty);
+                                                                             DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                         }
+
+                                                                         /*await Grid.Refresh(true);
 
                                                                          int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                         await Grid.SelectRowAsync(_index);
+                                                                         await Grid.SelectRowAsync(_index);*/
                                                                      });
+
+    private async Task SetDataSource()
+    {
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetEligibility"},
+                                                     {"filter", EducationAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+    }
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -479,77 +421,14 @@ public partial class Education : ComponentBase
                                                                                                                           {"methodName", "Admin_ToggleEducationStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
-                                                                             _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
 
-                                                                             await Grid.Refresh(true);
-
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                             {
+                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                             }
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
 
-    /// <summary>
-    ///     The AdminEducationAdaptor class is a data adaptor for the Admin Education page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin Education page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminEducationAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin Education page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetEducation"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
-                                           }
-                           : _adminList;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
 }

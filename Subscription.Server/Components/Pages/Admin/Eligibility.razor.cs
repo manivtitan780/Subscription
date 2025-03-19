@@ -8,7 +8,7 @@
 // File Name:           Eligibility.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 16:03
-// Last Updated On:     03-13-2025 16:03
+// Last Updated On:     03-19-2025 19:03
 // *****************************************/
 
 #endregion
@@ -17,8 +17,6 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Eligibility : ComponentBase
 {
-    // private static TaskCompletionSource<bool> _initializationTaskSource;
-
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
@@ -38,6 +36,31 @@ public partial class Eligibility : ComponentBase
     }
 
     private bool AdminScreens
+    {
+        get;
+        set;
+    }
+
+    private List<AdminList> DataSource
+    {
+        get;
+        set;
+    } = [];
+
+    /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    /// </remarks>
+    [Inject]
+    private SfDialogService DialogService
     {
         get;
         set;
@@ -72,25 +95,6 @@ public partial class Eligibility : ComponentBase
         get;
         set;
     } = new();
-
-    /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    /// </remarks>
-    [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
 
     private SfGrid<AdminList> Grid
     {
@@ -181,12 +185,6 @@ public partial class Eligibility : ComponentBase
         get;
         set;
     }
-
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
 
     private async Task DataBound(object arg)
     {
@@ -299,7 +297,6 @@ public partial class Eligibility : ComponentBase
             try
             {
                 await SetDataSource();
-                // _initializationTaskSource.SetResult(true);
             }
             catch
             {
@@ -316,7 +313,6 @@ public partial class Eligibility : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        // _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -404,6 +400,7 @@ public partial class Eligibility : ComponentBase
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
     }
+
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
     /// </summary>
@@ -443,5 +440,4 @@ public partial class Eligibility : ComponentBase
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-    
 }

@@ -1,12 +1,22 @@
-using Microsoft.AspNetCore.Components;
+#region Header
+
+// /*****************************************
+// Copyright:           Titan-Techs.
+// Location:            Newtown, PA, USA
+// Solution:            Subscription
+// Project:             Subscription.Server
+// File Name:           DocumentType.razor.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          03-14-2025 20:03
+// Last Updated On:     03-19-2025 19:03
+// *****************************************/
+
+#endregion
 
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class DocumentType : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
-
-    private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /*
@@ -33,14 +43,38 @@ public partial class DocumentType : ComponentBase
         set;
     }
 
+    private List<DocumentTypes> DataSource
+    {
+        get;
+        set;
+    } = [];
+
+    /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    /// </remarks>
     [Inject]
-    private IConfiguration Configuration
+    private SfDialogService DialogService
     {
         get;
         set;
     }
 
     private string DocumentTypeAuto
+    {
+        get;
+        set;
+    }
+
+    private DocumentTypeDialog DocumentTypeDialog
     {
         get;
         set;
@@ -70,35 +104,6 @@ public partial class DocumentType : ComponentBase
         set;
     } = new();
 
-    /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    /// </remarks>
-    [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the filter value for the application DocumentType in the administrative context.
-    ///     This static property is used to filter the DocumentType based on certain criteria in the administrative context.
-    /// </summary>
-    private static string Filter
-    {
-        get;
-        set;
-    }
-
     private SfGrid<DocumentTypes> Grid
     {
         get;
@@ -113,32 +118,6 @@ public partial class DocumentType : ComponentBase
     /// </summary>
     [Inject]
     private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the DocumentType class.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the DocumentType class.
-    ///     It is injected at runtime by the dependency injection system.
-    /// </remarks>
-    [Inject]
-    private ILogger<DocumentType> Logger
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current DocumentType.
-    ///     This object contains information about the user's login session, including their ID, name, email address, role,
-    ///     last login date, and login IP.
-    ///     It is used to manage user authentication and authorization within the application.
-    /// </summary>
-    private LoginCooky LoginCookyUser
     {
         get;
         set;
@@ -210,12 +189,6 @@ public partial class DocumentType : ComponentBase
     }
 
     private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
-
-    private DocumentTypeDialog DocumentTypeDialog
     {
         get;
         set;
@@ -305,8 +278,6 @@ public partial class DocumentType : ComponentBase
                              {
                                  await FilterSet(documentType.Value.NullOrWhiteSpace() ? string.Empty : documentType.Value);
                                  await SetDataSource();
-                                 //await Grid.Refresh(true);
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -319,16 +290,8 @@ public partial class DocumentType : ComponentBase
     private async Task FilterSet(string value)
     {
         DocumentTypeAuto = value;
-        _query ??= new();
-        _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoDocumentType", value);
     }
-
-    private List<DocumentTypes> DataSource
-    {
-        get;
-        set;
-    } = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -337,13 +300,10 @@ public partial class DocumentType : ComponentBase
             string _result = await LocalStorage.GetItemAsStringAsync("autoDocumentType");
 
             DocumentTypeAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-            _query ??= new();
-            _query.AddParams("Filter", DocumentTypeAuto);
 
             try
             {
                 await SetDataSource();
-                _initializationTaskSource.SetResult(true);
             }
             catch
             {
@@ -352,18 +312,7 @@ public partial class DocumentType : ComponentBase
         }
     }
 
-    private async Task SetDataSource()
-    {
-        Dictionary<string, string> _parameters = new()
-                                                 {
-                                                     {"methodName", "Admin_GetDocumentTypes"},
-                                                     {"filter", DocumentTypeAuto ?? string.Empty}
-                                                 };
-        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
-    }
-
-/// <summary>
+    /// <summary>
     ///     This method is called when the component is initialized.
     ///     It retrieves the user's login information from the local storage and checks the user's role.
     ///     If the user's role is not "AD" (Administrator), it redirects the user to the home page.
@@ -371,7 +320,6 @@ public partial class DocumentType : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -395,7 +343,6 @@ public partial class DocumentType : ComponentBase
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -404,7 +351,7 @@ public partial class DocumentType : ComponentBase
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh(true);
+    private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
     ///     Handles the event of a row being selected in the DocumentType grid.
@@ -423,76 +370,37 @@ public partial class DocumentType : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveDocumentType(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"cacheName", CacheObjects.DocumentTypes.ToString()}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveDocumentType", _parameters,
-                                                                                                                                DocumentTypeRecordClone);
-                                                                           if (DocumentTypeRecordClone != null)
-                                                                           {
-                                                                               DocumentTypeRecord = DocumentTypeRecordClone.Copy();
-                                                                           }
+                                                                        {
+                                                                            Dictionary<string, string> _parameters = new()
+                                                                                                                     {
+                                                                                                                         {"cacheName", CacheObjects.DocumentTypes.ToString()}
+                                                                                                                     };
+                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveDocumentType", _parameters,
+                                                                                                                                 DocumentTypeRecordClone);
+                                                                            if (DocumentTypeRecordClone != null)
+                                                                            {
+                                                                                DocumentTypeRecord = DocumentTypeRecordClone.Copy();
+                                                                            }
 
-                                                                           DataSource = General.DeserializeObject<List<DocumentTypes>>(_response);
-                                                                           //await Grid.Refresh(false);
+                                                                            if (_response.NotNullOrWhiteSpace() && _response != "null")
+                                                                            {
+                                                                                DataSource = General.DeserializeObject<List<DocumentTypes>>(_response);
+                                                                            }
+                                                                            
+                                                                            //await Grid.Refresh(false);
 
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                            /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                            await Grid.SelectRowAsync(_index);*/
+                                                                        });
 
-    public class AdminDocumentTypeAdaptor : DataAdaptor
+    private async Task SetDataSource()
     {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin DocumentType page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetDocumentTypes"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<DocumentTypes> _documentType = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _documentType,
-                                               Count = _documentType.Count
-                                           }
-                           : _documentType;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetDocumentTypes"},
+                                                     {"filter", DocumentTypeAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
     }
 }
