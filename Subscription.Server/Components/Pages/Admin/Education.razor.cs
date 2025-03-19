@@ -383,7 +383,7 @@ public partial class Education : ComponentBase
     {
         Dictionary<string, string> _parameters = new()
                                                  {
-                                                     {"methodName", "Admin_GetEligibility"},
+                                                     {"methodName", "Admin_GetEducation"},
                                                      {"filter", EducationAuto ?? string.Empty}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);

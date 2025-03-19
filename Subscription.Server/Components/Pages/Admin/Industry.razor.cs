@@ -8,7 +8,7 @@
 // File Name:           Industry.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
-// Last Updated On:     03-13-2025 19:03
+// Last Updated On:     03-19-2025 20:03
 // *****************************************/
 
 #endregion
@@ -17,9 +17,6 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Industry : ComponentBase
 {
-        private static TaskCompletionSource<bool> _initializationTaskSource;
-
-    private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
@@ -44,8 +41,32 @@ public partial class Industry : ComponentBase
         set;
     }
 
+    private List<AdminList> DataSource
+    {
+        get;
+        set;
+    } = [];
+
+    /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    /// </remarks>
     [Inject]
-    private IConfiguration Configuration
+    private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
+
+    private SfGrid<AdminList> Grid
     {
         get;
         set;
@@ -82,41 +103,6 @@ public partial class Industry : ComponentBase
     } = new();
 
     /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    /// </remarks>
-    [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the filter value for the application Industry in the administrative context.
-    ///     This static property is used to filter the Industry based on certain criteria in the administrative context.
-    /// </summary>
-    private static string Filter
-    {
-        get;
-        set;
-    }
-
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
     ///     browser.
     ///     It is used in this class to retrieve and store Industry-specific data, such as the "autoIndustry" item and the
@@ -124,32 +110,6 @@ public partial class Industry : ComponentBase
     /// </summary>
     [Inject]
     private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Industry class.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Industry class.
-    ///     It is injected at runtime by the dependency injection system.
-    /// </remarks>
-    [Inject]
-    private ILogger<Industry> Logger
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Industry.
-    ///     This object contains information about the user's login session, including their ID, name, email address, role,
-    ///     last login date, and login IP.
-    ///     It is used to manage user authentication and authorization within the application.
-    /// </summary>
-    private LoginCooky LoginCookyUser
     {
         get;
         set;
@@ -251,40 +211,40 @@ public partial class Industry : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditIndustryAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                                {
+                                                                    VisibleSpinner = true;
+                                                                    if (id != 0)
+                                                                    {
+                                                                        List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                        if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                        {
+                                                                            int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                            await Grid.SelectRowAsync(_index);
+                                                                        }
+                                                                    }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (IndustryRecordClone == null)
-                                                                           {
-                                                                               IndustryRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               IndustryRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           IndustryRecordClone = IndustryRecord.Copy();
-                                                                       }
+                                                                    if (id == 0)
+                                                                    {
+                                                                        Title = "Add";
+                                                                        if (IndustryRecordClone == null)
+                                                                        {
+                                                                            IndustryRecordClone = new();
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            IndustryRecordClone.Clear();
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Title = "Edit";
+                                                                        IndustryRecordClone = IndustryRecord.Copy();
+                                                                    }
 
-                                                                       VisibleSpinner = false;
-                                                                       IndustryRecordClone.Entity = "Industry";
-                                                                       await AdminDialog.ShowDialog();
-                                                                   });
+                                                                    VisibleSpinner = false;
+                                                                    IndustryRecordClone.Entity = "Industry";
+                                                                    await AdminDialog.ShowDialog();
+                                                                });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -310,7 +270,7 @@ public partial class Industry : ComponentBase
         return ExecuteMethod(async () =>
                              {
                                  await FilterSet(industry.Value.NullOrWhiteSpace() ? string.Empty : industry.Value);
-                                 await Grid.Refresh(true);
+                                 await SetDataSource();
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
@@ -324,8 +284,6 @@ public partial class Industry : ComponentBase
     private async Task FilterSet(string value)
     {
         IndustryAuto = value;
-        _query ??= new();
-        _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoIndustry", value);
     }
 
@@ -336,12 +294,10 @@ public partial class Industry : ComponentBase
             string _result = await LocalStorage.GetItemAsStringAsync("autoIndustry");
 
             IndustryAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-            _query ??= new();
-            _query.AddParams("Filter", IndustryAuto);
 
             try
             {
-                _initializationTaskSource.SetResult(true);
+                await SetDataSource();
             }
             catch
             {
@@ -358,7 +314,6 @@ public partial class Industry : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -382,7 +337,6 @@ public partial class Industry : ComponentBase
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -391,7 +345,7 @@ public partial class Industry : ComponentBase
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh(true);
+    private async Task RefreshGrid() => await SetDataSource(); 
 
     /// <summary>
     ///     Handles the event of a row being selected in the Industry grid.
@@ -410,27 +364,42 @@ public partial class Industry : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveIndustry(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"methodName", "Admin_SaveIndustry"},
-                                                                                                                        {"parameterName", "Industry"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.LeadIndustries.ToString()}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                IndustryRecordClone);
-                                                                           if (IndustryRecordClone != null)
-                                                                           {
-                                                                               IndustryRecord = IndustryRecordClone.Copy();
-                                                                           }
+                                                                    {
+                                                                        Dictionary<string, string> _parameters = new()
+                                                                                                                 {
+                                                                                                                     {"methodName", "Admin_SaveIndustry"},
+                                                                                                                     {"parameterName", "Industry"},
+                                                                                                                     {"containDescription", "false"},
+                                                                                                                     {"isString", "false"},
+                                                                                                                     {"cacheName", CacheObjects.LeadIndustries.ToString()}
+                                                                                                                 };
+                                                                        string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
+                                                                                                                             IndustryRecordClone);
+                                                                        if (IndustryRecordClone != null)
+                                                                        {
+                                                                            IndustryRecord = IndustryRecordClone.Copy();
+                                                                        }
 
-                                                                           await Grid.Refresh(true);
+                                                                        if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                        {
+                                                                            await FilterSet(string.Empty);
+                                                                            DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                        }
 
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                        /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                        await Grid.SelectRowAsync(_index);*/
+                                                                    });
+
+    private async Task SetDataSource()
+    {
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetIndustries"},
+                                                     {"filter", IndustryAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+    }
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -462,77 +431,14 @@ public partial class Industry : ComponentBase
                                                                                                                           {"methodName", "Admin_ToggleIndustryStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
-                                                                             _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
 
-                                                                             await Grid.Refresh(true);
-
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                             {
+                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                             }
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
 
-    /// <summary>
-    ///     The AdminIndustryAdaptor class is a data adaptor for the Admin Industry page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin Industry page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminIndustryAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin Industry page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetIndustries"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
-                                           }
-                           : _adminList;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
 }
