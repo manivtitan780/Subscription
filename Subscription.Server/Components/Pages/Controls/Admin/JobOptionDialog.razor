@@ -1,4 +1,4 @@
-<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="323px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
     <ChildContent>
         <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
         <DialogPositionData X="right" Y="center"></DialogPositionData>
@@ -13,35 +13,38 @@
                 <FluentValidationValidator Validator="_adminListValidator"/>
             </FormValidator>
             <FormItems>
-                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.Code)">
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.KeyValue)">
                         <Template>
-                            <TextBox @bind-Value="Model.Code" ID="textCode" MaxLength="2" Placeholder="Code"/>
+                            <TextBox @bind-Value="Model.KeyValue" ID="textCode" MaxLength="2" Placeholder="Code" />
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.Option)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Text)">
                         <Template>
-                            <TextBox @bind-Value="Model.Option" ID="textOption" MaxLength="255" Placeholder="Job Option"/>
+                            <TextBox @bind-Value="Model.Text" ID="textOption" MaxLength="255" Placeholder="Job Option"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.Description)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
                         <Template>
-                            <TextArea @bind-Value="Model.Option" ID="textDescription" MaxLength="2000" Placeholder="Description"></TextArea>
+                            <TextArea @bind-Value="Model.Text" ID="textDescription" MaxLength="2000" Placeholder="Description"></TextArea>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.PercentText)">
+                        <Template>
+                            <label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
+                            <SfMultiSelect @bind-Value="Model.Tax" DataSource="@TaxTerms" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues" TValue="string" Width="100%">
+                                <MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
+                            </SfMultiSelect>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.RateText)">
                         <Template>
-                            <TextArea @bind-Value="Model.RateText" ID="textRateText" MaxLength="255" Placeholder="Rate Text"></TextArea>
+                            <TextBox @bind-Value="Model.RateText" ID="textRateText" MaxLength="255" Placeholder="Rate Text"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.PercentText)">
                         <Template>
-                            <TextArea @bind-Value="Model.PercentText" ID="textPercentText" MaxLength="255" Placeholder="Percent Text"></TextArea>
-                        </Template>
-                    </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.PercentText)">
-                        <Template>
-                            <MultiSelect @bind-Value="Model.Tax" Model="@TaxTerms" ID="multiTaxTerms" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" Text="Text" Key="KeyValue"/>
+                            <TextBox @bind-Value="Model.PercentText" ID="textPercentText" MaxLength="255" Placeholder="Percent Text"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.CostPercent)">
@@ -51,12 +54,12 @@
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupCheck" LabelText="Display Options">
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.Rate)" LabelText="Benefits required?" ID="checkedRate" EditorType="FormEditorType.Switch"/>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.Exp)" LabelText="Benefits required?" ID="checkedExp" EditorType="FormEditorType.Switch"/>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.PlaceFee)" LabelText="Benefits required?" ID="checkedPlaceFee" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Rate)" LabelText="Rate required?" ID="checkedRate" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Exp)" LabelText="Expenses required?" ID="checkedExp" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.PlaceFee)" LabelText="Placement Fee required?" ID="checkedPlaceFee" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Benefits)" LabelText="Benefits required?" ID="checkedBenefits" EditorType="FormEditorType.Switch"/>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.ShowHours)" LabelText="Benefits required?" ID="checkedShowHours" EditorType="FormEditorType.Switch"/>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.ShowPercent)" LabelText="Benefits required?" ID="checkedShowPercent" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ShowHours)" LabelText="Show Hours?" ID="checkedShowHours" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ShowPercent)" LabelText="Show Percent?" ID="checkedShowPercent" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
             </FormItems>
         </SfDataForm>

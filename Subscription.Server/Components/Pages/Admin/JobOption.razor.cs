@@ -13,6 +13,8 @@
 
 #endregion
 
+using StackExchange.Redis;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class JobOption : ComponentBase
@@ -212,14 +214,14 @@ public partial class JobOption : ComponentBase
                                                                          if (id.NotNullOrWhiteSpace())
                                                                          {
                                                                              List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                             if (_selectedList.Count == 0 || _selectedList.First().Code != id)
+                                                                             if (_selectedList.Count == 0 || _selectedList.First().KeyValue != id)
                                                                              {
                                                                                  int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                                  await Grid.SelectRowAsync(_index);
                                                                              }
                                                                          }
 
-                                                                         if (id.NotNullOrWhiteSpace())
+                                                                         if (id.NullOrWhiteSpace())
                                                                          {
                                                                              Title = "Add";
                                                                              if (JobOptionRecordClone == null)
@@ -333,6 +335,11 @@ public partial class JobOption : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
+                                    List<string> _keys = [CacheObjects.TaxTerms.ToString()];
+                                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+
+                                    RedisValue _cacheValues = await _service.GetAsync(CacheObjects.TaxTerms.ToString());
+                                    TaxTerms = _cacheValues.IsNull ? [] : JsonConvert.DeserializeObject<List<KeyValues>>(_cacheValues.ToString());
                                 }
                             });
 
@@ -340,6 +347,12 @@ public partial class JobOption : ComponentBase
         await base.OnInitializedAsync();
     }
 
+    private List<KeyValues> TaxTerms
+    {
+        get;
+        set;
+    } = [];
+    
     /// <summary>
     ///     Refreshes the grid component of the JobOption page.
     ///     This method is used to update the grid component and reflect any changes made to the data.
@@ -367,10 +380,6 @@ public partial class JobOption : ComponentBase
                                                                      {
                                                                          Dictionary<string, string> _parameters = new()
                                                                                                                   {
-                                                                                                                      {"methodName", "Admin_SaveJobOption"},
-                                                                                                                      {"parameterName", "JobOption"},
-                                                                                                                      {"containDescription", "false"},
-                                                                                                                      {"isString", "false"},
                                                                                                                       {"cacheName", CacheObjects.JobOptions.ToString()}
                                                                                                                   };
                                                                          string _response = await General.ExecuteRest<string>("Admin/SaveJobOptions", _parameters,
@@ -415,7 +424,7 @@ public partial class JobOption : ComponentBase
                                                                             /*_selectedID = id;
                                                                             _toggleValue = enabled ? (byte)2 : (byte)1;*/
                                                                             List<JobOptions> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                            if (_selectedList.Count == 0 || _selectedList.First().Code != id)
+                                                                            if (_selectedList.Count == 0 || _selectedList.First().KeyValue != id)
                                                                             {
                                                                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                                 await Grid.SelectRowAsync(_index);

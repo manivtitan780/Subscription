@@ -39,14 +39,14 @@ public class JobOptionsValidator : AbstractValidator<JobOptions>
 
         When(x => x.IsAdd, () =>
                            {
-                               RuleFor(x => x.Code).NotEmpty().WithMessage("Job Option Code is required")
+                               RuleFor(x => x.KeyValue).NotEmpty().WithMessage("Job Option Code is required")
                                                    .Length(1).WithMessage("Job Option Code should be exactly {MaxLength} character.");
                                //.Must(CheckJobCodeExists).WithMessage("Job Option Code already exists. Enter another Job Option Code.");
                            });
 
         RuleFor(x => x.Description).MaximumLength(500).WithMessage("Job Option Description should be less than {MaxLength} characters.");
 
-        RuleFor(x => x.Option).NotEmpty().WithMessage("Job Option should not be empty.")
+        RuleFor(x => x.Text).NotEmpty().WithMessage("Job Option should not be empty.")
                               .Length(2, 50).WithMessage("Job Option should be between {MinLength} and {MaxLength} characters.");
                               //.Must((obj, option) => CheckJobOptionExists(obj.Code, option)).WithMessage("Job Option already exists. Enter another Job Option.");
 

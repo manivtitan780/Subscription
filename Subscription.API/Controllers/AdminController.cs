@@ -8,7 +8,7 @@
 // File Name:           AdminController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 15:03
-// Last Updated On:     03-16-2025 19:03
+// Last Updated On:     03-18-2025 20:03
 // *****************************************/
 
 #endregion
@@ -208,6 +208,49 @@ public class AdminController : ControllerBase
         }
 
         return Ok(_returnCode);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = "")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveJobOptions", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Char("Code", 1, jobOption.KeyValue);
+        _command.Varchar("JobOptions", 50, jobOption.Text);
+        _command.Varchar("Desc", 500, jobOption.Description);
+        _command.Bit("Duration", jobOption.Duration);
+        _command.Bit("Rate", jobOption.Rate);
+        _command.Bit("Sal", jobOption.Sal);
+        _command.Varchar("TaxTerms", 20, jobOption.Tax);
+        _command.Bit("Expenses", jobOption.Exp);
+        _command.Bit("PlaceFee", jobOption.PlaceFee);
+        _command.Bit("Benefits", jobOption.Benefits);
+        _command.Bit("ShowHours", jobOption.ShowHours);
+        _command.Varchar("RateText", 255, jobOption.RateText);
+        _command.Varchar("PercentText", 255, jobOption.PercentText);
+        _command.Decimal("CostPercent", 5, 2, jobOption.CostPercent);
+        _command.Bit("ShowPercent", jobOption.ShowPercent);
+        _command.Varchar("User", 10, "ADMIN");
+
+        try
+        {
+            await _con.OpenAsync();
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch
+        {
+            // ignored
+        }
+
+        return jobOption.KeyValue;
     }
 
     /// <summary>

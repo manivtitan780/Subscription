@@ -73,7 +73,7 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     ///     If the selected value changes, the ValueChanged event is invoked.
     /// </remarks>
     [Parameter]
-    public TValue? Value
+    public TValue Value
     {
         get => _value;
         set
@@ -119,7 +119,7 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>>? ValueExpression
+    public Expression<Func<TValue>> ValueExpression
     {
         get;
         set;

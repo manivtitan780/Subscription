@@ -34,31 +34,12 @@ public class JobOptions
 		Clear();
 	}
 
-	/// <summary>
-	///     Initializes a new instance of the <see cref="JobOptions" /> class.
-	/// </summary>
-	/// <param name="code">The code for the job option.</param>
-	/// <param name="option">The option for the job.</param>
-	/// <param name="description">The description of the job option. Default is an empty string.</param>
-	/// <param name="updatedDate">The date when the job option was last updated. Default is an empty string.</param>
-	/// <param name="duration">A value indicating whether the job option has a duration. Default is false.</param>
-	/// <param name="rate">A value indicating whether the rate is included in the job option. Default is false.</param>
-	/// <param name="sal">A value indicating whether the salary is included in the job option. Default is false.</param>
-	/// <param name="tax">The tax for the job option. Default is an empty string.</param>
-	/// <param name="exp">A value indicating whether the job option has an expense. Default is false.</param>
-	/// <param name="placeFee">A value indicating whether the job option has a placement fee. Default is false.</param>
-	/// <param name="benefits">A value indicating whether the job option includes benefits. Default is false.</param>
-	/// <param name="showHours">A value indicating whether to show hours for the job option. Default is false.</param>
-	/// <param name="rateText">The text for the rate of the job option. Default is "Rate".</param>
-	/// <param name="percentText">The text for the percent of the job option. Default is "Percent".</param>
-	/// <param name="costPercent">The cost percent for the job option. Default is 0.</param>
-	/// <param name="showPercent">A value indicating whether to show percent for the job option. Default is false.</param>
-	public JobOptions(string code, string option, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
+	public JobOptions(string keyValue, string text, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
 					 bool exp = false, bool placeFee = false, bool benefits = false, bool showHours = false, string rateText = "Rate", string percentText = "Percent", decimal costPercent = 0,
 					 bool showPercent = false)
 	{
-		Code = code;
-		Option = option;
+		KeyValue = keyValue;
+		Text = text;
 		Description = description;
 		UpdatedDate = updatedDate;
 		Duration = duration;
@@ -93,12 +74,12 @@ public class JobOptions
 	}
 
 	/// <summary>
-	///     Gets or sets the code for the job option.
+	///     Gets or sets the KeyValue for the job option.
 	/// </summary>
 	/// <value>
-	///     The code for the job option.
+	///     The KeyValue for the job option.
 	/// </value>
-	public string Code
+	public string KeyValue
 	{
 		get;
 		set;
@@ -188,7 +169,7 @@ public class JobOptions
 	/// <value>
 	///     The option for the job.
 	/// </value>
-	public string Option
+	public string Text
 	{
 		get;
 		set;
@@ -341,8 +322,8 @@ public class JobOptions
 	/// </remarks>
 	public void Clear()
 	{
-		Code = "";
-		Option = "";
+		KeyValue = "";
+		Text = "";
 		Description = "";
 		UpdatedDate = "";
 		Duration = false;

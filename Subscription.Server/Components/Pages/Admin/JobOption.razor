@@ -17,12 +17,12 @@
 						@{
 							if (aCon is JobOptions _con)
 							{
-								<span class="point" @onclick="() => EditJobOptionAsync(_con.Code)">@_con.Option</span>
+								<span class="point" @onclick="() => EditJobOptionAsync(_con.KeyValue)">@_con.Text</span>
 							}
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn Field="@nameof(JobOptions.Code)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn Field="@nameof(JobOptions.KeyValue)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 				<GridColumn Field="@nameof(JobOptions.Description)" HeaderText="Description" Width="45%"/>
 				<GridColumn Field="@nameof(JobOptions.UpdatedDate)" HeaderText="Last Updated" Width="15%"/>
 				<GridColumn Width="10%">
@@ -31,7 +31,7 @@
 							if (aCon is JobOptions _con)
 							{
 								<div class="buttonContain">
-									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditJobOptionAsync(_con.Code)" title="Edit Title"/>
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditJobOptionAsync(_con.KeyValue)" title="Edit Title"/>
 								</div>
 							}
 						}
@@ -41,5 +41,5 @@
 		</SfGrid>
 	</GridContent>
 </AdminGrid>
-<JobOptionDialog HeaderString="@($"{Title} JobOption")" Model="JobOptionRecordClone" Placeholder="JobOption" @ref="JobOptionDialog" Save="SaveJobOption"/>
+<JobOptionDialog HeaderString="@($"{Title} JobOption")" Model="@JobOptionRecordClone" Placeholder="JobOption" @ref="JobOptionDialog" Save="SaveJobOption" TaxTerms="@TaxTerms"/>
 @* <AdminListDialog HeaderString="@($"{Title} JobOption")" Model="JobOptionRecordClone" Placeholder="JobOption" @ref="AdminDialog" Save="SaveJobOption"/> *@
