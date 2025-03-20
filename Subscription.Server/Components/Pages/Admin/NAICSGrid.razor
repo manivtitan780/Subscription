@@ -8,8 +8,8 @@
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%"
-		        ID="gridCompany" @ref="Grid" TValue="NAICS" Width="100%">
-			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
+		        ID="gridCompany" @ref="Grid" TValue="NAICS" Width="100%" EnableVirtualization="true">
+			<GridPageSettings PageSize="50" />
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="NAICS"/>
 			<GridColumns>
