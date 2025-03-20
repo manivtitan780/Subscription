@@ -4,13 +4,13 @@
         <DialogPositionData X="right" Y="center"></DialogPositionData>
         <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
         <DialogEvents OnOpen="OpenDialog"></DialogEvents>
-        <SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveJobOptions" @ref="EditJobOptionsForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+        <SfDataForm EditContext="Context" ID="jobOptionsEditForm" OnValidSubmit="SaveJobOptions" @ref="EditJobOptionsForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
-                <SfButton CssClass="e-primary" type="submit">@($"Save {Placeholder}")</SfButton>
+                <SfButton CssClass="e-primary" type="submit">Save Job Options</SfButton>
                 <SfButton CssClass="e-secondary" OnClick="CancelJobOptions" type="button">Cancel</SfButton>
             </FormButtons>
             <FormValidator>
-                <FluentValidationValidator Validator="_adminListValidator"/>
+                <FluentValidationValidator Validator="_jobOptionsValidator"/>
             </FormValidator>
             <FormItems>
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">

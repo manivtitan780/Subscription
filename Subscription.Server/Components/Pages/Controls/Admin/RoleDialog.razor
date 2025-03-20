@@ -1,0 +1,46 @@
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+    <ChildContent>
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="right" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <SfDataForm EditContext="Context" ID="roleEditForm" OnValidSubmit="SaveRole" @ref="EditRoleForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">Save Role</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelRole" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_roleValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Role Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.RoleName)">
+                        <Template>
+                            <TextBox @bind-Value="Model.RoleName" ID="textCode" MaxLength="2" Placeholder="Code"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Description" ID="textOption" MaxLength="255" Placeholder="Job Option"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+                <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupCheck" LabelText="Permissions">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.CreateOrEditCompany)" LabelText="Create/Edit Company?" ID="checkedCreatedOrEditCompany" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.CreateOrEditCandidate)" LabelText="Create/Edit Candidates?" ID="checkedCreatedOrEditCandidate" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.CreateOrEditRequisitions)" LabelText="Create/Edit Requisitions?" ID="checkedCreatedOrEditRequisitions" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.EditMyCompanyProfile)" LabelText="Edit My Company Profile?" ID="checkedEditMyCompanyProfile" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ViewAllCandidates)" LabelText="View All Candidates?" ID="checkedViewAllCandidates" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ViewOnlyMyCandidates)" LabelText="View only My Candidates?" ID="checkedViewOnlyMyCandidates" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ViewRequisitions)" LabelText="View Requisitions?" ID="checkedViewRequisitions" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ViewAllCompanies)" LabelText="View All Companies?" ID="checkedViewAllCompanies" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ViewMyCompanyProfile)" LabelText="View My Company Profile?" ID="checkedViewMyCompanyProfile" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ManageSubmittedCandidates)" LabelText="Manage Submitted Candidates?" ID="checkedManageSubmittedCandidates" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.DownloadOriginal)" LabelText="Download Original?" ID="checkedDownloadOriginal" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.DownloadFormatted)" LabelText="Download Formatted?" ID="checkedDownloadFormatted" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.AdminScreens)" LabelText="Manage Admin Pages?" ID="checkedAdminScreens" EditorType="FormEditorType.Switch"/>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
+    </ChildContent>
+</SfDialog>

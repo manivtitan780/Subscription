@@ -5,9 +5,9 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           JobOptionDialog.razor.cs
+// File Name:           RoleDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-17-2025 19:03
+// Created On:          03-20-2025 19:03
 // Last Updated On:     03-20-2025 19:03
 // *****************************************/
 
@@ -15,9 +15,9 @@
 
 namespace Subscription.Server.Components.Pages.Controls.Admin;
 
-public partial class JobOptionDialog : ComponentBase
+public partial class RoleDialog : ComponentBase
 {
-    private readonly JobOptionsValidator _jobOptionsValidator = new();
+    private readonly JobOptionsValidator _roleValidator = new();
 
     /// <summary>
     ///     Gets or sets the Cancel event callback that is triggered when the Cancel operation is performed in the
@@ -54,22 +54,7 @@ public partial class JobOptionDialog : ComponentBase
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the EditForm component for the AdminListDialog.
-    /// </summary>
-    /// <remarks>
-    ///     This property represents the EditForm component in the dialog, which is used for editing the details of the
-    ///     AdminList.
-    ///     The form includes a TextBoxControl for input and a SwitchControl for toggling the status of the AdminList.
-    ///     The form's Model is bound to the AdminList and its OnValidSubmit event is bound to the SaveAdminList method.
-    /// </remarks>
-    private EditForm EditAdminForm
-    {
-        get;
-        set;
-    }
-
-    private SfDataForm EditJobOptionsForm
+    private SfDataForm EditRoleForm
     {
         get;
         set;
@@ -98,7 +83,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     The value of this property is bound to the Model attribute of the EditForm component.
     /// </remarks>
     [Parameter]
-    public JobOptions Model
+    public Role Model
     {
         get;
         set;
@@ -160,7 +145,7 @@ public partial class JobOptionDialog : ComponentBase
     {
         get;
         set;
-    } = false;
+    }
 
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.
@@ -170,7 +155,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     This method is invoked when the user clicks on the Cancel button in the AdminListDialog.
     /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task CancelJobOptions(MouseEventArgs args)
+    private async Task CancelRole(MouseEventArgs args)
     {
         VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
@@ -205,7 +190,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     It also controls the spinner animation and the dialog buttons during the save operation.
     /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task SaveJobOptions(EditContext editContext)
+    private async Task SaveRole(EditContext editContext)
     {
         VisibleSpinner = true;
         await Save.InvokeAsync(editContext);

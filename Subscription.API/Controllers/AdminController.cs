@@ -222,6 +222,41 @@ public class AdminController : ControllerBase
 
         return Ok(_returnCode);
     }
+    
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = "NAICS")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveNAICS", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", naics.ID.DBNull());
+
+        _command.Varchar("NAICS", 100, naics.Title);
+
+        try
+        {
+            await _con.OpenAsync();
+
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving NAICS. {ExceptionMessage}", ex.Message);
+        }
+        finally
+        {
+            await _con.CloseAsync();
+        }
+
+        return Ok(_returnCode);
+    }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = "")

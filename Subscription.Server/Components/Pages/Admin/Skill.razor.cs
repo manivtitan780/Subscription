@@ -13,13 +13,10 @@
 
 #endregion
 
-namespace Subscription.Server.Components.Pages;
+namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Skill : ComponentBase
 {
-    private static TaskCompletionSource<bool> _initializationTaskSource;
-
-    private Query _query = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
@@ -43,13 +40,12 @@ public partial class Skill : ComponentBase
         get;
         set;
     }
-
-    [Inject]
-    private IConfiguration Configuration
+    
+    private List<AdminList> DataSource
     {
         get;
         set;
-    }
+    } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -100,16 +96,6 @@ public partial class Skill : ComponentBase
         set;
     } = new();
 
-    /// <summary>
-    ///     Gets or sets the filter value for the application Skill in the administrative context.
-    ///     This static property is used to filter the Skill based on certain criteria in the administrative context.
-    /// </summary>
-    private static string Filter
-    {
-        get;
-        set;
-    }
-
     private SfGrid<AdminList> Grid
     {
         get;
@@ -124,32 +110,6 @@ public partial class Skill : ComponentBase
     /// </summary>
     [Inject]
     private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ILogger instance used for logging in the Skill class.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to log information about the execution of tasks and methods within the Skill class.
-    ///     It is injected at runtime by the dependency injection system.
-    /// </remarks>
-    [Inject]
-    private ILogger<Skill> Logger
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the `LoginCooky` object for the current Skill.
-    ///     This object contains information about the user's login session, including their ID, name, email address, role,
-    ///     last login date, and login IP.
-    ///     It is used to manage user authentication and authorization within the application.
-    /// </summary>
-    private LoginCooky LoginCookyUser
     {
         get;
         set;
@@ -324,8 +284,6 @@ public partial class Skill : ComponentBase
     private async Task FilterSet(string value)
     {
         SkillAuto = value;
-        _query ??= new();
-        _query.AddParams("Filter", value);
         await LocalStorage.SetItemAsStringAsync("autoSkill", value);
     }
 
@@ -336,12 +294,10 @@ public partial class Skill : ComponentBase
             string _result = await LocalStorage.GetItemAsStringAsync("autoSkill");
 
             SkillAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-            _query ??= new();
-            _query.AddParams("Filter", SkillAuto);
 
             try
             {
-                _initializationTaskSource.SetResult(true);
+                await SetDataSource();
             }
             catch
             {
@@ -358,7 +314,6 @@ public partial class Skill : ComponentBase
     /// <returns>A Task that represents the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -382,7 +337,6 @@ public partial class Skill : ComponentBase
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
@@ -391,7 +345,7 @@ public partial class Skill : ComponentBase
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private Task RefreshGrid() => Grid.Refresh(true);
+    private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
     ///     Handles the event of a row being selected in the Skill grid.
@@ -426,11 +380,26 @@ public partial class Skill : ComponentBase
                                                                                SkillRecord = SkillRecordClone.Copy();
                                                                            }
 
-                                                                           await Grid.Refresh(true);
+                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                           {
+                                                                               await FilterSet(string.Empty);
+                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                           }
 
                                                                            /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
                                                                            await Grid.SelectRowAsync(_index);*/
                                                                        });
+
+    private async Task SetDataSource()
+    {
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"methodName", "Admin_GetSkills"},
+                                                     {"filter", SkillAuto ?? string.Empty}
+                                                 };
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
+        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+    }
 
     /// <summary>
     ///     Toggles the status of an AdminList item and shows a confirmation dialog.
@@ -462,77 +431,14 @@ public partial class Skill : ComponentBase
                                                                                                                           {"methodName", "Admin_ToggleSkillStatus"},
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
-                                                                             _ = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
+                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
 
-                                                                             await Grid.Refresh(true);
-
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                             {
+                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                             }
                                                                          }
                                                                          // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
 
-    /// <summary>
-    ///     The AdminSkillAdaptor class is a data adaptor for the Admin Skill page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
-    /// </summary>
-    /// <remarks>
-    ///     This class is used to handle data operations for the Admin Skill page.
-    ///     It communicates with the server to fetch data based on the DataManagerRequest and a key.
-    ///     The ReadAsync method is used to asynchronously fetch data from the server.
-    ///     It uses the General.GetReadAsync method to perform the actual data fetching.
-    /// </remarks>
-    public class AdminSkillAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously fetches data for the Admin Skill page from the server.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key used to fetch specific data. Default is null.</param>
-        /// <returns>A Task that represents the asynchronous operation. The Task result contains the fetched data as an object.</returns>
-        /// <remarks>
-        ///     This method uses the General.GetReadAsync method to fetch data from the server.
-        ///     It sets a flag to prevent multiple simultaneous reads.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                Dictionary<string, string> _parameters = new()
-                                                         {
-                                                             {"methodName", "Admin_GetSkills"},
-                                                             {"filter", dm.Params["Filter"]?.ToString() ?? string.Empty}
-                                                         };
-                string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-                List<AdminList> _adminList = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
-                return dm.RequiresCounts ? new DataResult
-                                           {
-                                               Result = _adminList,
-                                               Count = _adminList.Count
-                                           }
-                           : _adminList;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
-}
+ }

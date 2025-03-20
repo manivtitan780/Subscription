@@ -205,6 +205,17 @@ public class Role
         set;
     }
 
+    public string CreatedDate
+    {
+        get;
+        set;
+    }
+    
+    public string UpdatedDate
+    {
+        get;
+        set;
+    }
     /// <summary>
     ///     Resets all properties of the Role instance to their default values.
     /// </summary>
@@ -231,6 +242,8 @@ public class Role
         ViewMyCompanyProfile = false;
         ViewOnlyMyCandidates = false;
         ViewRequisitions = false;
+        CreatedDate = DateTime.Today.CultureDate();
+        UpdatedDate = DateTime.Today.CultureDate();
     }
 
     /// <summary>

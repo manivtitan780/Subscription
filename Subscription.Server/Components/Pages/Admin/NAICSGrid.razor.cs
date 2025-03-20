@@ -250,7 +250,6 @@ public partial class NAICSGrid : ComponentBase
                                                                  }
 
                                                                  VisibleSpinner = false;
-                                                                 // NAICSRecordClone.Entity = "NAICS";
                                                                  await NAICSDialog.ShowDialog();
                                                              });
 
