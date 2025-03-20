@@ -8,7 +8,7 @@
 // File Name:           NAICSGrid.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-19-2025 21:03
-// Last Updated On:     03-19-2025 21:03
+// Last Updated On:     03-20-2025 15:03
 // *****************************************/
 
 #endregion
@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class NAICSGrid : ComponentBase
 {
-     private readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
     ///     Gets or sets the 'NAICSDialog' instance used for managing NAICS information in the administrative context.
@@ -68,7 +68,32 @@ public partial class NAICSGrid : ComponentBase
         set;
     }
 
+    private SfGrid<NAICS> Grid
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
+    ///     browser.
+    ///     It is used in this class to retrieve and store NAICS-specific data, such as the "autoNAICS" item and the
+    ///     `LoginCookyUser` object.
+    /// </summary>
+    [Inject]
+    private ILocalStorageService LocalStorage
+    {
+        get;
+        set;
+    }
+
     private string NAICSAuto
+    {
+        get;
+        set;
+    }
+
+    private NAICSDialog NAICSDialog
     {
         get;
         set;
@@ -97,25 +122,6 @@ public partial class NAICSGrid : ComponentBase
         get;
         set;
     } = new();
-
-    private SfGrid<NAICS> Grid
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
-    ///     browser.
-    ///     It is used in this class to retrieve and store NAICS-specific data, such as the "autoNAICS" item and the
-    ///     `LoginCookyUser` object.
-    /// </summary>
-    [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -213,40 +219,40 @@ public partial class NAICSGrid : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditNAICSAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<NAICS> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                             {
+                                                                 VisibleSpinner = true;
+                                                                 if (id != 0)
+                                                                 {
+                                                                     List<NAICS> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                     if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                     {
+                                                                         int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                         await Grid.SelectRowAsync(_index);
+                                                                     }
+                                                                 }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (NAICSRecordClone == null)
-                                                                           {
-                                                                               NAICSRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               NAICSRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           NAICSRecordClone = NAICSRecord.Copy();
-                                                                       }
+                                                                 if (id == 0)
+                                                                 {
+                                                                     Title = "Add";
+                                                                     if (NAICSRecordClone == null)
+                                                                     {
+                                                                         NAICSRecordClone = new();
+                                                                     }
+                                                                     else
+                                                                     {
+                                                                         NAICSRecordClone.Clear();
+                                                                     }
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     Title = "Edit";
+                                                                     NAICSRecordClone = NAICSRecord.Copy();
+                                                                 }
 
-                                                                       VisibleSpinner = false;
-                                                                       // NAICSRecordClone.Entity = "NAICS";
-                                                                       //await AdminDialog.ShowDialog();
-                                                                   });
+                                                                 VisibleSpinner = false;
+                                                                 // NAICSRecordClone.Entity = "NAICS";
+                                                                 await NAICSDialog.ShowDialog();
+                                                             });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -365,28 +371,28 @@ public partial class NAICSGrid : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveNAICS(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"cacheName", CacheObjects.NAICS.ToString()}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveNAICS", _parameters,
-                                                                                                                                NAICSRecordClone);
-                                                                           if (NAICSRecordClone != null)
-                                                                           {
-                                                                               NAICSRecord = NAICSRecordClone.Copy();
-                                                                           }
+                                                                 {
+                                                                     Dictionary<string, string> _parameters = new()
+                                                                                                              {
+                                                                                                                  {"cacheName", CacheObjects.NAICS.ToString()}
+                                                                                                              };
+                                                                     string _response = await General.ExecuteRest<string>("Admin/SaveNAICS", _parameters,
+                                                                                                                          NAICSRecordClone);
+                                                                     if (NAICSRecordClone != null)
+                                                                     {
+                                                                         NAICSRecord = NAICSRecordClone.Copy();
+                                                                     }
 
-                                                                           //await Grid.Refresh(true);
-                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                           {
-                                                                               await FilterSet(string.Empty);
-                                                                               DataSource = General.DeserializeObject<List<NAICS>>(_response);
-                                                                           }
+                                                                     //await Grid.Refresh(true);
+                                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                     {
+                                                                         await FilterSet(string.Empty);
+                                                                         DataSource = General.DeserializeObject<List<NAICS>>(_response);
+                                                                     }
 
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                     /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                     await Grid.SelectRowAsync(_index);*/
+                                                                 });
 
     private async Task SetDataSource()
     {

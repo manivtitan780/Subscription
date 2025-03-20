@@ -3,17 +3,17 @@
 
 <PageHeader/>
 <AdminGrid AddMethod="() => EditNAICSAsync()" AutocompleteMethod="Admin_SearchNAICS" AutocompleteParameter="@("NAICS")" Name="@NAICSAuto"
-           Entity="NAICS" HeaderContentPlural="Eligibilities" HeaderContentSingular="NAICS" Height="140px" Page="NAICS" @ref="AdminGrid"
+           Entity="NAICS" HeaderContentPlural="North American Industry Classification System" HeaderContentSingular="NAICS" Height="140px" Page="NAICS" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%"
+		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%"
 		        ID="gridCompany" @ref="Grid" TValue="NAICS" Width="100%" EnableVirtualization="true">
 			<GridPageSettings PageSize="50" />
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="NAICS"/>
 			<GridColumns>
-				<GridColumn Field="Text" HeaderText="NAICS" Width="50%">
+				<GridColumn Field="Text" HeaderText="NAICS Title" Width="50%">
 					<Template Context="aCon">
 						@{
 							if (aCon is NAICS _con)
@@ -43,4 +43,4 @@
 	</GridContent>
 </AdminGrid>
 
-@*<NAICSDialog HeaderString="@($"{Title} NAICS")" Model="NAICSRecordClone" Placeholder="NAICS" @ref="AdminDialog" Save="SaveNAICS"/>*@
+<NAICSDialog HeaderString="@($"{Title} NAICS")" Model="NAICSRecordClone" Placeholder="NAICS" @ref="NAICSDialog" Save="SaveNAICS"/>

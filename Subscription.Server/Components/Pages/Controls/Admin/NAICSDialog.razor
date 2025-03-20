@@ -1,0 +1,26 @@
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+    <ChildContent>
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="right" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveNAICS" @ref="EditNAICSForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">@($"Save {Placeholder}")</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelNAICS" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_naicsValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="NAICS Information">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Title)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Title" ID="textOption" MaxLength="255" Placeholder="NAICS"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
+    </ChildContent>
+</SfDialog>
