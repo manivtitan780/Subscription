@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           RoleValidator.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          07-07-2023 15:29
-// Last Updated On:     10-15-2023 20:05
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          03-20-2025 20:03
+// Last Updated On:     03-20-2025 20:03
 // *****************************************/
 
 #endregion

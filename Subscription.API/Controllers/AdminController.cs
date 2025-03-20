@@ -300,6 +300,52 @@ public class AdminController : ControllerBase
 
         return Ok(_returnCode);
     }
+    
+   [HttpPost]
+    public async Task<ActionResult<string>> SaveRole([FromBody] Role role, string cacheName = "Roles")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveRole", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", role.ID.DBNull());
+        _command.Varchar("RoleName", 10, role.RoleName);
+        _command.Varchar("RoleDescription", 255, role.Description);
+        _command.Bit("@CreateOrEditCompany", role.CreateOrEditCompany);
+        _command.Bit("@CreateOrEditCandidate", role.CreateOrEditCandidate);
+        _command.Bit("@ViewAllCompanies", role.ViewAllCompanies);
+        _command.Bit("@ViewMyCompanyProfile", role.ViewMyCompanyProfile);
+        _command.Bit("@EditMyCompanyProfile", role.EditMyCompanyProfile);
+        _command.Bit("@CreateOrEditRequisitions", role.CreateOrEditRequisitions);
+        _command.Bit("@ViewOnlyMyCandidates", role.ViewOnlyMyCandidates);
+        _command.Bit("@ViewAllCandidates", role.ViewAllCandidates);
+        _command.Bit("@ViewRequisitions", role.ViewRequisitions);
+        _command.Bit("@EditRequisitions", role.EditRequisitions);
+        _command.Bit("@ManageSubmittedCandidates", role.ManageSubmittedCandidates);
+        _command.Bit("@DownloadOriginal", role.DownloadOriginal);
+        _command.Bit("@DownloadFormatted", role.DownloadFormatted);
+        _command.Bit("@AdminScreens", role.AdminScreens);
+        _command.Varchar("User", 10, "ADMIN");
+
+        try
+        {
+            await _con.OpenAsync();
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving roles. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving roles.");
+        }
+
+        return Ok(_returnCode);
+    }
 
     /// <summary>
     ///     Toggles the administrative list based on the provided method name, ID, and username.

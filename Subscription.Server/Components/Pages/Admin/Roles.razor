@@ -7,9 +7,9 @@
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
-		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%"
+		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%"
 		        ID="gridCompany" @ref="Grid" TValue="Role" Width="100%">
-			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
+			<GridPageSettings PageSize="50"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="Role"/>
 			<GridColumns>
@@ -25,8 +25,8 @@
 				</GridColumn>
 				<GridColumn Field="@nameof(Role.Description)" HeaderText="Role Description" Width="35%"/>
 				<GridColumn Field="@nameof(Role.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-				<GridColumn Field="@nameof(Role.UpdatedDate)" HeaderText="Last Updated" Width="15%"/>
 				<GridColumn Field="@nameof(Role.CreatedDate)" HeaderText="Created" Width="15%"/>
+				<GridColumn Field="@nameof(Role.UpdatedDate)" HeaderText="Last Updated" Width="15%"/>
 				<GridColumn Width="10%">
 					<Template Context="aCon">
 						@{
