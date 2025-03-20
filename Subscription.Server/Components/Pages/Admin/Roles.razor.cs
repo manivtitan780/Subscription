@@ -19,7 +19,6 @@ public partial class Roles : ComponentBase
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    /*
     /// <summary>
     ///     Gets or sets the 'RoleDialog' instance used for managing Role information in the administrative context.
     ///     This dialog is used for both creating new Role and editing existing Role.
@@ -29,7 +28,6 @@ public partial class Roles : ComponentBase
         get;
         set;
     }
-    */
 
     public AdminGrid AdminGrid
     {
@@ -245,7 +243,7 @@ public partial class Roles : ComponentBase
 
                                                                        VisibleSpinner = false;
                                                                        //RoleRecordClone.Entity = "Role";
-                                                                       //await RoleDialog.ShowDialog();
+                                                                       await RoleDialog.ShowDialog();
                                                                    });
 
     /// <summary>

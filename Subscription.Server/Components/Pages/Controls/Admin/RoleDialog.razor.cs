@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 
 public partial class RoleDialog : ComponentBase
 {
-    private readonly JobOptionsValidator _roleValidator = new();
+    private readonly RoleValidator _roleValidator = new();
 
     /// <summary>
     ///     Gets or sets the Cancel event callback that is triggered when the Cancel operation is performed in the
