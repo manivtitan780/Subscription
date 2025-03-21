@@ -166,7 +166,7 @@ public class AdminController : ControllerBase
             {
                 _cacheValue = _reader.NString(0, "[]");
             }
-            
+
             /*_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";*/
 
             if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
@@ -222,7 +222,7 @@ public class AdminController : ControllerBase
 
         return Ok(_returnCode);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = "NAICS")
     {
@@ -300,8 +300,8 @@ public class AdminController : ControllerBase
 
         return Ok(_returnCode);
     }
-    
-   [HttpPost]
+
+    [HttpPost]
     public async Task<ActionResult<string>> SaveRole([FromBody] Role role, string cacheName = "Roles")
     {
         await using SqlConnection _con = new(Start.ConnectionString);
@@ -347,6 +347,39 @@ public class AdminController : ControllerBase
         return Ok(_returnCode);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveState([FromBody] State state, string cacheName = "States")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveState", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", state.ID.DBNull());
+        _command.Varchar("Code", 2, state.Code);
+        _command.Varchar("State", 50, state.StateName);
+        _command.Varchar("Country", 50, "USA");
+        _command.Varchar("User", 10, "ADMIN");
+
+        try
+        {
+            await _con.OpenAsync();
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving state. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving state.");
+        }
+
+        return Ok(_returnCode);
+    }
+    
     /// <summary>
     ///     Toggles the administrative list based on the provided method name, ID, and username.
     /// </summary>

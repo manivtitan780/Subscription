@@ -40,7 +40,7 @@ public class StateValidator : AbstractValidator<State>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        When(x => x.ID != 0, () =>
+        When(x => x.ID == 0, () =>
                              {
                                  RuleFor(x => x.Code).NotEmpty().WithMessage("State Code should not be empty.")
                                                      .Length(2).WithMessage("State Code should be exactly {MaxLength} characters.");

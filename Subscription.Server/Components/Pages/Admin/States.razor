@@ -1,6 +1,46 @@
-@page "/States"
-<h3>States</h3>
+@page "/Admin/State"
+@layout SubscriptionLayout
 
-@code {
-	
-}
+<PageHeader/>
+<AdminGrid AddMethod="() => EditStateAsync()" AutocompleteMethod="Admin_SearchState" AutocompleteParameter="@("State")" Name="@StateAuto"
+           Entity="State" HeaderContentPlural="States" HeaderContentSingular="State" Height="140px" Page="State" @ref="AdminGrid"
+           RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+	<GridContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%"
+		        ID="gridCompany" @ref="Grid" TValue="State" Width="100%">
+			<GridPageSettings PageSize="100"/>
+			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="State"/>
+			<GridColumns>
+				<GridColumn Field="Text" HeaderText="State" Width="50%">
+					<Template Context="aCon">
+						@{
+							if (aCon is State _con)
+							{
+								<span class="point" @onclick="() => EditStateAsync(_con.ID)">@_con.StateName</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(State.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn Field="@nameof(State.CreatedDate)" HeaderText="Created" Width="15%"/>
+				<GridColumn Field="@nameof(State.UpdatedDate)" Format="d" HeaderText="Last Updated" Width="15%"/>
+				<GridColumn Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is State _con)
+						{
+								<div class="buttonContain">
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditStateAsync(_con.ID)" title="Edit Title"/>
+								</div>
+							}
+						}
+					</Template>
+				</GridColumn>
+			</GridColumns>
+		</SfGrid>
+	</GridContent>
+</AdminGrid>
+
+<StateDialog HeaderString="@($"{Title} State")" Model="StateRecordClone" Placeholder="State" @ref="StateDialog" Save="SaveState"/>
