@@ -1,0 +1,58 @@
+@page "/Admin/User"
+@layout SubscriptionLayout
+
+<PageHeader/>
+<AdminGrid AddMethod="() => EditUserAsync()" AutocompleteMethod="Admin_SearchUser" AutocompleteParameter="@("User")" Name="@UserAuto"
+           Entity="User" HeaderContentPlural="Users" HeaderContentSingular="User" Height="140px" Page="User" @ref="AdminGrid"
+           RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+	<GridContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%"
+		        ID="gridCompany" @ref="Grid" TValue="User" Width="100%">
+			<GridPageSettings PageSize="50"/>
+			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="User"/>
+			<GridColumns>
+				<GridColumn Field="Text" HeaderText="Name" Width="30%">
+					<Template Context="aCon">
+						@{
+							if (aCon is User _con)
+							{
+								<span class="point" @onclick="() => EditUserAsync(_con.UserName)">@($"{_con.FullName} [{_con.UserName}]")</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(Subscription.Model.User.EmailAddress)" HeaderText="Email" Width="30%"/>
+				<GridColumn Field="@nameof(Subscription.Model.User.UserName)" HeaderText="ID" IsPrimaryKey="true" Visible="true" Width="0"/>
+				<GridColumn Field="@nameof(Subscription.Model.User.Role)" HeaderText="Role" Width="15%"/>
+				<GridColumn Field="@nameof(Subscription.Model.User.Status)" HeaderText="Status" Width="15%">
+					<Template Context="aCon">
+						@{
+							if (aCon is User _con)
+							{
+								<span>@(_con.Status)</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is User _con)
+							{
+								<div class="buttonContain">
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditUserAsync(_con.UserName)" title="Edit User"/>
+									<SfButton Content="" IconCss="e-icons e-repeat" @onclick="() => ToggleMethod(_con.UserName, _con.StatusEnabled)"
+									          title="@($"{(_con.StatusEnabled ? "Disable" : "Enable")} User")"/>
+								</div>
+							}
+						}
+					</Template>
+				</GridColumn>
+			</GridColumns>
+		</SfGrid>
+	</GridContent>
+</AdminGrid>
+@*<UserDialog HeaderString="@($"{Title} User")" Model="UserRecordClone" @ref="DialogUser" RolesList="Roles" Save="Save"/>*@
+@*<UserDialog HeaderString="@($"{Title} User")" Model="UserRecordClone" Placeholder="User" @ref="AdminDialog" Save="SaveUser"/>*@

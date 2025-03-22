@@ -1,5 +1,31 @@
-<h3>TaxTermDialog</h3>
-
-@code {
-	
-}
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="352px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+    <ChildContent>
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="right" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <SfDataForm EditContext="Context" ID="TaxTermEditForm" OnValidSubmit="SaveTaxTerm" @ref="EditTaxTermForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">Save Tax Term</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelTaxTerm" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_taxTermValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Tax Term Information">
+                    <FormItem ColumnSpan="2" Field="@nameof(Model.Code)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Code" ID="textCode" MaxLength="2" Placeholder="Code" Readonly="@(!Model.IsAdd)"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Text)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Text" ID="textOption" MaxLength="255" Placeholder="Tax Term"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
+    </ChildContent>
+</SfDialog>
