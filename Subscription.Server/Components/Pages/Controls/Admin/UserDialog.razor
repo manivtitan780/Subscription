@@ -6,52 +6,51 @@
         <DialogEvents OnOpen="OpenDialog"></DialogEvents>
         <SfDataForm EditContext="Context" ID="UserEditForm" OnValidSubmit="SaveUser" @ref="EditUserForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
-                <SfButton CssClass="e-primary" type="submit">Save Job Options</SfButton>
+                <SfButton CssClass="e-primary" type="submit">Save User</SfButton>
                 <SfButton CssClass="e-secondary" OnClick="CancelUser" type="button">Cancel</SfButton>
             </FormButtons>
             <FormValidator>
                 <FluentValidationValidator Validator="_userValidator"/>
             </FormValidator>
             <FormItems>
-                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.KeyValue)">
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="User Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.UserName)">
                         <Template>
-                            <TextBox @bind-Value="Model.KeyValue" ID="textCode" MaxLength="2" Placeholder="Code"/>
+                            <TextBox @bind-Value="Model.UserName" ID="textUserName" MaxLength="10" Placeholder="UserName"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" Field="@nameof(Model.Text)">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.FirstName)">
                         <Template>
-                            <TextBox @bind-Value="Model.Text" ID="textOption" MaxLength="255" Placeholder="Job Option"/>
+                            <TextBox @bind-Value="Model.FirstName" ID="textFirstName" MaxLength="50" Placeholder="First Name"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.LastName)">
                         <Template>
-                            <TextArea @bind-Value="Model.Description" ID="textDescription" MaxLength="2000" Placeholder="Description"></TextArea>
+                            <TextBox @bind-Value="Model.LastName" ID="textLastName" MaxLength="50" Placeholder="Last Name"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" Field="@nameof(Model.PercentText)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Password)">
                         <Template>
-                            <label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
-                            <SfMultiSelect @bind-Value="Model.Tax" DataSource="@TaxTerms" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues" TValue="string" Width="100%">
-                                <MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
-                            </SfMultiSelect>
+                            <TextBox @bind-Value="Model.Password" ID="textPassword" MaxLength="16" Placeholder="Password" TextBoxType="InputType.Password" />
+                            @{
+                                if (!Model.IsAdd)
+                                {
+                                    <div> Note: Leave password blank if you do not wish to change the password.</div>
+                                }
+                            }
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.RateText)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.EmailAddress)">
                         <Template>
-                            <TextBox @bind-Value="Model.RateText" ID="textRateText" MaxLength="255" Placeholder="Rate Text"/>
+                            <TextBox @bind-Value="Model.EmailAddress" ID="textEmail" MaxLength="255" Placeholder="Email Address"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.PercentText)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.RoleID)">
                         <Template>
-                            <TextBox @bind-Value="Model.PercentText" ID="textPercentText" MaxLength="255" Placeholder="Percent Text"/>
+                            <DropDown @bind-Value="Model.RoleID" Model="Roles" ID="dropState" TItem="IntValues" TValue="byte" Placeholder="State" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.CostPercent)">
-                        <Template>
-                            <NumericTextBox @bind-Value="Model.CostPercent" ID="numericCostPercent" Max="100" Placeholder="Cost Percent" TValue="decimal"/>
-                        </Template>
-                    </FormItem>
+                    <FormItem ColumnSpan="2" Field="@nameof(Model.StatusEnabled)" LabelText="User Active?:" ID="checkedStatus" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
             </FormItems>
         </SfDataForm>
