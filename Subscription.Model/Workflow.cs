@@ -25,21 +25,21 @@ namespace Subscription.Model;
 ///     of the next step, the roles, and the step.
 /// </remarks>
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public class AppWorkflow
+public class Workflow
 {
 	/// <summary>
-	///     Initializes a new instance of the <see cref="AppWorkflow" /> class.
+	///     Initializes a new instance of the <see cref="Workflow" /> class.
 	/// </summary>
 	/// <remarks>
 	///     This constructor is used to reset all properties of the AppWorkflow instance to their default values.
 	/// </remarks>
-	public AppWorkflow()
+	public Workflow()
     {
         Clear();
     }
 
 	/// <summary>
-	///     Initializes a new instance of the <see cref="AppWorkflow" /> class.
+	///     Initializes a new instance of the <see cref="Workflow" /> class.
 	/// </summary>
 	/// <param name="id">The unique identifier for the AppWorkflow instance.</param>
 	/// <param name="step">The step in the workflow.</param>
@@ -51,7 +51,7 @@ public class AppWorkflow
 	/// <param name="nextFull">The full description of the next step in the workflow.</param>
 	/// <param name="roleFull">The full description of the roles associated with the AppWorkflow instance.</param>
 	/// <param name="stepFull">The full description of the step in the workflow. This parameter is optional.</param>
-	public AppWorkflow(int id, string step, string next, bool isLast, string roleIDs, bool schedule, bool anyStage, string nextFull,
+	public Workflow(int id, string step, string next, bool isLast, string roleIDs, bool schedule, bool anyStage, string nextFull,
 					   string roleFull, string stepFull = "")
     {
         ID = id;
@@ -255,5 +255,5 @@ public class AppWorkflow
 	///     Creates a deep copy of the current AppWorkflow object.
 	/// </summary>
 	/// <returns>A new AppWorkflow object that is a deep copy of this instance.</returns>
-	public AppWorkflow Copy() => MemberwiseClone() as AppWorkflow;
+	public Workflow Copy() => MemberwiseClone() as Workflow;
 }

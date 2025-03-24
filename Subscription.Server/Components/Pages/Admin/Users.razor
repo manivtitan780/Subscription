@@ -54,5 +54,5 @@
 		</SfGrid>
 	</GridContent>
 </AdminGrid>
-@*<UserDialog HeaderString="@($"{Title} User")" Model="UserRecordClone" @ref="DialogUser" RolesList="Roles" Save="Save"/>*@
+<UserDialog HeaderString="@($"{Title} User")" Model="UserRecordClone" @ref="UserDialog" RolesList="@Roles" Save="SaveUser"/>
 @*<UserDialog HeaderString="@($"{Title} User")" Model="UserRecordClone" Placeholder="User" @ref="AdminDialog" Save="SaveUser"/>*@

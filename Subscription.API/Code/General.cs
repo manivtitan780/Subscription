@@ -49,8 +49,14 @@ public static class General
     
     internal static byte[] GenerateRandomString(int length = 8)
     {
-        string _randomString = Path.GetRandomFileName().Replace(".", string.Empty)[..length];
-        return Encoding.UTF8.GetBytes(_randomString);
+        //string _randomString = Path.GetRandomFileName().Replace(".", string.Empty)[..length];
+        StringBuilder _result = new(length);
+        while (_result.Length < length)
+        {
+            string _randomString = Path.GetRandomFileName().Replace(".", string.Empty);
+            _result.Append(_randomString);
+        }
+        return Encoding.UTF8.GetBytes(_result.ToString());
     }
     public static async Task SetCache()
     {

@@ -50,7 +50,7 @@ public partial class Candidates
         new() {Name = "Formatted", TooltipText = "Show Formatted Resume"}
     ];
 
-    private List<AppWorkflow> _workflow = [];
+    private List<Workflow> _workflow = [];
 
     private ActivityPanel ActivityPanel
     {
@@ -1400,7 +1400,7 @@ public partial class Candidates
                                 _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()]);
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
                                 _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
-                                _workflow = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
+                                _workflow = General.DeserializeObject<List<Workflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
                                 /*

@@ -20,12 +20,12 @@ public class IntValues
     public string Text
     {
         get;
-        init;
+        set;
     }
 
     public int KeyValue
     {
         get;
-        init;
+        set;
     }
 }

@@ -8,8 +8,16 @@
 // File Name:           Users.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-21-2025 21:03
-// Last Updated On:     03-23-2025 19:03
+// Last Updated On:     03-24-2025 19:03
 // *****************************************/
+
+#endregion
+
+#region Using
+
+using StackExchange.Redis;
+
+using Role = Subscription.Model.Role;
 
 #endregion
 
@@ -104,6 +112,12 @@ public partial class Users : ComponentBase
         get;
         set;
     }
+
+    private List<IntValues> Roles
+    {
+        get;
+        set;
+    } = [];
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -235,16 +249,19 @@ public partial class Users : ComponentBase
                                                                         {
                                                                             UserRecordClone.Clear();
                                                                         }
+
+                                                                        UserRecordClone.IsAdd = true;
                                                                     }
                                                                     else
                                                                     {
                                                                         Title = "Edit";
                                                                         UserRecordClone = UserRecord.Copy();
+                                                                        UserRecordClone.IsAdd = false;
                                                                     }
 
                                                                     VisibleSpinner = false;
                                                                     //UserRecordClone.Entity = "User";
-                                                                    //await UserDialog.ShowDialog();
+                                                                    await UserDialog.ShowDialog();
                                                                 });
 
     /// <summary>
@@ -270,15 +287,15 @@ public partial class Users : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 if (_runFilter)
-                                 {
-                                     await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
-                                     await SetDataSource();
-                                 }
+                                 //if (_runFilter)
+                                 //{
+                                 await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
+                                 await SetDataSource();
+                                 /*}
                                  else
                                  {
                                      _runFilter = true;
-                                 }
+                                 }*/
                              });
     }
 
@@ -341,6 +358,25 @@ public partial class Users : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
+
+                                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                                    RedisValue _value = await _service.GetAsync(CacheObjects.Roles.ToString());
+                                    string _roleString = _value.ToString();
+                                    try
+                                    {
+                                        if (_roleString.NotNullOrWhiteSpace() && _roleString != "[]")
+                                        {
+                                            List<Role> _roles = General.DeserializeObject<List<Role>>(_roleString);
+                                            foreach (Role _role in _roles)
+                                            {
+                                                Roles.Add(new() {KeyValue = _role.ID, Text = $"[{_role.RoleName}] - {_role.Description}"});
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Roles = [];
+                                    }
                                 }
                             });
 

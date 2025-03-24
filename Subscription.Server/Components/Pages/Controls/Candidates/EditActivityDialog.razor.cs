@@ -250,7 +250,7 @@ public partial class EditActivityDialog
     ///     current workflow step.
     /// </remarks>
     [Parameter]
-    public List<AppWorkflow> Status
+    public List<Workflow> Status
     {
         get;
         set;

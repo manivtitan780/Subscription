@@ -388,8 +388,8 @@ public class AdminController : ControllerBase
         await using SqlConnection _con = new(Start.ConnectionString);
 
         string _returnCode = "";
-        byte[] _salt = user.Password.NullOrWhiteSpace() ? new byte[16] : General.GenerateRandomString();
-        byte[] _password = user.Password.NullOrWhiteSpace() ? new byte[16] : General.ComputeHashWithSalt(user.Password, _salt);
+        byte[] _salt = user.Password.NullOrWhiteSpace() ? new byte[64] : General.GenerateRandomString(64);
+        byte[] _password = user.Password.NullOrWhiteSpace() ? new byte[64] : General.ComputeHashWithSalt(user.Password, _salt);
         General.GenerateRandomString();
         await using SqlCommand _command = new("Admin_SaveUser", _con);
         _command.CommandType = CommandType.StoredProcedure;
@@ -400,8 +400,8 @@ public class AdminController : ControllerBase
         _command.TinyInt("Role", user.RoleID);
         _command.Bit("Status", user.StatusEnabled);
         _command.Varchar("User", 10, "ADMIN");
-        _command.Binary("Salt", 16, user.Password.NullOrWhiteSpace() ? DBNull.Value : _salt);
-        _command.Binary("Password", 16, user.Password.NullOrWhiteSpace() ? DBNull.Value : _password);
+        _command.Binary("Salt", 64, user.Password.NullOrWhiteSpace() ? DBNull.Value : _salt);
+        _command.Binary("Password", 64, user.Password.NullOrWhiteSpace() ? DBNull.Value : _password);
         //_command.Varchar("Passwd", 30, user.Password.NullOrWhiteSpace() ? DBNull.Value : user.Password);
         try
         {

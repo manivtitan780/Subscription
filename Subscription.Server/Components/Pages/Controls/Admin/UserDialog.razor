@@ -1,4 +1,4 @@
-<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="575px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
     <ChildContent>
         <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
         <DialogPositionData X="right" Y="center"></DialogPositionData>
@@ -47,10 +47,10 @@
                     </FormItem>
                     <FormItem ColumnSpan="3" Field="@nameof(Model.RoleID)">
                         <Template>
-                            <DropDown @bind-Value="Model.RoleID" Model="Roles" ID="dropState" TItem="IntValues" TValue="byte" Placeholder="State" Text="Text" Key="KeyValue"/>
+                            <DropDown @bind-Value="Model.RoleID" Model="RolesList" ID="dropRole" TItem="IntValues" TValue="int" Placeholder="Role" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="2" Field="@nameof(Model.StatusEnabled)" LabelText="User Active?:" ID="checkedStatus" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="2" Field="@nameof(Model.StatusEnabled)" LabelText="User Active?" ID="checkedStatus" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
             </FormItems>
         </SfDataForm>

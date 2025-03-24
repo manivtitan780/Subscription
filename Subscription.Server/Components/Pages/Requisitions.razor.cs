@@ -42,8 +42,8 @@ public partial class Requisitions
 
     private Requisition _target;
 
-    private readonly List<AppWorkflow> _workflow = [];
-    private List<AppWorkflow> _workflows;
+    private readonly List<Workflow> _workflow = [];
+    private List<Workflow> _workflows;
 
     public ActivityPanelRequisition ActivityPanel
     {
@@ -962,7 +962,7 @@ public partial class Requisitions
                                     // break;
                                 }
 
-                                _workflows = General.DeserializeObject<List<AppWorkflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
+                                _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                             });
 
         await base.OnInitializedAsync();

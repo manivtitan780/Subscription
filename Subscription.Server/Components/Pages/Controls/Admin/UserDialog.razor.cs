@@ -135,7 +135,7 @@ public partial class UserDialog : ComponentBase
     }
 
     [Parameter]
-    public List<IntValues> Roles
+    public List<IntValues> RolesList
     {
         get;
         set;
