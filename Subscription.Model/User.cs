@@ -50,7 +50,7 @@ public class User
 	///     This constructor initializes the user with the provided parameters.
 	///     The 'StatusEnabled' property is initialized based on the 'statusCode' parameter (true if 'statusCode' is "ACT").
 	/// </remarks>
-	public User(string userName, string fullName, string role, string status, string emailAddress, string firstName, string lastName, string roleID,
+	public User(string userName, string fullName, string role, string status, string emailAddress, string firstName, string lastName, byte roleID,
 				bool statusCode) //, string password)
     {
         UserName = userName;
@@ -85,7 +85,7 @@ public class User
         EmailAddress = "";
         FirstName = "";
         LastName = "";
-        RoleID = "RC";
+        RoleID = 4;
         StatusCode = status;
         StatusEnabled = status == "ACT";
         Password = "";
@@ -188,7 +188,7 @@ public class User
 	/// <value>
 	///     The RoleID is a string that represents the unique identifier for a User's role.
 	/// </value>
-	public string RoleID
+	public byte RoleID
     {
         get;
         set;
@@ -261,7 +261,7 @@ public class User
         EmailAddress = "";
         FirstName = "";
         LastName = "";
-        RoleID = "RC";
+        RoleID = 4;
         StatusCode = "ACT";
         StatusEnabled = true;
         CreatedDate = DateTime.Today.CultureDate();

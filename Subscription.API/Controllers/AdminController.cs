@@ -8,10 +8,12 @@
 // File Name:           AdminController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 15:03
-// Last Updated On:     03-18-2025 20:03
+// Last Updated On:     03-24-2025 14:03
 // *****************************************/
 
 #endregion
+
+using System.CodeDom.Compiler;
 
 namespace Subscription.API.Controllers;
 
@@ -224,41 +226,6 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = "NAICS")
-    {
-        await using SqlConnection _con = new(Start.ConnectionString);
-        string _returnCode = "";
-        await using SqlCommand _command = new("Admin_SaveNAICS", _con);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", naics.ID.DBNull());
-
-        _command.Varchar("NAICS", 100, naics.Title);
-
-        try
-        {
-            await _con.OpenAsync();
-
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
-            {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving NAICS. {ExceptionMessage}", ex.Message);
-        }
-        finally
-        {
-            await _con.CloseAsync();
-        }
-
-        return Ok(_returnCode);
-    }
-
-    [HttpPost]
     public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = "")
     {
         await using SqlConnection _con = new(Start.ConnectionString);
@@ -296,6 +263,41 @@ public class AdminController : ControllerBase
         catch
         {
             // ignored
+        }
+
+        return Ok(_returnCode);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = "NAICS")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveNAICS", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", naics.ID.DBNull());
+
+        _command.Varchar("NAICS", 100, naics.Title);
+
+        try
+        {
+            await _con.OpenAsync();
+
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving NAICS. {ExceptionMessage}", ex.Message);
+        }
+        finally
+        {
+            await _con.CloseAsync();
         }
 
         return Ok(_returnCode);
@@ -366,7 +368,7 @@ public class AdminController : ControllerBase
             _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
 
             if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
-            {
+            {       
                 RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
                 await _service.CreateAsync(cacheName, _returnCode);
             }
@@ -379,7 +381,49 @@ public class AdminController : ControllerBase
 
         return Ok(_returnCode);
     }
-    
+
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveUser([FromBody] User user, string cacheName = "Users")
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+
+        string _returnCode = "";
+        byte[] _salt = user.Password.NullOrWhiteSpace() ? new byte[16] : General.GenerateRandomString();
+        byte[] _password = user.Password.NullOrWhiteSpace() ? new byte[16] : General.ComputeHashWithSalt(user.Password, _salt);
+        General.GenerateRandomString();
+        await using SqlCommand _command = new("Admin_SaveUser", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Varchar("UserName", 10, user.UserName);
+        _command.Varchar("FirstName", 50, user.FirstName);
+        _command.Varchar("LastName", 200, user.LastName);
+        _command.Varchar("Email", 200, user.EmailAddress);
+        _command.TinyInt("Role", user.RoleID);
+        _command.Bit("Status", user.StatusEnabled);
+        _command.Varchar("User", 10, "ADMIN");
+        _command.Binary("Salt", 16, user.Password.NullOrWhiteSpace() ? DBNull.Value : _salt);
+        _command.Binary("Password", 16, user.Password.NullOrWhiteSpace() ? DBNull.Value : _password);
+        //_command.Varchar("Passwd", 30, user.Password.NullOrWhiteSpace() ? DBNull.Value : user.Password);
+        try
+        {
+            await _con.OpenAsync();
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await _service.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving user. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving user.");
+            // ignored
+        }
+
+        return Ok(_returnCode);
+    }
+
     /// <summary>
     ///     Toggles the administrative list based on the provided method name, ID, and username.
     /// </summary>

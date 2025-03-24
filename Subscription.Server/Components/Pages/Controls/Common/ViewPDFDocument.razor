@@ -2,7 +2,7 @@
 	<DialogTemplates>
 		<Header>@($"Document: {DocumentName} ({DocumentLocation})")</Header>
 		<Content>
-			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 			<SfPdfViewer2 DownloadFileName="@DownloadFileName" EnableErrorDialog="false" Height="calc(85vh - 85px)" @ref="PdfViewer">
 				<PdfViewerToolbarSettings ToolbarItems="_toolbarItems" ShowTooltip="false"></PdfViewerToolbarSettings>
 			</SfPdfViewer2>

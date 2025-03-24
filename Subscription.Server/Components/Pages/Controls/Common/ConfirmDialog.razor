@@ -4,7 +4,7 @@
 			@(ToggleStatus ? $"{(ToggleValue == 1 ? "Enable" : "Disable")} {Entity}" : IsUndoActivity ? "Undo Activity" : $"Delete {Entity}")
 		</Header>
 		<Content>
-			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000" />
 			<div style="margin: 10px; text-align: center">
 				<label class="wishNewCandidate">
 					@if (IsUndoActivity)

@@ -46,6 +46,12 @@ public static class General
     /// <returns>The deserialized object of type T.</returns>
     internal static T? DeserializeObject<T>(object? array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
 
+    
+    internal static byte[] GenerateRandomString(int length = 8)
+    {
+        string _randomString = Path.GetRandomFileName().Replace(".", string.Empty)[..length];
+        return Encoding.UTF8.GetBytes(_randomString);
+    }
     public static async Task SetCache()
     {
         RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);

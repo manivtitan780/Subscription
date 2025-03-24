@@ -6,7 +6,7 @@
            Entity="Experience" HeaderContentPlural="Experiences" HeaderContentSingular="Experience" Height="140px" Page="Experience" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
-		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>@**@
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" 
 				ID="gridCompany" @ref="Grid" TValue="AdminList" Width="100%">
 			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>

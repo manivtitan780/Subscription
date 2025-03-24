@@ -8,7 +8,7 @@
 // File Name:           Users.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-21-2025 21:03
-// Last Updated On:     03-21-2025 21:03
+// Last Updated On:     03-23-2025 19:03
 // *****************************************/
 
 #endregion
@@ -16,17 +16,9 @@
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Users : ComponentBase
-{    private readonly SemaphoreSlim _semaphore = new(1, 1);
-
-    /// <summary>
-    ///     Gets or sets the 'UserDialog' instance used for managing User information in the administrative context.
-    ///     This dialog is used for both creating new User and editing existing User.
-    /// </summary>
-    private UserDialog UserDialog
-    {
-        get;
-        set;
-    }
+{
+    private bool _runFilter;
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     public AdminGrid AdminGrid
     {
@@ -64,36 +56,6 @@ public partial class Users : ComponentBase
         get;
         set;
     }
-
-    private string UserAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the UserRecord property of the User class.
-    ///     The UserRecord property represents a single User in the application.
-    ///     It is used to hold the data of the selected User in the User grid.
-    ///     The data is encapsulated in a User object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private User UserRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a User record. This property is used to hold a copy of a User record for
-    ///     operations like editing or adding a User.
-    ///     When adding a new User, a new instance of User is created and assigned to this property.
-    ///     When editing an existing User, a copy of the User record to be edited is created and assigned to this property.
-    /// </summary>
-    private User UserRecordClone
-    {
-        get;
-        set;
-    } = new();
 
     private SfGrid<User> Grid
     {
@@ -179,6 +141,46 @@ public partial class Users : ComponentBase
         set;
     }
 
+    private string UserAuto
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the 'UserDialog' instance used for managing User information in the administrative context.
+    ///     This dialog is used for both creating new User and editing existing User.
+    /// </summary>
+    private UserDialog UserDialog
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    ///     Gets or sets the UserRecord property of the User class.
+    ///     The UserRecord property represents a single User in the application.
+    ///     It is used to hold the data of the selected User in the User grid.
+    ///     The data is encapsulated in a User object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private User UserRecord
+    {
+        get;
+        set;
+    } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a User record. This property is used to hold a copy of a User record for
+    ///     operations like editing or adding a User.
+    ///     When adding a new User, a new instance of User is created and assigned to this property.
+    ///     When editing an existing User, a copy of the User record to be edited is created and assigned to this property.
+    /// </summary>
+    private User UserRecordClone
+    {
+        get;
+        set;
+    } = new();
+
     private bool VisibleSpinner
     {
         get;
@@ -210,40 +212,40 @@ public partial class Users : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditUserAsync(string id = "") => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id.NotNullOrWhiteSpace())
-                                                                       {
-                                                                           List<User> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().UserName != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                                {
+                                                                    VisibleSpinner = true;
+                                                                    if (id.NotNullOrWhiteSpace())
+                                                                    {
+                                                                        List<User> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                        if (_selectedList.Count == 0 || _selectedList.First().UserName != id)
+                                                                        {
+                                                                            int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                            await Grid.SelectRowAsync(_index);
+                                                                        }
+                                                                    }
 
-                                                                       if (id.NullOrWhiteSpace())
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (UserRecordClone == null)
-                                                                           {
-                                                                               UserRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               UserRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           UserRecordClone = UserRecord.Copy();
-                                                                       }
+                                                                    if (id.NullOrWhiteSpace())
+                                                                    {
+                                                                        Title = "Add";
+                                                                        if (UserRecordClone == null)
+                                                                        {
+                                                                            UserRecordClone = new();
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            UserRecordClone.Clear();
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Title = "Edit";
+                                                                        UserRecordClone = UserRecord.Copy();
+                                                                    }
 
-                                                                       VisibleSpinner = false;
-                                                                       //UserRecordClone.Entity = "User";
-                                                                       //await UserDialog.ShowDialog();
-                                                                   });
+                                                                    VisibleSpinner = false;
+                                                                    //UserRecordClone.Entity = "User";
+                                                                    //await UserDialog.ShowDialog();
+                                                                });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -268,8 +270,15 @@ public partial class Users : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
-                                 await SetDataSource();
+                                 if (_runFilter)
+                                 {
+                                     await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
+                                     await SetDataSource();
+                                 }
+                                 else
+                                 {
+                                     _runFilter = true;
+                                 }
                              });
     }
 
@@ -362,32 +371,28 @@ public partial class Users : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveUser(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"methodName", "Admin_SaveUser"},
-                                                                                                                        {"parameterName", "User"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Users.ToString()}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveUser", _parameters,
-                                                                                                                                UserRecordClone);
-                                                                           if (UserRecordClone != null)
-                                                                           {
-                                                                               UserRecord = UserRecordClone.Copy();
-                                                                           }
+                                                                {
+                                                                    Dictionary<string, string> _parameters = new()
+                                                                                                             {
+                                                                                                                 {"cacheName", CacheObjects.Users.ToString()}
+                                                                                                             };
+                                                                    string _response = await General.ExecuteRest<string>("Admin/SaveUser", _parameters,
+                                                                                                                         UserRecordClone);
+                                                                    if (UserRecordClone != null)
+                                                                    {
+                                                                        UserRecord = UserRecordClone.Copy();
+                                                                    }
 
-                                                                           //await Grid.Refresh(true);
-                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                           {
-                                                                               await FilterSet(string.Empty);
-                                                                               DataSource = General.DeserializeObject<List<User>>(_response);
-                                                                           }
+                                                                    //await Grid.Refresh(true);
+                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                    {
+                                                                        await FilterSet(string.Empty);
+                                                                        DataSource = General.DeserializeObject<List<User>>(_response);
+                                                                    }
 
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                    /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                    await Grid.SelectRowAsync(_index);*/
+                                                                });
 
     private async Task SetDataSource()
     {
@@ -396,7 +401,7 @@ public partial class Users : ComponentBase
                                                      {"methodName", "Admin_GetUsers"},
                                                      {"filter", UserAuto ?? string.Empty}
                                                  };
-        string _returnValue = await General.ExecuteRest<string>("Admin/GetUser", _parameters, null, false);
+        string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<User>>(_returnValue);
     }
 
@@ -410,33 +415,35 @@ public partial class Users : ComponentBase
     /// </param>
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task ToggleMethod(string id, bool enabled) => ExecuteMethod(async () =>
-                                                                     {
-                                                                         List<User> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                         if (_selectedList.Count == 0 || _selectedList.First().UserName != id)
-                                                                         {
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);
-                                                                         }
+                                                                        {
+                                                                            List<User> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                            if (_selectedList.Count == 0 || _selectedList.First().UserName != id)
+                                                                            {
+                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                                await Grid.SelectRowAsync(_index);
+                                                                            }
 
-                                                                         if (await DialogService.ConfirmAsync(null, enabled ? "Disable User?" : "Enable User?",
-                                                                                                              General.DialogOptions("Are you sure you want to <strong>"
-                                                                                                                                    + (enabled ? "disable" : "enable") + "</strong> " +
-                                                                                                                                    "this <i>User</i>?")))
-                                                                         {
-                                                                             Dictionary<string, string> _parameters = new()
-                                                                                                                      {
-                                                                                                                          {"methodName", "Admin_ToggleUserStatus"},
-                                                                                                                          {"id", id.ToString()}
-                                                                                                                      };
-                                                                             string _response = await General.ExecuteRest<string>("Admin/ToggleUser", _parameters);
+                                                                            if (await DialogService.ConfirmAsync(null, enabled ? "Disable User?" : "Enable User?",
+                                                                                                                 General.DialogOptions("Are you sure you want to <strong>"
+                                                                                                                                       + (enabled ? "disable" : "enable") + "</strong> " +
+                                                                                                                                       "this <i>User</i>?")))
+                                                                            {
+                                                                                Dictionary<string, string> _parameters = new()
+                                                                                                                         {
+                                                                                                                             {"methodName", "Admin_ToggleUserStatus"},
+                                                                                                                             {"id", id},
+                                                                                                                             {"idIsString", "true"},
+                                                                                                                             {"isUser", "true"}
+                                                                                                                         };
+                                                                                string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
 
-                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                             {
-                                                                                 DataSource = General.DeserializeObject<List<User>>(_response);
-                                                                             }
-                                                                             /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);*/
-                                                                         }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
-                                                                     });
+                                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                                {
+                                                                                    DataSource = General.DeserializeObject<List<User>>(_response);
+                                                                                }
+                                                                                /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                                await Grid.SelectRowAsync(_index);*/
+                                                                            }
+                                                                            // await AdminGrid.DialogConfirm.ShowDialog();
+                                                                        });
 }

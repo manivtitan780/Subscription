@@ -52,6 +52,6 @@
 	</div>
 </div>
 @* <ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px"></ConfirmDialog> *@
-<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000"/>
+<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 <ViewPDFDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewPDF"/>@**@
 @* <ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" /> *@

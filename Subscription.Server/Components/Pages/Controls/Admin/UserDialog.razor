@@ -1,5 +1,59 @@
-<h3>UserDialog</h3>
-
-@code {
-	
-}
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+    <ChildContent>
+        <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="right" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <SfDataForm EditContext="Context" ID="UserEditForm" OnValidSubmit="SaveUser" @ref="EditUserForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">Save Job Options</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelUser" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_userValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.KeyValue)">
+                        <Template>
+                            <TextBox @bind-Value="Model.KeyValue" ID="textCode" MaxLength="2" Placeholder="Code"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Text)">
+                        <Template>
+                            <TextBox @bind-Value="Model.Text" ID="textOption" MaxLength="255" Placeholder="Job Option"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Description)">
+                        <Template>
+                            <TextArea @bind-Value="Model.Description" ID="textDescription" MaxLength="2000" Placeholder="Description"></TextArea>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.PercentText)">
+                        <Template>
+                            <label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
+                            <SfMultiSelect @bind-Value="Model.Tax" DataSource="@TaxTerms" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues" TValue="string" Width="100%">
+                                <MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
+                            </SfMultiSelect>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.RateText)">
+                        <Template>
+                            <TextBox @bind-Value="Model.RateText" ID="textRateText" MaxLength="255" Placeholder="Rate Text"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.PercentText)">
+                        <Template>
+                            <TextBox @bind-Value="Model.PercentText" ID="textPercentText" MaxLength="255" Placeholder="Percent Text"/>
+                        </Template>
+                    </FormItem>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.CostPercent)">
+                        <Template>
+                            <NumericTextBox @bind-Value="Model.CostPercent" ID="numericCostPercent" Max="100" Placeholder="Cost Percent" TValue="decimal"/>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
+    </ChildContent>
+</SfDialog>
