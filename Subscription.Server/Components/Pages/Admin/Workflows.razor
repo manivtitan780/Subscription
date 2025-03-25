@@ -1,5 +1,47 @@
-<h3>Workflows</h3>
+@page "/Admin/Workflow"
+@layout SubscriptionLayout
 
-@code {
-	
-}
+<PageHeader/>
+<AdminGrid AddMethod="() => EditWorkflowAsync()" AutocompleteMethod="Admin_SearchWorkflow" AutocompleteParameter="@("Workflow")" Name="@WorkflowAuto" Entity="Workflow" HeaderContentPlural="Job Option"
+           HeaderContentSingular="Workflow" Height="140px" Page="Workflow" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+	<GridContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" DataSource="@DataSource" Height="100%" ID="gridCompany"
+		        TValue="Workflow" @ref="Grid" Width="100%">
+			<GridPageSettings PageSize="2000"/>
+			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="Workflow"/>
+			<GridColumns>
+				<GridColumn Field="Text" HeaderText="Step" Width="15%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Workflow _con)
+							{
+								<span class="point" @onclick="() => EditWorkflowAsync(_con.ID)">@_con.StepFull</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(Workflow.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn Field="@nameof(Workflow.NextFull)" HeaderText="Next" Width="22%"/>
+				<GridColumn Field="@nameof(Workflow.IsLast)" HeaderText="Is Last?" Width="10%"/>
+				<GridColumn Field="@nameof(Workflow.RoleFull)" HeaderText="Roles?" Width="23%"/>
+				<GridColumn Field="@nameof(Workflow.Schedule)" HeaderText="Schedule?" Width="10%"/>
+				<GridColumn Field="@nameof(Workflow.AnyStage)" HeaderText="Any Stage?" Width="10%"/>
+				<GridColumn Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is Workflow _con)
+							{
+								<div class="buttonContain">
+									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditWorkflowAsync(_con.KeyValue)" title="Edit Title"/>
+								</div>
+							}
+						}
+					</Template>
+				</GridColumn>
+			</GridColumns>
+		</SfGrid>
+	</GridContent>
+</AdminGrid>
+@*<WorkflowDialog HeaderString="@($"{Title} Workflow")" Model="@WorkflowRecordClone" Placeholder="Workflow" @ref="WorkflowDialog" Save="SaveWorkflow" TaxTerms="@TaxTerms"/>*@
