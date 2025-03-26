@@ -15,8 +15,6 @@
 
 #region Using
 
-using StackExchange.Redis;
-
 using Syncfusion.Blazor.Calendars;
 
 using FocusEventArgs = Syncfusion.Blazor.Calendars.FocusEventArgs;

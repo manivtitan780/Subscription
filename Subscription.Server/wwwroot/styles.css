@@ -280,6 +280,10 @@ body, form, html {
 
 /* #region Buttons*/
 
+.point{
+    cursor: pointer;
+}
+
 .e-btn.e-primary, .e-css.e-btn.e-primary {
     background: var(--c-red) !important;
     border-color: var(--c-red) !important;

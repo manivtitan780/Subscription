@@ -307,6 +307,13 @@ public partial class AdminGrid
         set;
     } = "346px";
 
+    [Parameter]
+    public string PopupWidth
+    {
+        get;
+        set;
+    } = "100%";
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)

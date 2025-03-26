@@ -61,6 +61,8 @@ global using FluentStorage;
 global using FluentStorage.Blobs;
 global using FluentStorage.Azure.Blobs;
 
+global using StackExchange.Redis;
+
 global using Subscription.Model.Return;
 global using Subscription.Server.Components.Pages.Controls.Admin;
 

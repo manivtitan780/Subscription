@@ -13,6 +13,8 @@
 
 #endregion
 
+using Role = Subscription.Model.Role;
+
 namespace Subscription.Server.Components.Pages;
 
 public partial class Requisitions

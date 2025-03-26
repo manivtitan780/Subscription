@@ -15,8 +15,6 @@
 
 #region Using
 
-using StackExchange.Redis;
-
 using Role = Subscription.Model.Role;
 
 #endregion

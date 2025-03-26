@@ -13,8 +13,6 @@
 
 #endregion
 
-using StackExchange.Redis;
-
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class JobOption : ComponentBase

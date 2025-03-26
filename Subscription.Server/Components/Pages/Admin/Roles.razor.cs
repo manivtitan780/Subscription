@@ -13,6 +13,8 @@
 
 #endregion
 
+using Role = Subscription.Model.Role;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Roles : ComponentBase
