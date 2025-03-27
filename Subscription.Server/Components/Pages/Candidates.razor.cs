@@ -2036,22 +2036,51 @@ public partial class Candidates
     private (string Code, string Name) SplitState(int stateID)
     {
         string _stateName = _states.FirstOrDefault(state => state.KeyValue == stateID)?.Text!;
-        string[] parts = _stateName?.Split([" - "], StringSplitOptions.TrimEntries);
-        if (parts?.Length != 2)
+        if (_stateName == null)
         {
             return ("", "");
         }
 
-        // Remove the brackets from the code
-        string _code = parts[0].Trim('[', ']');
-        string _state = parts[1];
+        if (!_stateName.Contains(" - "))
+        {
+            return ("", _stateName);
+        }
 
-        return (_code, _state);
+        string[] _parts = _stateName.Split([" - "], StringSplitOptions.TrimEntries);
+        return _parts.Length != 2 ? ("", "") : (_parts[0].Trim('[', ']'), _parts[1]);
+
+        // Remove the brackets from the code
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
-    private Task UndoActivity(int arg) => null;
+    /// <summary>
+    ///     Asynchronously undoes a candidate activity based on the provided activity ID.
+    /// </summary>
+    /// <param name="activityID">The ID of the candidate activity to undo.</param>
+    /// <remarks>
+    ///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint with the activity ID, user ID,
+    ///     and a flag indicating it's from the candidate screen.
+    ///     If the user is not logged in, "JOLLY" is used as the user ID. The response is expected to be a dictionary
+    ///     containing the activity data, which is then deserialized into a list of CandidateActivity objects.
+    ///     If the response is null or an exception occurs during the process, the method will return immediately.
+    /// </remarks>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    private Task UndoActivity(int activityID) => ExecuteMethod(async () =>
+                                                               {
+                                                                   Dictionary<string, string> _parameters = new()
+                                                                                                            {
+                                                                                                                {"submissionID", activityID.ToString()},
+                                                                                                                {"user", User},
+                                                                                                                {"isCandidateScreen", "true"},
+                                                                                                                {"roleID", RoleName}
+                                                                                                            };
+                                                                   string _response = await General.ExecuteRest<string>("Candidates/UndoCandidateActivity", _parameters);
+                                                                   if (_response.NotNullOrWhiteSpace() && _response == "[]")
+                                                                   {
+                                                                       _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                   }
+                                                               });
 
     public class CandidateAdaptor : DataAdaptor
     {

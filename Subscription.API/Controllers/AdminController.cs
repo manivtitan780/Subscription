@@ -8,12 +8,10 @@
 // File Name:           AdminController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 15:03
-// Last Updated On:     03-24-2025 14:03
+// Last Updated On:     03-26-2025 20:03
 // *****************************************/
 
 #endregion
-
-using System.CodeDom.Compiler;
 
 namespace Subscription.API.Controllers;
 
@@ -368,7 +366,7 @@ public class AdminController : ControllerBase
             _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
 
             if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
-            {       
+            {
                 RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
                 await _service.CreateAsync(cacheName, _returnCode);
             }

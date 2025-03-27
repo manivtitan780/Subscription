@@ -165,8 +165,7 @@
 									<TabHeader Text="Activity"/>
 								</ChildContent>
 								<ContentTemplate>
-									<ActivityPanelRequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID"		
-																User="@User"/>
+									<ActivityPanelRequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID" User="@User"/>
 								</ContentTemplate>
 							</TabItem>
 						</TabItems>
@@ -179,6 +178,5 @@
 <SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 <AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument" />
 <RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions" 
-						 Model="_requisitionDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" 
-						 States="_states" Title="@Title"/>
+						 Model="_requisitionDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 <EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
