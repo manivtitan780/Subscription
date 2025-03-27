@@ -2075,8 +2075,8 @@ public partial class Candidates
                                                                                                                 {"isCandidateScreen", "true"},
                                                                                                                 {"roleID", RoleName}
                                                                                                             };
-                                                                   string _response = await General.ExecuteRest<string>("Candidates/UndoCandidateActivity", _parameters);
-                                                                   if (_response.NotNullOrWhiteSpace() && _response == "[]")
+                                                                   string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
+                                                                   if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
                                                                        _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
