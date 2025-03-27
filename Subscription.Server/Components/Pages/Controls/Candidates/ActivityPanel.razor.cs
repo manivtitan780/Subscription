@@ -8,7 +8,7 @@
 // File Name:           ActivityPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-03-2025 20:03
-// Last Updated On:     03-03-2025 20:03
+// Last Updated On:     03-27-2025 16:03
 // *****************************************/
 
 #endregion
@@ -26,6 +26,7 @@ public partial class ActivityPanel
 {
     private int _selectedID;
 
+    /*
     /// <summary>
     ///     Gets or sets the ConfirmDialog instance used within the ActivityPanel.
     /// </summary>
@@ -38,6 +39,26 @@ public partial class ActivityPanel
     ///     The dialog can be used for various purposes, such as confirming the undoing of an activity.
     /// </remarks>
     private ConfirmDialog DialogConfirm
+    {
+        get;
+        set;
+    }
+    */
+
+    /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    /// </remarks>
+    [Inject]
+    private SfDialogService DialogService
     {
         get;
         set;
@@ -251,6 +272,11 @@ public partial class ActivityPanel
         _selectedID = activityID;
         int _index = await GridActivity.GetRowIndexByPrimaryKeyAsync(activityID);
         await GridActivity.SelectRowAsync(_index);
-        await DialogConfirm.ShowDialog();
+        if (await DialogService.ConfirmAsync(null, "Undo Candidate Activity?",
+                                             General.DialogOptions("Are you sure you want to <strong>undo</strong> this Candidate Activity?<br/><br/>Note: This action is irreversible.")))
+        {
+            await UndoCandidateActivity.InvokeAsync(activityID);
+        }
+        // await DialogConfirm.ShowDialog();
     }
 }
