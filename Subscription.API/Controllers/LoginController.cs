@@ -89,7 +89,7 @@ public class LoginController(IConfiguration configuration) : ControllerBase
             RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
             RedisValue _roles = await _service.GetAsync("Roles");
             string _roleString = _roles.ToString();
-            List<Role>? _rolesList = JsonConvert.DeserializeObject<List<Role>>(_roleString);
+            List<Role> _rolesList = JsonConvert.DeserializeObject<List<Role>>(_roleString);
             Role _userRole = _rolesList!.FirstOrDefault(role => role.ID == _roleID)!;
             List<string> _permissions = [];
 

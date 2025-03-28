@@ -50,7 +50,7 @@
                                                 <SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditActivityDialog(_con.ID)"/>
                                             }
 
-                                            if (_con.StatusCode != "PEN" && (_con.UpdatedBy == User || RoleID == 1))
+                                            if (_con.StatusCode != "PEN" && (_con.UpdatedBy.Trim() == User.Trim() || RoleID == 1))
                                             {
                                                 <SfButton Content="" IconCss="e-icons e-undo" @onclick="() => UndoActivity(_con.ID)" />
                                             }

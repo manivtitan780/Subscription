@@ -1465,7 +1465,7 @@ public partial class Candidates
 
                                                                          string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
                                                                                                                               activity.Model);
-                                                                         if (_response.NotNullOrWhiteSpace() && _response == "[]")
+                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
                                                                              _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                          }

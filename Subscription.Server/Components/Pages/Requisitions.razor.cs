@@ -977,10 +977,27 @@ public partial class Requisitions
         set;
     }
 
-    private async Task SaveActivity(EditContext arg)
-    {
-        await Task.CompletedTask;
-    }
+    private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
+                                                                      {
+                                                                          Dictionary<string, string> _parameters = new()
+                                                                                                                   {
+                                                                                                                       {"candidateID", _target.ID.ToString()},
+                                                                                                                       {"user", User},
+                                                                                                                       {"roleID", RoleName},
+                                                                                                                       {"isCandidateScreen", "false"},
+                                                                                                                       {"jsonPath", ""},
+                                                                                                                       {"emailAddress", ""},
+                                                                                                                       {"uploadPath", ""}
+                                                                                                                   };
+
+                                                                          string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
+                                                                                                                               activity.Model);
+                                                                          
+                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                          {
+                                                                              _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                          }
+                                                                      });
 
     /// <summary>
     ///     Asynchronously saves the document associated with the requisition.

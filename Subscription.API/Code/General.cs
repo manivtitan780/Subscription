@@ -44,7 +44,7 @@ public static class General
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
     /// <returns>The deserialized object of type T.</returns>
-    internal static T? DeserializeObject<T>(object? array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
 
     
     internal static byte[] GenerateRandomString(int length = 8)
@@ -353,7 +353,7 @@ public static class General
     }
 
     // ReSharper disable once UnusedMember.Local
-    private static async Task<List<IntValues>?> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
+    private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
     {
         return await reader.FillList<IntValues>(intValue => new()
                                                             {

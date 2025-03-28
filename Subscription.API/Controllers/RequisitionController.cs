@@ -101,9 +101,9 @@ public class RequisitionController : ControllerBase
     ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
     ///     will be omitted from the string.
     /// </returns>
-    private static string? GenerateLocation(RequisitionDetails requisition, string? stateName)
+    private static string GenerateLocation(RequisitionDetails requisition, string stateName)
     {
-        string? _location = "";
+        string _location = "";
         if (!requisition.City.NullOrWhiteSpace())
         {
             _location = requisition.City;
@@ -179,11 +179,11 @@ public class RequisitionController : ControllerBase
         _command.Bit("ThenProceed", thenProceed);
         _command.Varchar("LoggedUser", 10, user);
 
-        string? _requisitions = "[]";
+        string _requisitions = "[]";
         int _count = 0, _page = 0;
         string _companies = "[]";
         string _companyContacts = "[]";
-        string? _statusCount = "[]";
+        string _statusCount = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -296,9 +296,9 @@ public class RequisitionController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("RequisitionID", requisitionID);
         _command.Varchar("RoleID", 2, roleID);
-        string? _requisitionDetail = "{}";
-        string? _activity = "[]";
-        string? _documents = "[]";
+        string _requisitionDetail = "{}";
+        string _activity = "[]";
+        string _documents = "[]";
         try
         {
             await _connection.OpenAsync();
@@ -523,7 +523,7 @@ public class RequisitionController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Requisition", 30, filter);
 
-        string? _requisitions = "[]";
+        string _requisitions = "[]";
         try
         {
             await _connection.OpenAsync();

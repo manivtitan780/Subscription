@@ -24,7 +24,7 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class ActivityPanel
 {
-    private int _selectedID;
+    //private int _selectedID;
 
     /*
     /// <summary>
@@ -269,7 +269,7 @@ public partial class ActivityPanel
     /// </remarks>
     private async Task UndoActivity(int activityID)
     {
-        _selectedID = activityID;
+        //_selectedID = activityID;
         int _index = await GridActivity.GetRowIndexByPrimaryKeyAsync(activityID);
         await GridActivity.SelectRowAsync(_index);
         if (await DialogService.ConfirmAsync(null, "Undo Candidate Activity?",

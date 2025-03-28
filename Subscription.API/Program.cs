@@ -13,6 +13,11 @@
 
 #endregion
 
+using System.ClientModel;
+
+using Azure;
+
+using OpenAI;
 
 WebApplicationBuilder _builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +42,18 @@ Log.Logger = new LoggerConfiguration()
                                  new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true},
                                  columnOptions: columnOptions).CreateLogger();
 _builder.Host.UseSerilog();
+
+_builder.Services.AddSingleton<OpenAIClient>(sp =>
+                                             {
+                                                 IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
+                                                 string _apiKey = _config["AzureOpenAI:APIKey"];
+                                                 string _endpoint = _config["AzureOpenAI:Endpoint"];
+                                                 OpenAIClientOptions _options = new()
+                                                                                {
+                                                                                    Endpoint = new Uri(_endpoint ?? string.Empty)
+                                                                                };
+                                                 return new(new(_apiKey ?? string.Empty), _options);
+                                             });
 
 /*GraphSenderOptions _graphOptions = new()
                                    {
@@ -99,6 +116,8 @@ _app.Use(async (context, next) =>
                  Start.EmailSecret = _config["Email:Secret"];
                  Start.EmailClientID = _config["Email:ClientID"];
                  Start.TenantID = _config["Email:TenantID"];
+                 Start.AzureOpenAIKey = _config["AzureOpenAI:APIKey"];
+                 Start.AzureOpenAIEndpoint = _config["AzureOpenAI:Endpoint"];
 
                  await General.SetCache();
                  _isSet = true;

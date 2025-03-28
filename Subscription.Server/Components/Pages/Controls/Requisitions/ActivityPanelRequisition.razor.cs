@@ -217,6 +217,25 @@ public partial class ActivityPanelRequisition
     }
 
     /// <summary>
+    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
+    /// </summary>
+    /// <value>
+    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
+    ///     interactions
+    ///     with those dialogs.
+    /// </value>
+    /// <remarks>
+    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
+    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
+    /// </remarks>
+    [Inject]
+    private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     ///     Asynchronously undoes a specified activity.
     /// </summary>
     /// <param name="activityID">The ID of the activity to undo.</param>
@@ -228,12 +247,24 @@ public partial class ActivityPanelRequisition
     /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task UndoActivity(int activityID)
     {
-        await Task.Yield();
+        /*await Task.Yield();
         int _index = await GridActivity.GetRowIndexByPrimaryKeyAsync(activityID);
-        await GridActivity.SelectRowAsync(_index);
+        await GridActivity.SelectRowAsync(_index);*/
         /*if (await JsRuntime.Confirm("Are you sure you want to undo the previous Submission Status?\n Note: This operation cannot be reversed and the Status has to be submitted again."))
         {
             await UndoCandidateActivity.InvokeAsync(activityID);
         }*/
+
+
+
+        //_selectedID = activityID;
+        int _index = await GridActivity.GetRowIndexByPrimaryKeyAsync(activityID);
+        await GridActivity.SelectRowAsync(_index);
+        if (await DialogService.ConfirmAsync(null, "Undo Candidate Activity?",
+                                             General.DialogOptions("Are you sure you want to <strong>undo</strong> this Candidate Activity?<br/><br/>Note: This action is irreversible.")))
+        {
+            await UndoCandidateActivity.InvokeAsync(activityID);
+        }
+
     }
 }

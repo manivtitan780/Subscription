@@ -41,7 +41,7 @@ public class AdminController : ControllerBase
     public async Task<ActionResult<string>> GetAdminList(string methodName, string filter = "", bool isString = true)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string? _generalItems = "[]";
+        string _generalItems = "[]";
 
         await using SqlCommand _command = new(methodName, _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -107,7 +107,7 @@ public class AdminController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar(paramName, 100, filter);
 
-        string? _listOptions = "[]";
+        string _listOptions = "[]";
         try
         {
             _connection.Open();
