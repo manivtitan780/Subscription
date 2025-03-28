@@ -860,6 +860,7 @@ public partial class Requisitions
                                 {
                                     IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
                                     User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     if (User.NullOrWhiteSpace())
                                     {
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
@@ -968,6 +969,12 @@ public partial class Requisitions
                             });
 
         await base.OnInitializedAsync();
+    }
+
+    private string RoleName
+    {
+        get;
+        set;
     }
 
     private async Task SaveActivity(EditContext arg)
@@ -1146,32 +1153,27 @@ public partial class Requisitions
     /// </summary>
     /// <param name="activityID">The ID of the candidate activity to undo.</param>
     /// <remarks>
-    ///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint of the API.
-    ///     The request includes the activity ID, the user ID (or "JOLLY" if the user ID is null or whitespace), and a flag
-    ///     indicating that this is not a candidate screen.
-    ///     If the API response is not null, it deserializes the "Activity" field of the response into a list of
-    ///     CandidateActivity objects.
+    ///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint with the activity ID, user ID,
+    ///     and a flag indicating it's from the candidate screen.
+    ///     If the user is not logged in, "JOLLY" is used as the user ID. The response is expected to be a dictionary
+    ///     containing the activity data, which is then deserialized into a list of CandidateActivity objects.
+    ///     If the response is null or an exception occurs during the process, the method will return immediately.
     /// </remarks>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     private Task UndoActivity(int activityID) => ExecuteMethod(async () =>
                                                                {
-                                                                   /*Dictionary<string, string> _parameters = new()
+                                                                   Dictionary<string, string> _parameters = new()
                                                                                                             {
                                                                                                                 {"submissionID", activityID.ToString()},
-                                                                                                                {"user", General.GetUserName(LoginCookyUser)},
-                                                                                                                {"isCandidateScreen", "false"}
+                                                                                                                {"user", User},
+                                                                                                                {"isCandidateScreen", "false"},
+                                                                                                                {"roleID", RoleName}
                                                                                                             };
-
-                                                                   Dictionary<string, object> _response = await General.PostRest("Candidates/UndoCandidateActivity", _parameters);
-                                                                   if (_response == null)
+                                                                   string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
+                                                                   if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
-                                                                       return;
+                                                                       _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
-
-                                                                   _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);*/
-                                                                   await Task.CompletedTask;
                                                                });
 
     /// <summary>
