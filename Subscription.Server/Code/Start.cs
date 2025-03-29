@@ -76,4 +76,28 @@ public class Start
         get;
         set;
     }
+
+    public static string AzureOpenAIKey
+    {
+        get;
+        set;
+    }
+
+    public static string AzureOpenAIEndpoint
+    {
+        get;
+        set;
+    }
+
+    public static string Model
+    {
+        get;
+        set;
+    }
+
+    public static string DeploymentName
+    {
+        get;
+        set;
+    }
 }

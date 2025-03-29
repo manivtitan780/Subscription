@@ -19,7 +19,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mail;
 
+using Azure;
+using Azure.AI.OpenAI;
+
 using OpenAI;
+using OpenAI.Chat;
 
 using Syncfusion.DocIO.DLS;
 
@@ -1541,12 +1545,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         string _fileContent = string.Empty;
-        const string prompt = """
-                               Parse this document and generate a JSON output containing, First & Last name, Email Addresses, Phone Numbers, Postal Address (Street, City, State, Zip etc), Education Info (Course, 
-                               School/College, Period, Location), Employment Info (Company, Period, Months worked, Title of Job), Skills (Skill Name, Period of usage, Months of usage), also include a field called 
-                               Summary and generate a couple of paragraphs of summary for this candidate, and a comma seperated string of Keywords. Don't include any intro or outro and give just the JSON output.
-                               Document Content: {0}
-                               """;
+        string prompt = Start.Prompt;
         using (MemoryStream _stream = new())
         {
             await file.CopyToAsync(_stream);
@@ -1559,6 +1558,42 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
         
         string _detailedPrompt = string.Format(prompt, _fileContent);
-        return Ok("[]");
+
+        Uri _endpoint = new Uri(Start.AzureOpenAIEndpoint);
+        AzureKeyCredential _credential = new(Start.AzureOpenAIKey);
+        AzureOpenAIClient client = new(_endpoint, _credential);
+
+        ChatClient chatClient = client.GetChatClient(Start.DeploymentName); // This points to o3-mini
+
+        ChatCompletionOptions chatOptions = new()
+                                            {
+                                                Temperature = (float)0.7,
+                                                MaxOutputTokenCount = 5000,
+                                                TopP = (float)0.95,
+                                                FrequencyPenalty = (float)0,
+                                                PresencePenalty = (float)0
+                                            };
+
+        List<ChatMessage> messages =
+        [
+            new SystemChatMessage(Start.SystemChatMessage),
+            new UserChatMessage(_detailedPrompt)
+        ];
+
+        string _parsedJSON = string.Empty;
+        string _tempJSONFileName = Path.Combine($"{Guid.NewGuid():N}.json");
+        try
+        {
+            ChatCompletion response = await chatClient.CompleteChatAsync(messages, chatOptions);
+            _parsedJSON = response.Content[0].Text;
+            System.Text.Json.JsonSerializer.Serialize(response);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error parsing candidate. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        
+        return Ok(_parsedJSON);
     }
 }

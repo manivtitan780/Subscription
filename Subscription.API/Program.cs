@@ -118,6 +118,9 @@ _app.Use(async (context, next) =>
                  Start.TenantID = _config["Email:TenantID"];
                  Start.AzureOpenAIKey = _config["AzureOpenAI:APIKey"];
                  Start.AzureOpenAIEndpoint = _config["AzureOpenAI:Endpoint"];
+                 Start.DeploymentName = _config["AzureOpenAI:DeploymentName"];
+                 Start.SystemChatMessage = _config["AzureOpenAI:SystemChatMessage"];
+                 Start.Prompt = _config["AzureOpenAI:Prompt"];
 
                  await General.SetCache();
                  _isSet = true;

@@ -131,4 +131,22 @@ public static class Start
         get;
         set;
     } = "";
+
+    public static string SystemChatMessage
+    {
+        get;
+        set;
+    } = "You are an assistant that extracts structured data from resumes in JSON format.";
+
+    public static string DeploymentName
+    {
+        get;
+        set;
+    } = "gpt-4o-prof";
+
+    public static string Prompt
+    {
+        get;
+        set;
+    }
 }

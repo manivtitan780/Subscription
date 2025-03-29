@@ -17,6 +17,8 @@
 
 using Microsoft.AspNetCore.ResponseCompression;
 
+using OpenAI;
+
 using Subscription.Server.Components;
 
 #endregion
@@ -26,6 +28,7 @@ WebApplicationBuilder _builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 _builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
+ConfigurationManager _config = _builder.Configuration;
 
 _builder.Services.AddBlazoredSessionStorage(); // Session storage
 _builder.Services.AddBlazoredLocalStorage();   // Local storage
@@ -49,6 +52,18 @@ _builder.Services.AddResponseCompression(options =>
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+_builder.Services.AddSingleton<OpenAIClient>(sp =>
+                                             {
+                                                 IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
+                                                 string _apiKey = _config["AzureOpenAI:APIKey"];
+                                                 string _endpoint = _config["AzureOpenAI:Endpoint"];
+                                                 OpenAIClientOptions _options = new()
+                                                                                {
+                                                                                    Endpoint = new Uri(_endpoint ?? string.Empty)
+                                                                                };
+                                                 return new(new(_apiKey ?? string.Empty), _options);
+                                             });
+
 /*
 Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Error()
@@ -78,7 +93,6 @@ _app.UseAntiforgery();
 
 _app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
-ConfigurationManager _config = _builder.Configuration;
 bool _isLocal = false;
 
 _app.Use(async (context, next) =>
@@ -111,6 +125,10 @@ _app.Use(async (context, next) =>
                  Start.AccountName = _config["AccountName"];
                  Start.UploadsPath = _builder.Environment.WebRootPath;
                  Start.UploadPath = _config["RootPath"];
+                 Start.AzureOpenAIKey = _config["AzureOpenAI:APIKey"];
+                 Start.AzureOpenAIEndpoint = _config["AzureOpenAI:Endpoint"];
+                 Start.Model = _config["AzureOpenAI:Model"];
+                 Start.DeploymentName = _config["AzureOpenAI:DeploymentName"];
              }
 
              await next.Invoke();
