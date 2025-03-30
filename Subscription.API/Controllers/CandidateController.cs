@@ -18,6 +18,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mail;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -649,13 +650,13 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         ChatClient _chatClient = _client.GetChatClient(Start.DeploymentName); // This points to o3-mini
 
         ChatCompletionOptions _chatOptions = new()
-                                            {
-                                                Temperature = 0.2f,
-                                                MaxOutputTokenCount = 10000,
-                                                TopP = 0.3f,
-                                                FrequencyPenalty = 0f,
-                                                PresencePenalty = 0f
-                                            };
+                                             {
+                                                 Temperature = 0.2f,
+                                                 MaxOutputTokenCount = 10000,
+                                                 TopP = 0.3f,
+                                                 FrequencyPenalty = 0f,
+                                                 PresencePenalty = 0f
+                                             };
 
         List<ChatMessage> _messages =
         [
@@ -670,7 +671,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             ChatCompletion _completeChatAsync = await _chatClient.CompleteChatAsync(_messages, _chatOptions);
             _parsedJSON = _completeChatAsync.Content[0].Text;
             //JsonSerializer.Serialize(_completeChatAsync);
-            
+
             /* Parse JSON to Objects */
             JsonNode _rootNode = JsonNode.Parse(_parsedJSON)!;
             if (_rootNode != null)
@@ -689,7 +690,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
                     RedisValue _value = await _service.GetAsync(CacheObjects.States.ToString());
                     List<State> _states = General.DeserializeObject<List<State>>(_value.ToString());
-                    foreach (State _state in _states.Where(state => _stateName.Equals(state.Code.Trim(), StringComparison.OrdinalIgnoreCase) || 
+                    foreach (State _state in _states.Where(state => _stateName.Equals(state.Code.Trim(), StringComparison.OrdinalIgnoreCase) ||
                                                                     _stateName.Equals(state.StateName.Trim(), StringComparison.OrdinalIgnoreCase)))
                     {
                         _stateID = _state.ID;
@@ -700,28 +701,15 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                 string _zip = _rootNode["Postal Address"]?["Zip"]?.ToString() ?? string.Empty;
                 string _summary = _rootNode["Summary"]?.ToString() ?? string.Empty;
                 string _keywords = _rootNode["Keywords"]?.ToString() ?? string.Empty;
-                
-                /*Education*/
-                DataTable _tableEducation = new();
-                _tableEducation.Columns.Add("Degree", typeof(string));
-                _tableEducation.Columns.Add("College", typeof(string));
-                _tableEducation.Columns.Add("State", typeof(string));
-                _tableEducation.Columns.Add("Country", typeof(string));
-                _tableEducation.Columns.Add("Year", typeof(string));
-                if (_rootNode["Education Info"] is JsonArray _educationArray)
-                {
-                    foreach (JsonNode _education in _educationArray)
-                    {
-                        DataRow _row = _tableEducation.NewRow();
-                        _row["Degree"] = _education?["Course"]?.ToString() ?? "";
-                        _row["College"] = _education?["School/College"]?.ToString() ?? "";
-                        _row["State"] = _education?["State"]?.ToString() ?? "";
-                        _row["Country"] = _education?["Country"]?.ToString() ?? "";
-                        _row["Year"] = _education?["Period"]?.ToString() ?? "";
-                        _tableEducation.Rows.Add(_row);
-                    }
-                }
 
+                /*Education*/
+                DataTable _tableEducation = Education(_rootNode["Education Info"] as JsonArray);
+
+                /*Experience*/
+                DataTable _tableExperience = Experience(_rootNode["Employment Info"] as JsonArray);
+
+                /* Skills */
+                DataTable _tableSkills = Skills(_rootNode["Skills"] as JsonArray);
             }
         }
         catch (Exception ex)
@@ -731,6 +719,76 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_parsedJSON);
+    }
+
+    private static DataTable Education(JsonArray education)
+    {
+        DataTable _tableEducation = new();
+        _tableEducation.Columns.Add("Degree", typeof(string));
+        _tableEducation.Columns.Add("College", typeof(string));
+        _tableEducation.Columns.Add("State", typeof(string));
+        _tableEducation.Columns.Add("Country", typeof(string));
+        _tableEducation.Columns.Add("Year", typeof(string));
+
+        foreach (JsonNode _education in education)
+        {
+            DataRow _row = _tableEducation.NewRow();
+            _row["Degree"] = _education?["Course"]?.ToString() ?? string.Empty;
+            _row["College"] = _education?["School/College"]?.ToString() ?? string.Empty;
+            _row["State"] = _education?["State"]?.ToString() ?? string.Empty;
+            _row["Country"] = _education?["Country"]?.ToString() ?? string.Empty;
+            _row["Year"] = _education?["Period"]?.ToString() ?? string.Empty;
+            _tableEducation.Rows.Add(_row);
+        }
+
+        return _tableEducation;
+    }
+
+    private static DataTable Experience(JsonArray experience)
+    {
+        DataTable _tableExperience = new();
+        _tableExperience.Columns.Add("Employer", typeof(string));
+        _tableExperience.Columns.Add("Start", typeof(string));
+        _tableExperience.Columns.Add("End", typeof(string));
+        _tableExperience.Columns.Add("Location", typeof(string));
+        _tableExperience.Columns.Add("Title", typeof(string));
+        _tableExperience.Columns.Add("Description", typeof(string));
+
+        foreach (JsonNode _experience in experience)
+        {
+            DataRow _row = _tableExperience.NewRow();
+            _row["Employer"] = _experience?["Company"]?.ToString() ?? string.Empty;
+            string[] _period = _experience?["Period"]?.ToString().Split('-');
+            _row["Start"] = _period?.Length > 0 ? _period[0].Trim() : string.Empty;
+            _row["End"] = _period?.Length > 1 ? _period[1].Trim() : string.Empty;
+            _row["Location"] = _experience?["Location"]?.ToString() ?? string.Empty;
+            _row["Title"] = _experience?["Title of Job"]?.ToString() ?? string.Empty;
+            _row["Description"] = _experience?["Description"]?.ToString() ?? string.Empty;
+            _tableExperience.Rows.Add(_row);
+        }
+
+        return _tableExperience;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static DataTable Skills(JsonArray skills)
+    {
+        DataTable _tableSkills = new();
+        _tableSkills.Columns.Add("Skill", typeof(string));
+        _tableSkills.Columns.Add("LastUsed", typeof(int));
+        _tableSkills.Columns.Add("Month", typeof(int));
+
+        foreach (JsonNode _skill in skills)
+        {
+            DataRow _row = _tableSkills.NewRow();
+            _row["Skill"] = _skill?["Skill"]?.ToString() ?? string.Empty;
+            string[] _period = _skill?["Last Used"]?.ToString().Split('-');
+            _row["LastUsed"] = _period?.Length > 0 ? _period[0].Trim().ToInt32() : 0;
+            _row["Month"] = _period?.Length > 1 ? _period[1].Trim().ToInt32() : 0;
+            _tableSkills.Rows.Add(_row);
+        }
+
+        return _tableSkills;
     }
 
     /// <summary>
