@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     03-30-2025 18:03
+// Last Updated On:     03-31-2025 15:03
 // *****************************************/
 
 #endregion
@@ -19,7 +19,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 using Azure;
@@ -346,6 +345,65 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_documentDetails);
+    }
+
+    private static DataTable Education(JsonArray education)
+    {
+        DataTable _tableEducation = new();
+        _tableEducation.Columns.Add("Degree", typeof(string));
+        _tableEducation.Columns.Add("College", typeof(string));
+        _tableEducation.Columns.Add("State", typeof(string));
+        _tableEducation.Columns.Add("Country", typeof(string));
+        _tableEducation.Columns.Add("Year", typeof(string));
+
+        foreach (JsonNode _education in education)
+        {
+            if (_education == null)
+            {
+                continue;
+            }
+
+            DataRow _row = _tableEducation.NewRow();
+            _row["Degree"] = _education["Course"]?.ToString() ?? string.Empty;
+            _row["College"] = _education["School"]?.ToString() ?? string.Empty;
+            _row["State"] = _education["State"]?.ToString() ?? string.Empty;
+            _row["Country"] = _education["Country"]?.ToString() ?? string.Empty;
+            _row["Year"] = _education["Period"]?.ToString() ?? string.Empty;
+            _tableEducation.Rows.Add(_row);
+        }
+
+        return _tableEducation;
+    }
+
+    private static DataTable Experience(JsonArray experience)
+    {
+        DataTable _tableExperience = new();
+        _tableExperience.Columns.Add("Employer", typeof(string));
+        _tableExperience.Columns.Add("Start", typeof(string));
+        _tableExperience.Columns.Add("End", typeof(string));
+        _tableExperience.Columns.Add("Location", typeof(string));
+        _tableExperience.Columns.Add("Title", typeof(string));
+        _tableExperience.Columns.Add("Description", typeof(string));
+
+        foreach (JsonNode _experience in experience)
+        {
+            if (_experience == null)
+            {
+                continue;
+            }
+
+            DataRow _row = _tableExperience.NewRow();
+            _row["Employer"] = _experience["Company"]?.ToString() ?? string.Empty;
+            //string[] _period = _experience?["Period"]?.ToString().Split('-');
+            _row["Start"] = _experience["Start"]?.ToString() ?? string.Empty;
+            _row["End"] = _experience["End"]?.ToString() ?? string.Empty;
+            _row["Location"] = _experience["Location"]?.ToString() ?? string.Empty;
+            _row["Title"] = _experience["Title"]?.ToString() ?? string.Empty;
+            _row["Description"] = _experience["Description"]?.ToString() ?? string.Empty;
+            _tableExperience.Rows.Add(_row);
+        }
+
+        return _tableExperience;
     }
 
     /// <summary>
@@ -676,13 +734,13 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             JsonNode _rootNode = JsonNode.Parse(_parsedJSON)!;
             if (_rootNode != null)
             {
-                string _firstName = _rootNode["First Name"]?.ToString() ?? string.Empty;
-                string _lastName = _rootNode["Last Name"]?.ToString() ?? string.Empty;
-                string _phone = _rootNode["Phone Numbers"]?[0]?.ToString() ?? string.Empty;
-                string _email = _rootNode["Email Addresses"]?[0]?.ToString() ?? string.Empty;
-                string _street = _rootNode["Postal Address"]?["Street"]?.ToString() ?? string.Empty;
-                string _city = _rootNode["Postal Address"]?["City"]?.ToString() ?? string.Empty;
-                string _stateName = _rootNode["Postal Address"]?["State"]?.ToString() ?? string.Empty;
+                string _firstName = _rootNode["FirstName"]?.ToString() ?? string.Empty;
+                string _lastName = _rootNode["LastName"]?.ToString() ?? string.Empty;
+                string _phone = _rootNode["PhoneNumbers"]?[0]?.ToString() ?? string.Empty;
+                string _email = _rootNode["EmailAddresses"]?[0]?.ToString() ?? string.Empty;
+                string _street = _rootNode["PostalAddress"]?["Street"]?.ToString() ?? string.Empty;
+                string _city = _rootNode["PostalAddress"]?["City"]?.ToString() ?? string.Empty;
+                string _stateName = _rootNode["PostalAddress"]?["State"]?.ToString() ?? string.Empty;
                 int _stateID = 0;
                 if (_stateName.NotNullOrWhiteSpace())
                 {
@@ -698,15 +756,15 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                     }
                 }
 
-                string _zip = _rootNode["Postal Address"]?["Zip"]?.ToString() ?? string.Empty;
-                string _summary = _rootNode["Summary"]?.ToString() ?? string.Empty;
-                string _keywords = _rootNode["Keywords"]?.ToString() ?? string.Empty;
+                string _zip = _rootNode["PostalAddress"]?["Zip"]?.ToString() ?? string.Empty;
+                string _summary = _rootNode["CandidateSummary"]?.ToString() ?? string.Empty;
+                string _keywords = _rootNode["CandidateKeywords"]?.ToString() ?? string.Empty;
 
                 /*Education*/
-                DataTable _tableEducation = Education(_rootNode["Education Info"] as JsonArray);
+                DataTable _tableEducation = Education(_rootNode["EducationInfo"] as JsonArray);
 
                 /*Experience*/
-                DataTable _tableExperience = Experience(_rootNode["Employment Info"] as JsonArray);
+                DataTable _tableExperience = Experience(_rootNode["EmploymentInfo"] as JsonArray);
 
                 /* Skills */
                 DataTable _tableSkills = Skills(_rootNode["Skills"] as JsonArray);
@@ -719,76 +777,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_parsedJSON);
-    }
-
-    private static DataTable Education(JsonArray education)
-    {
-        DataTable _tableEducation = new();
-        _tableEducation.Columns.Add("Degree", typeof(string));
-        _tableEducation.Columns.Add("College", typeof(string));
-        _tableEducation.Columns.Add("State", typeof(string));
-        _tableEducation.Columns.Add("Country", typeof(string));
-        _tableEducation.Columns.Add("Year", typeof(string));
-
-        foreach (JsonNode _education in education)
-        {
-            DataRow _row = _tableEducation.NewRow();
-            _row["Degree"] = _education?["Course"]?.ToString() ?? string.Empty;
-            _row["College"] = _education?["School/College"]?.ToString() ?? string.Empty;
-            _row["State"] = _education?["State"]?.ToString() ?? string.Empty;
-            _row["Country"] = _education?["Country"]?.ToString() ?? string.Empty;
-            _row["Year"] = _education?["Period"]?.ToString() ?? string.Empty;
-            _tableEducation.Rows.Add(_row);
-        }
-
-        return _tableEducation;
-    }
-
-    private static DataTable Experience(JsonArray experience)
-    {
-        DataTable _tableExperience = new();
-        _tableExperience.Columns.Add("Employer", typeof(string));
-        _tableExperience.Columns.Add("Start", typeof(string));
-        _tableExperience.Columns.Add("End", typeof(string));
-        _tableExperience.Columns.Add("Location", typeof(string));
-        _tableExperience.Columns.Add("Title", typeof(string));
-        _tableExperience.Columns.Add("Description", typeof(string));
-
-        foreach (JsonNode _experience in experience)
-        {
-            DataRow _row = _tableExperience.NewRow();
-            _row["Employer"] = _experience?["Company"]?.ToString() ?? string.Empty;
-            string[] _period = _experience?["Period"]?.ToString().Split('-');
-            _row["Start"] = _period?.Length > 0 ? _period[0].Trim() : string.Empty;
-            _row["End"] = _period?.Length > 1 ? _period[1].Trim() : string.Empty;
-            _row["Location"] = _experience?["Location"]?.ToString() ?? string.Empty;
-            _row["Title"] = _experience?["Title of Job"]?.ToString() ?? string.Empty;
-            _row["Description"] = _experience?["Description"]?.ToString() ?? string.Empty;
-            _tableExperience.Rows.Add(_row);
-        }
-
-        return _tableExperience;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static DataTable Skills(JsonArray skills)
-    {
-        DataTable _tableSkills = new();
-        _tableSkills.Columns.Add("Skill", typeof(string));
-        _tableSkills.Columns.Add("LastUsed", typeof(int));
-        _tableSkills.Columns.Add("Month", typeof(int));
-
-        foreach (JsonNode _skill in skills)
-        {
-            DataRow _row = _tableSkills.NewRow();
-            _row["Skill"] = _skill?["Skill"]?.ToString() ?? string.Empty;
-            string[] _period = _skill?["Last Used"]?.ToString().Split('-');
-            _row["LastUsed"] = _period?.Length > 0 ? _period[0].Trim().ToInt32() : 0;
-            _row["Month"] = _period?.Length > 1 ? _period[1].Trim().ToInt32() : 0;
-            _tableSkills.Rows.Add(_row);
-        }
-
-        return _tableSkills;
     }
 
     /// <summary>
@@ -1594,6 +1582,31 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_candidates);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static DataTable Skills(JsonArray skills)
+    {
+        DataTable _tableSkills = new();
+        _tableSkills.Columns.Add("Skill", typeof(string));
+        _tableSkills.Columns.Add("LastUsed", typeof(int));
+        _tableSkills.Columns.Add("Month", typeof(int));
+
+        foreach (JsonNode _skill in skills)
+        {
+            if (_skill == null)
+            {
+                continue;
+            }
+
+            DataRow _row = _tableSkills.NewRow();
+            _row["Skill"] = _skill["Skill"]?.ToString() ?? string.Empty;
+            _row["LastUsed"] = _skill["PeriodOfUsage"]?.ToInt32() ?? 0;
+            _row["Month"] = _skill["MonthsOfUsage"]?.ToInt32() ?? 0;
+            _tableSkills.Rows.Add(_row);
+        }
+
+        return _tableSkills;
     }
 
     /// <summary>
