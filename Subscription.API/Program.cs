@@ -15,10 +15,6 @@
 
 using System.ClientModel;
 
-using Azure;
-
-using OpenAI;
-
 WebApplicationBuilder _builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

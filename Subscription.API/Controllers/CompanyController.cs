@@ -13,8 +13,6 @@
 
 #endregion
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Subscription.API.Controllers;
 
 /// <summary>

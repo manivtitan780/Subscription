@@ -196,6 +196,20 @@ public partial class GridHeader
         set;
     }
 
+    [Parameter]
+    public EventCallback<MouseEventArgs> AddMethod
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> RefreshGrid
+    {
+        get;
+        set;
+    }
+
     protected override void OnParametersSet()
     {
         _endpoint = Endpoint;

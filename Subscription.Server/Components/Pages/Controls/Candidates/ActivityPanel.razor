@@ -13,7 +13,7 @@
 							@{
 								if (aCon is CandidateActivity _con)
 								{
-									<span>@($"{_con.Status} [{_con.UpdatedBy}]")</span>
+									<span>@($"{_con.Status} [{_con.UpdatedBy.ToUpper()}]")</span>
 								}
 							}
 						</Template>
@@ -33,7 +33,7 @@
 							@{
 								if (aCon is CandidateActivity _con)
 								{
-									<span>@($"{_con.CandidateUpdatedBy}")</span>
+									<span>@($"{_con.CandidateUpdatedBy.ToUpper()}")</span>
 								}
 							}
 						</Template>
@@ -50,7 +50,7 @@
 												<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditActivityDialog(_con.ID)" />
 											}
 
-											if (_con.StatusCode != "PEN" && (_con.UpdatedBy.Trim() == User.Trim() || RoleID == 1))
+											if (_con.StatusCode != "PEN" && (_con.UpdatedBy.Trim().Equals(User.Trim(), StringComparison.OrdinalIgnoreCase) || RoleID == 1))
 											{
 												<SfButton Content="" IconCss="e-icons e-undo" @onclick="() => UndoActivity(_con.ID)" />
 											}

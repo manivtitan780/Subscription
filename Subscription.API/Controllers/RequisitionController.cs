@@ -15,8 +15,6 @@
 
 #region Using
 
-using System.Diagnostics.CodeAnalysis;
-
 #endregion
 
 namespace Subscription.API.Controllers;

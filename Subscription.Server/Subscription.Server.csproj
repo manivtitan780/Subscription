@@ -91,6 +91,7 @@
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
+        <Content Remove="FileRaz.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -147,6 +148,15 @@
 
     <ItemGroup>
         <Folder Include="Components\Pages\Controls\Requisitions\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="FileRaz.razor.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Dockerfile" />
+      <None Remove="..\.dockerignore" />
     </ItemGroup>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

@@ -18,6 +18,14 @@
 global using Microsoft.AspNetCore.Mvc;
 
 global using System.Data;
+global using System.Diagnostics.CodeAnalysis;
+global using System.Net;
+global using System.Net.Mail;
+global using System.Runtime.CompilerServices;
+global using System.Text.Json.Nodes;
+
+global using Azure;
+global using Azure.AI.OpenAI;
 
 global using Microsoft.Data.SqlClient;
 
@@ -29,6 +37,9 @@ global using FluentStorage.Azure.Blobs;
 
 global using Newtonsoft.Json.Linq;
 
+global using OpenAI;
+global using OpenAI.Chat;
+
 global using Subscription.Model;
 
 global using Serilog;
@@ -37,5 +48,8 @@ global using Serilog.Sinks.MSSqlServer;
 global using Subscription.API;
 global using Subscription.API.Code;
 global using Subscription.Model.Return;
+
+global using Syncfusion.DocIO;
+global using Syncfusion.DocIO.DLS;
 
 #endregion
