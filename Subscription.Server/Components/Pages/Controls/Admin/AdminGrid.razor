@@ -1,12 +1,12 @@
 ﻿<div id="divMainGrid">
-	<div id="divHeader" style="display: grid; grid-template-columns: 2fr 1fr;">
+	<div id="divHeader" style="display: grid; grid-template-columns: 1.5fr 1.5fr;">
 		<div style="line-height: 50px; margin-left: 10px; font-size: 24px; font-weight: bold; text-transform: uppercase">@HeaderContentPlural</div>
 		<div style="text-align: right; line-height: 50px;">
 			<SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Add" IconCss="e-icons e-plus" @onclick="AddMethod">Add</SfButton>
 			<SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Refresh" IconCss="e-icons e-refresh" @onclick="RefreshGrid">Refresh</SfButton>
-
+			
 			<SfAutoComplete CssClass="rightMargin" AllowCustom="true" EnablePersistence="false" Highlight="true" HtmlAttributes="@_htmlAttribute" ID="autoFilter" MinLength="3" Placeholder="Select&hellip;"
-			                PopupWidth="@PopupWidth" @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="200px" @bind-Value="@Name" Query="@Query">
+			                PopupWidth="@PopupWidth" @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="150px" @bind-Value="@Name" Query="@Query">
 				<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(DropDownAdaptor)" Key="Key"></SfDataManager>
 				<AutoCompleteFieldSettings Text="Text" Value="KeyValue"></AutoCompleteFieldSettings>
 				<AutoCompleteEvents Created="Created" TItem="KeyValues" TValue="string" ValueChange="ValueChange"/>

@@ -8,7 +8,7 @@
 // File Name:           AdminGrid.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 14:03
-// Last Updated On:     03-11-2025 20:03
+// Last Updated On:     04-04-2025 15:04
 // *****************************************/
 
 #endregion
@@ -44,6 +44,13 @@ public partial class AdminGrid
     /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> AddMethod
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> AdvancedSearch
     {
         get;
         set;
@@ -233,6 +240,13 @@ public partial class AdminGrid
     }
 
     [Parameter]
+    public string PopupWidth
+    {
+        get;
+        set;
+    } = "100%";
+
+    [Parameter]
     public Query Query
     {
         get;
@@ -307,13 +321,6 @@ public partial class AdminGrid
         set;
     } = "346px";
 
-    [Parameter]
-    public string PopupWidth
-    {
-        get;
-        set;
-    } = "100%";
-
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
@@ -322,6 +329,7 @@ public partial class AdminGrid
             Query.AddParams("MethodName", AutocompleteMethod);
             Query.AddParams("ParameterName", AutocompleteParameter);
         }
+
         base.OnAfterRender(firstRender);
     }
 
