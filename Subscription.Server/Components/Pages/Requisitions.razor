@@ -3,7 +3,8 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<GridHeader AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" ValueChange="AutocompleteValueChange">
+<GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" 
+			RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" 
 				Query="_query" @ref="Grid" TValue="Requisition" Width="100%">
