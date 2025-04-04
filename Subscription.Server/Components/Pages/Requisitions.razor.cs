@@ -8,12 +8,16 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     03-09-2025 20:03
+// Last Updated On:     04-04-2025 20:04
 // *****************************************/
 
 #endregion
 
+#region Using
+
 using Role = Subscription.Model.Role;
+
+#endregion
 
 namespace Subscription.Server.Components.Pages;
 
@@ -231,6 +235,12 @@ public partial class Requisitions
     {
         get;
     } = 5;
+
+    private string RoleName
+    {
+        get;
+        set;
+    }
 
     /// <summary>
     ///     Gets or sets the search model for the requisition. This model is used to store the search parameters for finding
@@ -971,33 +981,29 @@ public partial class Requisitions
         await base.OnInitializedAsync();
     }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private async Task Refresh(MouseEventArgs arg) => await Grid.Refresh(true);
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
-                                                                      {
-                                                                          Dictionary<string, string> _parameters = new()
-                                                                                                                   {
-                                                                                                                       {"candidateID", _target.ID.ToString()},
-                                                                                                                       {"user", User},
-                                                                                                                       {"roleID", RoleName},
-                                                                                                                       {"isCandidateScreen", "false"},
-                                                                                                                       {"jsonPath", ""},
-                                                                                                                       {"emailAddress", ""},
-                                                                                                                       {"uploadPath", ""}
-                                                                                                                   };
+                                                                     {
+                                                                         Dictionary<string, string> _parameters = new()
+                                                                                                                  {
+                                                                                                                      {"candidateID", _target.ID.ToString()},
+                                                                                                                      {"user", User},
+                                                                                                                      {"roleID", RoleName},
+                                                                                                                      {"isCandidateScreen", "false"},
+                                                                                                                      {"jsonPath", ""},
+                                                                                                                      {"emailAddress", ""},
+                                                                                                                      {"uploadPath", ""}
+                                                                                                                  };
 
-                                                                          string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
-                                                                                                                               activity.Model);
-                                                                          
-                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                          {
-                                                                              _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
-                                                                          }
-                                                                      });
+                                                                         string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
+                                                                                                                              activity.Model);
+
+                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                         {
+                                                                             _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                         }
+                                                                     });
 
     /// <summary>
     ///     Asynchronously saves the document associated with the requisition.
