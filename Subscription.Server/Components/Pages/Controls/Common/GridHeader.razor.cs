@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           GridHeader.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-22-2024 15:04
-// Last Updated On:     10-29-2024 15:10
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 19:02
+// Last Updated On:     04-04-2025 15:04
 // *****************************************/
 
 #endregion
@@ -27,6 +27,13 @@ public partial class GridHeader
                                                         };
 
     private SfAutoComplete<string, KeyValues> Acb
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> AddMethod
     {
         get;
         set;
@@ -159,6 +166,13 @@ public partial class GridHeader
     } = [5, 10, 15, 20, 25, 50, 75, 100];
 
     [Parameter]
+    public EventCallback<MouseEventArgs> RefreshGrid
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
     public CompanySearch SearchModel
     {
         get;
@@ -166,7 +180,21 @@ public partial class GridHeader
     } = new();
 
     [Parameter]
+    public bool ShowAdd
+    {
+        get;
+        set;
+    } = true;
+
+    [Parameter]
     public bool ShowAlphabet
+    {
+        get;
+        set;
+    } = true;
+
+    [Parameter]
+    public bool ShowSearch
     {
         get;
         set;
@@ -197,14 +225,7 @@ public partial class GridHeader
     }
 
     [Parameter]
-    public EventCallback<MouseEventArgs> AddMethod
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public EventCallback<MouseEventArgs> RefreshGrid
+    public EventCallback<MouseEventArgs> AdvancedSearch
     {
         get;
         set;

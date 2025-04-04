@@ -2164,4 +2164,15 @@ public partial class Candidates
             }
         }
     }
+
+    private async Task AddCandidate(MouseEventArgs arg)
+    {
+        await Grid.SelectRowAsync(-1);
+        await EditCandidate();
+    }
+
+    private async Task Refresh(MouseEventArgs arg)
+    {
+        await Grid.Refresh(true);
+    }
 }
