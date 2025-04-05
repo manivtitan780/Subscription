@@ -685,6 +685,12 @@ public partial class Candidates
         set;
     }
 
+    private SubmitCandidate SubmitDialog
+    {
+        get;
+        set;
+    }
+
     private async Task AddCandidate(MouseEventArgs arg)
     {
         await Grid.SelectRowAsync(-1);

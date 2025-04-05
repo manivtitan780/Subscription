@@ -1,9 +1,9 @@
 ﻿<SfDialog CssClass="dialogPopup" Header="Edit Activity" Height="@(IsShow ? "98vh" : "516px")" IsModal="true" MinHeight="@(IsShow ? "98vh" : "500px")" @ref="Dialog" Target="#divTarget" Visible="false" Width="500px">
 	<ChildContent>
-		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
-		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<DialogEvents OnOpen="OpenDialog"/>
 		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveActivityDialog" @ref="EditActivityForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-primary" type="submit">Update Activity</SfButton>
