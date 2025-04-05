@@ -20,7 +20,7 @@
 <PageHeader/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
+	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" RefreshGrid="Refresh" ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" Query="_query" 
 					@ref="Grid" TValue="Candidate" Width="100%">
@@ -112,22 +112,27 @@
 				<GridTemplates Context="context">
 					<DetailTemplate>
 						@* Add Buttons Start *@
-						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-						             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
-							@* Visible="UserRights.EditCandidate" *@
-							<SpeedDialItems>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C."/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume"/>
-								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment"/>
-							</SpeedDialItems>
-						</SfSpeedDial>
+						@{
+							if (RequisitionID == 0)
+							{
+								<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
+											 OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
+									@* Visible="UserRights.EditCandidate" *@
+									<SpeedDialItems>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C." />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment" />
+									</SpeedDialItems>
+								</SfSpeedDial>
+							}
+						}
 						@* Add Buttons End *@
 						@if (context is Candidate)
 						{

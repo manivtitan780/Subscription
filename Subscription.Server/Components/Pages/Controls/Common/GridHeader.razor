@@ -30,6 +30,12 @@
                 <SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Advanced Search" IconCss="e-icons e-search" @onclick="AdvancedSearch">Search</SfButton>
             }
         }
+        @{
+            if (ShowSubmit)
+            {
+                <SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Submit" IconCss="e-icons e-save" @onclick="Submit">Submit</SfButton>
+            }
+        }
 
         <SfAutoComplete CssClass="rightMargin" AllowCustom="true" EnablePersistence="false" Highlight="true" HtmlAttributes="@_htmlAttribute" ID="autoFilter" MinLength="3" Placeholder="Select&hellip;"
                         @ref="Acb" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="12%" @bind-Value="@Name">

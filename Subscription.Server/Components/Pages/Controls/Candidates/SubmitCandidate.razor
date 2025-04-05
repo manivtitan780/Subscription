@@ -1,0 +1,17 @@
+﻿<SfDialog Header="Submit Candidate" Height="405px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+    <ChildContent>
+        <SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
+        <DialogPositionData X="center" Y="center" />
+        <DialogAnimationSettings Duration="500" Effect="DialogEffect.FadeZoom" />
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <EditForm Model="Model" OnValidSubmit="SubmitCandidateToRequisitionDialog" @ref="EditSubmitForm">
+            @* <DataAnnotationsValidator /> *@
+            <FluentValidationValidator />
+            <div class="divContainerTable">
+                <TextBoxControl @bind-Value="@(Model.Text)" @bind-Value:event="ValueChanged" ID="textNotes" MaxLength="1000" MinLength="5" Multiline="true" Placeholder="Submission Notes" Rows="10"
+                                ValidationMessage="@(() => Model.Text)" />
+            </div>
+            <DialogFooter CancelMethod="CancelDialog" @ref="FooterDialog" />
+        </EditForm>
+    </ChildContent>
+</SfDialog>
