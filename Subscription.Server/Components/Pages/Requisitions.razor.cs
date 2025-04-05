@@ -1166,6 +1166,9 @@ public partial class Requisitions
             case "itemAddDocument":
                 _selectedTab = 1;
                 return AddDocument();
+            case "itemSubmitExisting":
+                NavManager.NavigateTo($"{NavManager.BaseUri}candidate?reqid={_target.ID}", true);
+                break;
         }
 
         return Task.CompletedTask;
