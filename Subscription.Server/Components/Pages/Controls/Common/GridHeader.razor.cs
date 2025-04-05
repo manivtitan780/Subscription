@@ -231,6 +231,20 @@ public partial class GridHeader
         set;
     }
 
+    [Parameter]
+    public EventCallback<MouseEventArgs> Submit
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public bool ShowSubmit
+    {
+        get;
+        set;
+    } = false;
+
     protected override void OnParametersSet()
     {
         _endpoint = Endpoint;

@@ -8,12 +8,19 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     03-11-2025 20:03
+// Last Updated On:     04-05-2025 15:04
 // *****************************************/
 
 #endregion
 
+#region Using
+
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
+
 using Role = Subscription.Model.Role;
+
+#endregion
 
 namespace Subscription.Server.Components.Pages;
 
@@ -351,6 +358,12 @@ public partial class Candidates
         set;
     } = true;
 
+    private bool IsFromCompany
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the instance of the IJSRuntime interface. This interface provides methods for interacting with
     ///     JavaScript from .NET code.
@@ -670,6 +683,12 @@ public partial class Candidates
     {
         get;
         set;
+    }
+
+    private async Task AddCandidate(MouseEventArgs arg)
+    {
+        await Grid.SelectRowAsync(-1);
+        await EditCandidate();
     }
 
     /// <summary>
@@ -1309,9 +1328,16 @@ public partial class Candidates
     {
         if (firstRender)
         {
-            if (await SessionStorage.ContainKeyAsync(StorageName))
+            if (RequisitionID == 0)
             {
-                SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
+                if (await SessionStorage.ContainKeyAsync(StorageName))
+                {
+                    SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
+                }
+                else
+                {
+                    SearchModel.Clear();
+                }
             }
             else
             {
@@ -1377,6 +1403,17 @@ public partial class Candidates
                                     DownloadFormatted = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "DownloadFormatted");
                                 }
 
+                                Uri _uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+                                if (QueryHelpers.ParseQuery(_uri.Query).TryGetValue("reqid", out StringValues _tempRequisitionID))
+                                {
+                                    RequisitionID = _tempRequisitionID.ToInt32();
+                                }
+
+                                if (QueryHelpers.ParseQuery(_uri.Query).TryGetValue("company", out StringValues _isFromCompany))
+                                {
+                                    IsFromCompany = _isFromCompany.ToInt32() > 0;
+                                }
+
                                 if (Start.APIHost.NullOrWhiteSpace())
                                 {
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
@@ -1435,6 +1472,11 @@ public partial class Candidates
     ///     "Candidates/DownloadResume" endpoint to retrieve the original resume.
     /// </remarks>
     private Task OriginalClick(MouseEventArgs arg) => GetResumeOnClick("Original");
+
+    private async Task Refresh(MouseEventArgs arg)
+    {
+        await Grid.Refresh(true);
+    }
 
     /// <summary>
     ///     Asynchronously saves the activity of a candidate.
@@ -1757,7 +1799,11 @@ public partial class Candidates
 
     private async Task SaveStorage(bool refreshGrid = true)
     {
-        await SessionStorage.SetItemAsync(StorageName, SearchModel);
+        if (RequisitionID == 0)
+        {
+            await SessionStorage.SetItemAsync(StorageName, SearchModel);
+        }
+
         if (refreshGrid)
         {
             await Grid.Refresh(true);
@@ -2052,6 +2098,11 @@ public partial class Candidates
         // Remove the brackets from the code
     }
 
+    private async Task SubmitSelectedCandidate(MouseEventArgs arg)
+    {
+        await Task.Yield();
+    }
+
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
     /// <summary>
@@ -2163,16 +2214,5 @@ public partial class Candidates
                 _semaphoreSlim.Release();
             }
         }
-    }
-
-    private async Task AddCandidate(MouseEventArgs arg)
-    {
-        await Grid.SelectRowAsync(-1);
-        await EditCandidate();
-    }
-
-    private async Task Refresh(MouseEventArgs arg)
-    {
-        await Grid.Refresh(true);
     }
 }

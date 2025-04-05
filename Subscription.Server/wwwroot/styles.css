@@ -33,6 +33,7 @@
     --c-red: #8e181b;
     --c-red-light: #8e181b;
     --c-red-light: rgba(142, 24, 27, 0.5);
+    --c-red-select: rgba(142, 24, 27, 0.15);
     --c-yellow: #fec10f;
     --c-yellowlight: #fec10f;
     --c-yellowlight: rgba(254, 193, 15, 0.5);
@@ -431,6 +432,10 @@ body, form, html {
 
 .e-grid .e-gridcontent {
     overflow-y: auto;
+}
+
+.e-grid td.e-active {
+    background: var(--c-red-select);
 }
 
 .e-rowcell:focus {
