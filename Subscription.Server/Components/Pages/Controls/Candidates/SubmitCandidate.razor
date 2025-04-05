@@ -1,17 +1,26 @@
-﻿<SfDialog Header="Submit Candidate" Height="405px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+﻿<SfDialog CssClass="dialogPopup" Header="Submit Candidate" Height="405px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
     <ChildContent>
-        <SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fabric" ZIndex="12000" />
-        <DialogPositionData X="center" Y="center" />
-        <DialogAnimationSettings Duration="500" Effect="DialogEffect.FadeZoom" />
-        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
-        <EditForm Model="Model" OnValidSubmit="SubmitCandidateToRequisitionDialog" @ref="EditSubmitForm">
-            @* <DataAnnotationsValidator /> *@
-            <FluentValidationValidator />
-            <div class="divContainerTable">
-                <TextBoxControl @bind-Value="@(Model.Text)" @bind-Value:event="ValueChanged" ID="textNotes" MaxLength="1000" MinLength="5" Multiline="true" Placeholder="Submission Notes" Rows="10"
-                                ValidationMessage="@(() => Model.Text)" />
-            </div>
-            <DialogFooter CancelMethod="CancelDialog" @ref="FooterDialog" />
-        </EditForm>
+        <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="center" Y="center"/>
+        <DialogAnimationSettings Duration="300" Effect="DialogEffect.FadeZoom"/>
+        <DialogEvents OnOpen="OpenDialog"/>
+        <SfDataForm EditContext="Context" ID="submitEditForm" OnValidSubmit="SaveCandidateSubmit" @ref="EditSubmitForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+            <FormButtons>
+                <SfButton CssClass="e-primary" type="submit">Submit Candidate</SfButton>
+                <SfButton CssClass="e-secondary" OnClick="CancelCandidateSubmit" type="button">Cancel</SfButton>
+            </FormButtons>
+            <FormValidator>
+                <FluentValidationValidator Validator="_submitCandidateRequisitionValidator"/>
+            </FormValidator>
+            <FormItems>
+                <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Activity Information">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Text)">
+                        <Template>
+                            <TextArea @bind-Value="Model.Text" ID="textActivityName" MaxLength="1000" Placeholder="Submission Notes"></TextArea>
+                        </Template>
+                    </FormItem>
+                </FormGroup>
+            </FormItems>
+        </SfDataForm>
     </ChildContent>
 </SfDialog>

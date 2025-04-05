@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           SubmitCandidate.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     09-11-2023 19:19
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          04-05-2025 16:04
+// Last Updated On:     04-05-2025 19:04
 // *****************************************/
 
 #endregion
@@ -31,6 +31,8 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </explain>
 public partial class SubmitCandidate
 {
+    private readonly SubmitCandidateRequisitionValidator _submitCandidateRequisitionValidator = new();
+
     /// <summary>
     ///     Gets or sets the cancel event callback that is invoked when the user clicks the cancel button in the
     ///     SubmitCandidate dialog.
@@ -46,6 +48,12 @@ public partial class SubmitCandidate
     /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel
+    {
+        get;
+        set;
+    }
+
+    private EditContext Context
     {
         get;
         set;
@@ -80,25 +88,7 @@ public partial class SubmitCandidate
     ///     This EditForm instance is used to handle the form submission process within the candidate submission dialog.
     ///     It includes validation for the text box, ensuring that the entered notes are between 5 and 1000 characters long.
     /// </remarks>
-    private EditForm EditSubmitForm
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the FooterDialog of the SubmitCandidate dialog.
-    /// </summary>
-    /// <value>
-    ///     The FooterDialog of the SubmitCandidate dialog.
-    /// </value>
-    /// <remarks>
-    ///     The FooterDialog is a part of the SubmitCandidate dialog used for submitting a candidate.
-    ///     It is an instance of the DialogFooter class, which represents a dialog footer in the admin controls of the
-    ///     application.
-    ///     The DialogFooter class contains properties and methods for managing the Cancel and Save buttons in the dialog.
-    /// </remarks>
-    private DialogFooter FooterDialog
+    private SfDataForm EditSubmitForm
     {
         get;
         set;
@@ -142,37 +132,27 @@ public partial class SubmitCandidate
         set;
     }
 
-    /// <summary>
-    ///     Gets or sets the SfSpinner control used in the SubmitCandidate dialog.
-    /// </summary>
-    /// <value>
-    ///     The SfSpinner control.
-    /// </value>
-    /// <remarks>
-    ///     This control is used to display a spinner animation while the candidate submission process is ongoing.
-    ///     It is shown when the user submits a candidate and hidden when the submission process is completed or cancelled.
-    /// </remarks>
-    private SfSpinner Spinner
+    private bool VisibleSpinner
     {
         get;
         set;
     }
 
-    /// <summary>
-    ///     Asynchronously cancels the candidate submission process.
-    /// </summary>
-    /// <param name="args">The mouse event arguments associated with the cancel action.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
-    /// <remarks>
-    ///     This method is invoked when the user clicks the cancel button in the SubmitCandidate dialog.
-    ///     It calls the General.CallCancelMethod, which hides the dialog and the spinner, and enables the dialog buttons.
-    /// </remarks>
-    private async Task CancelDialog(MouseEventArgs args)
+    private async Task CancelCandidateSubmit(MouseEventArgs args)
     {
-        await Task.Yield();
-        //await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+        VisibleSpinner = true;
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
+    }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
     }
 
     /// <summary>
@@ -188,7 +168,25 @@ public partial class SubmitCandidate
     ///     instance is used to handle the form submission process within the candidate submission dialog and includes
     ///     validation for the text box, ensuring that the entered notes are between 5 and 1000 characters long.
     /// </explain>
-    private void OpenDialog() => EditSubmitForm.EditContext?.Validate();
+    private void OpenDialog() => Context.Validate();
+
+    /// <summary>
+    ///     Asynchronously submits a candidate to a requisition.
+    /// </summary>
+    /// <param name="editContext">The edit context associated with the submission action.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <remarks>
+    ///     This method is responsible for handling the submission process of a candidate to a requisition.
+    ///     It calls the General.CallSaveMethod, which executes the provided save method, shows the spinner,
+    ///     disables the dialog buttons, and then hides the spinner and dialog, and enables the dialog buttons.
+    /// </remarks>
+    private async Task SaveCandidateSubmit(EditContext editContext)
+    {
+        VisibleSpinner = true;
+        await Save.InvokeAsync(editContext);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
+    }
 
     /// <summary>
     ///     Asynchronously shows the SubmitCandidate dialog.
@@ -201,20 +199,4 @@ public partial class SubmitCandidate
     ///     The dialog is initially invisible and its visibility is controlled programmatically by this method.
     /// </remarks>
     public async Task ShowDialog() => await Dialog.ShowAsync();
-
-    /// <summary>
-    ///     Asynchronously submits a candidate to a requisition.
-    /// </summary>
-    /// <param name="editContext">The edit context associated with the submission action.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method is responsible for handling the submission process of a candidate to a requisition.
-    ///     It calls the General.CallSaveMethod, which executes the provided save method, shows the spinner,
-    ///     disables the dialog buttons, and then hides the spinner and dialog, and enables the dialog buttons.
-    /// </remarks>
-    private async Task SubmitCandidateToRequisitionDialog(EditContext editContext)
-    {
-        await Task.Yield();
-        //await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
-    }
 }

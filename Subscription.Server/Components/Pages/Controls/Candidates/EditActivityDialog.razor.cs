@@ -220,24 +220,6 @@ public partial class EditActivityDialog
     }
 
     /// <summary>
-    ///     Gets or sets the Syncfusion Blazor Spinner control used in the dialog.
-    /// </summary>
-    /// <value>
-    ///     The Syncfusion Blazor Spinner control.
-    /// </value>
-    /// <remarks>
-    ///     This control is used to display a spinner animation while the dialog is performing an operation, such as saving or
-    ///     cancelling.
-    ///     The spinner is shown when the `SaveActivityDialog` or `CancelDialog` methods are called, and hidden when these
-    ///     operations are completed.
-    /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
     ///     Gets or sets the list of application workflow steps.
     /// </summary>
     /// <value>
@@ -296,7 +278,6 @@ public partial class EditActivityDialog
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
         VisibleSpinner = false;
-        //await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
     }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
@@ -307,7 +288,6 @@ public partial class EditActivityDialog
         Context.OnFieldChanged += Context_OnFieldChanged;
         base.OnParametersSet();
     }
-
 
     /// <summary>
     ///     Changes the status of the activity.
@@ -322,7 +302,6 @@ public partial class EditActivityDialog
     /// </remarks>
     private void ChangeStatus(ChangeEventArgs<string, KeyValues> status)
     {
-        //IsShow = false;
         if (Status != null)
         {
             IsShow = Status.Any(workflow => workflow.Step == status.Value && workflow.Schedule);
@@ -380,7 +359,6 @@ public partial class EditActivityDialog
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
         VisibleSpinner = false;
-        //await General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
     }
 
     /// <summary>
