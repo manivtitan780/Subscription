@@ -1948,18 +1948,18 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                 _mailMessage.To.Add("manivenkit@gmail.com");
 
                 // Add attachments from byte arrays
-                if (_originalBytesArray is {Length: > 0})
-                {
-                    using MemoryStream _originalStream = new(_originalBytesArray);
-                    Attachment _originalAttachment = new(_originalStream, _original, GetMimeType(_original));
-                    _mailMessage.Attachments.Add(_originalAttachment);
-                }
 
                 if (_formattedBytesArray is {Length: > 0})
                 {
                     using MemoryStream _formattedStream = new(_formattedBytesArray);
                     Attachment _formattedAttachment = new(_formattedStream, _formatted, GetMimeType(_formatted));
                     _mailMessage.Attachments.Add(_formattedAttachment);
+                }
+                else if (_originalBytesArray is {Length: > 0})
+                {
+                    using MemoryStream _originalStream = new(_originalBytesArray);
+                    Attachment _originalAttachment = new(_originalStream, _original, GetMimeType(_original));
+                    _mailMessage.Attachments.Add(_originalAttachment);
                 }
 
                 _smtpClient.Send(_mailMessage);
