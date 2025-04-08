@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-05-2025 15:04
+// Last Updated On:     04-05-2025 20:04
 // *****************************************/
 
 #endregion
@@ -50,6 +50,7 @@ public partial class Candidates
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
     private List<StatusCode> _statusCodes = [];
+    private readonly SubmitCandidateRequisition _submitCandidateModel = new();
 
     private Candidate _target;
 
@@ -666,6 +667,12 @@ public partial class Candidates
         set;
     }
 
+    private SubmitCandidate SubmitDialog
+    {
+        get;
+        set;
+    }
+
     /// <summary>
     ///     Gets or sets the username of the current user.
     /// </summary>
@@ -680,12 +687,6 @@ public partial class Candidates
     }
 
     private bool VisibleSpin
-    {
-        get;
-        set;
-    }
-
-    private SubmitCandidate SubmitDialog
     {
         get;
         set;
@@ -1816,6 +1817,30 @@ public partial class Candidates
         }
     }
 
+    private Task SaveSubmitCandidate(EditContext arg) => ExecuteMethod(async () =>
+                                                                       {
+                                                                           Dictionary<string, string> _parameters = new()
+                                                                                                                    {
+                                                                                                                        {"requisitionID", RequisitionID.ToString()},
+                                                                                                                        {"candidateID", _target.ID.ToString()},
+                                                                                                                        {"notes", _submitCandidateModel.Text},
+                                                                                                                        {"roleID", RoleName},
+                                                                                                                        {"user", User}/*,
+                                                                                                                        {"jsonPath", Start.JsonFilePath},
+                                                                                                                        {"emailAddress", General.GetEmail(LoginCookyUser)},
+                                                                                                                        {"uploadPath", Start.UploadsPath}*/
+                                                                                                                    };
+
+                                                                           _ = await General.ExecuteRest<bool>("Candidate/SubmitCandidateRequisition", _parameters);
+
+                                                                           //_candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
+
+                                                                           if (RequisitionID > 0)
+                                                                           {
+                                                                               NavManager.NavigateTo(NavManager.BaseUri + (IsFromCompany ? "company" : "requisition"));
+                                                                           }
+                                                                       });
+
     /// <summary>
     ///     Sets the communication rating of the candidate.
     /// </summary>
@@ -2106,7 +2131,8 @@ public partial class Candidates
 
     private async Task SubmitSelectedCandidate(MouseEventArgs arg)
     {
-        await Task.Yield();
+        _submitCandidateModel.Clear();
+        await SubmitDialog.ShowDialog();
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
@@ -2220,5 +2246,10 @@ public partial class Candidates
                 _semaphoreSlim.Release();
             }
         }
+    }
+
+    private void RowSelected(RowSelectingEventArgs<Candidate> arg)
+    {
+        _target = arg.Data;
     }
 }
