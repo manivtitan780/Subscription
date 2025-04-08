@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     04-02-2025 18:04
+// Last Updated On:     04-08-2025 20:04
 // *****************************************/
 
 #endregion
@@ -837,6 +837,23 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                       Count = _count,
                       Data = _candidates
                   });
+    }
+
+    private string GetMimeType(string fileName)
+    {
+        string extension = Path.GetExtension(fileName).ToLowerInvariant();
+        return extension switch
+               {
+                   ".pdf" => "application/pdf",
+                   ".doc" => "application/msword",
+                   ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                   ".xls" => "application/vnd.ms-excel",
+                   ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                   ".txt" => "text/plain",
+                   ".jpg" or ".jpeg" => "image/jpeg",
+                   ".png" => "image/png",
+                   _ => "application/octet-stream"
+               };
     }
 
     public async Task<ActionResult<string>> ParseCandidate(IFormFile file)
@@ -1772,57 +1789,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
     }
 
     /// <summary>
-    ///     Reverts the last activity of a candidate.
-    /// </summary>
-    /// <param name="submissionID">The ID of the submission related to the candidate's activity.</param>
-    /// <param name="user">The user who is performing the undo operation.</param>
-    /// <param name="roleID">The role ID of the user, default is "RS".</param>
-    /// <param name="isCandidateScreen">
-    ///     A boolean value indicating if the operation is performed from the candidate screen,
-    ///     default is true.
-    /// </param>
-    /// <returns>A dictionary containing the list of remaining activities for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to undo the candidate's last activity,
-    ///     and returns a dictionary containing the updated list of activities.
-    ///     If the operation is successful, the dictionary will contain a list of remaining activities for the candidate.
-    /// </remarks>
-    [HttpPost]
-    public async Task<ActionResult<string>> UndoCandidateActivity(int submissionID, string user, string roleID = "RS", bool isCandidateScreen = true)
-    {
-        string _activities = "[]";
-        if (submissionID == 0)
-        {
-            return NotFound("Submission ID is not valid.");
-        }
-
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("UndoCandidateActivity", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", submissionID);
-        _command.Varchar("User", 10, user);
-        _command.Bit("CandScreen", isCandidateScreen);
-        _command.Char("RoleID", 2, roleID);
-
-        try
-        {
-            await _connection.OpenAsync();
-            _activities = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error undoing candidate activity. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_activities);
-    }
-
-    /// <summary>
     ///     Submits a candidate for a specific requisition.
     /// </summary>
     /// <param name="requisitionID">The ID of the requisition.</param>
@@ -1949,17 +1915,9 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
                 // Add attachments from byte arrays
 
-                if (_formattedBytesArray is {Length: > 0})
+                if (!TryAddAttachment(_formattedBytesArray, _formatted, _mailMessage))
                 {
-                    using MemoryStream _formattedStream = new(_formattedBytesArray);
-                    Attachment _formattedAttachment = new(_formattedStream, _formatted, GetMimeType(_formatted));
-                    _mailMessage.Attachments.Add(_formattedAttachment);
-                }
-                else if (_originalBytesArray is {Length: > 0})
-                {
-                    using MemoryStream _originalStream = new(_originalBytesArray);
-                    Attachment _originalAttachment = new(_originalStream, _original, GetMimeType(_original));
-                    _mailMessage.Attachments.Add(_originalAttachment);
+                    TryAddAttachment(_originalBytesArray, _original, _mailMessage);
                 }
 
                 _smtpClient.Send(_mailMessage);
@@ -1976,6 +1934,71 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(true);
+    }
+
+    private bool TryAddAttachment(byte[] array, string name, MailMessage mailMessage)
+    {
+        if (array is null)
+        {
+            return false;
+        }
+
+        using MemoryStream _formattedStream = new(array);
+        Attachment _formattedAttachment = new(_formattedStream, name, GetMimeType(name));
+        mailMessage.Attachments.Add(_formattedAttachment);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Reverts the last activity of a candidate.
+    /// </summary>
+    /// <param name="submissionID">The ID of the submission related to the candidate's activity.</param>
+    /// <param name="user">The user who is performing the undo operation.</param>
+    /// <param name="roleID">The role ID of the user, default is "RS".</param>
+    /// <param name="isCandidateScreen">
+    ///     A boolean value indicating if the operation is performed from the candidate screen,
+    ///     default is true.
+    /// </param>
+    /// <returns>A dictionary containing the list of remaining activities for the candidate.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to undo the candidate's last activity,
+    ///     and returns a dictionary containing the updated list of activities.
+    ///     If the operation is successful, the dictionary will contain a list of remaining activities for the candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<string>> UndoCandidateActivity(int submissionID, string user, string roleID = "RS", bool isCandidateScreen = true)
+    {
+        string _activities = "[]";
+        if (submissionID == 0)
+        {
+            return NotFound("Submission ID is not valid.");
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("UndoCandidateActivity", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Id", submissionID);
+        _command.Varchar("User", 10, user);
+        _command.Bit("CandScreen", isCandidateScreen);
+        _command.Char("RoleID", 2, roleID);
+
+        try
+        {
+            await _connection.OpenAsync();
+            _activities = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error undoing candidate activity. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_activities);
     }
 
     /// <summary>
@@ -2042,22 +2065,5 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_returnVal);
-    }
-
-    private string GetMimeType(string fileName)
-    {
-        string extension = Path.GetExtension(fileName).ToLowerInvariant();
-        return extension switch
-               {
-                   ".pdf" => "application/pdf",
-                   ".doc" => "application/msword",
-                   ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                   ".xls" => "application/vnd.ms-excel",
-                   ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                   ".txt" => "text/plain",
-                   ".jpg" or ".jpeg" => "image/jpeg",
-                   ".png" => "image/png",
-                   _ => "application/octet-stream"
-               };
     }
 }
