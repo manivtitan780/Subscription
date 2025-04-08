@@ -102,30 +102,30 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                                                                                                                            items = new
                                                                                                                                    {
                                                                                                                                        Course = new
-                                                                                                                                                   {
-                                                                                                                                                       type = "string",
-                                                                                                                                                       description = "Course name of the candidate"
-                                                                                                                                                   },
-                                                                                                                                        School = new
-                                                                                                                                                    {
-                                                                                                                                                         type = "string",
-                                                                                                                                                         description = "School name of the candidate"
-                                                                                                                                                    },
-                                                                                                                                        Period = new
-                                                                                                                                                   {
-                                                                                                                                                       type = "string",
-                                                                                                                                                       description = "Period of the education"
-                                                                                                                                                   },
-                                                                                                                                        State = new
-                                                                                                                                                   {
-                                                                                                                                                       type = "string",
-                                                                                                                                                       description = "State of the education"
-                                                                                                                                                   },
-                                                                                                                                        Country = new
-                                                                                                                                                   {
-                                                                                                                                                       type = "string",
-                                                                                                                                                       description = "Country of the education"
-                                                                                                                                                   }
+                                                                                                                                                {
+                                                                                                                                                    type = "string",
+                                                                                                                                                    description = "Course name of the candidate"
+                                                                                                                                                },
+                                                                                                                                       School = new
+                                                                                                                                                {
+                                                                                                                                                    type = "string",
+                                                                                                                                                    description = "School name of the candidate"
+                                                                                                                                                },
+                                                                                                                                       Period = new
+                                                                                                                                                {
+                                                                                                                                                    type = "string",
+                                                                                                                                                    description = "Period of the education"
+                                                                                                                                                },
+                                                                                                                                       State = new
+                                                                                                                                               {
+                                                                                                                                                   type = "string",
+                                                                                                                                                   description = "State of the education"
+                                                                                                                                               },
+                                                                                                                                       Country = new
+                                                                                                                                                 {
+                                                                                                                                                     type = "string",
+                                                                                                                                                     description = "Country of the education"
+                                                                                                                                                 }
                                                                                                                                    },
                                                                                                                            description = "Education information of the candidate"
                                                                                                                        },
@@ -1822,129 +1822,117 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_activities);
     }
 
-	/// <summary>
-	///     Submits a candidate for a specific requisition.
-	/// </summary>
-	/// <param name="requisitionID">The ID of the requisition.</param>
-	/// <param name="candidateID">The ID of the candidate.</param>
-	/// <param name="notes">Additional notes about the submission (optional).</param>
-	/// <param name="user">The user who is performing the submission (optional).</param>
-	/// <param name="roleID">The role ID of the user (optional, default is "RS").</param>
-	/// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
-	/// <remarks>
-	///     This method connects to the database, executes a stored procedure to submit the candidate for the requisition,
-	///     and returns a dictionary containing the result of the operation.
-	///     If the operation is successful, the dictionary will contain a list of activities for the candidate.
-	/// </remarks>
-	[HttpPost]
-	public async Task<ActionResult<bool>> SubmitCandidateRequisition(int requisitionID, int candidateID, string notes = "", string user = "", string roleID = "RS")
-	{
-		if (candidateID == 0 || requisitionID == 0)
-		{
-			return BadRequest("Candidate ID and/or Requisition ID is not valid.");
-		}
+    /// <summary>
+    ///     Submits a candidate for a specific requisition.
+    /// </summary>
+    /// <param name="requisitionID">The ID of the requisition.</param>
+    /// <param name="candidateID">The ID of the candidate.</param>
+    /// <param name="notes">Additional notes about the submission (optional).</param>
+    /// <param name="user">The user who is performing the submission (optional).</param>
+    /// <param name="roleID">The role ID of the user (optional, default is "RS").</param>
+    /// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
+    /// <remarks>
+    ///     This method connects to the database, executes a stored procedure to submit the candidate for the requisition,
+    ///     and returns a dictionary containing the result of the operation.
+    ///     If the operation is successful, the dictionary will contain a list of activities for the candidate.
+    /// </remarks>
+    [HttpPost]
+    public async Task<ActionResult<bool>> SubmitCandidateRequisition(int requisitionID, int candidateID, string notes = "", string user = "", string roleID = "RS")
+    {
+        if (candidateID == 0 || requisitionID == 0)
+        {
+            return BadRequest("Candidate ID and/or Requisition ID is not valid.");
+        }
 
-		await using SqlConnection _connection = new(Start.ConnectionString);
-		await using SqlCommand _command = new("SubmitCandidateRequisition", _connection);
-		_command.CommandType = CommandType.StoredProcedure;
-		_command.Int("RequisitionID", requisitionID);
-		_command.Int("CandidateID", candidateID);
-		_command.Varchar("Notes", 1000, notes);
-		_command.Char("RoleID", 2, roleID);
-		_command.Char("User", 10, user);
-		try
-		{
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("SubmitCandidateRequisition", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("RequisitionID", requisitionID);
+        _command.Int("CandidateID", candidateID);
+        _command.Varchar("Notes", 1000, notes);
+        _command.Char("RoleID", 2, roleID);
+        _command.Char("User", 10, user);
+        try
+        {
             await _connection.OpenAsync();
-			await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "", _company = "";
-			await _reader.ReadAsync();
-			_firstName = _reader.NString(0);
-			_lastName = _reader.NString(1);
-			_reqCode = _reader.NString(2);
-			_reqTitle = _reader.NString(3);
-			_original = _reader.NString(4);
-			_originalInternal = _reader.NString(5);
-			_formatted = _reader.NString(6);
-			_formattedInternal = _reader.NString(7);
-			_company = _reader.GetString(8);
+            await _reader.ReadAsync();
+            string _firstName = _reader.NString(0);
+            string _lastName = _reader.NString(1);
+            string _reqCode = _reader.NString(2);
+            string _reqTitle = _reader.NString(3);
+            string _original = _reader.NString(4);
+            string _originalInternal = _reader.NString(5);
+            string _formatted = _reader.NString(6);
+            string _formattedInternal = _reader.NString(7);
+            string _company = _reader.GetString(8);
 
-			List<EmailTemplates> _templates = [];
-			Dictionary<string, string> _emailAddresses = new(), _emailCC = new();
+            List<EmailTemplates> _templates = [];
+            Dictionary<string, string> _emailAddresses = new(), _emailCC = new();
 
-			await _reader.NextResultAsync();
-			while (await _reader.ReadAsync())
-			{
-				_templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
-			}
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
+            }
 
-			await _reader.NextResultAsync();
-			while (await _reader.ReadAsync())
-			{
-				_emailAddresses.Add(_reader.NString(0), _reader.NString(1));
-			}
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
+            }
 
-			await _reader.CloseAsync();
+            await _reader.CloseAsync();
 
-			if (_templates.Count > 0)
-			{
-				EmailTemplates _templateSingle = _templates[0];
-				if (!_templateSingle.CC.NullOrWhiteSpace())
-				{
-					string[] _ccArray = _templateSingle.CC.Split(",");
-					foreach (string _cc in _ccArray)
-					{
-						_emailCC.Add(_cc, _cc);
-					}
-				}
+            if (_templates.Count > 0)
+            {
+                EmailTemplates _templateSingle = _templates[0];
+                if (!_templateSingle.CC.NullOrWhiteSpace())
+                {
+                    string[] _ccArray = _templateSingle.CC.Split(",");
+                    foreach (string _cc in _ccArray)
+                    {
+                        _emailCC.Add(_cc, _cc);
+                    }
+                }
 
-				_templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
-														 .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
-														 .Replace("$FIRST_NAME$", _firstName)
-														 .Replace("$LAST_NAME$", _lastName)
-														 .Replace("$REQ_ID$", _reqCode)
-														 .Replace("$REQ_TITLE$", _reqTitle)
-														 .Replace("$COMPANY$", _company)
-														 .Replace("$SUBMISSION_NOTES$", notes)
-														 .Replace("$LOGGED_USER$", user);
+                _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                         .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
+                                                         .Replace("$FIRST_NAME$", _firstName)
+                                                         .Replace("$LAST_NAME$", _lastName)
+                                                         .Replace("$REQ_ID$", _reqCode)
+                                                         .Replace("$REQ_TITLE$", _reqTitle)
+                                                         .Replace("$COMPANY$", _company)
+                                                         .Replace("$SUBMISSION_NOTES$", notes)
+                                                         .Replace("$LOGGED_USER$", user);
 
-				_templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
-														  .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
-														  .Replace("$FIRST_NAME$", _firstName)
-														  .Replace("$LAST_NAME$", _lastName)
-														  .Replace("$REQ_ID$", _reqCode)
-														  .Replace("$REQ_TITLE$", _reqTitle)
-														  .Replace("$COMPANY$", _company)
-														  .Replace("$SUBMISSION_NOTES$", notes)
-														  .Replace("$LOGGED_USER$", user);
+                _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                          .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
+                                                          .Replace("$FIRST_NAME$", _firstName)
+                                                          .Replace("$LAST_NAME$", _lastName)
+                                                          .Replace("$REQ_ID$", _reqCode)
+                                                          .Replace("$REQ_TITLE$", _reqTitle)
+                                                          .Replace("$COMPANY$", _company)
+                                                          .Replace("$SUBMISSION_NOTES$", notes)
+                                                          .Replace("$LOGGED_USER$", user);
 
                 if (_original.NotNullOrWhiteSpace() || _formatted.NotNullOrWhiteSpace())
                 {
                     return Ok(false);
                 }
 
-				/*List<string> _attachments = new();
-				string _pathDest = "";
-				//if (_firstTime)
-				//{
-				string _path = "";
-				if (!_formatted.NullOrWhiteSpace())
-				{
-					_path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formattedInternal);
-					_pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formatted);
-				}
-				else
-				{
-					_path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _originalInternal);
-					_pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _original);
-				}
+                byte[] _originalBytesArray = null;
+                if (_originalInternal.NotNullOrWhiteSpace())
+                {
+                    _originalBytesArray = await General.ReadFromBlob($"{Start.AzureBlobContainer}/Candidate/{candidateID}/{_formattedInternal}");
+                }
 
-				if (!_path.NullOrWhiteSpace() && !_pathDest.NullOrWhiteSpace() && System.IO.File.Exists(_path))
-				{
-					System.IO.File.Copy(_path, _pathDest, true);
-					_attachments.Add(_pathDest);
-				}*/ //TODO: Check for Attachments
-				//}
+                byte[] _formattedBytesArray = null;
+                if (_formattedInternal.NotNullOrWhiteSpace())
+                {
+                    _formattedBytesArray = await General.ReadFromBlob($"{Start.AzureBlobContainer}/Candidate/{candidateID}/{_formattedInternal}");
+                }
 
                 using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
                 _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
@@ -1958,39 +1946,37 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                                                IsBodyHtml = true
                                            };
                 _mailMessage.To.Add("manivenkit@gmail.com");
+
+                // Add attachments from byte arrays
+                if (_originalBytesArray is {Length: > 0})
+                {
+                    using MemoryStream _originalStream = new(_originalBytesArray);
+                    Attachment _originalAttachment = new(_originalStream, _original, GetMimeType(_original));
+                    _mailMessage.Attachments.Add(_originalAttachment);
+                }
+
+                if (_formattedBytesArray is {Length: > 0})
+                {
+                    using MemoryStream _formattedStream = new(_formattedBytesArray);
+                    Attachment _formattedAttachment = new(_formattedStream, _formatted, GetMimeType(_formatted));
+                    _mailMessage.Attachments.Add(_formattedAttachment);
+                }
+
                 _smtpClient.Send(_mailMessage);
-				// GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, _attachments);
-				/*await Task.Yield();
-				if (!_pathDest.NullOrWhiteSpace() && System.IO.File.Exists(_pathDest))
-				{
-					bool _waiting = true;
-					byte _attempts = 0;
-					while (_waiting && _attempts < 10)
-					{
-						try
-						{
-							await Task.Yield();
-							System.IO.File.Delete(_pathDest);
-							_waiting = false;
-						}
-						catch
-						{
-							_attempts++;
-							_waiting = _attempts < 10;
-						}
-					}
-				}*/
-			}
-		}
-		catch
-		{
-			//
-		}
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error submitting candidate requisition. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
 
-		await _connection.CloseAsync();
-
-		return Ok(true);
-	}
+        return Ok(true);
+    }
 
     /// <summary>
     ///     Uploads a document for a candidate.
@@ -2016,7 +2002,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
         // Create the folder path
         string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
-        
+
         await General.UploadToBlob(file, _blobPath);
         /*// Create a BlobStorage instance
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
@@ -2056,5 +2042,22 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_returnVal);
+    }
+
+    private string GetMimeType(string fileName)
+    {
+        string extension = Path.GetExtension(fileName).ToLowerInvariant();
+        return extension switch
+               {
+                   ".pdf" => "application/pdf",
+                   ".doc" => "application/msword",
+                   ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                   ".xls" => "application/vnd.ms-excel",
+                   ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                   ".txt" => "text/plain",
+                   ".jpg" or ".jpeg" => "image/jpeg",
+                   ".png" => "image/png",
+                   _ => "application/octet-stream"
+               };
     }
 }
