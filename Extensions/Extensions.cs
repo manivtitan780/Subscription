@@ -200,7 +200,6 @@ public static partial class Extensions
     ///     The method uses the ToInt64 extension method to convert the input string to a long.
     ///     The resulting long is then formatted to a phone number format.
     /// </remarks>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string FormatPhoneNumber(this string s) => s.ToInt64() > 0 ? $"{s.ToInt64():(###) ###-####}" : "";
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -384,7 +383,6 @@ public static partial class Extensions
     /// <returns>
     ///     A string containing only the numeric characters from the input string.
     /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string StripPhoneNumber(this string s) => MyRegex().Replace(s, string.Empty);
 
     /// <summary>
@@ -394,7 +392,6 @@ public static partial class Extensions
     /// <returns>
     ///     A Base64 encoded string that represents the original text.
     /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToBase64String(this string s)
     {
         byte[] _bytes = Encoding.UTF8.GetBytes(s);
@@ -412,7 +409,6 @@ public static partial class Extensions
     ///     The method creates a new MemoryStream, copies the content of the input Stream into it,
     ///     and then converts the MemoryStream to a byte array.
     /// </remarks>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] ToStreamByteArray(this Stream s)
     {
         using MemoryStream _memoryStream = new();

@@ -1074,7 +1074,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                                                          .Replace("$FIRST_NAME$", candidateDetails.FirstName)
                                                          .Replace("$LAST_NAME$", candidateDetails.LastName)
                                                          .Replace("$CAND_LOCATION$", GetCandidateLocation(candidateDetails, _stateName))
-                                                         .Replace("$CAND_PHONE_PRIMARY$", candidateDetails.Phone1.StripPhoneNumber().FormatPhoneNumber())
+                                                         .Replace("$CAND_PHONE_PRIMARY$", candidateDetails.Phone1.StripAndFormatPhoneNumber())
                                                          .Replace("$CAND_SUMMARY$", candidateDetails.Summary)
                                                          .Replace("$LOGGED_USER$", userName);
                 _templateSingle.Template = _templateSingle.Template!.Replace("$TODAY$", DateTime.Today.CultureDate())
@@ -1082,7 +1082,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                                                           .Replace("$FIRST_NAME$", candidateDetails.FirstName)
                                                           .Replace("$LAST_NAME$", candidateDetails.LastName)
                                                           .Replace("$CAND_LOCATION$", GetCandidateLocation(candidateDetails, _stateName))
-                                                          .Replace("$CAND_PHONE_PRIMARY$", candidateDetails.Phone1.StripPhoneNumber().FormatPhoneNumber())
+                                                          .Replace("$CAND_PHONE_PRIMARY$", candidateDetails.Phone1.StripAndFormatPhoneNumber())
                                                           .Replace("$CAND_SUMMARY$", candidateDetails.Summary)
                                                           .Replace("$LOGGED_USER$", userName);
 
