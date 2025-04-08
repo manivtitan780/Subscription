@@ -18,6 +18,8 @@
 using System.Security.Cryptography;
 using System.Text;
 
+using FluentStorage.Blobs;
+
 using Newtonsoft.Json;
 
 #endregion
@@ -351,6 +353,25 @@ public static class General
         }
     }
 
+    internal static async Task UploadToBlob(IFormFile file, string blobPath)
+    {
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        await using Stream stream = file.OpenReadStream();
+        await _storage.WriteAsync(blobPath, stream);
+    }
+
+    internal static async Task<byte[]> ReadFromBlob(string blobPath)
+    {
+        //Connect to the Azure Blob Storage
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        //Read the file into a Bytes Array
+        byte[] _memBytes = await _storage.ReadBytesAsync(blobPath);
+        
+        return _memBytes;
+    }
+    
     // ReSharper disable once UnusedMember.Local
     private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
     {

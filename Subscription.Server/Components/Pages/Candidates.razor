@@ -32,7 +32,7 @@
 						<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID"/>
 					}
 				}
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Candidate"/>
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" RowSelecting="RowSelected" TValue="Candidate"/>
 				<GridColumns>
 					<GridSortSettings AllowUnsort="false">
 						@* <GridSortColumns>
@@ -280,7 +280,7 @@
 	<AddDocumentDialog DocumentTypes="_documentTypes" Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/> @*AfterUpload="AfterDocument" BeforeUpload="BeforeDocument" *@
 	<MPCCandidateDialog MPCGrid="_candidateMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
 	<RatingCandidateDialog RatingGrid="_candidateRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
-	<SubmitCandidate Model="@_candidateDetailsObjectClone" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
+	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
 }
 else
 {
