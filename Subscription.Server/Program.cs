@@ -84,7 +84,7 @@ if (!_app.Environment.IsDevelopment()){
 }
 
 /*SyncfusionLicenseProvider.RegisterLicense("MzU1ODExM0AzMjM3MmUzMDJlMzBtNU84aGQ5RDhlYXNPZ0tpZ2U3bkloRnI4YThTb1hVUVFnOEpHTVdCYlRnPQ==");*/
-SyncfusionLicenseProvider.RegisterLicense("MzYyMDc2MUAzMjM4MmUzMDJlMzBldVNkeUdtdkk5ZC91Y0VZVXd2dU1uNU0rK1gxT0VrenBuNFc2cGRLVWJBPQ==");
+SyncfusionLicenseProvider.RegisterLicense("MzgwMzYxM0AzMjM5MmUzMDJlMzAzYjMyMzkzYmNwU05xWTZNUGkwRkQrSm9lSUV4N0xFSU1IMysvZnB2TUxHL3FPdTkxMm89");
 
 _app.UseHttpsRedirection();
 
