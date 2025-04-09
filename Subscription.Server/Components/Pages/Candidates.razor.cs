@@ -1833,11 +1833,10 @@ public partial class Candidates
 
                                                                            _ = await General.ExecuteRest<bool>("Candidate/SubmitCandidateRequisition", _parameters);
 
-                                                                           //_candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response["Activity"]);
-
                                                                            if (RequisitionID > 0)
                                                                            {
-                                                                               NavManager.NavigateTo(NavManager.BaseUri + (IsFromCompany ? "company" : "requisition"));
+                                                                               await SessionStorage.SetItemAsync("OptReqID", RequisitionID.ToString());
+                                                                               NavManager.NavigateTo(NavManager.BaseUri + (IsFromCompany ? "company" : $"requisition"));
                                                                            }
                                                                        });
 
