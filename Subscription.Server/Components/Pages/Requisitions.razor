@@ -7,22 +7,22 @@
 			RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" 
-				Query="_query" @ref="Grid" TValue="Requisition" Width="100%">
-			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+				@ref="Grid" TValue="Requisition" Width="100%" DataSource="@DataSource" TotalItemCount="378">
+			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="SearchModel.ItemCount" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
-			@{
+			@*@{
 				if (HasRendered)
 				{
-					<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/>
+					$1$ <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/> #1#
 				}
-			}
+			}*@
 			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>
 			<GridColumns>
-				<GridSortSettings AllowUnsort="false">
-					@*<GridSortColumns>
+				@*<GridSortSettings AllowUnsort="false">
+					$1$<GridSortColumns>
 					<GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
-				</GridSortColumns>*@
-				</GridSortSettings>
+				</GridSortColumns>#1#
+				</GridSortSettings>*@
 				<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="12%">
 					<Template Context="aCon">

@@ -54,8 +54,9 @@ public class RequisitionSearch
 	/// <param name="dueEnd">The end date for the due time range of the requisition search.</param>
 	/// <param name="recruiter">Indicates whether the requisition is for a recruiter.</param>
 	/// <param name="user">The user who is performing the requisition search.</param>
+	/// <param name="optRequisitionID">The optional requisition ID for the RequisitionSearch.</param>
 	public RequisitionSearch(int itemCount, int page, byte sortField, byte sortDirection, string code, string title, string company, string option,
-							 string status, string createdBy, DateTime createdOn, DateTime createdOnEnd, DateTime due, DateTime dueEnd, bool recruiter, string user)
+							 string status, string createdBy, DateTime createdOn, DateTime createdOnEnd, DateTime due, DateTime dueEnd, bool recruiter, string user, int optRequisitionID = 0)
 	{
 		ItemCount = itemCount;
 		Page = page;
@@ -73,6 +74,13 @@ public class RequisitionSearch
 		DueEnd = dueEnd;
 		Recruiter = recruiter;
 		User = user;
+		OptRequisitionID = optRequisitionID;
+	}
+
+	public int OptRequisitionID
+	{
+		get;
+		set;
 	}
 
 	/// <summary>
@@ -327,6 +335,7 @@ public class RequisitionSearch
 		DueEnd = new(2099, 12, 31);
 		Recruiter = true;
 		User = "%";
+		OptRequisitionID = 0;
 	}
 
 	/// <summary>
