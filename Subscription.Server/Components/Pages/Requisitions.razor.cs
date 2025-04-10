@@ -8,14 +8,12 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-10-2025 15:04
+// Last Updated On:     04-10-2025 16:04
 // *****************************************/
 
 #endregion
 
 #region Using
-
-using Role = Subscription.Model.Role;
 
 #endregion
 
@@ -28,19 +26,20 @@ public partial class Requisitions
     // private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private List<CandidateActivity> _candidateActivityObject = [];
-    private List<KeyValues> /*_companies = [], */_jobOptions = [];
     private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
-    private List<KeyValues> _recruiters;
-    private List<RequisitionDocuments> _reqDocumentsObject = [];
+    private List<KeyValues> /*_companies = [], */ _jobOptions = [];
 
     private Preferences _preference;
+    private List<KeyValues> _recruiters;
     private RequisitionDetails _reqDetailsObject = new();
     private RequisitionDetails _reqDetailsObjectClone = new();
+    private List<RequisitionDocuments> _reqDocumentsObject = [];
     private MarkupString _requisitionDetailSkills = string.Empty.ToMarkupString();
 
     //private List<Role> _roles;
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+
     private List<StatusCode> _statusCodes;
     //private readonly List<KeyValues> _statusSearch = [];
 
@@ -507,7 +506,7 @@ public partial class Requisitions
                                                                           }
                                                                       }
 
-                                                                      await SessionStorage.SetItemAsync(StorageName, SearchModel);
+                                                                      await SaveStorage(false);// SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                       await SessionStorage.RemoveItemAsync("RequisitionIDFromDashboard");
                                                                   }
                                                                   else
@@ -810,7 +809,7 @@ public partial class Requisitions
 
             await SetDataSource().ConfigureAwait(false);
             Grid.TotalItemCount = 378;
-            await Grid.Refresh().ConfigureAwait(false);
+            //await Grid.Refresh().ConfigureAwait(false);
         }
     }
 
@@ -982,7 +981,7 @@ public partial class Requisitions
     private async Task Refresh(MouseEventArgs arg)
     {
         await SetDataSource().ConfigureAwait(false);
-        await Grid.Refresh().ConfigureAwait(false);
+        //await Grid.Refresh().ConfigureAwait(false);
     }
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
@@ -1102,7 +1101,7 @@ public partial class Requisitions
         await SessionStorage.SetItemAsync(StorageName, SearchModel);
         if (refreshGrid)
         {
-            await Grid.Refresh(true);
+            await SetDataSource().ConfigureAwait(false);
         }
     }
 
@@ -1118,8 +1117,7 @@ public partial class Requisitions
                                                  };
         //(int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
         (int _count, string _requisitions, string _, string _, string _status, int _) =
-            await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false)
-                         .ConfigureAwait(false);
+            await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
         DataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
         Grid.TotalItemCount = _count;
         Count = _count;
@@ -1127,6 +1125,8 @@ public partial class Requisitions
         {
             await SessionStorage.SetItemAsync("StatusList", _status.CompressGZip()).ConfigureAwait(false);
         }
+
+        await Grid.Refresh().ConfigureAwait(false);
     }
 
     /// <summary>

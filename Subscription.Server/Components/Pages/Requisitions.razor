@@ -3,11 +3,11 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" 
-			RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
-	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" 
-				@ref="Grid" TotalItemCount="378" TValue="Requisition" Width="100%">
+<GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)"
+            RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
+	<GridContent>+
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
+		        @ref="Grid" TotalItemsCount="378" TValue="Requisition" Width="100%">
 			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="SearchModel.ItemCount" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 			@*@{
@@ -18,11 +18,6 @@
 			}*@
 			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>
 			<GridColumns>
-				@*<GridSortSettings AllowUnsort="false">
-					$1$<GridSortColumns>
-					<GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
-				</GridSortColumns>#1#
-				</GridSortSettings>*@
 				<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="12%">
 					<Template Context="aCon">
@@ -157,8 +152,8 @@
 									<TabHeader Text="Documents"/>
 								</ChildContent>
 								<ContentTemplate>
-									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User" 
-													Model="@_reqDocumentsObject" @ref="DocumentsPanel"/>
+									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User"
+									                Model="@_reqDocumentsObject" @ref="DocumentsPanel"/>
 								</ContentTemplate>
 							</TabItem>
 							<TabItem>
@@ -166,7 +161,8 @@
 									<TabHeader Text="Activity"/>
 								</ChildContent>
 								<ContentTemplate>
-									<ActivityPanelRequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID" User="@User"/>
+									<ActivityPanelRequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID" 
+															  User="@User"/>
 								</ContentTemplate>
 							</TabItem>
 						</TabItems>
@@ -177,7 +173,7 @@
 	</GridContent>
 </GridHeader>
 <SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>
-<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument" />
-<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions" 
-						 Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
+<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
+<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
+                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 <EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
