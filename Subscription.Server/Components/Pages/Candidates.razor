@@ -20,7 +20,8 @@
 <PageHeader/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" RefreshGrid="Refresh" ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
+	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" RefreshGrid="Refresh" 
+				ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" Query="_query" 
 					@ref="Grid" TValue="Candidate" Width="100%">
