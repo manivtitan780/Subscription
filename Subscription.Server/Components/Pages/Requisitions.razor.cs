@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-04-2025 20:04
+// Last Updated On:     04-10-2025 14:04
 // *****************************************/
 
 #endregion
@@ -102,6 +102,18 @@ public partial class Requisitions
     /// </summary>
     [Inject]
     private IConfiguration Configuration
+    {
+        get;
+        set;
+    }
+
+    private int Count
+    {
+        get;
+        set;
+    }
+
+    private List<Requisition> DataSource
     {
         get;
         set;
@@ -221,6 +233,12 @@ public partial class Requisitions
     {
         get;
     } = [];
+
+    private int Page
+    {
+        get;
+        set;
+    } = 1;
 
     /// <summary>
     ///     Gets or sets the ID of the requisition. This ID is used to uniquely identify a requisition in the system.
@@ -431,7 +449,7 @@ public partial class Requisitions
                                                                         SearchModel.Title = string.Empty;
                                                                         SearchModel.Page = 1;
                                                                         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                        await Grid.Refresh(false);
+                                                                        await Grid.Refresh();
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
@@ -439,7 +457,7 @@ public partial class Requisitions
                                                                                                          SearchModel.Title = filter.Value;
                                                                                                          SearchModel.Page = 1;
                                                                                                          await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                                                         await Grid.Refresh(false);
+                                                                                                         await Grid.Refresh();
                                                                                                      });
 
     /// <summary>
@@ -454,7 +472,7 @@ public partial class Requisitions
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                    await Grid.Refresh(false);
+                                                    await Grid.Refresh();
                                                 });
 
     /// <summary>
@@ -711,7 +729,7 @@ public partial class Requisitions
                                                                               SearchModel.Page = 1;
                                                                               /*_query.Queries.Params["GetInformation"] = _companies.Count == 0;*/
                                                                               await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                              await Grid.Refresh(false);
+                                                                              await Grid.Refresh();
                                                                           });
 
     private string GetDurationCode(string durationCode)
@@ -764,18 +782,13 @@ public partial class Requisitions
         return _location;
     }
 
-    private int Page
-    {
-        get;
-        set;
-    } = 1;
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
                                                                                    {
                                                                                        Page = page.CurrentPage;
                                                                                        SearchModel.Page = page.CurrentPage;
 
                                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                                       await Grid.Refresh(false);
+                                                                                       await Grid.Refresh();
                                                                                    });
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -1095,6 +1108,28 @@ public partial class Requisitions
         }
     }
 
+    private async Task SetDataSource()
+    {
+        // await Task.CompletedTask;
+        Dictionary<string, string> _parameters = new()
+                                                 {
+                                                     {"getCompanyInformation", Companies.Count.Equals(0).ToBooleanString()},
+                                                     {"requisitionID", RequisitionID.ToString()},
+                                                     {"thenProceed", false.ToString()},
+                                                     {"user", User}
+                                                 };
+        //(int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
+        (int _count, string _requisitions, string _, string _, string _status, int _) =
+            await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
+        DataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
+        Grid.TotalItemCount = _count;
+        Count = _count;
+        if (_status.NotNullOrWhiteSpace() && _status != "[]")
+        {
+            await SessionStorage.SetItemAsync("StatusList", _status.CompressGZip());
+        }
+    }
+
     /// <summary>
     ///     Sets the skills for the requisition details object.
     /// </summary>
@@ -1192,39 +1227,6 @@ public partial class Requisitions
                                                                        _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
-
-    private int Count
-    {
-        get;
-        set;
-    }
-
-    private async Task SetDataSource()
-    {
-        // await Task.CompletedTask;
-        Dictionary<string, string> _parameters = new()
-                                                 {
-                                                     {"getCompanyInformation", Companies.Count.Equals(0).ToBooleanString()},
-                                                     {"requisitionID", RequisitionID.ToString()},
-                                                     {"thenProceed", false.ToString()},
-                                                     {"user", User}
-                                                 };
-        (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
-            await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
-        DataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
-        Grid.TotalItemCount = _count;
-        Count = _count;
-        if (_status.NotNullOrWhiteSpace())
-        {
-            await SessionStorage.SetItemAsync("StatusList", _status.CompressGZip());
-        }
-    }
-
-    private List<Requisition> DataSource
-    {
-        get;
-        set;
-    }
 
     /// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
