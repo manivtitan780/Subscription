@@ -152,12 +152,14 @@
 											<div class="layout-2">
 												<div class="leftLayout">
 													<PanelDisplayText Label="Address" MarkupText="@Address"/>
-													<PanelDisplayText Label="Email Address" Text="@_candidateDetailsObject.Email"/>
-													<PanelDisplayText Label="Phone#" Text="@_candidateDetailsObject.Phone1.FormatPhoneNumber()"/>
-													<PanelDisplayText Label="Alternate Phone#" Text="@_candidateDetailsObject.Phone2.FormatPhoneNumber()"/>
-													<PanelDisplayText Label="Title" Text="@_candidateDetailsObject.Title"/>
-													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candidateDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")"/>
-													<PanelDisplayText Label="Salary Expected" Text="@($"{_candidateDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - {_candidateDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"/>
+													<PanelDisplayText Label="Email Address" Text="@_candDetailsObject.Email"/>
+													<PanelDisplayText Label="Phone#" Text="@_candDetailsObject.Phone1.FormatPhoneNumber()"/>
+													<PanelDisplayText Label="Alternate Phone#" Text="@_candDetailsObject.Phone2.FormatPhoneNumber()"/>
+													<PanelDisplayText Label="Title" Text="@_candDetailsObject.Title"/>
+													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - " +
+																									  $"{_candDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")"/>
+													<PanelDisplayText Label="Salary Expected" Text="@($"{_candDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - " +
+																									  $"{_candDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"/>
 												</div>
 												<div class="leftLayout">
 													<PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility"/>
@@ -165,19 +167,19 @@
 													<PanelDisplayText Label="Tax Terms" MarkupText="@CandidateTaxTerms"/>
 													<PanelDisplayText Label="Job Options" MarkupText="@CandidateJobOptions"/>
 													<PanelDisplayText Label="Communication" MarkupText="@CandidateCommunication"/>
-													<PanelDisplayText Label="Security Clearance" Text="@(_candidateDetailsObject.Background ? "Yes" : "No")"/>
-													<PanelDisplayText Label="Willing to Relocate" Text="@(_candidateDetailsObject.Relocate ? "Yes" : "No")"/>
+													<PanelDisplayText Label="Security Clearance" Text="@(_candDetailsObject.Background ? "Yes" : "No")"/>
+													<PanelDisplayText Label="Willing to Relocate" Text="@(_candDetailsObject.Relocate ? "Yes" : "No")"/>
 												</div>
 												<div class="rightLayout">
 													<div class="divPanelContainer" style="margin-bottom:5px;">
 														<span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
 														<span class="spanRightText ratingCandidateExpand">
-															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candidateDetailsObject.RateCandidate"/>
+															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candDetailsObject.RateCandidate"/>
 														</span>
 													</div>
 													<PanelDisplayText Label="Rating Date" MarkupText="@RatingDate"/>
 													<PanelDisplayText Label="Rating Notes" MarkupText="@RatingNote"/>
-													<PanelDisplayText Label="M.P.C.?" Text="@(_candidateDetailsObject.MPC ? "Yes" : "No")"/>
+													<PanelDisplayText Label="M.P.C.?" Text="@(_candDetailsObject.MPC ? "Yes" : "No")"/>
 													<PanelDisplayText Label="M.P.C. Date" MarkupText="@MPCDate"/>
 													<PanelDisplayText Label="M.P.C. Notes" MarkupText="@MPCNote"/>
 												</div>
@@ -189,8 +191,8 @@
 											<TabHeader Text="Skills"/>
 										</ChildContent>
 										<ContentTemplate>
-											<SkillPanel DeleteSkill="DeleteSkill" EditRights="HasEditRights" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candidateDetailsObject"
-											            ModelSkill="_candidateSkillsObject" @ref="SkillPanel" UserName="@User"/>
+											<SkillPanel DeleteSkill="DeleteSkill" EditRights="HasEditRights" EditSkill="EditSkill" IsRequisition="@(RequisitionID > 0)" Model="_candDetailsObject"
+											            ModelSkill="_candSkillsObject" @ref="SkillPanel" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -199,7 +201,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<EducationPanel DeleteEducation="DeleteEducation" EditEducation="EditEducation" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)"
-											                Model="@_candidateEducationObject" @ref="EducationPanel" UserName="@User"/>
+											                Model="@_candEducationObject" @ref="EducationPanel" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -208,7 +210,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<ExperiencePanel DeleteExperience="DeleteExperience" EditExperience="EditExperience" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)"
-											                 Model="@_candidateExperienceObject" @ref="ExperiencePanel" UserName="@User"/>
+											                 Model="@_candExperienceObject" @ref="ExperiencePanel" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -216,8 +218,8 @@
 											<TabHeader Text="Notes"/>
 										</ChildContent>
 										<ContentTemplate>
-											<NotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)"
-											            Model="@_candidateNotesObject" @ref="NotesPanel" UserName="@User"/>
+											<NotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)" Model="@_candidateNotesObject" 
+														@ref="NotesPanel" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -226,7 +228,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<div class="resumeContainerBox">
-												<SfRichTextEditor Height="278px" Readonly="true" Value="@_candidateDetailsObject.TextResume">
+												<SfRichTextEditor Height="278px" Readonly="true" Value="@_candDetailsObject.TextResume">
 													<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
@@ -250,7 +252,7 @@
 											<TabHeader Text="Documents"/>
 										</ChildContent>
 										<ContentTemplate>
-											<DownloadsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candidateDocumentsObject" @ref="DownloadsPanel"/>
+											<DownloadsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candDocumentsObject" @ref="DownloadsPanel"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -258,7 +260,7 @@
 											<TabHeader Text="Candidate Activity"/>
 										</ChildContent>
 										<ContentTemplate>
-											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candidateActivityObject" @ref="ActivityPanel" RoleID="@RoleID"
+											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID"
 											               UndoCandidateActivity="UndoActivity" User="@User"/> @*TODO: Activity Panel Rights to be set*@
 										</ContentTemplate>
 									</TabItem>
@@ -270,7 +272,7 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
-	<EditCandidateDialog Model="_candidateDetailsObjectClone" Communication="_communication" Eligibility="_eligibility" Experience="_experience" Save="SaveCandidate" States="_states" JobOptions="_jobOptions"
+	<EditCandidateDialog Model="_candDetailsObjectClone" Communication="_communication" Eligibility="_eligibility" Experience="_experience" Save="SaveCandidate" States="_states" JobOptions="_jobOptions"
 	                     TaxTerms="_taxTerms" @ref="CandidateDialog"/>
 	<EditSkillDialog Model="SelectedSkill" @ref="CandidateSkillDialog" Save="SaveSkill"/>
 	<EditActivityDialog IsCandidate="true" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
@@ -278,8 +280,8 @@
 	<EditExperienceDialog Model="SelectedExperience" @ref="CandidateExperienceDialog" Save="SaveExperience"/>
 	<EditNotesDialog Model="SelectedNotes" @ref="CandidateNotesDialog" Save="SaveNote" Title="Candidate" Entity="Candidate"/>
 	<AddDocumentDialog DocumentTypes="_documentTypes" Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/> @*AfterUpload="AfterDocument" BeforeUpload="BeforeDocument" *@
-	<MPCCandidateDialog MPCGrid="_candidateMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
-	<RatingCandidateDialog RatingGrid="_candidateRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
+	<MPCCandidateDialog MPCGrid="_candMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
+	<RatingCandidateDialog RatingGrid="_candRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
 	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
 }
 else

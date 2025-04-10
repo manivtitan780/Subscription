@@ -6,8 +6,8 @@
 <GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" 
 			RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
 	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" 
-				@ref="Grid" TValue="Requisition" Width="100%" DataSource="@DataSource" TotalItemCount="378">
+		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions" 
+				@ref="Grid" TotalItemCount="378" TValue="Requisition" Width="100%">
 			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="SearchModel.ItemCount" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 			@*@{
@@ -111,38 +111,38 @@
 								<ContentTemplate>
 									<div class="layout-2">
 										<div class="leftLayout">
-											<PanelDisplayText Label="Company Name" Text="@(_requisitionDetailsObject.CompanyName)"/>
-											<PanelDisplayText Label="Contact Name" Text="@(_requisitionDetailsObject.ContactName)"/>
-											<PanelDisplayText Label="Job Title" Text="@(_requisitionDetailsObject.PositionTitle)"/>
-											<PanelDisplayText Label="No. of Positions" Text="@(_requisitionDetailsObject.Positions.ToString())"/>
-											<PanelDisplayText Label="Project Location" Text="@GetLocation(_requisitionDetailsObject.Location)"/>
-											<PanelDisplayText Label="Duration" Text="@(_requisitionDetailsObject.Duration + " " + GetDurationCode(_requisitionDetailsObject.DurationCode))"/>
-											<PanelDisplayText Label="Expected Start Date" Text="@(_requisitionDetailsObject.ExpectedStart.CultureDate())"/>
-											<PanelDisplayText Label="Due Date" Text="@(_requisitionDetailsObject.DueDate.CultureDate())"/>
-											<PanelDisplayText Label="Expected Rate" Text="@($"{_requisitionDetailsObject.ExpRateLow.CultureCurrency()} - {_requisitionDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
-											<PanelDisplayText Label="Salary Expected" Text="@($"{_requisitionDetailsObject.SalaryLow.CultureCurrency()} - {_requisitionDetailsObject.SalaryHigh.CultureCurrency()}")"/>
-											<PanelDisplayText Label="Load Expected" Text="@($"{_requisitionDetailsObject.ExpLoadLow.CultureCurrency()} - {_requisitionDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
-											<PanelDisplayText Label="Placement Fee" Text="@(_requisitionDetailsObject.PlacementFee.CulturePercentage())"/>
-											<PanelDisplayText Label="Status" Text="@(_requisitionDetailsObject.Status)"/>
+											<PanelDisplayText Label="Company Name" Text="@(_reqDetailsObject.CompanyName)"/>
+											<PanelDisplayText Label="Contact Name" Text="@(_reqDetailsObject.ContactName)"/>
+											<PanelDisplayText Label="Job Title" Text="@(_reqDetailsObject.PositionTitle)"/>
+											<PanelDisplayText Label="No. of Positions" Text="@(_reqDetailsObject.Positions.ToString())"/>
+											<PanelDisplayText Label="Project Location" Text="@GetLocation(_reqDetailsObject.Location)"/>
+											<PanelDisplayText Label="Duration" Text="@(_reqDetailsObject.Duration + " " + GetDurationCode(_reqDetailsObject.DurationCode))"/>
+											<PanelDisplayText Label="Expected Start Date" Text="@(_reqDetailsObject.ExpectedStart.CultureDate())"/>
+											<PanelDisplayText Label="Due Date" Text="@(_reqDetailsObject.DueDate.CultureDate())"/>
+											<PanelDisplayText Label="Expected Rate" Text="@($"{_reqDetailsObject.ExpRateLow.CultureCurrency()} - {_reqDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Salary Expected" Text="@($"{_reqDetailsObject.SalaryLow.CultureCurrency()} - {_reqDetailsObject.SalaryHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Load Expected" Text="@($"{_reqDetailsObject.ExpLoadLow.CultureCurrency()} - {_reqDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
+											<PanelDisplayText Label="Placement Fee" Text="@(_reqDetailsObject.PlacementFee.CulturePercentage())"/>
+											<PanelDisplayText Label="Status" Text="@(_reqDetailsObject.Status)"/>
 										</div>
 										<div class="leftLayout">
-											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_requisitionDetailsObject.AssignedTo)"/>
-											<PanelDisplayText Label="Priority" Text="@(_requisitionDetailsObject.Priority)"/>
-											<PanelDisplayText Label="Job Options" Text="@(_requisitionDetailsObject.JobOptions)"/>
-											<PanelDisplayText Label="Experience" Text="@(_requisitionDetailsObject.Experience)"/>
-											<PanelDisplayText Label="Report To" Text="@(_requisitionDetailsObject.ReportTo)"/>
-											<PanelDisplayText Label="Education" Text="@(_requisitionDetailsObject.Education)"/>
-											<PanelDisplayText Label="Eligibility" Text="@(_requisitionDetailsObject.Eligibility)"/>
-											<PanelDisplayText Label="Expenses Paid?" Text="@_requisitionDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="Security Clearance?" Text="@_requisitionDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="OFCCP?" Text="@_requisitionDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="Benefits?" Text="@_requisitionDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="Benefits Notes" MarkupText="@_requisitionDetailsObject.BenefitNotes.ToMarkupString()"/>
+											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_reqDetailsObject.AssignedTo)"/>
+											<PanelDisplayText Label="Priority" Text="@(_reqDetailsObject.Priority)"/>
+											<PanelDisplayText Label="Job Options" Text="@(_reqDetailsObject.JobOptions)"/>
+											<PanelDisplayText Label="Experience" Text="@(_reqDetailsObject.Experience)"/>
+											<PanelDisplayText Label="Report To" Text="@(_reqDetailsObject.ReportTo)"/>
+											<PanelDisplayText Label="Education" Text="@(_reqDetailsObject.Education)"/>
+											<PanelDisplayText Label="Eligibility" Text="@(_reqDetailsObject.Eligibility)"/>
+											<PanelDisplayText Label="Expenses Paid?" Text="@_reqDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Security Clearance?" Text="@_reqDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="OFCCP?" Text="@_reqDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Benefits?" Text="@_reqDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
+											<PanelDisplayText Label="Benefits Notes" MarkupText="@_reqDetailsObject.BenefitNotes.ToMarkupString()"/>
 										</div>
 										<div class="rightLayout" style="display:flex; flex-direction:column;">
 											<div style="font-weight: bold; height: 23px;">Description:</div>
 											<div style="overflow-y: auto; flex: 1;">
-												@_requisitionDetailsObject.Description.ToMarkupString()
+												@_reqDetailsObject.Description.ToMarkupString()
 											</div>
 											<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
 											<div style="flex: 1; overflow-y: auto;">
@@ -158,7 +158,7 @@
 								</ChildContent>
 								<ContentTemplate>
 									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User" 
-													Model="@_requisitionDocumentsObject" @ref="DocumentsPanel"/>
+													Model="@_reqDocumentsObject" @ref="DocumentsPanel"/>
 								</ContentTemplate>
 							</TabItem>
 							<TabItem>
@@ -179,5 +179,5 @@
 <SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 <AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument" />
 <RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions" 
-						 Model="_requisitionDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
+						 Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 <EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
