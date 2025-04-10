@@ -28,15 +28,15 @@ public partial class Candidates
 {
     private const string StorageName = "CandidatesGrid";
     private static TaskCompletionSource<bool> _initializationTaskSource;
-    private List<CandidateActivity> _candidateActivityObject = [];
-    private CandidateDetails _candidateDetailsObject = new(), _candidateDetailsObjectClone = new();
-    private List<CandidateDocument> _candidateDocumentsObject = [];
-    private List<CandidateEducation> _candidateEducationObject = [];
-    private List<CandidateExperience> _candidateExperienceObject = [];
-    private List<CandidateMPC> _candidateMPCObject = [];
+    private List<CandidateActivity> _candActivityObject = [];
+    private CandidateDetails _candDetailsObject = new(), _candDetailsObjectClone = new();
+    private List<CandidateDocument> _candDocumentsObject = [];
+    private List<CandidateEducation> _candEducationObject = [];
+    private List<CandidateExperience> _candExperienceObject = [];
+    private List<CandidateMPC> _candMPCObject = [];
     private List<CandidateNotes> _candidateNotesObject = [];
-    private List<CandidateRating> _candidateRatingObject = [];
-    private List<CandidateSkills> _candidateSkillsObject = [];
+    private List<CandidateRating> _candRatingObject = [];
+    private List<CandidateSkills> _candSkillsObject = [];
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
     private bool _formattedExists, _originalExists;
 
@@ -781,7 +781,7 @@ public partial class Candidates
 
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
 
-                                                              _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
+                                                              _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                           });
 
     /// <summary>
@@ -803,7 +803,7 @@ public partial class Candidates
                                                               Dictionary<string, string> _parameters = CreateParameters(id);
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", _parameters);
 
-                                                              _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
+                                                              _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                           });
 
     /// <summary>
@@ -825,7 +825,7 @@ public partial class Candidates
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", _parameters);
 
-                                                               _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
+                                                               _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -852,7 +852,7 @@ public partial class Candidates
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", _parameters);
 
-                                                          _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
+                                                          _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
@@ -883,16 +883,16 @@ public partial class Candidates
                                  ReturnCandidateDetails _response = await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters,
                                                                                                                       null, false);
 
-                                 _candidateDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate) ?? new();
-                                 _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills) ?? [];
-                                 _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education) ?? [];
-                                 _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience) ?? [];
+                                 _candDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate) ?? new();
+                                 _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills) ?? [];
+                                 _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education) ?? [];
+                                 _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience) ?? [];
                                  _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes) ?? [];
-                                 _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents) ?? [];
-                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity) ?? [];
+                                 _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents) ?? [];
+                                 _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity) ?? [];
 
-                                 _candidateRatingObject = _response.Rating;
-                                 _candidateMPCObject = _response.MPC;
+                                 _candRatingObject = _response.Rating;
+                                 _candMPCObject = _response.MPC;
                                  RatingMPC = _response.RatingMPC;
                                  GetMPCDate();
                                  GetMPCNote();
@@ -905,7 +905,7 @@ public partial class Candidates
                                  SetTaxTerm();
                                  SetExperience();
 
-                                 _selectedTab = _candidateActivityObject is {Count: > 0} ? 7 : 0;
+                                 _selectedTab = _candActivityObject is {Count: > 0} ? 7 : 0;
                                  _formattedExists = _target.FormattedResume;
                                  _originalExists = _target.OriginalResume;
 
@@ -1002,22 +1002,22 @@ public partial class Candidates
 
                                                       if (_target == null || _target.ID == 0)
                                                       {
-                                                          if (_candidateDetailsObjectClone == null)
+                                                          if (_candDetailsObjectClone == null)
                                                           {
-                                                              _candidateDetailsObjectClone = new();
+                                                              _candDetailsObjectClone = new();
                                                           }
                                                           else
                                                           {
-                                                              _candidateDetailsObjectClone.Clear();
+                                                              _candDetailsObjectClone.Clear();
                                                           }
 
-                                                          _candidateDetailsObjectClone.IsAdd = true;
+                                                          _candDetailsObjectClone.IsAdd = true;
                                                       }
                                                       else
                                                       {
-                                                          _candidateDetailsObjectClone = _candidateDetailsObject.Copy();
+                                                          _candDetailsObjectClone = _candDetailsObject.Copy();
 
-                                                          _candidateDetailsObjectClone.IsAdd = false;
+                                                          _candDetailsObjectClone.IsAdd = false;
                                                       }
 
                                                       VisibleSpin = false;
@@ -1205,13 +1205,13 @@ public partial class Candidates
     private void GetMPCDate()
     {
         string _mpcDate = "";
-        if (_candidateDetailsObject.MPCNotes == "")
+        if (_candDetailsObject.MPCNotes == "")
         {
             MPCDate = _mpcDate.ToMarkupString();
             return;
         }
 
-        CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
+        CandidateMPC _candidateMPCObjectFirst = _candMPCObject.MaxBy(x => x.DateTime);
         _mpcDate = $"{_candidateMPCObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateMPCObjectFirst.Name.Where(char.IsLetter))}]";
 
         MPCDate = _mpcDate.ToMarkupString();
@@ -1228,13 +1228,13 @@ public partial class Candidates
     private void GetMPCNote()
     {
         string _mpcNote = "";
-        if (_candidateDetailsObject.MPCNotes == "")
+        if (_candDetailsObject.MPCNotes == "")
         {
             MPCNote = _mpcNote.ToMarkupString();
             return;
         }
 
-        CandidateMPC _candidateMPCObjectFirst = _candidateMPCObject.MaxBy(x => x.DateTime);
+        CandidateMPC _candidateMPCObjectFirst = _candMPCObject.MaxBy(x => x.DateTime);
         _mpcNote = _candidateMPCObjectFirst.Comment;
 
         MPCNote = _mpcNote.ToMarkupString();
@@ -1251,13 +1251,13 @@ public partial class Candidates
     private void GetRatingDate()
     {
         string _ratingDate = "";
-        if (_candidateDetailsObject.RateNotes == "")
+        if (_candDetailsObject.RateNotes == "")
         {
             RatingDate = _ratingDate.ToMarkupString();
             return;
         }
 
-        CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
+        CandidateRating _candidateRatingObjectFirst = _candRatingObject.MaxBy(x => x.DateTime);
         _ratingDate = $"{_candidateRatingObjectFirst.DateTime.CultureDate()} [{string.Concat(_candidateRatingObjectFirst.Name.Where(char.IsLetter))}]";
 
         RatingDate = _ratingDate.ToMarkupString();
@@ -1276,13 +1276,13 @@ public partial class Candidates
     private void GetRatingNote()
     {
         string _ratingNote = "";
-        if (_candidateDetailsObject.RateNotes == "")
+        if (_candDetailsObject.RateNotes == "")
         {
             RatingNote = _ratingNote.ToMarkupString();
             return;
         }
 
-        CandidateRating _candidateRatingObjectFirst = _candidateRatingObject.MaxBy(x => x.DateTime);
+        CandidateRating _candidateRatingObjectFirst = _candRatingObject.MaxBy(x => x.DateTime);
         _ratingNote = _candidateRatingObjectFirst.Comment;
 
         RatingNote = _ratingNote.ToMarkupString();
@@ -1516,7 +1516,7 @@ public partial class Candidates
                                                                                                                               activity.Model);
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                             _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                          }
                                                                      });
 
@@ -1549,15 +1549,15 @@ public partial class Candidates
                                                                                                    {"emailAddress", "maniv@titan-techs.com"}
                                                                                                };
 
-                                                      await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candidateDetailsObjectClone);
+                                                      await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candDetailsObjectClone);
 
-                                                      _candidateDetailsObject = _candidateDetailsObjectClone.Copy();
-                                                      if (_candidateDetailsObject != null)
+                                                      _candDetailsObject = _candDetailsObjectClone.Copy();
+                                                      if (_candDetailsObject != null)
                                                       {
-                                                          _target.Name = $"{_candidateDetailsObject.FirstName} {_candidateDetailsObject.LastName}";
-                                                          _target.Phone = _candidateDetailsObject.Phone1.FormatPhoneNumber();
-                                                          _target.Email = _candidateDetailsObject.Email;
-                                                          _target.Location = $"{_candidateDetailsObject.City}, {SplitState(_candidateDetailsObject.StateID).Code}, {_candidateDetailsObject.ZipCode}";
+                                                          _target.Name = $"{_candDetailsObject.FirstName} {_candDetailsObject.LastName}";
+                                                          _target.Phone = _candDetailsObject.Phone1.FormatPhoneNumber();
+                                                          _target.Email = _candDetailsObject.Email;
+                                                          _target.Location = $"{_candDetailsObject.City}, {SplitState(_candDetailsObject.StateID).Code}, {_candDetailsObject.ZipCode}";
                                                       }
 
                                                       _target.Updated = DateTime.Today.CultureDate() + "[ADMIN]";
@@ -1603,7 +1603,7 @@ public partial class Candidates
                                                                                                                                   DialogDocument.FileName);
                                                                              if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                              {
-                                                                                 _candidateDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
+                                                                                 _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                                              }
                                                                          }
                                                                      });
@@ -1640,7 +1640,7 @@ public partial class Candidates
                                                                                    return;
                                                                                }
 
-                                                                               _candidateEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
+                                                                               _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                                            }
                                                                        });
 
@@ -1674,7 +1674,7 @@ public partial class Candidates
                                                                                      return;
                                                                                  }
 
-                                                                                 _candidateExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
+                                                                                 _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
                                                                              }
                                                                          });
 
@@ -1699,7 +1699,7 @@ public partial class Candidates
                                                                            Dictionary<string, object> _response = await General.PostRest("Candidate/SaveMPC", _parameters, _mpc);
                                                                            if (_response != null)
                                                                            {
-                                                                               _candidateMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
+                                                                               _candMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
                                                                                RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstMPC"]?.ToString() ?? string.Empty);
                                                                                GetMPCDate();
                                                                                GetMPCNote();
@@ -1758,9 +1758,9 @@ public partial class Candidates
                                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/SaveRating", _parameters, _rating);
                                                                               if (_response != null)
                                                                               {
-                                                                                  _candidateRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
+                                                                                  _candRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
                                                                                   RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? string.Empty);
-                                                                                  _candidateDetailsObject.RateCandidate = RatingMPC.Rating.ToInt32();
+                                                                                  _candDetailsObject.RateCandidate = RatingMPC.Rating.ToInt32();
                                                                                   GetRatingDate();
                                                                                   GetRatingNote();
                                                                               }
@@ -1800,7 +1800,7 @@ public partial class Candidates
                                                                            return;
                                                                        }
 
-                                                                       _candidateSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
+                                                                       _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
                                                                    }
                                                                });
 
@@ -1855,7 +1855,7 @@ public partial class Candidates
     /// </remarks>
     private void SetCommunication()
     {
-        string _returnValue = _candidateDetailsObject.Communication switch
+        string _returnValue = _candDetailsObject.Communication switch
                               {
                                   "G" => "Good",
                                   "A" => "Average",
@@ -1878,8 +1878,8 @@ public partial class Candidates
     {
         if (_eligibility is {Count: > 0})
         {
-            CandidateEligibility = _candidateDetailsObject.EligibilityID > 0
-                                       ? _eligibility.FirstOrDefault(eligibility => eligibility.KeyValue == _candidateDetailsObject.EligibilityID)!.Text.ToMarkupString()
+            CandidateEligibility = _candDetailsObject.EligibilityID > 0
+                                       ? _eligibility.FirstOrDefault(eligibility => eligibility.KeyValue == _candDetailsObject.EligibilityID)!.Text.ToMarkupString()
                                        : "".ToMarkupString();
         }
     }
@@ -1897,8 +1897,8 @@ public partial class Candidates
     {
         if (_experience is {Count: > 0})
         {
-            CandidateExperience = (_candidateDetailsObject.ExperienceID > 0
-                                       ? _experience.FirstOrDefault(experience => experience.KeyValue == _candidateDetailsObject.ExperienceID)!.Text
+            CandidateExperience = (_candDetailsObject.ExperienceID > 0
+                                       ? _experience.FirstOrDefault(experience => experience.KeyValue == _candDetailsObject.ExperienceID)!.Text
                                        : "").ToMarkupString();
         }
     }
@@ -1920,7 +1920,7 @@ public partial class Candidates
         string _returnValue = "";
         if (_jobOptions is {Count: > 0})
         {
-            string[] _splitJobOptions = _candidateDetailsObject.JobOptions.Split(',');
+            string[] _splitJobOptions = _candDetailsObject.JobOptions.Split(',');
             foreach (string _str in _splitJobOptions)
             {
                 if (_str == "")
@@ -1960,7 +1960,7 @@ public partial class Candidates
 
         if (_taxTerms is {Count: > 0})
         {
-            string[] _splitTaxTerm = _candidateDetailsObject.TaxTerm.Split(',');
+            string[] _splitTaxTerm = _candDetailsObject.TaxTerm.Split(',');
             foreach (string _str in _splitTaxTerm)
             {
                 if (_str == "")
@@ -1994,37 +1994,37 @@ public partial class Candidates
     /// </remarks>
     private void SetupAddress()
     {
-        string _generateAddress = _candidateDetailsObject.Address1;
+        string _generateAddress = _candDetailsObject.Address1;
 
         if (_generateAddress == "")
         {
-            _generateAddress = _candidateDetailsObject.Address2;
+            _generateAddress = _candDetailsObject.Address2;
         }
         else
         {
-            _generateAddress += _candidateDetailsObject.Address2 == "" ? "" : "<br/>" + _candidateDetailsObject.Address2;
+            _generateAddress += _candDetailsObject.Address2 == "" ? "" : "<br/>" + _candDetailsObject.Address2;
         }
 
         if (_generateAddress == "")
         {
-            _generateAddress = _candidateDetailsObject.City;
+            _generateAddress = _candDetailsObject.City;
         }
         else
         {
-            _generateAddress += _candidateDetailsObject.City == "" ? "" : "<br/>" + _candidateDetailsObject.City;
+            _generateAddress += _candDetailsObject.City == "" ? "" : "<br/>" + _candDetailsObject.City;
         }
 
-        if (_candidateDetailsObject.StateID > 0)
+        if (_candDetailsObject.StateID > 0)
         {
             if (_generateAddress == "")
             {
-                _generateAddress = SplitState(_candidateDetailsObject.StateID).Name; // _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                _generateAddress = SplitState(_candDetailsObject.StateID).Name; // _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
             }
             else
             {
                 try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                 {
-                    _generateAddress += ", " + SplitState(_candidateDetailsObject.StateID)
+                    _generateAddress += ", " + SplitState(_candDetailsObject.StateID)
                                            .Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
                 }
                 catch
@@ -2034,15 +2034,15 @@ public partial class Candidates
             }
         }
 
-        if (_candidateDetailsObject.ZipCode != "")
+        if (_candDetailsObject.ZipCode != "")
         {
             if (_generateAddress == "")
             {
-                _generateAddress = _candidateDetailsObject.ZipCode;
+                _generateAddress = _candDetailsObject.ZipCode;
             }
             else
             {
-                _generateAddress += ", " + _candidateDetailsObject.ZipCode;
+                _generateAddress += ", " + _candDetailsObject.ZipCode;
             }
         }
 
@@ -2160,7 +2160,7 @@ public partial class Candidates
                                                                    string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
-                                                                       _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                       _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
 

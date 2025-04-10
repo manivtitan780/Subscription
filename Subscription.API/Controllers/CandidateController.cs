@@ -26,7 +26,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 {
     private static readonly string[] JSONSerializable = ["Skill"];
 
-    private void CreateToolFunction(ChatCompletionOptions options)
+    /*private void CreateToolFunction(ChatCompletionOptions options)
     {
         options.Tools.Add(ChatTool.CreateFunctionTool("extract_candidate",
                                                       "Extract candidate details from resume",
@@ -197,7 +197,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                                                                                                    }
                                                                                   })));
         ;
-    }
+    }*/
 
     /// <summary>
     ///     Deletes a candidate's document from the database.
@@ -507,7 +507,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_documentDetails);
     }
 
-    private static DataTable Education(JsonArray education)
+    /*private static DataTable Education(JsonArray education)
     {
         DataTable _tableEducation = new();
         _tableEducation.Columns.Add("Degree", typeof(string));
@@ -564,7 +564,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return _tableExperience;
-    }
+    }*/
 
     /// <summary>
     ///     Retrieves the detailed information of a candidate by their ID.
@@ -856,7 +856,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                };
     }
 
-    public async Task<ActionResult<string>> ParseCandidate(IFormFile file)
+    /*public async Task<ActionResult<string>> ParseCandidate(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {
@@ -909,7 +909,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             _parsedJSON = _completeChatAsync.Content[0].Text;
             //JsonSerializer.Serialize(_completeChatAsync);
 
-            /* Parse JSON to Objects */
+            /* Parse JSON to Objects #1#
             JsonNode _rootNode = JsonNode.Parse(_parsedJSON)!;
             if (_rootNode != null)
             {
@@ -939,13 +939,13 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                 string _summary = _rootNode["CandidateSummary"]?.ToString() ?? string.Empty;
                 string _keywords = _rootNode["CandidateKeywords"]?.ToString() ?? string.Empty;
 
-                /*Education*/
+                /*Education#1#
                 DataTable _tableEducation = Education(_rootNode["EducationInfo"] as JsonArray);
 
-                /*Experience*/
+                /*Experience#1#
                 DataTable _tableExperience = Experience(_rootNode["EmploymentInfo"] as JsonArray);
 
-                /* Skills */
+                /* Skills #1#
                 DataTable _tableSkills = Skills(_rootNode["Skills"] as JsonArray);
             }
         }
@@ -956,7 +956,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
 
         return Ok(_parsedJSON);
-    }
+    }*/
 
     /// <summary>
     ///     Asynchronously saves the details of a candidate to the database.

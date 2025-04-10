@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-10-2025 14:04
+// Last Updated On:     04-10-2025 15:04
 // *****************************************/
 
 #endregion
@@ -25,26 +25,24 @@ public partial class Requisitions
 {
     private const string StorageName = "RequisitionGrid";
 
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+    // private static TaskCompletionSource<bool> _initializationTaskSource;
 
     private List<CandidateActivity> _candidateActivityObject = [];
-    private List<KeyValues> _companies = [], _jobOptions = [];
+    private List<KeyValues> /*_companies = [], */_jobOptions = [];
     private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
-    private Preferences _preference;
-
-    private Query _query = new();
     private List<KeyValues> _recruiters;
+    private List<RequisitionDocuments> _reqDocumentsObject = [];
+
+    private Preferences _preference;
+    private RequisitionDetails _reqDetailsObject = new();
+    private RequisitionDetails _reqDetailsObjectClone = new();
     private MarkupString _requisitionDetailSkills = string.Empty.ToMarkupString();
 
-    private RequisitionDetails _requisitionDetailsObject = new();
-    private RequisitionDetails _requisitionDetailsObjectClone = new();
-    private List<RequisitionDocuments> _requisitionDocumentsObject = [];
-
-    private List<Role> _roles;
+    //private List<Role> _roles;
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
     private List<StatusCode> _statusCodes;
-    private readonly List<KeyValues> _statusSearch = [];
+    //private readonly List<KeyValues> _statusSearch = [];
 
     private Requisition _target;
 
@@ -556,7 +554,7 @@ public partial class Requisitions
                                                                    return;
                                                                }
 
-                                                               _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response["Document"]);
+                                                               _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response["Document"]);
                                                            });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition)
@@ -587,9 +585,9 @@ public partial class Requisitions
                                  (string _requisition, string _activity, string _documents) = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters,
                                                                                                                                                   null, false);
 
-                                 _requisitionDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
+                                 _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
                                  _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
-                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
+                                 _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
                                  SetSkills();
 
                                  _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
@@ -691,19 +689,19 @@ public partial class Requisitions
                                                                   if (isAdd)
                                                                   {
                                                                       Title = "Add";
-                                                                      if (_requisitionDetailsObjectClone == null)
+                                                                      if (_reqDetailsObjectClone == null)
                                                                       {
-                                                                          _requisitionDetailsObjectClone = new();
+                                                                          _reqDetailsObjectClone = new();
                                                                       }
                                                                       else
                                                                       {
-                                                                          _requisitionDetailsObjectClone.Clear();
+                                                                          _reqDetailsObjectClone.Clear();
                                                                       }
                                                                   }
                                                                   else
                                                                   {
                                                                       Title = "Edit";
-                                                                      _requisitionDetailsObjectClone = _requisitionDetailsObject.Copy();
+                                                                      _reqDetailsObjectClone = _reqDetailsObject.Copy();
                                                                   }
 
                                                                   await DetailsRequisition.ShowDialog();
@@ -757,25 +755,25 @@ public partial class Requisitions
 
         return location;*/
         string _location = string.Empty;
-        if (_requisitionDetailsObject != null)
+        if (_reqDetailsObject != null)
         {
-            if (_requisitionDetailsObject.City.NotNullOrWhiteSpace())
+            if (_reqDetailsObject.City.NotNullOrWhiteSpace())
             {
-                _location = _requisitionDetailsObject.City;
+                _location = _reqDetailsObject.City;
             }
 
-            if (_requisitionDetailsObject.StateID.ToInt32() != 0)
+            if (_reqDetailsObject.StateID.ToInt32() != 0)
             {
-                foreach (IntValues _intValues in _states.Where(intValues => _requisitionDetailsObject.StateID.ToInt32() == intValues.KeyValue))
+                foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
                 {
                     _location = $"{_location}, {_intValues.Text}";
                     break;
                 }
             }
 
-            if (_requisitionDetailsObject.ZipCode.NotNullOrWhiteSpace())
+            if (_reqDetailsObject.ZipCode.NotNullOrWhiteSpace())
             {
-                _location = $"{_location}, {_requisitionDetailsObject.ZipCode}";
+                _location = $"{_location}, {_reqDetailsObject.ZipCode}";
             }
         }
 
@@ -901,7 +899,7 @@ public partial class Requisitions
 
                                 Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
 
-                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
+                                //_roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
 
                                 _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
@@ -929,7 +927,7 @@ public partial class Requisitions
                                 _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
                                 _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
 
-                                if (_statusCodes is {Count: > 0})
+                                /*if (_statusCodes is {Count: > 0})
                                 {
                                     foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
                                     {
@@ -939,26 +937,26 @@ public partial class Requisitions
                                                               Text = _statusCode.Code
                                                           });
                                     }
-                                }
+                                }*/
 
                                 List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[CacheObjects.Companies.ToString()]);
 
-                                _companies = [];
+                                //_companies = [];
                                 Companies = [];
-                                _companies.Add(new()
+                                /*_companies.Add(new()
                                                {
                                                    KeyValue = "All Companies",
                                                    Text = "%"
-                                               });
+                                               });*/
                                 if (_companyList != null)
                                 {
                                     foreach (CompaniesList _company in _companyList.Where(company => company.UpdatedBy == User || company.UpdatedBy == "ADMIN"))
                                     {
-                                        _companies.Add(new()
+                                        /*_companies.Add(new()
                                                        {
                                                            KeyValue = _company.CompanyName,
                                                            Text = _company.CompanyName
-                                                       });
+                                                       });*/
 
                                         Companies.Add(new()
                                                       {
@@ -1042,7 +1040,7 @@ public partial class Requisitions
                                                                                                                                   DialogDocument.FileName);
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
-                                                                                 _requisitionDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
+                                                                                 _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
                                                                              }
                                                                          }
                                                                      });
@@ -1073,17 +1071,17 @@ public partial class Requisitions
                                                                                                                     {"emailAddress", ""}
                                                                                                                 };
 
-                                                                       _ = await General.ExecuteRest<int>("Requisition/SaveRequisition", _parameters, _requisitionDetailsObjectClone);
+                                                                       _ = await General.ExecuteRest<int>("Requisition/SaveRequisition", _parameters, _reqDetailsObjectClone);
 
-                                                                       _requisitionDetailsObject = _requisitionDetailsObjectClone.Copy();
+                                                                       _reqDetailsObject = _reqDetailsObjectClone.Copy();
 
-                                                                       if (_requisitionDetailsObject.RequisitionID > 0)
+                                                                       if (_reqDetailsObject.RequisitionID > 0)
                                                                        {
-                                                                           _target.Title = $"{_requisitionDetailsObject.PositionTitle} ({_candidateActivityObject.Count})";
-                                                                           _target.Company = _requisitionDetailsObject.CompanyName;
-                                                                           _target.JobOptions = _requisitionDetailsObject.JobOptions;
-                                                                           _target.Status = _requisitionDetailsObject.Status;
-                                                                           _target.PriorityColor = _requisitionDetailsObject.Priority.ToUpperInvariant() switch
+                                                                           _target.Title = $"{_reqDetailsObject.PositionTitle} ({_candidateActivityObject.Count})";
+                                                                           _target.Company = _reqDetailsObject.CompanyName;
+                                                                           _target.JobOptions = _reqDetailsObject.JobOptions;
+                                                                           _target.Status = _reqDetailsObject.Status;
+                                                                           _target.PriorityColor = _reqDetailsObject.Priority.ToUpperInvariant() switch
                                                                                                    {
                                                                                                        "HIGH" => _preference.HighPriorityColor,
                                                                                                        "LOW" => _preference.LowPriorityColor,
@@ -1120,13 +1118,14 @@ public partial class Requisitions
                                                  };
         //(int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
         (int _count, string _requisitions, string _, string _, string _status, int _) =
-            await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
+            await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false)
+                         .ConfigureAwait(false);
         DataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
         Grid.TotalItemCount = _count;
         Count = _count;
         if (_status.NotNullOrWhiteSpace() && _status != "[]")
         {
-            await SessionStorage.SetItemAsync("StatusList", _status.CompressGZip());
+            await SessionStorage.SetItemAsync("StatusList", _status.CompressGZip()).ConfigureAwait(false);
         }
     }
 
@@ -1143,28 +1142,26 @@ public partial class Requisitions
     /// </remarks>
     private void SetSkills()
     {
-        if (_requisitionDetailsObject == null)
+        if (_reqDetailsObject == null)
         {
             return;
         }
 
-        if (_requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() && _requisitionDetailsObject.Optional.NullOrWhiteSpace())
+        if (_reqDetailsObject.SkillsRequired.NullOrWhiteSpace() && _reqDetailsObject.Optional.NullOrWhiteSpace())
         {
             return;
         }
 
-        string _skillsRequired = _requisitionDetailsObject.SkillsRequired.NullOrWhiteSpace() ? string.Empty :
-                                     _requisitionDetailsObject.SkillsRequired.Split(',')
-                                                              .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
-                                                               //.Where(text => text != null)
-                                                              .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
+        string _skillsRequired = _reqDetailsObject.SkillsRequired.NullOrWhiteSpace() ? string.Empty :
+                                     _reqDetailsObject.SkillsRequired.Split(',')
+                                                      .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
+                                                      .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
                                      ?? string.Empty;
 
-        string _skillsOptional = _requisitionDetailsObject.Optional.NullOrWhiteSpace() ? string.Empty :
-                                     _requisitionDetailsObject.Optional.Split(',')
-                                                              .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
-                                                               //.Where(text => text != null)
-                                                              .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
+        string _skillsOptional = _reqDetailsObject.Optional.NullOrWhiteSpace() ? string.Empty :
+                                     _reqDetailsObject.Optional.Split(',')
+                                                      .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
+                                                      .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
                                      ?? string.Empty;
 
         string _skillStringTemp = string.Empty;
@@ -1269,12 +1266,12 @@ public partial class Requisitions
                 return null;
             }
 
-            if (_initializationTaskSource == null)
+            /*if (_initializationTaskSource == null)
             {
                 return null;
             }
 
-            await _initializationTaskSource.Task;
+            await _initializationTaskSource.Task;*/
             try
             {
                 RequisitionSearch _searchModel = General.DeserializeObject<RequisitionSearch>(dm.Params["SearchModel"].ToString());
