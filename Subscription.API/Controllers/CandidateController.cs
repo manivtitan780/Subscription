@@ -1693,7 +1693,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveSkill", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
+        _command.CommandType = CommandType.StoredProcedure; 
         _command.Int("EntitySkillId", skill.ID);
         _command.Varchar("Skill", 100, skill.Skill);
         _command.Int("CandidateID", candidateID);

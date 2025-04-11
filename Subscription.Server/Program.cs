@@ -39,8 +39,8 @@ _builder.Services.AddSignalR(e =>
                                  e.EnableDetailedErrors = true;
                              });
 _builder.Services.AddScoped<SfDialogService>();
-_builder.Services.AddScoped<Container>();
-_builder.Services.AddScoped<Requisitions.RequisitionAdaptor>();
+// _builder.Services.AddScoped<Container>();
+// _builder.Services.AddScoped<Requisitions.RequisitionAdaptor>();
 _builder.Services.AddSyncfusionBlazor();
 _builder.Services.AddResponseCompression(options =>
                                          {
@@ -54,7 +54,7 @@ _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { optio
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.AddSingleton<OpenAIClient>(sp =>
                                              {
-                                                 IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
+                                                 // IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
                                                  string _apiKey = _config["AzureOpenAI:APIKey"];
                                                  string _endpoint = _config["AzureOpenAI:Endpoint"];
                                                  OpenAIClientOptions _options = new()
