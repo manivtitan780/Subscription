@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-10-2025 21:04
+// Last Updated On:     04-11-2025 19:04
 // *****************************************/
 
 #endregion
@@ -43,11 +43,7 @@ public partial class Requisitions
     private readonly List<Workflow> _workflow = [];
     private List<Workflow> _workflows;
 
-    private ActivityPanelRequisition ActivityPanel
-    {
-        get;
-        set;
-    }
+    private ActivityPanelRequisition ActivityPanel { get; set; }
 
     /*
     /// <summary>
@@ -74,11 +70,7 @@ public partial class Requisitions
     /// <value>
     ///     The list of companies.
     /// </value>
-    private List<Company> Companies
-    {
-        get;
-        set;
-    } = [];
+    private List<Company> Companies { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets a list of company contacts associated with the requisition.
@@ -86,58 +78,27 @@ public partial class Requisitions
     /// <value>
     ///     The list of company contacts.
     /// </value>
-    private List<CompanyContacts> CompanyContacts
-    {
-        get;
-    } = [];
+    private List<CompanyContacts> CompanyContacts { get; } = [];
 
     /// <summary>
     ///     Represents the configuration for the application.
     /// </summary>
     [Inject]
-    private IConfiguration Configuration
-    {
-        get;
-        set;
-    }
+    private IConfiguration Configuration { get; set; }
 
-    private int Count
-    {
-        get;
-        set;
-    }
+    private int Count { get; set; }
 
-    private List<Requisition> DataSource
-    {
-        get;
-        set;
-    }
+    private List<Requisition> DataSource { get; set; }
 
-    private RequisitionDetailsPanel DetailsRequisition
-    {
-        get;
-        set;
-    }
+    private RequisitionDetailsPanel DetailsRequisition { get; set; }
 
-    private EditActivityDialog DialogActivity
-    {
-        get;
-        set;
-    }
+    private EditActivityDialog DialogActivity { get; set; }
 
-    private AddRequisitionDocument DialogDocument
-    {
-        get;
-        set;
-    }
+    private AddRequisitionDocument DialogDocument { get; set; }
 
-    private DocumentsPanel DocumentsPanel
-    {
-        get;
-        set;
-    }
-
+    private DocumentsPanel DocumentsPanel { get; set; }
     /*
+
     [Inject]
     private Container ContainerObject
     {
@@ -146,17 +107,9 @@ public partial class Requisitions
     }
     */
 
-    private static SfGrid<Requisition> Grid
-    {
-        get;
-        set;
-    }
+    private static SfGrid<Requisition> Grid { get; set; }
 
-    private bool HasEditRights
-    {
-        get;
-        set;
-    }
+    private bool HasEditRights { get; set; }
 
     /*
     private bool HasRendered
@@ -166,22 +119,14 @@ public partial class Requisitions
     }
 
     */
-    public bool HasViewRights
-    {
-        get;
-        set;
-    }
+    public bool HasViewRights { get; set; }
 
     /// <summary>
     ///     Gets or sets the JavaScript runtime instance. This instance is used to invoke JavaScript functions from C# code.
     ///     For example, it is used in the DownloadDocument method to open a new browser tab for document download.
     /// </summary>
     [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService used in the application.
@@ -191,11 +136,7 @@ public partial class Requisitions
     ///     It is used to store and retrieve data such as user preferences and application state.
     /// </remarks>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager service used in the Companies page.
@@ -204,11 +145,7 @@ public partial class Requisitions
     ///     For example, it is used in the `DownloadDocument` method to construct a URI for downloading a document.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets a new document for the requisition. This property is used to store the details of a new document
@@ -216,65 +153,35 @@ public partial class Requisitions
     ///     created.
     ///     If the new document already exists, its data is cleared before adding new data.
     /// </summary>
-    private RequisitionDocuments NewDocument
-    {
-        get;
-        set;
-    } = new();
+    private RequisitionDocuments NewDocument { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets a list of KeyValues instances representing the next steps for the candidate.
     /// </summary>
-    private List<KeyValues> NextSteps
-    {
-        get;
-    } = [];
+    private List<KeyValues> NextSteps { get; } = [];
 
-    private int Page
-    {
-        get;
-        set;
-    } = 1;
+    private int Page { get; set; } = 1;
 
     /// <summary>
     ///     Gets or sets the ID of the requisition. This ID is used to uniquely identify a requisition in the system.
     /// </summary>
-    private int RequisitionID
-    {
-        get;
-        set;
-    }
+    private int RequisitionID { get; set; }
 
-    private int RoleID
-    {
-        get;
-    } = 5;
+    private int RoleID { get; } = 5;
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the search model for the requisition. This model is used to store the search parameters for finding
     ///     requisitions.
     /// </summary>
-    private RequisitionSearch SearchModel
-    {
-        get;
-        set;
-    } = new();
+    private RequisitionSearch SearchModel { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the search model for the requisition. This model is used to store the search parameters for finding
     ///     requisitions.
     /// </summary>
-    private RequisitionSearch SearchModelClone
-    {
-        get;
-        set;
-    } = new();
+    private RequisitionSearch SearchModelClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the selected activity for the candidate.
@@ -283,22 +190,14 @@ public partial class Requisitions
     ///     The selected activity is of type <see cref="CandidateActivity" /> and it represents the current
     ///     activity selected for the candidate.
     /// </value>
-    private CandidateActivity SelectedActivity
-    {
-        get;
-        set;
-    } = new();
+    private CandidateActivity SelectedActivity { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the selected document for download from the requisition's documents panel.
     ///     This property is used in the DownloadDocument method to generate a query string for downloading the selected
     ///     document.
     /// </summary>
-    private RequisitionDocuments SelectedDownload
-    {
-        get;
-        set;
-    } = new();
+    private RequisitionDocuments SelectedDownload { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the session storage service used for storing and retrieving session data.
@@ -309,21 +208,13 @@ public partial class Requisitions
     ///     The session storage service.
     /// </value>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the skills associated with the requisition.
     ///     This is a list of <see cref="IntValues" /> where each value represents a unique skill.
     /// </summary>
-    private List<IntValues> Skills
-    {
-        get;
-        set;
-    } = [];
+    private List<IntValues> Skills { get; set; } = [];
 
     /*
     /// <summary>
@@ -351,28 +242,16 @@ public partial class Requisitions
     }
     */
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    } = new();
+    private SfSpinner Spinner { get; set; } = new();
 
-    private SfSpinner SpinnerTop
-    {
-        get;
-        set;
-    }
+    private SfSpinner SpinnerTop { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of status values associated with the requisition.
     ///     This list is populated with the 'StatusCount' data from the API response.
     ///     Each status is represented by a 'KeyValues' object.
     /// </summary>
-    private List<KeyValues> StatusList
-    {
-        get;
-        set;
-    } = [];
+    private List<KeyValues> StatusList { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the title of the requisition. The title is used to distinguish between "Add" and "Edit" modes in the
@@ -380,23 +259,11 @@ public partial class Requisitions
     ///     When a new requisition is being added, the title is set to "Add". When an existing requisition is being edited, the
     ///     title is set to "Edit".
     /// </summary>
-    private static string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private static string Title { get; set; } = "Edit";
 
-    private static string User
-    {
-        get;
-        set;
-    }
+    private static string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Asynchronously adds a new document to the requisition.
