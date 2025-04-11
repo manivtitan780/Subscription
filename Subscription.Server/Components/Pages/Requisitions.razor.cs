@@ -8,12 +8,8 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-10-2025 16:04
+// Last Updated On:     04-10-2025 21:04
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
@@ -25,16 +21,15 @@ public partial class Requisitions
 
     // private static TaskCompletionSource<bool> _initializationTaskSource;
 
-    private List<CandidateActivity> _candidateActivityObject = [];
+    private List<CandidateActivity> _candActivityObject = [];
     private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
     private List<KeyValues> /*_companies = [], */ _jobOptions = [];
 
     private Preferences _preference;
     private List<KeyValues> _recruiters;
-    private RequisitionDetails _reqDetailsObject = new();
-    private RequisitionDetails _reqDetailsObjectClone = new();
+    private MarkupString _reqDetailSkills = string.Empty.ToMarkupString();
+    private RequisitionDetails _reqDetailsObject = new(), _reqDetailsObjectClone = new();
     private List<RequisitionDocuments> _reqDocumentsObject = [];
-    private MarkupString _requisitionDetailSkills = string.Empty.ToMarkupString();
 
     //private List<Role> _roles;
     private int _selectedTab;
@@ -48,12 +43,13 @@ public partial class Requisitions
     private readonly List<Workflow> _workflow = [];
     private List<Workflow> _workflows;
 
-    public ActivityPanelRequisition ActivityPanel
+    private ActivityPanelRequisition ActivityPanel
     {
         get;
         set;
     }
 
+    /*
     /// <summary>
     ///     Gets or sets the AutocompleteValue property of the Requisition.
     /// </summary>
@@ -70,6 +66,7 @@ public partial class Requisitions
         get;
         set;
     }
+    */
 
     /// <summary>
     ///     Gets or sets the list of companies associated with the requisition.
@@ -116,7 +113,7 @@ public partial class Requisitions
         set;
     }
 
-    public RequisitionDetailsPanel DetailsRequisition
+    private RequisitionDetailsPanel DetailsRequisition
     {
         get;
         set;
@@ -155,18 +152,20 @@ public partial class Requisitions
         set;
     }
 
-    public bool HasEditRights
+    private bool HasEditRights
     {
         get;
         set;
     }
 
+    /*
     private bool HasRendered
     {
         get;
         set;
     }
 
+    */
     public bool HasViewRights
     {
         get;
@@ -326,6 +325,7 @@ public partial class Requisitions
         set;
     } = [];
 
+    /*
     /// <summary>
     ///     Gets or sets the sort direction for the requisition grid. This property is used to determine the order in which
     ///     requisitions are displayed in the grid.
@@ -349,6 +349,7 @@ public partial class Requisitions
         get;
         set;
     }
+    */
 
     private SfSpinner Spinner
     {
@@ -446,7 +447,7 @@ public partial class Requisitions
                                                                         SearchModel.Title = string.Empty;
                                                                         SearchModel.Page = 1;
                                                                         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                        await Grid.Refresh();
+                                                                        //await Grid.Refresh();
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
@@ -454,7 +455,7 @@ public partial class Requisitions
                                                                                                          SearchModel.Title = filter.Value;
                                                                                                          SearchModel.Page = 1;
                                                                                                          await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                                                         await Grid.Refresh();
+                                                                                                         //await Grid.Refresh();
                                                                                                      });
 
     /// <summary>
@@ -469,7 +470,7 @@ public partial class Requisitions
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                    await Grid.Refresh();
+                                                    //await Grid.Refresh();
                                                 });
 
     /// <summary>
@@ -506,7 +507,7 @@ public partial class Requisitions
                                                                           }
                                                                       }
 
-                                                                      await SaveStorage(false);// SessionStorage.SetItemAsync(StorageName, SearchModel);
+                                                                      await SaveStorage(false); // SessionStorage.SetItemAsync(StorageName, SearchModel);
                                                                       await SessionStorage.RemoveItemAsync("RequisitionIDFromDashboard");
                                                                   }
                                                                   else
@@ -585,11 +586,11 @@ public partial class Requisitions
                                                                                                                                                   null, false);
 
                                  _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
-                                 _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
+                                 _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
                                  _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
                                  SetSkills();
 
-                                 _selectedTab = _candidateActivityObject.Count > 0 ? 2 : 0;
+                                 _selectedTab = _candActivityObject.Count > 0 ? 2 : 0;
 
                                  await Task.Delay(100);
                                  VisibleSpinner = false;
@@ -726,7 +727,7 @@ public partial class Requisitions
                                                                               SearchModel.Page = 1;
                                                                               /*_query.Queries.Params["GetInformation"] = _companies.Count == 0;*/
                                                                               await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                              await Grid.Refresh();
+                                                                              //await Grid.Refresh();
                                                                           });
 
     private string GetDurationCode(string durationCode)
@@ -740,7 +741,7 @@ public partial class Requisitions
                };
     }
 
-    private string GetLocation(string location)
+    private string GetLocation()
     {
         /*if (_states == null || location.ToInt32() == 0)
         {
@@ -754,26 +755,28 @@ public partial class Requisitions
 
         return location;*/
         string _location = string.Empty;
-        if (_reqDetailsObject != null)
+        if (_reqDetailsObject == null)
         {
-            if (_reqDetailsObject.City.NotNullOrWhiteSpace())
-            {
-                _location = _reqDetailsObject.City;
-            }
+            return _location;
+        }
 
-            if (_reqDetailsObject.StateID.ToInt32() != 0)
-            {
-                foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
-                {
-                    _location = $"{_location}, {_intValues.Text}";
-                    break;
-                }
-            }
+        if (_reqDetailsObject.City.NotNullOrWhiteSpace())
+        {
+            _location = _reqDetailsObject.City;
+        }
 
-            if (_reqDetailsObject.ZipCode.NotNullOrWhiteSpace())
+        if (_reqDetailsObject.StateID.ToInt32() != 0)
+        {
+            foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
             {
-                _location = $"{_location}, {_reqDetailsObject.ZipCode}";
+                _location = $"{_location}, {_intValues.Text}";
+                break;
             }
+        }
+
+        if (_reqDetailsObject.ZipCode.NotNullOrWhiteSpace())
+        {
+            _location = $"{_location}, {_reqDetailsObject.ZipCode}";
         }
 
         return _location;
@@ -785,7 +788,7 @@ public partial class Requisitions
                                                                                        SearchModel.Page = page.CurrentPage;
 
                                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                                       await Grid.Refresh();
+                                                                                       //await Grid.Refresh();
                                                                                    });
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -1002,7 +1005,7 @@ public partial class Requisitions
 
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                             _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                          }
                                                                      });
 
@@ -1076,7 +1079,7 @@ public partial class Requisitions
 
                                                                        if (_reqDetailsObject.RequisitionID > 0)
                                                                        {
-                                                                           _target.Title = $"{_reqDetailsObject.PositionTitle} ({_candidateActivityObject.Count})";
+                                                                           _target.Title = $"{_reqDetailsObject.PositionTitle} ({_candActivityObject.Count})";
                                                                            _target.Company = _reqDetailsObject.CompanyName;
                                                                            _target.JobOptions = _reqDetailsObject.JobOptions;
                                                                            _target.Status = _reqDetailsObject.Status;
@@ -1176,7 +1179,7 @@ public partial class Requisitions
             _skillStringTemp += "<strong>Optional Skills:</strong> <br/>" + _skillsOptional;
         }
 
-        _requisitionDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? string.Empty : _skillStringTemp).ToMarkupString();
+        _reqDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? string.Empty : _skillStringTemp).ToMarkupString();
     }
 
     private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
@@ -1196,6 +1199,8 @@ public partial class Requisitions
 
         return Task.CompletedTask;
     }
+
+    private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
     /// <summary>
     ///     Asynchronously undoes a candidate activity based on the provided activity ID.
@@ -1221,11 +1226,11 @@ public partial class Requisitions
                                                                    string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
-                                                                       _candidateActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                       _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
 
-    /// <summary>
+    /*/// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
     ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
     /// </summary>
@@ -1271,7 +1276,7 @@ public partial class Requisitions
                 return null;
             }
 
-            await _initializationTaskSource.Task;*/
+            await _initializationTaskSource.Task;#1#
             try
             {
                 RequisitionSearch _searchModel = General.DeserializeObject<RequisitionSearch>(dm.Params["SearchModel"].ToString());
@@ -1296,7 +1301,7 @@ public partial class Requisitions
                         return dm.RequiresCounts ? new DataResult
                                                    {
                                                        Result = null,
-                                                       Count = 0 /*_count*/
+                                                       Count = 0 /*_count#1#
                                                    } : null;
                     }
 
@@ -1305,7 +1310,7 @@ public partial class Requisitions
                         return dm.RequiresCounts ? new DataResult
                                                    {
                                                        Result = _dataSource,
-                                                       Count = _count /*_count*/
+                                                       Count = _count /*_count#1#
                                                    } : _dataSource;
                     }
 
@@ -1314,7 +1319,7 @@ public partial class Requisitions
                         return dm.RequiresCounts ? new DataResult
                                                    {
                                                        Result = _dataSource,
-                                                       Count = _count /*_count*/
+                                                       Count = _count /*_count#1#
                                                    } : _dataSource;
                     }
 
@@ -1323,7 +1328,7 @@ public partial class Requisitions
                     return dm.RequiresCounts ? new DataResult
                                                {
                                                    Result = _dataSource,
-                                                   Count = _count /*_count*/
+                                                   Count = _count /*_count#1#
                                                } : _dataSource;
                 }
                 catch (Exception)
@@ -1355,5 +1360,5 @@ public partial class Requisitions
                 _semaphoreSlim.Release();
             }
         }
-    }
+    }*/
 }
