@@ -4,7 +4,8 @@
 
 <PageHeader />
 <GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Requisition/SearchRequisitions"
-			Name="@(SearchModel.Title)" PageSize="SearchModel.ItemCount" RefreshGrid="Refresh" TotalCount="@Count" ValueChange="AutocompleteValueChange">
+			Name="@(SearchModel.Title)" PageChanging="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanging="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count" 
+			ValueChange="AutocompleteValueChange" ShowSearch="true" >
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
 		        @ref="Grid" TotalItemsCount="378" TValue="Requisition" Width="100%">
