@@ -8,7 +8,7 @@
 // File Name:           Users.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-21-2025 21:03
-// Last Updated On:     03-24-2025 19:03
+// Last Updated On:     04-12-2025 15:04
 // *****************************************/
 
 #endregion
@@ -23,26 +23,12 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Users : ComponentBase
 {
-    private bool _runFilter;
+    //private bool _runFilter;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-
-    private List<User> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<User> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -57,17 +43,9 @@ public partial class Users : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private SfGrid<User> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<User> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -76,11 +54,7 @@ public partial class Users : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -89,33 +63,17 @@ public partial class Users : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
-    private List<IntValues> Roles
-    {
-        get;
-        set;
-    } = [];
+    private List<IntValues> Roles { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -124,50 +82,24 @@ public partial class Users : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the User of the User Dialog in the administrative context.
     ///     The User changes based on the action being performed on the User record - "Add" when a new User is being added,
     ///     and "Edit" when an existing User's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private string UserAuto
-    {
-        get;
-        set;
-    }
+    private string UserAuto { get; set; }
 
     /// <summary>
     ///     Gets or sets the 'UserDialog' instance used for managing User information in the administrative context.
     ///     This dialog is used for both creating new User and editing existing User.
     /// </summary>
-    private UserDialog UserDialog
-    {
-        get;
-        set;
-    }
+    private UserDialog UserDialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the UserRecord property of the User class.
@@ -175,11 +107,7 @@ public partial class Users : ComponentBase
     ///     It is used to hold the data of the selected User in the User grid.
     ///     The data is encapsulated in a User object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private User UserRecord
-    {
-        get;
-        set;
-    } = new();
+    private User UserRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a User record. This property is used to hold a copy of a User record for
@@ -187,17 +115,9 @@ public partial class Users : ComponentBase
     ///     When adding a new User, a new instance of User is created and assigned to this property.
     ///     When editing an existing User, a copy of the User record to be edited is created and assigned to this property.
     /// </summary>
-    private User UserRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private User UserRecordClone { get; set; } = new();
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -281,21 +201,11 @@ public partial class Users : ComponentBase
     /// </summary>
     /// <param name="user">The selected User in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> user)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 //if (_runFilter)
-                                 //{
-                                 await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
-                                 await SetDataSource();
-                                 /*}
-                                 else
-                                 {
-                                     _runFilter = true;
-                                 }*/
-                             });
-    }
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> user) => ExecuteMethod(async () =>
+                                                                                      {
+                                                                                          await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
+                                                                                          await SetDataSource();
+                                                                                      });
 
     /// <summary>
     ///     Sets the filter value for the User component.
@@ -314,17 +224,8 @@ public partial class Users : ComponentBase
         if (firstRender)
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoUser");
-
             UserAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
-
-            try
-            {
-                await SetDataSource();
-            }
-            catch
-            {
-                //
-            }
+            await SetDataSource();
         }
     }
 
@@ -371,7 +272,7 @@ public partial class Users : ComponentBase
                                             }
                                         }
                                     }
-                                    catch (Exception ex)
+                                    catch //(Exception ex)
                                     {
                                         Roles = [];
                                     }
@@ -417,15 +318,11 @@ public partial class Users : ComponentBase
                                                                         UserRecord = UserRecordClone.Copy();
                                                                     }
 
-                                                                    //await Grid.Refresh(true);
                                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                     {
                                                                         await FilterSet(string.Empty);
                                                                         DataSource = General.DeserializeObject<List<User>>(_response);
                                                                     }
-
-                                                                    /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                    await Grid.SelectRowAsync(_index);*/
                                                                 });
 
     private async Task SetDataSource()
@@ -437,6 +334,8 @@ public partial class Users : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<User>>(_returnValue);
+
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -475,9 +374,6 @@ public partial class Users : ComponentBase
                                                                                 {
                                                                                     DataSource = General.DeserializeObject<List<User>>(_response);
                                                                                 }
-                                                                                /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                                await Grid.SelectRowAsync(_index);*/
                                                                             }
-                                                                            // await AdminGrid.DialogConfirm.ShowDialog();
                                                                         });
 }
