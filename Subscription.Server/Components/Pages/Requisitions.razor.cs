@@ -97,28 +97,14 @@ public partial class Requisitions
     private AddRequisitionDocument DialogDocument { get; set; }
 
     private DocumentsPanel DocumentsPanel { get; set; }
-    /*
-
-    [Inject]
-    private Container ContainerObject
-    {
-        get;
-        set;
-    }
-    */
+    
+    /*    [Inject]    private Container ContainerObject    {        get;        set;    }    */
 
     private static SfGrid<Requisition> Grid { get; set; }
 
     private bool HasEditRights { get; set; }
 
-    /*
-    private bool HasRendered
-    {
-        get;
-        set;
-    }
-
-    */
+    /*    private bool HasRendered    {        get;        set;    }    */
     public bool HasViewRights { get; set; }
 
     /// <summary>
@@ -222,11 +208,7 @@ public partial class Requisitions
     ///     requisitions are displayed in the grid.
     ///     The sort direction can be either ascending or descending.
     /// </summary>
-    private SortDirection SortDirectionProperty
-    {
-        get;
-        set;
-    }
+    private SortDirection SortDirectionProperty    {        get;        set;    }
 
     /// <summary>
     ///     Gets or sets the field by which the requisition data is sorted.
@@ -235,11 +217,7 @@ public partial class Requisitions
     ///     The field name used for sorting. Possible values include "Code", "Title", "Company", "Option", "Status", "DueEnd",
     ///     and "Updated".
     /// </value>
-    private string SortField
-    {
-        get;
-        set;
-    }
+    private string SortField    {        get;        set;    }
     */
 
     private SfSpinner Spinner { get; set; } = new();
