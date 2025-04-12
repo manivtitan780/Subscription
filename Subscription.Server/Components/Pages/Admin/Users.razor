@@ -2,11 +2,10 @@
 @layout SubscriptionLayout
 
 <PageHeader/>
-<AdminGrid AddMethod="() => EditUserAsync()" AutocompleteMethod="Admin_SearchUser" AutocompleteParameter="@("User")" Name="@UserAuto"
-           Entity="User" HeaderContentPlural="Users" HeaderContentSingular="User" Height="140px" Page="User" @ref="AdminGrid"
-           RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+<AdminGrid AddMethod="() => EditUserAsync()" AutocompleteMethod="Admin_SearchUser" AutocompleteParameter="@("User")" Name="@UserAuto"Entity="User" HeaderContentPlural="Users" HeaderContentSingular="User" 
+		   Height="140px" Page="User" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
-		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
 		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%"
 		        ID="gridCompany" @ref="Grid" TValue="User" Width="100%">
 			<GridPageSettings PageSize="50"/>
