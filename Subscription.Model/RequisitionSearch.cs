@@ -327,7 +327,7 @@ public class RequisitionSearch
 		Title = "";
 		Company = "";
 		Option = "";
-		Status = "";
+		Status = "New,Open,Partially Filled";
 		CreatedBy = "";
 		CreatedOn = new(1900, 1, 1);
 		CreatedOnEnd = new(2099, 12, 31);

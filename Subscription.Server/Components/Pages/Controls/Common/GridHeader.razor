@@ -47,4 +47,9 @@
     <div id="divGrid">
         @GridContent
     </div>
+    <div id="divFooter">
+        <SfPager CurrentPage="CurrentPage" ItemClick="ItemClick" NumericItemsCount="@NumericCount" PageChanged="PageChanged" PageSize="@PageSize" PageSizeChanged="PageSizeChanged" 
+                 PageSizes="@(new() {10, 25, 50, 75, 100})" @ref="Pager" TotalItemsCount="@TotalCount">
+        </SfPager>
+    </div>
 </div>

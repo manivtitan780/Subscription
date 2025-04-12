@@ -2,13 +2,13 @@
 @using AnimationEffect = AnimationEffect
 @layout SubscriptionLayout
 
-<PageHeader/>
-<GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)"
-            RefreshGrid="Refresh" ValueChange="AutocompleteValueChange">
+<PageHeader />
+<GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Requisition/SearchRequisitions"
+			Name="@(SearchModel.Title)" PageSize="SearchModel.ItemCount" RefreshGrid="Refresh" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
+		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
 		        @ref="Grid" TotalItemsCount="378" TValue="Requisition" Width="100%">
-			<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="SearchModel.ItemCount" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+			<GridPageSettings PageCount="7" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 			@*@{
 				if (HasRendered)

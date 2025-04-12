@@ -147,7 +147,7 @@ body, form, html {
 }
 
 #divMainGrid > #divGrid {
-    height: calc(100% - 50px);
+    height: calc(100% - 107px);
     /*border: 1px solid red;*/
 }
 
@@ -615,7 +615,7 @@ body, form, html {
 
 /* #region Pager */
 
-#divFooter div, #divHeader, #divHeader div {
+/*#divFooter div,*/ #divHeader, #divHeader div {
     background: #f6f6f6;
 }
 
@@ -631,14 +631,22 @@ body, form, html {
 .e-pager .e-currentitem {
     border-bottom-color: var(--c-red);
     background: var(--c-yellow);
+    border-radius: 3px;
 }
 
 .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
     background: var(--c-yellow);
+    border-radius: 3px;
+}
+
+.e-pager .e-numericitem{
+    min-width: 35px;    
 }
 
 .e-pager .e-currentitem.e-numericitem.e-focused {
     background: var(--c-yellow);
+    border-radius: 3px;
+    box-shadow: none;
 }
 
 /* #endregion Pager */

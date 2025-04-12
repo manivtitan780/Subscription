@@ -13,6 +13,8 @@
 
 #endregion
 
+using System.Diagnostics;
+
 namespace Subscription.Server.Components.Pages;
 
 public partial class Requisitions
@@ -645,7 +647,6 @@ public partial class Requisitions
 
     private async Task SetDataSource()
     {
-        // await Task.CompletedTask;
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"getCompanyInformation", Companies.Count.Equals(0).ToBooleanString()},
