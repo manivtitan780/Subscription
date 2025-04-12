@@ -32,6 +32,8 @@ public partial class AdvancedSearch : ComponentBase
     [Parameter]
     public List<KeyValues> Companies { get; set; }
 
+    private EditContext Context { get; set; }
+
     private DateTime CreatedEndMax { get; set; }
 
     private DateTime CreatedEndMin { get; set; }
@@ -45,8 +47,6 @@ public partial class AdvancedSearch : ComponentBase
     private DateTime DueEndMin { get; set; }
 
     private SfDatePicker<DateTime> DueMax { get; set; }
-
-    private SfDataForm SearchForm { get; set; }
 
     [Parameter]
     public List<IntValues> EligibilityDropDown { get; set; } = [];
@@ -62,16 +62,10 @@ public partial class AdvancedSearch : ComponentBase
     [Parameter]
     public RequisitionSearch Model { get; set; } = new();
 
-    private List<IntValues> ProximityUnit { get; } = [];
-
-    private List<IntValues> ProximityValue { get; } = [];
-
-    private List<KeyValues> RelocateDropDown { get; set; } = [];
-
     [Parameter]
     public EventCallback<EditContext> Search { get; set; }
 
-    private List<KeyValues> SecurityClearanceDropDown { get; set; } = [];
+    private SfDataForm SearchForm { get; set; }
 
     private List<KeyValues> ShowRequisitions { get; } = [];
 
@@ -82,8 +76,6 @@ public partial class AdvancedSearch : ComponentBase
 
     [Parameter]
     public List<KeyValues> StatusDropDown { get; set; }
-
-    private EditContext Context { get; set; }
 
     private bool VisibleSpinner { get; set; }
 
