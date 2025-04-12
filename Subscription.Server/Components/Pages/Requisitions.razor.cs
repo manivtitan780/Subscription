@@ -8,12 +8,10 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-11-2025 19:04
+// Last Updated On:     04-12-2025 19:04
 // *****************************************/
 
 #endregion
-
-using System.Diagnostics;
 
 namespace Subscription.Server.Components.Pages;
 
@@ -61,7 +59,7 @@ public partial class Requisitions
     private AddRequisitionDocument DialogDocument { get; set; }
 
     private DocumentsPanel DocumentsPanel { get; set; }
-    
+
     private static SfGrid<Requisition> Grid { get; set; }
 
     private bool HasEditRights { get; set; }
@@ -549,11 +547,22 @@ public partial class Requisitions
         await base.OnInitializedAsync();
     }
 
-    private async Task Refresh(MouseEventArgs arg)
+    private async Task PageChanging(PageChangingEventArgs page)
     {
-        await SetDataSource().ConfigureAwait(false);
-        //await Grid.Refresh().ConfigureAwait(false);
+        Page = page.CurrentPage;
+        SearchModel.Page = page.CurrentPage;
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
+
+    private async Task PageSizeChanging(PageSizeChangingArgs page)
+    {
+        SearchModel.ItemCount = page.SelectedPageSize.ToInt32();
+        SearchModel.Page = 1;
+        await Grid.GoToPageAsync(1);
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+
+    private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
                                                                      {
@@ -591,9 +600,11 @@ public partial class Requisitions
                                                                                                                           {"user", User},
                                                                                                                           {"path", Start.UploadsPath}
                                                                                                                       };
+                                                                             
                                                                              string _response = await General.ExecuteRest<string>("Requisition/UploadDocument", _parameters, null, true,
                                                                                                                                   DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                   DialogDocument.FileName);
+                                                                             
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
@@ -742,6 +753,8 @@ public partial class Requisitions
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
+}
+
 
     /*/// <summary>
     ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
@@ -874,4 +887,3 @@ public partial class Requisitions
             }
         }
     }*/
-}
