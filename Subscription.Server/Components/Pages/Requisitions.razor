@@ -8,8 +8,8 @@
 			ValueChange="AutocompleteValueChange" ShowSearch="true" >
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
-		        @ref="Grid" TotalItemsCount="378" TValue="Requisition" Width="100%">
-			<GridPageSettings PageCount="7" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+		        @ref="Grid" TValue="Requisition" Width="100%">
+			@*<GridPageSettings PageCount="7" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>*@
 			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 			@*@{
 				if (HasRendered)
@@ -17,7 +17,7 @@
 					$1$ <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(RequisitionAdaptor)" Key="ID"/> #1#
 				}
 			}*@
-			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" TValue="Requisition"/>
+			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" RowSelecting="RowSelected" TValue="Requisition"/>
 			<GridColumns>
 				<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="12%">

@@ -20,28 +20,23 @@
 <PageHeader/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" RefreshGrid="Refresh" 
+	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" 
+				Name="@(SearchModel.Name)" PageChanging="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanging="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count" 
 				ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
 		<GridContent>
-			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" Query="_query" 
+			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" 
 					@ref="Grid" TValue="Candidate" Width="100%">
-				<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>
+				@*<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>*@
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
-				@{
+				@*@{
 					if (HasRendered)
 					{
 						<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateAdaptor)" Key="ID"/>
 					}
-				}
+				}*@
 				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" RowSelecting="RowSelected" TValue="Candidate"/>
 				<GridColumns>
-					<GridSortSettings AllowUnsort="false">
-						@* <GridSortColumns>
-								<GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
-							</GridSortColumns> *@
-					</GridSortSettings>
-					<GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-					<GridColumn AllowSorting="true" HeaderText="Name" Width="20%">
+					<GridColumn HeaderText="Name" Width="20%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -51,7 +46,8 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
+					<GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+					<GridColumn Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -63,7 +59,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
+					<GridColumn Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -73,7 +69,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
+					<GridColumn Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -85,7 +81,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
+					<GridColumn Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -97,7 +93,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn AllowSorting="true" Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
+					<GridColumn Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -138,7 +134,7 @@
 						@if (context is Candidate)
 						{
 							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
-								<SfSpinner @bind-Visible="@VisibleSpin" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
+								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
 								<TabAnimationSettings>
 									<TabAnimationPrevious Effect="AnimationEffect.None"/>
 									<TabAnimationNext Effect="AnimationEffect.None"/>

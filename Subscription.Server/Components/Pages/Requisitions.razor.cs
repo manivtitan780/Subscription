@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-12-2025 19:04
+// Last Updated On:     04-13-2025 15:04
 // *****************************************/
 
 #endregion
@@ -60,7 +60,7 @@ public partial class Requisitions
 
     private DocumentsPanel DocumentsPanel { get; set; }
 
-    private static SfGrid<Requisition> Grid { get; set; }
+    private SfGrid<Requisition> Grid { get; set; }
 
     private bool HasEditRights { get; set; }
 
@@ -106,9 +106,9 @@ public partial class Requisitions
 
     private List<KeyValues> StatusList { get; set; } = [];
 
-    private static string Title { get; set; } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private static string User { get; set; }
+    private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
 
@@ -564,6 +564,11 @@ public partial class Requisitions
 
     private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
 
+    private void RowSelected(RowSelectingEventArgs<Requisition> arg)
+    {
+        _target = arg.Data;
+    }
+
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
                                                                      {
                                                                          Dictionary<string, string> _parameters = new()
@@ -600,11 +605,11 @@ public partial class Requisitions
                                                                                                                           {"user", User},
                                                                                                                           {"path", Start.UploadsPath}
                                                                                                                       };
-                                                                             
+
                                                                              string _response = await General.ExecuteRest<string>("Requisition/UploadDocument", _parameters, null, true,
                                                                                                                                   DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                   DialogDocument.FileName);
-                                                                             
+
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
@@ -669,7 +674,7 @@ public partial class Requisitions
         (int _count, string _requisitions, string _, string _, string _status, int _) =
             await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
         DataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
-        Grid.TotalItemCount = _count;
+
         Count = _count;
         if (_status.NotNullOrWhiteSpace() && _status != "[]")
         {
@@ -755,135 +760,134 @@ public partial class Requisitions
                                                                });
 }
 
+/*/// <summary>
+///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
+///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
+/// </summary>
+/// <remarks>
+///     The ReadAsync method is used to asynchronously read data for the Requisitions page.
+///     It checks if a read operation is already in progress, and if not, it initiates a new read operation.
+///     The method retrieves lead data using the General.GetRequisitionReadAdaptor method and the provided
+///     DataManagerRequest.
+///     If there are any requisitions, it selects the first one. The method returns the retrieved requisitions data.
+/// </remarks>
+public class RequisitionAdaptor(ISessionStorageService sessionStorage) : DataAdaptor
+{
+    private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
-    /*/// <summary>
-    ///     The RequisitionAdaptor class is a custom data adaptor for the Requisitions page.
-    ///     It inherits from the DataAdaptor class and overrides the ReadAsync method.
+    /// <summary>
+    ///     Asynchronously reads data from the Requisition data source.
     /// </summary>
+    /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
+    /// <param name="key">An optional key to identify a specific data record.</param>
     /// <remarks>
-    ///     The ReadAsync method is used to asynchronously read data for the Requisitions page.
-    ///     It checks if a read operation is already in progress, and if not, it initiates a new read operation.
-    ///     The method retrieves lead data using the General.GetRequisitionReadAdaptor method and the provided
-    ///     DataManagerRequest.
-    ///     If there are any requisitions, it selects the first one. The method returns the retrieved requisitions data.
+    ///     This method checks if the data is already being read or if it has not been loaded yet. If either of these
+    ///     conditions is true, it returns null.
+    ///     Otherwise, it sets the _reading flag to true and proceeds with the data read operation. It also checks if the
+    ///     Companies list is not null and has more than 0 items.
+    ///     If so, it sets the _getInformation flag to true. Then it calls the GetRequisitionReadAdaptor method from the
+    ///     General class, passing the SearchModel, dm, _getInformation, RequisitionID, and true as parameters.
+    ///     The result of this method call is stored in the _requisitionReturn object. After the data read operation, it sets
+    ///     the _currentPage to the Page property of the SearchModel and the _reading flag back to false.
     /// </remarks>
-    public class RequisitionAdaptor(ISessionStorageService sessionStorage) : DataAdaptor
+    /// <returns>
+    ///     A Task that represents the asynchronous operation. The task result contains the data retrieved from the data
+    ///     source.
+    /// </returns>
+    public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
     {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously reads data from the Requisition data source.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key to identify a specific data record.</param>
-        /// <remarks>
-        ///     This method checks if the data is already being read or if it has not been loaded yet. If either of these
-        ///     conditions is true, it returns null.
-        ///     Otherwise, it sets the _reading flag to true and proceeds with the data read operation. It also checks if the
-        ///     Companies list is not null and has more than 0 items.
-        ///     If so, it sets the _getInformation flag to true. Then it calls the GetRequisitionReadAdaptor method from the
-        ///     General class, passing the SearchModel, dm, _getInformation, RequisitionID, and true as parameters.
-        ///     The result of this method call is stored in the _requisitionReturn object. After the data read operation, it sets
-        ///     the _currentPage to the Page property of the SearchModel and the _reading flag back to false.
-        /// </remarks>
-        /// <returns>
-        ///     A Task that represents the asynchronous operation. The task result contains the data retrieved from the data
-        ///     source.
-        /// </returns>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+        if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
         {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
+            return null;
+        }
 
-            /*if (_initializationTaskSource == null)
-            {
-                return null;
-            }
+        /*if (_initializationTaskSource == null)
+        {
+            return null;
+        }
 
-            await _initializationTaskSource.Task;#1#
+        await _initializationTaskSource.Task;#1#
+        try
+        {
+            RequisitionSearch _searchModel = General.DeserializeObject<RequisitionSearch>(dm.Params["SearchModel"].ToString());
+            List<Requisition> _dataSource = [];
+
             try
             {
-                RequisitionSearch _searchModel = General.DeserializeObject<RequisitionSearch>(dm.Params["SearchModel"].ToString());
-                List<Requisition> _dataSource = [];
+                Dictionary<string, string> _parameters = new()
+                                                         {
+                                                             {"getCompanyInformation", dm.Params["GetInformation"].ToString()},
+                                                             {"requisitionID", dm.Params["RequisitionID"].ToString()},
+                                                             {"thenProceed", false.ToString()},
+                                                             {"user", dm.Params["User"].ToString()}
+                                                         };
+                (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
+                    await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, _searchModel, false);
 
-                try
+                _dataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
+
+                if (_dataSource == null)
                 {
-                    Dictionary<string, string> _parameters = new()
-                                                             {
-                                                                 {"getCompanyInformation", dm.Params["GetInformation"].ToString()},
-                                                                 {"requisitionID", dm.Params["RequisitionID"].ToString()},
-                                                                 {"thenProceed", false.ToString()},
-                                                                 {"user", dm.Params["User"].ToString()}
-                                                             };
-                    (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
-                        await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, _searchModel, false);
+                    return dm.RequiresCounts ? new DataResult
+                                               {
+                                                   Result = null,
+                                                   Count = 0 /*_count#1#
+                                               } : null;
+                }
 
-                    _dataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
-
-                    if (_dataSource == null)
-                    {
-                        return dm.RequiresCounts ? new DataResult
-                                                   {
-                                                       Result = null,
-                                                       Count = 0 /*_count#1#
-                                                   } : null;
-                    }
-
-                    if (!dm.Params["GetInformation"].ToBoolean())
-                    {
-                        return dm.RequiresCounts ? new DataResult
-                                                   {
-                                                       Result = _dataSource,
-                                                       Count = _count /*_count#1#
-                                                   } : _dataSource;
-                    }
-
-                    if (_status.NullOrWhiteSpace())
-                    {
-                        return dm.RequiresCounts ? new DataResult
-                                                   {
-                                                       Result = _dataSource,
-                                                       Count = _count /*_count#1#
-                                                   } : _dataSource;
-                    }
-
-                    await sessionStorage.SetItemAsync("StatusList", _status.CompressGZip());
-
+                if (!dm.Params["GetInformation"].ToBoolean())
+                {
                     return dm.RequiresCounts ? new DataResult
                                                {
                                                    Result = _dataSource,
                                                    Count = _count /*_count#1#
                                                } : _dataSource;
                 }
-                catch (Exception)
+
+                if (_status.NullOrWhiteSpace())
                 {
-                    if (_dataSource == null)
-                    {
-                        return dm.RequiresCounts ? new DataResult
-                                                   {
-                                                       Result = null,
-                                                       Count = 1
-                                                   } : null;
-                    }
-
-                    _dataSource.Add(new());
-
                     return dm.RequiresCounts ? new DataResult
                                                {
                                                    Result = _dataSource,
-                                                   Count = 1
+                                                   Count = _count /*_count#1#
                                                } : _dataSource;
                 }
+
+                await sessionStorage.SetItemAsync("StatusList", _status.CompressGZip());
+
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = _count /*_count#1#
+                                           } : _dataSource;
             }
-            catch
+            catch (Exception)
             {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
+                if (_dataSource == null)
+                {
+                    return dm.RequiresCounts ? new DataResult
+                                               {
+                                                   Result = null,
+                                                   Count = 1
+                                               } : null;
+                }
+
+                _dataSource.Add(new());
+
+                return dm.RequiresCounts ? new DataResult
+                                           {
+                                               Result = _dataSource,
+                                               Count = 1
+                                           } : _dataSource;
             }
         }
-    }*/
+        catch
+        {
+            return null;
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
+    }
+}*/

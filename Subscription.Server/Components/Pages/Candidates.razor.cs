@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-05-2025 20:04
+// Last Updated On:     04-13-2025 19:04
 // *****************************************/
 
 #endregion
@@ -33,8 +33,8 @@ public partial class Candidates
     private List<CandidateDocument> _candDocumentsObject = [];
     private List<CandidateEducation> _candEducationObject = [];
     private List<CandidateExperience> _candExperienceObject = [];
-    private List<CandidateMPC> _candMPCObject = [];
     private List<CandidateNotes> _candidateNotesObject = [];
+    private List<CandidateMPC> _candMPCObject = [];
     private List<CandidateRating> _candRatingObject = [];
     private List<CandidateSkills> _candSkillsObject = [];
     private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
@@ -62,635 +62,142 @@ public partial class Candidates
 
     private List<Workflow> _workflow = [];
 
-    private ActivityPanel ActivityPanel
-    {
-        get;
-        set;
-    }
+    private ActivityPanel ActivityPanel { get; set; }
 
-    /// <summary>
-    ///     Represents the address of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the address of the candidate.
-    ///     The address is constructed from various address fields of the candidate's details.
-    /// </remarks>
-    private MarkupString Address
-    {
-        get;
-        set;
-    }
+    private MarkupString Address { get; set; }
 
-    /// <summary>
-    ///     Represents the candidate's communication rating.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the communication rating of the candidate.
-    ///     The communication rating is converted to a more descriptive string.
-    ///     The conversion is as follows:
-    ///     - "G" => "Good"
-    ///     - "A" => "Average"
-    ///     - "X" => "Excellent"
-    ///     - Any other value => "Fair"
-    /// </remarks>
-    private MarkupString CandidateCommunication
-    {
-        get;
-        set;
-    }
+    private MarkupString CandidateCommunication { get; set; }
 
-    private EditCandidateDialog CandidateDialog
-    {
-        get;
-        set;
-    }
+    private EditCandidateDialog CandidateDialog { get; set; }
 
-    /// <summary>
-    ///     Represents the dialog component for editing a candidate's education details.
-    /// </summary>
-    /// <remarks>
-    ///     This component provides a user interface for editing the education details of a candidate.
-    ///     It includes fields for entering the degree, college, location, year, and other relevant information.
-    ///     The dialog can be opened in either add or edit mode, depending on whether an existing education record is being
-    ///     edited or a new one is being added.
-    /// </remarks>
-    private EditEducationDialog CandidateEducationDialog
-    {
-        get;
-        set;
-    }
+    private EditEducationDialog CandidateEducationDialog { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the eligibility status of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the eligibility status of a candidate. The eligibility status is determined based on
-    ///     the `EligibilityID` of the candidate.
-    ///     If the `EligibilityID` is greater than 0, the eligibility status is set to the corresponding value from the
-    ///     `_eligibility` collection.
-    ///     If the `EligibilityID` is not greater than 0, the eligibility status is set to an empty string.
-    ///     This property is in the `SetEligibility()` method and in the `BuildRenderTree()` method of the `Candidate`
-    ///     component.
-    /// </remarks>
-    private MarkupString CandidateEligibility
-    {
-        get;
-        set;
-    }
+    private MarkupString CandidateEligibility { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the Candidate's experience.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the Candidate's experience retrieved from the
-    ///     `_candidateDetailsObject.ExperienceID`.
-    ///     If the `ExperienceID` is greater than 0, it fetches the corresponding experience from the `_experience` collection.
-    ///     Otherwise, it is set to an empty string.
-    /// </remarks>
-    private MarkupString CandidateExperience
-    {
-        get;
-        set;
-    }
+    private MarkupString CandidateExperience { get; set; }
 
-    /// <summary>
-    ///     Represents the dialog component for editing a candidate's experience details.
-    /// </summary>
-    /// <remarks>
-    ///     This component provides a user interface for editing the experience details of a candidate.
-    ///     It includes fields for entering the job title, company, location, duration, and other relevant information.
-    ///     The dialog can be opened in either add or edit mode, depending on whether an existing experience record is being
-    ///     edited or a new one is being added.
-    /// </remarks>
-    private EditExperienceDialog CandidateExperienceDialog
-    {
-        get;
-        set;
-    }
+    private EditExperienceDialog CandidateExperienceDialog { get; set; }
 
-    /// <summary>
-    ///     Represents the job options for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the job options of the candidate.
-    ///     The job options are constructed from the candidate's details and the `_jobOptions` collection.
-    /// </remarks>
-    private MarkupString CandidateJobOptions
-    {
-        get;
-        set;
-    }
+    private MarkupString CandidateJobOptions { get; set; }
 
-    private EditNotesDialog CandidateNotesDialog
-    {
-        get;
-        set;
-    }
+    private EditNotesDialog CandidateNotesDialog { get; set; }
 
-    /// <summary>
-    ///     Represents the dialog component for editing a candidate's skills.
-    /// </summary>
-    /// <remarks>
-    ///     This component provides a user interface for editing the skills of a candidate.
-    ///     It includes fields for entering skill details and can be opened in either add or edit mode.
-    /// </remarks>
-    private EditSkillDialog CandidateSkillDialog
-    {
-        get;
-        set;
-    }
+    private EditSkillDialog CandidateSkillDialog { get; set; }
 
-    /// <summary>
-    ///     Represents the tax terms for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the tax terms of the candidate.
-    ///     The tax terms are constructed from the candidate's details and the `_taxTerms` collection.
-    /// </remarks>
-    private MarkupString CandidateTaxTerms
-    {
-        get;
-        set;
-    }
+    private MarkupString CandidateTaxTerms { get; set; }
 
-    /// <summary>
-    ///     Represents the configuration for the application.
-    /// </summary>
     [Inject]
-    private IConfiguration Configuration
-    {
-        get;
-        set;
-    }
+    private IConfiguration Configuration { get; set; }
 
-    private EditActivityDialog DialogActivity
-    {
-        get;
-        set;
-    }
+    private int Count { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the dialog for adding a candidate document.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to manage the dialog for adding a candidate document in the Candidate page.
-    ///     It is an instance of the `AddCandidateDocument` component, which allows the user to upload a document to a
-    ///     company.
-    ///     The dialog is shown when the `AddDocument` method is called.
-    /// </remarks>
-    private AddDocumentDialog DialogDocument
-    {
-        get;
-        set;
-    }
+    private List<Candidate> DataSource { get; set; }
 
-    private bool DownloadFormatted
-    {
-        get;
-        set;
-    }
+    private EditActivityDialog DialogActivity { get; set; }
 
-    private bool DownloadOriginal
-    {
-        get;
-        set;
-    }
+    private AddDocumentDialog DialogDocument { get; set; }
 
-    private DownloadsPanel DownloadsPanel
-    {
-        get;
-        set;
-    }
+    private bool DownloadFormatted { get; set; }
 
-    public EditContext EditConEducation
-    {
-        get;
-        set;
-    }
+    private bool DownloadOriginal { get; set; }
 
-    public EditContext EditConExperience
-    {
-        get;
-        set;
-    }
+    private DownloadsPanel DownloadsPanel { get; set; }
 
-    public EditContext EditConNotes
-    {
-        get;
-        set;
-    }
+    public EditContext EditConEducation { get; set; }
 
-    public EditContext EditConSkill
-    {
-        get;
-        set;
-    }
+    public EditContext EditConExperience { get; set; }
 
-    private EducationPanel EducationPanel
-    {
-        get;
-        set;
-    }
+    public EditContext EditConNotes { get; set; }
 
-    private ExperiencePanel ExperiencePanel
-    {
-        get;
-        set;
-    }
+    public EditContext EditConSkill { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the name of the file being uploaded.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the name of the file that is being uploaded in the `Candidate.UploadDocument()`
-    ///     method.
-    ///     It is then used in the `Candidate.SaveDocument()` method to add the file to the request for the API call.
-    /// </remarks>
-    private string FileName
-    {
-        get;
-        set;
-    }
+    private EducationPanel EducationPanel { get; set; }
 
-    public bool FormattedExists
-    {
-        get;
-        set;
-    }
+    private ExperiencePanel ExperiencePanel { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the Syncfusion grid component used to display candidates.
-    /// </summary>
-    /// <remarks>
-    ///     This grid is used to display the list of candidates and their details.
-    ///     It supports various operations such as sorting, filtering, and paging.
-    /// </remarks>
-    private SfGrid<Candidate> Grid
-    {
-        get;
-        set;
-    }
+    private string FileName { get; set; }
 
-    /// <summary>
-    ///     Gets or sets a value indicating whether the user has edit rights.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to determine if the current user has the necessary permissions to edit the candidates.
-    ///     It is set based on the user's claims retrieved during the initialization of the component.
-    /// </remarks>
-    private bool HasEditRights
-    {
-        get;
-        set;
-    } = true;
+    public bool FormattedExists { get; set; }
+
+    private SfGrid<Candidate> Grid { get; set; }
+
+    private bool HasEditRights { get; set; } = true;
 
     private bool HasRendered { get; set; }
 
-    /// <summary>
-    ///     Gets or sets a value indicating whether the user has view rights.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to determine if the current user has the necessary permissions to view the candidates.
-    ///     It is set based on the user's claims retrieved during the initialization of the component.
-    /// </remarks>
-    private bool HasViewRights
-    {
-        get;
-        set;
-    } = true;
+    private bool HasViewRights { get; set; } = true;
 
-    private bool IsFromCompany
-    {
-        get;
-        set;
-    }
+    private bool IsFromCompany { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the IJSRuntime interface. This interface provides methods for interacting with
-    ///     JavaScript from .NET code.
-    /// </summary>
-    /// <remarks>
-    ///     The IJSRuntime instance is used to invoke JavaScript functions from .NET code. In the Companies class, it is used
-    ///     to open a new browser tab for document download in the `Companies.DownloadDocument()` method.
-    /// </remarks>
     [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the ILocalStorageService used in the application.
-    /// </summary>
-    /// <remarks>
-    ///     This service is used to manage local storage in the browser.
-    ///     It is used to store and retrieve data such as user preferences and application state.
-    /// </remarks>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the MIME type of the file being uploaded.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the MIME type of the file being uploaded in the `Candidate.UploadDocument()` method.
-    ///     The MIME type is retrieved from the FileInfo of the uploaded file.
-    ///     It is then used as a parameter in the API request in the `Candidate.SaveDocument()` method.
-    /// </remarks>
-    private string Mime
-    {
-        get;
-        set;
-    }
+    private string Mime { get; set; }
 
-    /// <summary>
-    ///     Represents the date of the candidate's MPC.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the date of the candidate's MPC.
-    ///     The date is retrieved from the `_candidateMPCObject` collection and formatted.
-    /// </remarks>
-    private MarkupString MPCDate
-    {
-        get;
-        set;
-    }
+    private MarkupString MPCDate { get; set; }
 
-    private MPCCandidateDialog MPCDialog
-    {
-        get;
-        set;
-    }
+    private MPCCandidateDialog MPCDialog { get; set; }
 
-    /// <summary>
-    ///     Represents the note of the candidate's MPC.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the note of the candidate's MPC.
-    ///     The note is retrieved from the `_candidateMPCObject` collection.
-    /// </remarks>
-    private MarkupString MPCNote
-    {
-        get;
-        set;
-    }
+    private MarkupString MPCNote { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the NavigationManager service used in the Companies page.
-    ///     This service provides methods and properties to manage and interact with the URI of the application.
-    ///     It is used for tasks such as navigating to different pages and constructing URIs for use within the application.
-    ///     For example, it is used in the `DownloadDocument` method to construct a URI for downloading a document.
-    /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
-    /// <summary>
-    ///     Gets or sets a new instance of the CandidateDocuments class.
-    /// </summary>
-    private CandidateDocument NewDocument
-    {
-        get;
-    } = new();
+    private CandidateDocument NewDocument { get; } = new();
 
-    /// <summary>
-    ///     Gets or sets a list of KeyValues instances representing the next steps for the candidate.
-    /// </summary>
-    private List<KeyValues> NextSteps
-    {
-        get;
-    } = [];
+    private List<KeyValues> NextSteps { get; } = [];
 
-    private NotesPanel NotesPanel
-    {
-        get;
-        set;
-    }
+    private NotesPanel NotesPanel { get; set; }
 
-    public bool OriginalExists
-    {
-        get;
-        set;
-    }
+    public bool OriginalExists { get; set; }
 
-    /// <summary>
-    ///     Represents the date of the candidate's rating.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the date of the candidate's rating.
-    ///     The date is retrieved from the `_candidateRatingObject` collection and formatted.
-    /// </remarks>
-    private MarkupString RatingDate
-    {
-        get;
-        set;
-    }
+    private int Page { get; set; } = 1;
 
-    private RatingCandidateDialog RatingDialog
-    {
-        get;
-        set;
-    }
+    private MarkupString RatingDate { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the RatingMPC property of the Candidate class. This property represents an instance of the
-    ///     CandidateRatingMPC class.
-    /// </summary>
-    private CandidateRatingMPC RatingMPC
-    {
-        get;
-        set;
-    } = new();
+    private RatingCandidateDialog RatingDialog { get; set; }
 
-    /// <summary>
-    ///     Represents the note of the candidate's rating.
-    /// </summary>
-    /// <remarks>
-    ///     This property is a markup string that holds the note of the candidate's rating.
-    ///     The note is retrieved from the `_candidateRatingObject` collection.
-    /// </remarks>
-    private MarkupString RatingNote
-    {
-        get;
-        set;
-    }
+    private CandidateRatingMPC RatingMPC { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets the Requisition ID for which to submit the Candidate for.
-    /// </summary>
-    private int RequisitionID
-    {
-        get;
-        set;
-    }
+    private MarkupString RatingNote { get; set; }
 
-    private int RoleID
-    {
-        get;
-        set;
-    }
+    private int RequisitionID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private int RoleID { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the search model used for filtering candidates.
-    /// </summary>
-    /// <remarks>
-    ///     This model contains the search parameters used to filter the list of candidates displayed in the grid.
-    ///     It includes properties such as Name and Page for pagination and filtering.
-    /// </remarks>
-    private CandidateSearch SearchModel
-    {
-        get;
-        set;
-    } = new();
+    private string RoleName { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the selected activity for the candidate.
-    /// </summary>
-    /// <value>
-    ///     The selected activity is of type <see cref="CandidateActivity" /> and it represents the current
-    ///     activity selected for the candidate.
-    /// </value>
-    private CandidateActivity SelectedActivity
-    {
-        get;
-        set;
-    } = new();
+    private CandidateSearch SearchModel { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets the selected document for download associated with a candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the document selected by the user for download.
-    ///     The document is selected in the DownloadsPanel and used in the `DownloadDocument` method.
-    /// </remarks>
-    private CandidateDocument SelectedDownload
-    {
-        get;
-        set;
-    } = new();
+    private CandidateActivity SelectedActivity { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets the selected education for the candidate. This property is of type
-    ///     <see cref="Subscription.Model.CandidateEducation" />.
-    /// </summary>
-    private CandidateEducation SelectedEducation
-    {
-        get;
-        set;
-    } = new();
+    private CandidateDocument SelectedDownload { get; set; } = new();
 
-    private CandidateEducation SelectedEducationClone
-    {
-        get;
-        set;
-    } = new();
+    private CandidateEducation SelectedEducation { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets the selected education for the candidate. This property is of type
-    ///     <see cref="Subscription.Model.CandidateExperience" />.
-    /// </summary>
-    private CandidateExperience SelectedExperience
-    {
-        get;
-        set;
-    } = new();
+    private CandidateEducation SelectedEducationClone { get; set; } = new();
 
-    private CandidateNotes SelectedNotes
-    {
-        get;
-        set;
-    } = new();
+    private CandidateExperience SelectedExperience { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets the selected skill for the candidate.
-    /// </summary>
-    /// <value>
-    ///     The selected skill of type <see cref="CandidateSkills" />.
-    /// </value>
-    private CandidateSkills SelectedSkill
-    {
-        get;
-        set;
-    } = new();
+    private CandidateNotes SelectedNotes { get; set; } = new();
 
-    /// <summary>
-    ///     Gets or sets an instance of the ILocalStorageService.
-    ///     This service is used for managing local storage in the application.
-    ///     It is used to store and retrieve the state of the Companies grid, including search parameters and pagination.
-    /// </summary>
+    private CandidateSkills SelectedSkill { get; set; } = new();
+
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the SkillPanel instance associated with the Candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to interact with the SkillPanel component, which provides functionality for managing
-    ///     candidate skills.
-    ///     It includes methods for editing and deleting skills, and properties for managing the display and behavior of the
-    ///     skill grid.
-    /// </remarks>
-    private SkillPanel SkillPanel
-    {
-        get;
-        set;
-    }
+    private SkillPanel SkillPanel { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the Syncfusion spinner control used in the application.
-    /// </summary>
-    /// <remarks>
-    ///     This spinner is displayed during long-running operations such as data loading or saving.
-    ///     It provides visual feedback to the user that an operation is in progress.
-    /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
-    private SubmitCandidate SubmitDialog
-    {
-        get;
-        set;
-    }
+    private SubmitCandidate SubmitDialog { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the username of the current user.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to store the username of the user currently logged into the application.
-    ///     It is retrieved from the user's claims during the initialization of the component.
-    /// </remarks>
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpin
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task AddCandidate(MouseEventArgs arg)
     {
@@ -698,13 +205,6 @@ public partial class Candidates
         await EditCandidate();
     }
 
-    /// <summary>
-    ///     This method is used to add a new document to the candidate's profile.
-    ///     It first checks if a new document instance exists, if not, it creates a new one.
-    ///     If an instance already exists, it clears the data from the previous instance.
-    ///     After preparing the new document instance, it opens the document dialog for the user to add the document details.
-    /// </summary>
-    /// <returns>A Task that represents the asynchronous operation.</returns>
     private Task AddDocument() => ExecuteMethod(() =>
                                                 {
                                                     NewDocument.Clear();
@@ -715,28 +215,21 @@ public partial class Candidates
                                                                     {
                                                                         SearchModel.Name = "";
                                                                         SearchModel.Page = 1;
-                                                                        await SaveStorage();
+                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
                                                                                                      {
                                                                                                          SearchModel.Name = filter.Value;
                                                                                                          SearchModel.Page = 1;
-                                                                                                         await SaveStorage();
+                                                                                                         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                                      });
 
-    /// <summary>
-    ///     Clears the filter applied to the candidates.
-    /// </summary>
-    /// <remarks>
-    ///     This function is called when the "Clear Filter" button is clicked.
-    ///     It resets the filter values and reloads the candidates.
-    /// </remarks>
     private Task ClearFilter() => ExecuteMethod(async () =>
                                                 {
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
-                                                    await SaveStorage();
+                                                    await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                 });
 
     private Dictionary<string, string> CreateParameters(int id) => new()
@@ -746,10 +239,6 @@ public partial class Candidates
                                                                        {"user", User}
                                                                    };
 
-    /// <summary>
-    ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
-    /// </summary>
-    /// <returns></returns>
     private Task DataHandler() => ExecuteMethod(async () =>
                                                 {
                                                     DotNetObjectReference<Candidates> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
@@ -761,16 +250,6 @@ public partial class Candidates
                                                     }
                                                 });
 
-    /// <summary>
-    ///     Asynchronously deletes a document associated with a candidate.
-    /// </summary>
-    /// <param name="arg">The ID of the document to be deleted.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method sends a POST request to the Candidates/DeleteCandidateDocument endpoint with the document ID and user
-    ///     ID as parameters.
-    ///     If the action is successful, the candidate's documents are updated.
-    /// </remarks>
     private Task DeleteDocument(int arg) => ExecuteMethod(async () =>
                                                           {
                                                               Dictionary<string, string> _parameters = new()
@@ -784,20 +263,6 @@ public partial class Candidates
                                                               _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                           });
 
-    /// <summary>
-    ///     Asynchronously deletes the education record of a candidate.
-    /// </summary>
-    /// <param name="id">The identifier of the education record to be deleted.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidates/DeleteEducation" endpoint with the education record's ID, the
-    ///     candidate's ID, and the user's ID as parameters.
-    ///     If the action is not in progress, it sets the action in progress, sends the request, and updates the candidate's
-    ///     education object with the response.
-    ///     If the response is null, the method returns immediately. If an exception occurs during the request, it is caught
-    ///     and ignored.
-    ///     After the request is completed, the action progress is set to false.
-    /// </remarks>
     private Task DeleteEducation(int id) => ExecuteMethod(async () =>
                                                           {
                                                               Dictionary<string, string> _parameters = CreateParameters(id);
@@ -806,20 +271,6 @@ public partial class Candidates
                                                               _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                           });
 
-    /// <summary>
-    ///     Asynchronously deletes the experience record of a candidate.
-    /// </summary>
-    /// <param name="id">The identifier of the education record to be deleted.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidates/DeleteExperience" endpoint with the experience record's ID, the
-    ///     candidate's ID, and the user's ID as parameters.
-    ///     If the action is not in progress, it sets the action in progress, sends the request, and updates the candidate's
-    ///     experience object with the response.
-    ///     If the response is null, the method returns immediately. If an exception occurs during the request, it is caught
-    ///     and ignored.
-    ///     After the request is completed, the action progress is set to false.
-    /// </remarks>
     private Task DeleteExperience(int id) => ExecuteMethod(async () =>
                                                            {
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
@@ -836,17 +287,6 @@ public partial class Candidates
                                                           _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
                                                       });
 
-    /// <summary>
-    ///     Asynchronously deletes a skill from a candidate's profile.
-    /// </summary>
-    /// <param name="id">The unique identifier of the skill to be deleted.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidates/DeleteSkill" endpoint with the skill's ID,
-    ///     the candidate's ID, and the current user's ID as parameters. If the current user is not logged in,
-    ///     the user ID is set to "JOLLY". The method also sets a flag to prevent multiple simultaneous requests.
-    ///     If the request is successful, the method updates the candidate's skills list with the response from the server.
-    /// </remarks>
     private Task DeleteSkill(int id) => ExecuteMethod(async () =>
                                                       {
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
@@ -873,27 +313,28 @@ public partial class Candidates
 
                                  _target = candidate.Data;
 
-                                 VisibleSpin = true;
+                                 VisibleSpinner = true;
 
                                  Dictionary<string, string> _parameters = new()
                                                                           {
                                                                               {"candidateID", _target.ID.ToString()},
                                                                               {"roleID", "RS"}
                                                                           };
-                                 ReturnCandidateDetails _response = await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters,
-                                                                                                                      null, false);
+                                 (string _candidate, string _notes, string _skills, string _education, string _s, string _activity, List<CandidateRating> _candidateRatings,
+                                  List<CandidateMPC> _candidateMPC, CandidateRatingMPC _candidateRatingMPC, string _documents) =
+                                     await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters, null, false);
 
-                                 _candDetailsObject = General.DeserializeObject<CandidateDetails>(_response.Candidate) ?? new();
-                                 _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response.Skills) ?? [];
-                                 _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response.Education) ?? [];
-                                 _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response.Experience) ?? [];
-                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response.Notes) ?? [];
-                                 _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response.Documents) ?? [];
-                                 _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response.Activity) ?? [];
+                                 _candDetailsObject = General.DeserializeObject<CandidateDetails>(_candidate) ?? new();
+                                 _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_skills) ?? [];
+                                 _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_education) ?? [];
+                                 _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_s) ?? [];
+                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? [];
+                                 _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_documents) ?? [];
+                                 _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
 
-                                 _candRatingObject = _response.Rating;
-                                 _candMPCObject = _response.MPC;
-                                 RatingMPC = _response.RatingMPC;
+                                 _candRatingObject = _candidateRatings;
+                                 _candMPCObject = _candidateMPC;
+                                 RatingMPC = _candidateRatingMPC;
                                  GetMPCDate();
                                  GetMPCNote();
                                  GetRatingDate();
@@ -910,30 +351,13 @@ public partial class Candidates
                                  _originalExists = _target.OriginalResume;
 
                                  await Task.Delay(100);
-                                 VisibleSpin = false;
+                                 VisibleSpinner = false;
                              });
     }
 
-    /// <summary>
-    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
-    /// </summary>
     [JSInvokable("DetailCollapse")]
     public void DetailRowCollapse() => _target = null;
 
-    /// <summary>
-    ///     Initiates the download of a document associated with a candidate.
-    /// </summary>
-    /// <param name="arg">The identifier of the document to be downloaded.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if another download operation is in progress. If not, it sets the SelectedDownload
-    ///     property to the document selected in the DownloadsPanel.
-    ///     It then constructs a query string by concatenating the internal file name of the document, the ID of the target
-    ///     candidate, the location of the document, and a zero, separated by "^" characters.
-    ///     The query string is then Base64 encoded. The method then invokes a JavaScript function to open a new browser tab
-    ///     with a URL constructed from the BaseUri of the NavigationManager, the string "Download/", and the encoded query
-    ///     string.
-    /// </remarks>
     private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
                                                             {
                                                                 SelectedDownload = DownloadsPanel.SelectedRow;
@@ -941,17 +365,6 @@ public partial class Candidates
                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                             });
 
-    /// <summary>
-    ///     Asynchronously edits the activity with the specified ID.
-    ///     If the action is not in progress or is a speed dial, it sets the selected activity to the selected row of the
-    ///     ActivityPanel,
-    ///     clears the NextSteps list and adds a new "No Change" option. Then, it iterates through the workflows to find the
-    ///     next steps
-    ///     based on the status code of the selected activity. If a next step is found, it is added to the NextSteps list.
-    ///     After all operations are done, it resets the action progress and shows the DialogActivity.
-    /// </summary>
-    /// <param name="id">The ID of the activity to be edited.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     private Task EditActivity(int id) => ExecuteMethod(async () =>
                                                        {
                                                            SelectedActivity = ActivityPanel.SelectedRow;
@@ -982,23 +395,9 @@ public partial class Candidates
                                                            await DialogActivity.ShowDialog();
                                                        });
 
-    /// <summary>
-    ///     Asynchronously edits the details of a candidate. If the candidate is not selected or is new,
-    ///     it prepares the system to add a new candidate. Otherwise, it prepares the system to edit the existing candidate's
-    ///     details.
-    /// </summary>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
-    ///     immediately.
-    ///     Then it shows a spinner indicating the action is in progress.
-    ///     If the target candidate is null or new, it prepares the system to add a new candidate.
-    ///     Otherwise, it prepares the system to edit the existing candidate's details.
-    ///     Finally, it hides the spinner and shows the dialog to edit the candidate.
-    /// </remarks>
     private Task EditCandidate() => ExecuteMethod(async () =>
                                                   {
-                                                      VisibleSpin = true;
+                                                      VisibleSpinner = true;
 
                                                       if (_target == null || _target.ID == 0)
                                                       {
@@ -1020,30 +419,15 @@ public partial class Candidates
                                                           _candDetailsObjectClone.IsAdd = false;
                                                       }
 
-                                                      VisibleSpin = false;
+                                                      VisibleSpinner = false;
 
                                                       await CandidateDialog.ShowDialog();
                                                       StateHasChanged();
                                                   });
 
-    /// <summary>
-    ///     Asynchronously edits the education details of a candidate. If the education record is not selected or is new,
-    ///     it prepares the system to add a new education record. Otherwise, it prepares the system to edit the existing
-    ///     education record.
-    /// </summary>
-    /// <param name="id">The ID of the education record to be edited. If the ID is 0, a new education record will be prepared.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
-    ///     immediately.
-    ///     Then it sets the action in progress.
-    ///     If the target education record is null or new, it prepares the system to add a new education record.
-    ///     Otherwise, it prepares the system to edit the existing education record.
-    ///     Finally, it resets the action progress and shows the dialog to edit the education record.
-    /// </remarks>
     private Task EditEducation(int id) => ExecuteMethod(async () =>
                                                         {
-                                                            VisibleSpin = true;
+                                                            VisibleSpinner = true;
                                                             if (id == 0)
                                                             {
                                                                 if (SelectedEducation == null)
@@ -1061,31 +445,13 @@ public partial class Candidates
                                                             }
 
                                                             EditConEducation = new(SelectedEducation!);
-                                                            VisibleSpin = false;
+                                                            VisibleSpinner = false;
                                                             await CandidateEducationDialog.ShowDialog();
                                                         });
 
-    /// <summary>
-    ///     Asynchronously edits the experience details of a candidate. If the experience record is not selected or is new,
-    ///     it prepares the system to add a new experience record. Otherwise, it prepares the system to edit the existing
-    ///     experience record.
-    /// </summary>
-    /// <param name="id">
-    ///     The ID of the experience record to be edited. If the ID is 0, a new experience record will be
-    ///     prepared.
-    /// </param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
-    ///     immediately.
-    ///     Then it sets the action in progress.
-    ///     If the target experience record is null or new, it prepares the system to add a new experience record.
-    ///     Otherwise, it prepares the system to edit the existing experience record.
-    ///     Finally, it resets the action progress and shows the dialog to edit the experience record.
-    /// </remarks>
     private Task EditExperience(int id) => ExecuteMethod(async () =>
                                                          {
-                                                             VisibleSpin = true;
+                                                             VisibleSpinner = true;
                                                              if (id == 0)
                                                              {
                                                                  if (SelectedExperience == null)
@@ -1103,13 +469,13 @@ public partial class Candidates
                                                              }
 
                                                              EditConExperience = new(SelectedExperience!);
-                                                             VisibleSpin = false;
+                                                             VisibleSpinner = false;
                                                              await CandidateExperienceDialog.ShowDialog();
                                                          });
 
     private Task EditNotes(int id) => ExecuteMethod(async () =>
                                                     {
-                                                        VisibleSpin = true;
+                                                        VisibleSpinner = true;
                                                         if (id == 0)
                                                         {
                                                             if (SelectedNotes == null)
@@ -1127,27 +493,13 @@ public partial class Candidates
                                                         }
 
                                                         EditConNotes = new(SelectedNotes!);
-                                                        VisibleSpin = false;
+                                                        VisibleSpinner = false;
                                                         await CandidateNotesDialog.ShowDialog();
                                                     });
 
-    /// <summary>
-    ///     Asynchronously edits the skill of a candidate. If the skill is not selected or is new,
-    ///     it prepares the system to add a new skill. Otherwise, it prepares the system to edit the existing skill.
-    /// </summary>
-    /// <param name="skill">The identifier of the skill to be edited.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if an action is already in progress or if the speed dial is active, if so it returns
-    ///     immediately.
-    ///     Then it sets the action in progress.
-    ///     If the target skill is null or new, it prepares the system to add a new skill.
-    ///     Otherwise, it prepares the system to edit the existing skill.
-    ///     Finally, it ends the action in progress and shows the dialog to edit the skill.
-    /// </remarks>
     private Task EditSkill(int skill) => ExecuteMethod(async () =>
                                                        {
-                                                           VisibleSpin = true;
+                                                           VisibleSpinner = true;
                                                            if (skill == 0)
                                                            {
                                                                if (SelectedSkill == null)
@@ -1165,43 +517,21 @@ public partial class Candidates
                                                            }
 
                                                            EditConSkill = new(SelectedSkill!);
-                                                           VisibleSpin = false;
+                                                           VisibleSpinner = false;
                                                            await CandidateSkillDialog.ShowDialog();
                                                        });
 
-    /// <summary>
-    ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
-    ///     immediately.
-    ///     If an exception occurs during the execution of the task, it will be logged using the provided logger.
-    /// </summary>
-    /// <param name="task">The task to be executed.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
-    /// <summary>
-    ///     Handles the click event on the Formatted button in the Candidate page.
-    ///     This method triggers the retrieval of the formatted resume of a candidate.
-    /// </summary>
-    /// <param name="arg">The mouse event arguments.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     private Task FormattedClick(MouseEventArgs arg) => GetResumeOnClick("Formatted");
 
     private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
                                                                           {
                                                                               SearchModel.Name = alphabet.ToString();
                                                                               SearchModel.Page = 1;
-                                                                              await SaveStorage();
+                                                                              await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                           });
 
-    /// <summary>
-    ///     Retrieves the most recent date from the CandidateMPC list and converts it to a MarkupString.
-    ///     The method first checks if the MpcNotes property of the CandidateDetails object is empty.
-    ///     If it is, an empty MarkupString is assigned to the MPCDate property.
-    ///     Then, the method finds the CandidateMPC object with the latest date.
-    ///     If such an object exists, the method formats its date and assigns it to the MPCDate property.
-    /// </summary>
     private void GetMPCDate()
     {
         string _mpcDate = "";
@@ -1217,14 +547,6 @@ public partial class Candidates
         MPCDate = _mpcDate.ToMarkupString();
     }
 
-    /// <summary>
-    ///     The GetMPCNote method is responsible for retrieving the most recent note from the CandidateMPC object list.
-    ///     If the MpcNotes property of the _candidateDetailsObject is empty, an empty string is converted to a MarkupString
-    ///     and assigned to the MPCNote property.
-    ///     The method then finds the CandidateMPC object with the latest date and assigns its Comments property to the
-    ///     _mpcNote variable.
-    ///     Finally, the _mpcNote is converted to a MarkupString and assigned to the MPCNote property.
-    /// </summary>
     private void GetMPCNote()
     {
         string _mpcNote = "";
@@ -1240,14 +562,6 @@ public partial class Candidates
         MPCNote = _mpcNote.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Retrieves the rating date for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method fetches the maximum (latest) date from the candidate's rating list and formats it into a string.
-    ///     The formatted string includes the date and the user's initials. If the candidate's rating notes are empty,
-    ///     an empty string is returned. The result is converted into a MarkupString and stored in the RatingDate property.
-    /// </remarks>
     private void GetRatingDate()
     {
         string _ratingDate = "";
@@ -1263,16 +577,6 @@ public partial class Candidates
         RatingDate = _ratingDate.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Retrieves the rating note for a candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method checks if the candidate's rating notes are empty. If they are, it sets the RatingNote property to an
-    ///     empty string.
-    ///     If the candidate has rating notes, it retrieves the most recent rating note based on the date and sets the
-    ///     RatingNote property to this value.
-    ///     The RatingNote property is then converted to a MarkupString for display purposes.
-    /// </remarks>
     private void GetRatingNote()
     {
         string _ratingNote = "";
@@ -1288,16 +592,6 @@ public partial class Candidates
         RatingNote = _ratingNote.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Handles the retrieval of a candidate's resume based on the specified resume type.
-    /// </summary>
-    /// <param name="resumeType">The type of the resume to retrieve. This can be "Original" or "Formatted".</param>
-    /// <returns>A Task representing the asynchronous operation of retrieving the resume.</returns>
-    /// <remarks>
-    ///     This method sends a GET request to the "Candidates/DownloadResume" endpoint with the candidate's ID and the resume
-    ///     type as query parameters.
-    ///     If the request is successful, it shows the retrieved resume in the DownloadsPanel.
-    /// </remarks>
     private Task GetResumeOnClick(string resumeType) => ExecuteMethod(async () =>
                                                                       {
                                                                           /*Dictionary<string, string> _parameters = new()
@@ -1328,7 +622,7 @@ public partial class Candidates
                                                                                            SearchModel.Page = page.CurrentPage;
                                                                                        }
 
-                                                                                       await SaveStorage(false);
+                                                                                       await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                    });
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -1351,36 +645,12 @@ public partial class Candidates
                 SearchModel.Clear();
             }
 
-            _query ??= new();
-            _query = _query.AddParams("SearchModel", SearchModel);
-            HasRendered = true;
-            try
-            {
-                _initializationTaskSource.SetResult(true);
-            }
-            catch
-            {
-                //
-            }
+            await SetDataSource();
         }
 
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    /// <summary>
-    ///     Handles the asynchronous initialization of the Candidates component.
-    /// </summary>
-    /// <remarks>
-    ///     This method performs the following steps:
-    ///     <list type="number">
-    ///         <item>Initializes the task completion source.</item>
-    ///         <item>Retrieves user claims and sets user permissions.</item>
-    ///         <item>Fetches configuration data from the cache server.</item>
-    ///         <item>Clears the search model.</item>
-    ///     </list>
-    ///     If the user is not authenticated, they are redirected to the login page.
-    /// </remarks>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     protected override async Task OnInitializedAsync()
     {
         _initializationTaskSource = new();
@@ -1449,56 +719,32 @@ public partial class Candidates
                                 _workflow = General.DeserializeObject<List<Workflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
-                                /*
-                                List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[CacheObjects.Users.ToString()]);
-
-                                foreach (UserList _user in _users.Where(user => user.UserName == User))
-                                {
-                                    RoleID = _user.Role;
-                                    break;
-                                }
-
-                                foreach (Role role in _roles.Where(role => role.ID == RoleID))
-                                {
-                                    RoleName = role.RoleName;
-                                    break;
-                                }
-                            */
                             });
 
         await base.OnInitializedAsync();
     }
 
-    /// <summary>
-    ///     Handles the click event for retrieving the original resume of a candidate.
-    /// </summary>
-    /// <param name="arg">The Mouse Event Arguments associated with the click event.</param>
-    /// <returns>A Task representing the asynchronous operation of retrieving the original resume.</returns>
-    /// <remarks>
-    ///     This method calls the GetResumeOnClick method with "Original" as the argument, which sends a GET request to the
-    ///     "Candidates/DownloadResume" endpoint to retrieve the original resume.
-    /// </remarks>
     private Task OriginalClick(MouseEventArgs arg) => GetResumeOnClick("Original");
 
-    private async Task Refresh(MouseEventArgs arg)
+    private async Task PageChanging(PageChangingEventArgs page)
     {
-        await Grid.Refresh(true);
+        Page = page.CurrentPage;
+        SearchModel.Page = page.CurrentPage;
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     Asynchronously saves the activity of a candidate.
-    /// </summary>
-    /// <param name="activity">The context of the activity to be saved.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method creates a new RestClient and RestRequest to send a POST request to the
-    ///     "Candidates/SaveCandidateActivity" endpoint.
-    ///     The activity model is serialized into JSON format and added to the body of the request.
-    ///     Additional parameters such as candidateID, user, roleID, isCandidateScreen, jsonPath, emailAddress, and uploadPath
-    ///     are added to the request.
-    ///     If the response is not null, it deserializes the "Activity" from the response into a List of CandidateActivity
-    ///     objects.
-    /// </remarks>
+    private async Task PageSizeChanging(PageSizeChangingArgs page)
+    {
+        SearchModel.ItemCount = page.SelectedPageSize.ToInt32();
+        SearchModel.Page = 1;
+        await Grid.GoToPageAsync(1);
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+
+    private async Task Refresh() => await Grid.Refresh(true);
+
+    private void RowSelected(RowSelectingEventArgs<Candidate> candidate) => _target = candidate.Data;
+
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
                                                                      {
                                                                          Dictionary<string, string> _parameters = new()
@@ -1514,32 +760,13 @@ public partial class Candidates
 
                                                                          string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
                                                                                                                               activity.Model);
+                                                                         
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
                                                                              _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                          }
                                                                      });
 
-    /// <summary>
-    ///     Asynchronously saves the candidate details.
-    /// </summary>
-    /// <remarks>
-    ///     This method performs the following steps:
-    ///     - Yields the current thread of execution.
-    ///     - Creates a new RestClient instance with the API host URL.
-    ///     - Creates a new RestRequest instance for the "Candidates/SaveCandidate" endpoint, using the POST method and JSON
-    ///     request format.
-    ///     - Adds the cloned candidate details object to the request body as JSON.
-    ///     - Adds the JSON file path, username, and email address as query parameters to the request. If the username or
-    ///     email address is null or whitespace, default values are used.
-    ///     - Sends the request asynchronously and awaits the response.
-    ///     - Updates the candidate details object with the cloned object.
-    ///     - Updates the target candidate's name, phone, email, location, updated date, and status based on the candidate
-    ///     details object.
-    ///     - Calls methods to set up the address, communication, eligibility, job option, tax term, and experience.
-    ///     - Yields the current thread of execution again.
-    ///     - Triggers a UI refresh by calling StateHasChanged.
-    /// </remarks>
     private Task SaveCandidate() => ExecuteMethod(async () =>
                                                   {
                                                       Dictionary<string, string> _parameters = new()
@@ -1571,17 +798,6 @@ public partial class Candidates
                                                       StateHasChanged();
                                                   });
 
-    /// <summary>
-    ///     Asynchronously saves the document related to a candidate.
-    /// </summary>
-    /// <param name="document">The edit context of the document to be saved.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method attempts to save a document related to a candidate. The document is represented by an EditContext.
-    ///     If the model of the EditContext is a CandidateDocument, it will be uploaded to a specified API endpoint.
-    ///     The method uses RestSharp to send a POST request to the API, including the document and additional parameters.
-    ///     If the upload is successful, the response is deserialized into a list of CandidateDocument objects.
-    /// </remarks>
     private Task SaveDocument(EditContext document) => ExecuteMethod(async () =>
                                                                      {
                                                                          if (document.Model is CandidateDocument _document)
@@ -1601,6 +817,7 @@ public partial class Candidates
                                                                              string _response = await General.ExecuteRest<string>("Candidate/UploadDocument", _parameters, null, true,
                                                                                                                                   DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                   DialogDocument.FileName);
+                                                                             
                                                                              if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                              {
                                                                                  _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
@@ -1608,22 +825,6 @@ public partial class Candidates
                                                                          }
                                                                      });
 
-    /// <summary>
-    ///     Asynchronously saves the education details of a candidate.
-    /// </summary>
-    /// <param name="education">
-    ///     The edit context containing the candidate's education details.
-    /// </param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidate/SaveEducation" endpoint with the candidate's education details.
-    ///     The user ID of the logged-in user or "JOLLY" (if no user is logged in) and the candidate's ID are added as query
-    ///     parameters to the request.
-    ///     If the response is not null, the education details from the response are deserialized and stored in the
-    ///     _candidateEducationObject.
-    /// </remarks>
     private Task SaveEducation(EditContext education) => ExecuteMethod(async () =>
                                                                        {
                                                                            if (education.Model is CandidateEducation _candidateEducation)
@@ -1635,6 +836,7 @@ public partial class Candidates
                                                                                                                         };
                                                                                string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters,
                                                                                                                                     _candidateEducation);
+                                                                               
                                                                                if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                {
                                                                                    return;
@@ -1644,21 +846,6 @@ public partial class Candidates
                                                                            }
                                                                        });
 
-    /// <summary>
-    ///     Asynchronously saves the candidate's experience.
-    /// </summary>
-    /// <param name="experience">
-    ///     The EditContext object containing the candidate's experience to be saved.
-    /// </param>
-    /// <returns>
-    ///     A Task representing the asynchronous operation.
-    /// </returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidates/SaveExperience" endpoint of the API.
-    ///     The request includes the experience model in the body and user and candidateID as query parameters.
-    ///     If the response is not null, it deserializes the "Experience" field of the response into a List of
-    ///     CandidateExperience objects.
-    /// </remarks>
     private Task SaveExperience(EditContext experience) => ExecuteMethod(async () =>
                                                                          {
                                                                              if (experience.Model is CandidateExperience _candidateExperience)
@@ -1669,6 +856,7 @@ public partial class Candidates
                                                                                                                               {"user", User}
                                                                                                                           };
                                                                                  string _response = await General.ExecuteRest<string>("Candidate/SaveExperience", _parameters, _candidateExperience);
+                                                                                 
                                                                                  if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                  {
                                                                                      return;
@@ -1678,16 +866,6 @@ public partial class Candidates
                                                                              }
                                                                          });
 
-    /// <summary>
-    ///     This method is used to save the CandidateMPC object. It makes a POST request to the "Candidates/SaveMPC" endpoint.
-    ///     The method takes an EditContext object as a parameter, which is used to form the body of the POST request.
-    ///     The user ID from the LoginCookyUser object is added as a query parameter to the request.
-    ///     If the request is successful, the response is deserialized into a dictionary and used to update the
-    ///     _candidateMPCObject and RatingMPC properties.
-    ///     The GetMPCDate and GetMPCNote methods are then called to update the MPC date and note.
-    /// </summary>
-    /// <param name="editContext">The EditContext object that contains the data to be saved.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     private Task SaveMPC(EditContext editContext) => ExecuteMethod(async () =>
                                                                    {
                                                                        if (editContext.Model is CandidateRatingMPC _mpc)
@@ -1697,6 +875,7 @@ public partial class Candidates
                                                                                                                         {"user", User}
                                                                                                                     };
                                                                            Dictionary<string, object> _response = await General.PostRest("Candidate/SaveMPC", _parameters, _mpc);
+                                                                           
                                                                            if (_response != null)
                                                                            {
                                                                                _candMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
@@ -1707,20 +886,6 @@ public partial class Candidates
                                                                        }
                                                                    });
 
-    /// <summary>
-    ///     Asynchronously saves a note for a candidate.
-    /// </summary>
-    /// <param name="note">
-    ///     The edit context containing the candidate's note details.
-    /// </param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidate/SaveNotes" endpoint with the candidate's note details.
-    ///     If the response is not null, the note details from the response are deserialized and stored in the
-    ///     _candidateNotesObject.
-    /// </remarks>
     private Task SaveNote(EditContext note) => ExecuteMethod(async () =>
                                                              {
                                                                  if (note.Model is CandidateNotes _candidateNotes)
@@ -1731,6 +896,7 @@ public partial class Candidates
                                                                                                                   {"user", User}
                                                                                                               };
                                                                      string _response = await General.ExecuteRest<string>("Candidate/SaveNotes", _parameters, _candidateNotes);
+                                                                     
                                                                      if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                      {
                                                                          return;
@@ -1740,13 +906,6 @@ public partial class Candidates
                                                                  }
                                                              });
 
-    /// <summary>
-    ///     This method is responsible for saving the rating of a candidate.
-    ///     It sends a POST request to the "Candidates/SaveRating" endpoint with the rating information.
-    ///     If the operation is successful, it updates the candidate's rating information in the application.
-    /// </summary>
-    /// <param name="editContext">The context for the form that contains the rating information to be saved.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     private Task SaveRating(EditContext editContext) => ExecuteMethod(async () =>
                                                                       {
                                                                           if (editContext.Model is CandidateRatingMPC _rating)
@@ -1756,6 +915,7 @@ public partial class Candidates
                                                                                                                            {"user", User}
                                                                                                                        };
                                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/SaveRating", _parameters, _rating);
+                                                                              
                                                                               if (_response != null)
                                                                               {
                                                                                   _candRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
@@ -1767,23 +927,6 @@ public partial class Candidates
                                                                           }
                                                                       });
 
-    /// <summary>
-    ///     Asynchronously saves the skill of a candidate.
-    /// </summary>
-    /// <param name="skill">
-    ///     The context of the skill to be saved.
-    /// </param>
-    /// <returns>
-    ///     A Task representing the asynchronous operation.
-    /// </returns>
-    /// <remarks>
-    ///     This method creates a new RestClient and RestRequest to make a POST request to the "Candidates/SaveSkill" endpoint.
-    ///     The skill model is added to the request body in JSON format.
-    ///     The user ID from the LoginCookyUser and the candidate ID are added as query parameters.
-    ///     The response from the server is expected to be a dictionary containing the updated skills.
-    ///     If the response is not null, it deserializes the "Skills" value from the response into a list of CandidateSkills
-    ///     and assigns it to the _candidateSkillsObject.
-    /// </remarks>
     private Task SaveSkill(EditContext skill) => ExecuteMethod(async () =>
                                                                {
                                                                    if (skill.Model is CandidateSkills _skill)
@@ -1795,6 +938,7 @@ public partial class Candidates
                                                                                                                 };
 
                                                                        string _response = await General.ExecuteRest<string>("Candidate/SaveSkill", _parameters, _skill);
+                                                                       
                                                                        if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                        {
                                                                            return;
@@ -1825,7 +969,7 @@ public partial class Candidates
                                                                                                                         {"candidateID", _target.ID.ToString()},
                                                                                                                         {"notes", _submitCandidateModel.Text},
                                                                                                                         {"roleID", RoleName},
-                                                                                                                        {"user", User}/*,
+                                                                                                                        {"user", User} /*,
                                                                                                                         {"jsonPath", Start.JsonFilePath},
                                                                                                                         {"emailAddress", General.GetEmail(LoginCookyUser)},
                                                                                                                         {"uploadPath", Start.UploadsPath}*/
@@ -1836,23 +980,10 @@ public partial class Candidates
                                                                            if (RequisitionID > 0)
                                                                            {
                                                                                await SessionStorage.SetItemAsync("OptReqID", RequisitionID.ToString());
-                                                                               NavManager.NavigateTo(NavManager.BaseUri + (IsFromCompany ? "company" : $"requisition"));
+                                                                               NavManager.NavigateTo(NavManager.BaseUri + (IsFromCompany ? "company" : "requisition"));
                                                                            }
                                                                        });
 
-    /// <summary>
-    ///     Sets the communication rating of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method retrieves the communication rating from the candidate details object and converts it to a more
-    ///     descriptive string.
-    ///     The conversion is as follows:
-    ///     - "G" => "Good"
-    ///     - "A" => "Average"
-    ///     - "X" => "Excellent"
-    ///     - Any other value => "Fair"
-    ///     The resulting string is then assigned to the CandidateCommunication property.
-    /// </remarks>
     private void SetCommunication()
     {
         string _returnValue = _candDetailsObject.Communication switch
@@ -1866,14 +997,14 @@ public partial class Candidates
         CandidateCommunication = _returnValue.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Sets the eligibility status of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method checks if the eligibility list has any items. If it does, it sets the CandidateEligibility property to
-    ///     the eligibility value of the candidate details object if it exists. If the eligibility ID of the candidate details
-    ///     object is not greater than 0, it sets the CandidateEligibility property to an empty string.
-    /// </remarks>
+    private async Task SetDataSource()
+    {
+        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
+
+        DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
+        await Grid.Refresh().ConfigureAwait(false);
+    }
+
     private void SetEligibility()
     {
         if (_eligibility is {Count: > 0})
@@ -1884,15 +1015,6 @@ public partial class Candidates
         }
     }
 
-    /// <summary>
-    ///     Sets the experience of the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method checks if the experience list is not null and has more than zero elements.
-    ///     If the candidate's ExperienceID is greater than zero, it sets the CandidateExperience
-    ///     to the corresponding experience value from the experience list.
-    ///     If the ExperienceID is not greater than zero, it sets the CandidateExperience to an empty string.
-    /// </remarks>
     private void SetExperience()
     {
         if (_experience is {Count: > 0})
@@ -1903,18 +1025,6 @@ public partial class Candidates
         }
     }
 
-    /// <summary>
-    ///     Sets the job options for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method performs the following steps:
-    ///     - Checks if the job options list is not null and has more than zero elements.
-    ///     - Splits the job options from the candidate details object by comma.
-    ///     - Iterates through each split job option.
-    ///     - If the split job option is not an empty string, it finds the corresponding job option in the job options list and
-    ///     appends it to the return value.
-    ///     - Finally, it converts the return value to a markup string and sets it as the candidate's job options.
-    /// </remarks>
     private void SetJobOption()
     {
         string _returnValue = "";
@@ -1942,18 +1052,6 @@ public partial class Candidates
         CandidateJobOptions = _returnValue.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Sets the tax terms for the candidate.
-    /// </summary>
-    /// <remarks>
-    ///     This method performs the following steps:
-    ///     - Checks if the tax terms list is not null and has more than zero items.
-    ///     - Splits the candidate's tax term string by comma.
-    ///     - Iterates through each split tax term.
-    ///     - If the tax term is not an empty string, it finds the corresponding tax term from the tax terms list and appends
-    ///     it to the return value.
-    ///     - Sets the `CandidateTaxTerms` property with the return value converted to a markup string.
-    /// </remarks>
     private void SetTaxTerm()
     {
         string _returnValue = "";
@@ -1982,16 +1080,6 @@ public partial class Candidates
         CandidateTaxTerms = _returnValue.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Sets up the address for the candidate by concatenating the address fields.
-    /// </summary>
-    /// <remarks>
-    ///     This method concatenates the Address1, Address2, City, StateID, and ZipCode fields of the candidate's details.
-    ///     Each part of the address is separated by a comma or a line break.
-    ///     If a part of the address is empty, it is skipped.
-    ///     If the generated address starts with a comma, it is removed.
-    ///     The final address is converted to a markup string and stored in the Address field.
-    /// </remarks>
     private void SetupAddress()
     {
         string _generateAddress = _candDetailsObject.Address1;
@@ -2054,18 +1142,6 @@ public partial class Candidates
         Address = _generateAddress.ToMarkupString();
     }
 
-    /// <summary>
-    ///     Handles the event when a speed dial item is clicked.
-    /// </summary>
-    /// <param name="args">The arguments related to the speed dial item event.</param>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method first checks if an action is already in progress. If not, it sets the action in progress and the speed
-    ///     dial to active.
-    ///     Depending on the ID of the clicked speed dial item, it performs different actions such as editing a candidate,
-    ///     rating, adding a skill, education, experience, notes, attachment, or resume.
-    ///     After the action is performed, it sets the speed dial to inactive and ends the action in progress.
-    /// </remarks>
     private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
     {
         switch (args.Item.ID)
@@ -2136,18 +1212,6 @@ public partial class Candidates
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
-    /// <summary>
-    ///     Asynchronously undoes a candidate activity based on the provided activity ID.
-    /// </summary>
-    /// <param name="activityID">The ID of the candidate activity to undo.</param>
-    /// <remarks>
-    ///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint with the activity ID, user ID,
-    ///     and a flag indicating it's from the candidate screen.
-    ///     If the user is not logged in, "JOLLY" is used as the user ID. The response is expected to be a dictionary
-    ///     containing the activity data, which is then deserialized into a list of CandidateActivity objects.
-    ///     If the response is null or an exception occurs during the process, the method will return immediately.
-    /// </remarks>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     private Task UndoActivity(int activityID) => ExecuteMethod(async () =>
                                                                {
                                                                    Dictionary<string, string> _parameters = new()
@@ -2158,97 +1222,94 @@ public partial class Candidates
                                                                                                                 {"roleID", RoleName}
                                                                                                             };
                                                                    string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
+                                                                   
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
-
-    public class CandidateAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        /// <summary>
-        ///     Asynchronously reads company data for the grid view on the Companies page.
-        ///     This method checks if the CompaniesList is not null and contains data, in which case it does not retrieve new data.
-        ///     If the CompaniesList is null or empty, it calls the GetCompanyReadAdaptor method to retrieve company data.
-        ///     If there are any companies in the retrieved data, it selects the first row in the grid view.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key to identify a specific data item. Default is null.</param>
-        /// <returns>
-        ///     A Task that represents the asynchronous read operation. The value of the TResult parameter contains the
-        ///     retrieved data.
-        /// </returns>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                List<Candidate> _dataSource = [];
-
-                object _candidateReturn = null;
-                try
-                {
-                    CandidateSearch _searchModel = General.DeserializeObject<CandidateSearch>(dm.Params["SearchModel"].ToString());
-
-                    (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, _searchModel, false);
-
-                    _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
-
-                    _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                           {
-                                                               Result = _dataSource,
-                                                               Count = _count /*_count*/
-                                                           } : _dataSource;
-                }
-                catch
-                {
-                    if (_dataSource == null)
-                    {
-                        _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = null,
-                                                                   Count = 1
-                                                               } : null;
-                    }
-                    else
-                    {
-                        _dataSource.Add(new());
-
-                        _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                               {
-                                                                   Result = _dataSource,
-                                                                   Count = 1
-                                                               } : _dataSource;
-                    }
-                }
-
-                return _candidateReturn;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
-
-    private void RowSelected(RowSelectingEventArgs<Candidate> arg)
-    {
-        _target = arg.Data;
-    }
 }
+/*
+     public class CandidateAdaptor : DataAdaptor
+     {
+         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+
+         /// <summary>
+         ///     Asynchronously reads company data for the grid view on the Companies page.
+         ///     This method checks if the CompaniesList is not null and contains data, in which case it does not retrieve new data.
+         ///     If the CompaniesList is null or empty, it calls the GetCompanyReadAdaptor method to retrieve company data.
+         ///     If there are any companies in the retrieved data, it selects the first row in the grid view.
+         /// </summary>
+         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
+         /// <param name="key">An optional key to identify a specific data item. Default is null.</param>
+         /// <returns>
+         ///     A Task that represents the asynchronous read operation. The value of the TResult parameter contains the
+         ///     retrieved data.
+         /// </returns>
+         public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+         {
+             if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
+             {
+                 return null;
+             }
+
+             if (_initializationTaskSource == null)
+             {
+                 return null;
+             }
+
+             await _initializationTaskSource.Task;
+             try
+             {
+                 List<Candidate> _dataSource = [];
+
+                 object _candidateReturn = null;
+                 try
+                 {
+                     CandidateSearch _searchModel = General.DeserializeObject<CandidateSearch>(dm.Params["SearchModel"].ToString());
+
+                     (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, _searchModel, false);
+
+                     _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
+
+                     _candidateReturn = dm.RequiresCounts ? new DataResult
+                                                            {
+                                                                Result = _dataSource,
+                                                                Count = _count /*_count#1#
+                                                            } : _dataSource;
+                 }
+                 catch
+                 {
+                     if (_dataSource == null)
+                     {
+                         _candidateReturn = dm.RequiresCounts ? new DataResult
+                                                                {
+                                                                    Result = null,
+                                                                    Count = 1
+                                                                } : null;
+                     }
+                     else
+                     {
+                         _dataSource.Add(new());
+
+                         _candidateReturn = dm.RequiresCounts ? new DataResult
+                                                                {
+                                                                    Result = _dataSource,
+                                                                    Count = 1
+                                                                } : _dataSource;
+                     }
+                 }
+
+                 return _candidateReturn;
+             }
+             catch
+             {
+                 return null;
+             }
+             finally
+             {
+                 _semaphoreSlim.Release();
+             }
+         }
+     }
+ */
