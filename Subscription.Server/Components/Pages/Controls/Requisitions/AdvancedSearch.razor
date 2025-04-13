@@ -37,8 +37,8 @@
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupStatus" LabelText="Status Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Status)">
 						<Template>
-							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="KeyValues" TValue="string" Placeholder="Select Status(s)" Text="Text" Key="KeyValue" 
-										 FilterBarPlaceholder="Select Status(es)&hellip;"/>
+							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="KeyValues" TValue="string" Placeholder="Select Status(s)" Text="Text" Key="KeyValue"
+							             FilterBarPlaceholder="Select Status(es)&hellip;"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -46,8 +46,7 @@
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCreatedBy" LabelText="Requisition Creator">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedBy)">
 						<Template>
-							<DropDown @bind-Value="Model.CreatedBy" Model="ShowRequisitions" ID="dropCreatedBy" TItem="KeyValues" TValue="string"
-							          Placeholder="Show Requisitions:" Text="Key" Key="Value"/>
+							<DropDown @bind-Value="Model.CreatedBy" Model="ShowRequisitions" ID="dropCreatedBy" TItem="KeyValues" TValue="string" Placeholder="Show Requisitions:" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -56,16 +55,16 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedOn)">
 						<Template>
 							<label class="e-form-label" for="dateCreatedStart">From:</label>
-							<SfDatePicker @bind-Value="Model.CreatedOn" Format="MM/dd/yyyy" ID="dateCreatedStart" Max="@(DateTime.Today.AddMonths(6))"
-							              OpenOnFocus="true" Placeholder="Created Date Start" TValue="DateTime" ValueChanged="CreatedOnSelect">
+							<SfDatePicker @bind-Value="Model.CreatedOn" Format="MM/dd/yyyy" ID="dateCreatedStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Created Date Start"
+							              TValue="DateTime" @*ValueChanged="CreatedOnSelect"*@>
 							</SfDatePicker>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedOnEnd)">
 						<Template>
 							<label class="e-form-label" for="dateCreatedEnd">To:</label>
-							<SfDatePicker @bind-Value="Model.CreatedOnEnd" Format="MM/dd/yyyy" ID="dateCreatedEnd" Max="@CreatedEndMax" Min="@CreatedEndMin"
-							              OpenOnFocus="true" Placeholder="Created Date End" TValue="DateTime" @ref="CreatedMax">
+							<SfDatePicker @bind-Value="Model.CreatedOnEnd" Format="MM/dd/yyyy" ID="dateCreatedEnd" Max="@CreatedEndMax" Min="@CreatedEndMin" OpenOnFocus="true" Placeholder="Created Date End"
+							              TValue="DateTime" @ref="CreatedMax">
 							</SfDatePicker>
 						</Template>
 					</FormItem>
@@ -75,17 +74,14 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Due)">
 						<Template>
 							<label class="e-form-label" for="dateDueStart">From:</label>
-							<SfDatePicker @bind-Value="Model.Due" Format="MM/dd/yyyy" ID="dateDueStart" Max="@(DateTime.Today.AddMonths(6))"
-							              OpenOnFocus="true" Placeholder="Due Date Start" TValue="DateTime" ValueChanged="DueOnSelect">
+							<SfDatePicker @bind-Value="Model.Due" Format="MM/dd/yyyy" ID="dateDueStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Due Date Start" TValue="DateTime" alueChanged="DueOnSelect">
 							</SfDatePicker>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.DueEnd)">
 						<Template>
 							<label class="e-form-label" for="dateDueEnd">To:</label>
-							<SfDatePicker @bind-Value="Model.DueEnd" Format="MM/dd/yyyy" ID="dateDueEnd" Max="@DueEndMax" Min="@DueEndMin"
-							              OpenOnFocus="true" Placeholder="Due Date End" TValue="DateTime" @ref="DueMax">
-							</SfDatePicker>
+							<SfDatePicker @bind-Value="Model.DueEnd" Format="MM/dd/yyyy" ID="dateDueEnd" Max="@DueEndMax" Min="@DueEndMin" OpenOnFocus="true" Placeholder="Due Date End" TValue="DateTime" @ref="DueMax"/>
 						</Template>
 					</FormItem>
 				</FormGroup>

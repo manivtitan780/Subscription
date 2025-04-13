@@ -81,7 +81,8 @@ public partial class AdvancedSearch : ComponentBase
 
     private async Task CancelSearchDialog(MouseEventArgs args)
     {
-        await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+        await Task.Yield();
+        //await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
     }
 
     private void CreatedOnSelect(DateTime date)
@@ -104,13 +105,14 @@ public partial class AdvancedSearch : ComponentBase
         Model.Clear();
         Model.Status = "New,Open,Partially Filled";
         ShowRequisitions.Clear();
-        ShowRequisitions.Add(new() {Key = "%", Value = "All Requisitions"});
-        ShowRequisitions.Add(new() {Key = "ADMIN", Value = "My Requisitions"});
+        ShowRequisitions.Add(new() {KeyValue = "%", Text = "All Requisitions"});
+        ShowRequisitions.Add(new() {KeyValue = "ADMIN", Text = "My Requisitions"});
     }
 
     private async Task SearchCandidateDialog(EditContext context)
     {
-        await General.CallSaveMethod(context, Spinner, FooterDialog, Dialog, Search);
+        await Task.Yield();
+        //await General.CallSaveMethod(context, Spinner, FooterDialog, Dialog, Search);
     }
 
     public async Task ShowDialog()
