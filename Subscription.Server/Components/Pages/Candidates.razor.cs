@@ -27,7 +27,6 @@ namespace Subscription.Server.Components.Pages;
 public partial class Candidates
 {
     private const string StorageName = "CandidatesGrid";
-    private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CandidateActivity> _candActivityObject = [];
     private CandidateDetails _candDetailsObject = new(), _candDetailsObjectClone = new();
     private List<CandidateDocument> _candDocumentsObject = [];
@@ -653,7 +652,6 @@ public partial class Candidates
 
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 // Get user claims
@@ -743,7 +741,13 @@ public partial class Candidates
 
     private async Task Refresh() => await Grid.Refresh(true);
 
-    private void RowSelected(RowSelectingEventArgs<Candidate> candidate) => _target = candidate.Data;
+    private void RowSelected(RowSelectingEventArgs<Candidate> candidate)
+    {
+        if (_target != null && _target != candidate.Data)
+        {
+            _target = candidate.Data;
+        }
+    }
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
                                                                      {
