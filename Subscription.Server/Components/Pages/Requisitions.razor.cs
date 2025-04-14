@@ -112,6 +112,8 @@ public partial class Requisitions
 
     private bool VisibleSpinner { get; set; }
 
+    private AdvancedRequisitionSearch DialogSearch { get; set; }
+
     private Task AddDocument() => ExecuteMethod(async () =>
                                                 {
                                                     if (NewDocument == null)
