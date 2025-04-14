@@ -23,8 +23,8 @@
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Company)">
 						<Template>
-							<DropDown @bind-Value="Model.Company" AllowFiltering="true" Model="Companies" ID="dropCompany" TItem="KeyValues" TValue="string" Placeholder="Company" Text="Text"
-							          Key="KeyValue" ShowClearButton="true"/>
+							<DropDown @bind-Value="Model.Company" AllowFiltering="true" Model="Companies" ID="dropCompany" TItem="Company" TValue="string" Placeholder="Company" Text="CompanyName"
+							          Key="ID" ShowClearButton="true"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Option)">
@@ -37,7 +37,7 @@
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupStatus" LabelText="Status Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Status)">
 						<Template>
-							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="KeyValues" TValue="string" Placeholder="Select Status(s)" Text="Text" Key="KeyValue"
+							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="StatusCode" TValue="string" Placeholder="Select Status(s)" Text="Status" Key="ID"
 							             FilterBarPlaceholder="Select Status(es)&hellip;"/>
 						</Template>
 					</FormItem>
@@ -56,7 +56,8 @@
 						<Template>
 							<label class="e-form-label" for="dateCreatedStart">From:</label>
 							<SfDatePicker @bind-Value="Model.CreatedOn" Format="MM/dd/yyyy" ID="dateCreatedStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Created Date Start"
-							              TValue="DateTime" @*ValueChanged="CreatedOnSelect"*@>
+										  TValue="DateTime" @*ValueChanged="CreatedOnSelect"*@>
+								<DatePickerEvents TValue="DateTime" ValueChange="CreatedOnSelect"/>
 							</SfDatePicker>
 						</Template>
 					</FormItem>
@@ -74,7 +75,8 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Due)">
 						<Template>
 							<label class="e-form-label" for="dateDueStart">From:</label>
-							<SfDatePicker @bind-Value="Model.Due" Format="MM/dd/yyyy" ID="dateDueStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Due Date Start" TValue="DateTime" alueChanged="DueOnSelect">
+							<SfDatePicker @bind-Value="Model.Due" Format="MM/dd/yyyy" ID="dateDueStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Due Date Start" TValue="DateTime">
+								<DatePickerEvents TValue="DateTime" ValueChange="DueOnSelect"/>
 							</SfDatePicker>
 						</Template>
 					</FormItem>

@@ -615,7 +615,18 @@ body, form, html {
 
 /* #region Pager */
 
-/*#divFooter div,*/ #divHeader, #divHeader div {
+/*#divFooter div,*/
+.e-pager .e-icon-next::before, .e-pager .e-icon-last::before, .e-pager .e-icon-first::before, .e-pager .e-icon-prev::before {
+    color: var(--c-red);
+    font-weight: bold;
+}
+
+.e-pager .e-icon-next.e-disable::before, .e-pager .e-icon-last.e-disable::before, .e-pager .e-icon-first.e-disable::before, .e-pager .e-icon-prev.e-disable::before {
+    color: var(--c-yellow);
+    font-weight: normal;
+}
+
+#divHeader, #divHeader div {
     background: #f6f6f6;
 }
 

@@ -8,7 +8,7 @@
 // File Name:           AdvancedSearch.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-12-2025 20:04
-// Last Updated On:     04-12-2025 20:04
+// Last Updated On:     04-13-2025 20:04
 // *****************************************/
 
 #endregion
@@ -21,7 +21,7 @@ using Syncfusion.Blazor.Calendars;
 
 namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
-public partial class AdvancedSearch : ComponentBase
+public partial class AdvancedRequisitionSearch : ComponentBase
 {
     [Parameter]
     public object AutoCompleteCityZip { get; set; }
@@ -30,7 +30,7 @@ public partial class AdvancedSearch : ComponentBase
     public EventCallback<MouseEventArgs> Cancel { get; set; }
 
     [Parameter]
-    public List<KeyValues> Companies { get; set; }
+    public List<Company> Companies { get; set; }
 
     private EditContext Context { get; set; }
 
@@ -56,8 +56,10 @@ public partial class AdvancedSearch : ComponentBase
     [Parameter]
     public List<KeyValues> JobOption { get; set; }
 
+    /*
     [Parameter]
     public List<KeyValues> JobOptionsDropDown { get; set; } = [];
+    */
 
     [Parameter]
     public RequisitionSearch Model { get; set; } = new();
@@ -75,7 +77,7 @@ public partial class AdvancedSearch : ComponentBase
     public List<IntValues> StateDropDown { get; set; } = [];
 
     [Parameter]
-    public List<KeyValues> StatusDropDown { get; set; }
+    public List<StatusCode> StatusDropDown { get; set; }
 
     private bool VisibleSpinner { get; set; }
 
@@ -85,21 +87,23 @@ public partial class AdvancedSearch : ComponentBase
         //await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
     }
 
-    private void CreatedOnSelect(DateTime date)
+    private void CreatedOnSelect(ChangedEventArgs<DateTime> date)
     {
-        CreatedEndMin = date;
-        CreatedEndMax = date.AddMonths(6);
-        Model.CreatedOnEnd = date.AddMonths(6);
+        DateTime _date = date.Value;
+        CreatedEndMin = _date;
+        CreatedEndMax = _date.AddMonths(6);
+        Model.CreatedOnEnd = _date.AddMonths(6);
     }
 
-    private void DueOnSelect(DateTime date)
+    private void DueOnSelect(ChangedEventArgs<DateTime> date)
     {
-        DueEndMin = date;
-        DueEndMax = date.AddMonths(6);
-        Model.DueEnd = date.AddMonths(6);
+        DateTime _date = date.Value;
+        DueEndMin = _date;
+        DueEndMax = _date.AddMonths(6);
+        Model.DueEnd = _date.AddMonths(6);
     }
 
-    private async Task OpenDialog()
+ private async Task OpenDialog()
     {
         await Task.Yield();
         Model.Clear();
