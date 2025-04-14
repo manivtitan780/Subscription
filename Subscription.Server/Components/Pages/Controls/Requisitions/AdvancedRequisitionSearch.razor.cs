@@ -81,16 +81,16 @@ public partial class AdvancedRequisitionSearch : ComponentBase
     {
         DateTime _date = date.Value;
         CreatedEndMin = _date;
-        CreatedEndMax = _date.AddMonths(6);
-        Model.CreatedOnEnd = _date.AddMonths(6);
+        CreatedEndMax = _date.AddMonths(36);
+        Model.CreatedOnEnd = _date.AddMonths(36);
     }
 
     private void DueOnSelect(ChangedEventArgs<DateTime> date)
     {
         DateTime _date = date.Value;
         DueEndMin = _date;
-        DueEndMax = _date.AddMonths(6);
-        Model.DueEnd = _date.AddMonths(6);
+        DueEndMax = _date.AddMonths(36);
+        Model.DueEnd = _date.AddMonths(36);
     }
 
     protected override void OnParametersSet()
@@ -100,14 +100,8 @@ public partial class AdvancedRequisitionSearch : ComponentBase
         base.OnParametersSet();
     }
 
-    private async Task OpenDialog() => Context.Validate();
-
-    /*await Task.Yield();
-        Model.Clear();
-        Model.Status = "New,Open,Partially Filled";
-        ShowRequisitions.Clear();
-        ShowRequisitions.Add(new() {KeyValue = "%", Text = "All Requisitions"});
-        ShowRequisitions.Add(new() {KeyValue = "ADMIN", Text = "My Requisitions"});*/
+    private void OpenDialog() => Context.Validate();
+    
     private async Task SearchCandidateDialog(EditContext context)
     {
         VisibleSpinner = true;
