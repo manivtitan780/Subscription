@@ -131,8 +131,7 @@ public partial class Requisitions
     private Task AdvancedSearch(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                       {
                                                                           SearchModelClone = SearchModel.Copy();
-                                                                          await Task.CompletedTask;
-                                                                          //await DialogSearch.ShowDialog();
+                                                                          await DialogSearch.ShowDialog();
                                                                       });
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
@@ -497,17 +496,17 @@ public partial class Requisitions
                                 _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
                                 _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
 
-                                /*if (_statusCodes is {Count: > 0})
+                                if (_statusCodes is {Count: > 0})
                                 {
                                     foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
                                     {
                                         _statusSearch.Add(new()
                                                           {
-                                                              KeyValue = _statusCode.Status,
-                                                              Text = _statusCode.Code
+                                                              Status = _statusCode.Status,
+                                                              Code = _statusCode.Code
                                                           });
                                     }
-                                }*/
+                                }
 
                                 List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[CacheObjects.Companies.ToString()]);
 
@@ -549,6 +548,7 @@ public partial class Requisitions
         await base.OnInitializedAsync();
     }
 
+    private List<StatusCode> _statusSearch = [];
     private async Task PageChanging(PageChangingEventArgs page)
     {
         Page = page.CurrentPage;
@@ -763,7 +763,8 @@ public partial class Requisitions
 
     private async Task SearchRequisition(EditContext arg)
     {
-        await Task.Yield();
+        SearchModel = SearchModelClone.Copy();
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 }
 

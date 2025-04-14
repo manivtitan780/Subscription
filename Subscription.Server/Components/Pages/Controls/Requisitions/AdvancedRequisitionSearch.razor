@@ -1,4 +1,4 @@
-<SfDialog CssClass="dialogPopup" Header="Advanced Search" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="832px">
+<SfDialog CssClass="dialogPopup" Header="Advanced Search" Height="796px" IsModal="true" MinHeight="500px" @ref="Dialog" Target="#divTarget" Visible="false" Width="700px">
 	<ChildContent>
 		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="center" Y="center"/>
@@ -10,53 +10,39 @@
 				<SfButton CssClass="e-secondary" OnClick="CancelSearchDialog" type="button">Cancel</SfButton>
 			</FormButtons>
 			<FormItems>
-				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupBasicInfo" LabelText="Basic Information">
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupBasicInfo" LabelText="Basic Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Code)">
 						<Template>
 							<TextBox @bind-Value="Model.Code" ID="textCode" MaxLength="255" Placeholder="Code"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="2" Field="@nameof(Model.Title)">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Title)">
 						<Template>
 							<TextBox @bind-Value="Model.Title" ID="textTitle" MaxLength="255" Placeholder="Job Position / Title"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="3" Field="@nameof(Model.Company)">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Company)">
 						<Template>
-							<DropDown @bind-Value="Model.Company" AllowFiltering="true" Model="Companies" ID="dropCompany" TItem="Company" TValue="string" Placeholder="Company" Text="CompanyName"
-							          Key="ID" ShowClearButton="true"/>
+							<DropDown @bind-Value="Model.Company" Model="Companies" ID="dropCompany" TItem="Company" TValue="string" Placeholder="Company" Text="CompanyName" Key="CompanyName" ShowClearButton="true"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="3" Field="@nameof(Model.Option)">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Option)">
 						<Template>
 							<DropDown @bind-Value="Model.Option" Model="JobOption" ID="dropJobOption" TItem="KeyValues" TValue="string" Placeholder="Job Option" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
-				</FormGroup>
-
-				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupStatus" LabelText="Status Information">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.Status)">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Status)">
 						<Template>
-							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="StatusCode" TValue="string" Placeholder="Select Status(s)" Text="Status" Key="ID"
-							             FilterBarPlaceholder="Select Status(es)&hellip;"/>
+							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="StatusCode" TValue="string" Placeholder="Select Status(s)" Text="Status" Key="Status" />
 						</Template>
 					</FormItem>
 				</FormGroup>
-
-				@*<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCreatedBy" LabelText="Requisition Creator">
-					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedBy)">
-						<Template>
-							<DropDown @bind-Value="Model.CreatedBy" Model="ShowRequisitions" ID="dropCreatedBy" TItem="KeyValues" TValue="string" Placeholder="Show Requisitions:" Text="Text" Key="KeyValue"/>
-						</Template>
-					</FormItem>
-				</FormGroup>*@
-
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupCreatedDates" LabelText="Requisition Created Date Range">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedOn)">
 						<Template>
 							<label class="e-form-label" for="dateCreatedStart">From:</label>
-							<SfDatePicker @bind-Value="Model.CreatedOn" Format="MM/dd/yyyy" ID="dateCreatedStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Created Date Start"
-										  TValue="DateTime" @*ValueChanged="CreatedOnSelect"*@>
+							<SfDatePicker @bind-Value="Model.CreatedOn" Format="MM/dd/yyyy" ID="dateCreatedStart" Max="@(DateTime.Today.AddMonths(36))" OpenOnFocus="true" Placeholder="Created Date Start"
+										  TValue="DateTime">
 								<DatePickerEvents TValue="DateTime" ValueChange="CreatedOnSelect"/>
 							</SfDatePicker>
 						</Template>
@@ -70,12 +56,11 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
-
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupDueDates" LabelText="Requisition Due Date Range">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Due)">
 						<Template>
 							<label class="e-form-label" for="dateDueStart">From:</label>
-							<SfDatePicker @bind-Value="Model.Due" Format="MM/dd/yyyy" ID="dateDueStart" Max="@(DateTime.Today.AddMonths(6))" OpenOnFocus="true" Placeholder="Due Date Start" TValue="DateTime">
+							<SfDatePicker @bind-Value="Model.Due" Format="MM/dd/yyyy" ID="dateDueStart" Max="@(DateTime.Today.AddMonths(36))" OpenOnFocus="true" Placeholder="Due Date Start" TValue="DateTime">
 								<DatePickerEvents TValue="DateTime" ValueChange="DueOnSelect"/>
 							</SfDatePicker>
 						</Template>

@@ -1,0 +1,123 @@
+<SfDialog CssClass="dialogPopup" Header="Advanced Search" Height="796px" IsModal="true" MinHeight="500px" @ref="Dialog" Target="#divTarget" Visible="false" Width="700px">
+	<ChildContent>
+		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<DialogPositionData X="center" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.FadeZoom"/>
+		<DialogEvents OnOpen="OpenDialog"/>
+		<SfDataForm EditContext="Context" ID="searchForm" OnValidSubmit="SearchCandidateDialog" @ref="SearchForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-primary" type="submit">Search</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelSearchDialog" type="button">Cancel</SfButton>
+			</FormButtons>
+			<FormItems>
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupBasicInfo" LabelText="Basic Information">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.Name)">
+						<Template>
+							<TextBox @bind-Value="Model.Name" ID="textName" MaxLength="255" Placeholder="Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.AllCandidates)">
+						<Template>
+							<div class="divSwitchFlex">
+								<label class="e-form-label">Show:</label>
+								<div style="display: flex; width: 400px">
+									<SfRadioButton @bind-Checked="Model.AllCandidates" Label="All Candidates" Name="showCandidates" Value="true"></SfRadioButton>
+									<SfRadioButton @bind-Checked="Model.AllCandidates" Label="My Candidates" Name="showCandidates" Value="false"></SfRadioButton>
+								</div>
+							</div>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.IncludeAdmin)">
+						<Template>
+							<SfSwitch @bind-Checked="Model.IncludeAdmin" ID="checkedIncludeAdmin" OffLabel="NO" OnLabel="YES">
+							</SfSwitch>
+							<label class="e-form-label" for="checkedIncludeAdmin">Include Admin Candidates?</label>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupKeywords" LabelText="Keywords and Skills">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Keywords)">
+						<Template>
+							<TextArea @bind-Value="Model.Keywords" ID="textKeywords" MaxLength="2000" Placeholder="Enter Keywords (separated by commas)" Rows="4"></TextArea>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Skills)">
+						<Template>
+							<TextArea @bind-Value="Model.Skills" ID="textSkills" MaxLength="2000" Placeholder="Enter Skills (separated by commas)" Rows="4"></TextArea>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupLocation" LabelText="Location">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.CityZip)">
+						<Template>
+							<SfSwitch @bind-Checked="Model.CityZip" ID="checkedNarrow" OffLabel="STATE" OnLabel="CITY/ZIP">
+							</SfSwitch>
+							<label class="e-form-label" for="checkedNarrow">Narrow Search By</label>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.CityName)" CssClass="@(!Model.CityZip ? "e-hidden" : "")">
+						<Template>
+							<label class="e-form-label" for="autoCityZip">City/Zip:</label>
+							<AutoCompleteButton @bind-Value="Model.CityName" EnablePersistence="false" ID="autoCityZip" ModelValue="false"
+												PlaceholderText="Select a City or Zip" @ref="AutoCompleteControl" Ref="AutoCompleteCityZip" TypeInstance="@typeof(CandidateCityZipAdaptor)"/>
+							<div style="display: flex; margin-top: 10px;">
+								<div style="width: 120px; margin-right: 10px;">
+									<DropDown @bind-Value="Model.Proximity" DataSource="@ProximityValue" ID="dropProximity" Placeholder="Proximity"
+											  Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
+								</div>
+								<div style="width: 120px;">
+									<DropDown @bind-Value="Model.ProximityUnit" DataSource="@ProximityUnit" ID="dropProximityUnit"
+											  Text="Value" TItem="IntValues" TValue="byte" Key="Key"/>
+								</div>
+							</div>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.StateID)" CssClass="@(Model.CityZip ? "e-hidden" : "")">
+						<Template>
+							<MultiSelect @bind-Value="Model.StateID" Model="StateDropDown" ID="multiState" 
+										 FilterBarPlaceholder="Search State..." Placeholder="Select State(s)" 
+										 Text="Value" TItem="IntValues" TValue="string" Key="Key"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupEligibilityOptions" LabelText="Eligibility and Job Options">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Eligibility)">
+						<Template>
+							<DropDown @bind-Value="Model.Eligibility" Model="EligibilityDropDown" ID="dropEligibility"
+									  Placeholder="Eligibility" Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.JobOptions)">
+						<Template>
+							<DropDown @bind-Value="Model.JobOptions" Model="JobOptionsDropDown" ID="dropJobOptions"
+									  Placeholder="Job Options" Text="Value" TItem="KeyValues" TValue="string" Key="Key"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupRelocateSecurity" LabelText="Relocate and Security">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Relocate)">
+						<Template>
+							<DropDown @bind-Value="Model.Relocate" Model="RelocateDropDown" ID="dropRelocate" 
+									  Placeholder="Relocate" Text="Value" TItem="KeyValues" TValue="string" Key="Key"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)">
+						<Template>
+							<DropDown @bind-Value="Model.SecurityClearance" Model="SecurityClearanceDropDown" ID="dropSecurityClearance"
+									  Placeholder="Security Clearance" Text="Value" TItem="KeyValues" TValue="string" Key="Key"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupActiveRequisitions" LabelText="Requisition Options">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.ActiveRequisitionsOnly)">
+						<Template>
+							<SfSwitch @bind-Checked="Model.ActiveRequisitionsOnly" ID="checkedActive" OffLabel="NO" OnLabel="YES">
+							</SfSwitch>
+							<label class="e-form-label" for="checkedActive">Active Requisitions Only</label>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>
