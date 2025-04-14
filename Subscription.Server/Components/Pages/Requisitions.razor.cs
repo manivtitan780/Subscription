@@ -760,6 +760,11 @@ public partial class Requisitions
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
+
+    private async Task SearchRequisition(EditContext arg)
+    {
+        await Task.Yield();
+    }
 }
 
 /*/// <summary>

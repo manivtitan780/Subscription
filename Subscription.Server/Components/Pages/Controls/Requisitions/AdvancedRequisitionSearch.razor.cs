@@ -5,10 +5,10 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           AdvancedSearch.razor.cs
+// File Name:           AdvancedRequisitionSearch.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-12-2025 20:04
-// Last Updated On:     04-13-2025 20:04
+// Last Updated On:     04-14-2025 19:04
 // *****************************************/
 
 #endregion
@@ -23,9 +23,6 @@ namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
 public partial class AdvancedRequisitionSearch : ComponentBase
 {
-    [Parameter]
-    public object AutoCompleteCityZip { get; set; }
-
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
 
@@ -48,18 +45,10 @@ public partial class AdvancedRequisitionSearch : ComponentBase
 
     private SfDatePicker<DateTime> DueMax { get; set; }
 
-    [Parameter]
-    public List<IntValues> EligibilityDropDown { get; set; } = [];
-
     internal DialogFooter FooterDialog { get; set; }
 
     [Parameter]
     public List<KeyValues> JobOption { get; set; }
-
-    /*
-    [Parameter]
-    public List<KeyValues> JobOptionsDropDown { get; set; } = [];
-    */
 
     [Parameter]
     public RequisitionSearch Model { get; set; } = new();
@@ -74,18 +63,19 @@ public partial class AdvancedRequisitionSearch : ComponentBase
     private SfSpinner Spinner { get; set; }
 
     [Parameter]
-    public List<IntValues> StateDropDown { get; set; } = [];
-
-    [Parameter]
     public List<StatusCode> StatusDropDown { get; set; }
 
     private bool VisibleSpinner { get; set; }
 
     private async Task CancelSearchDialog(MouseEventArgs args)
     {
-        await Task.Yield();
-        //await General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);
+        VisibleSpinner = true;
+        await Cancel.InvokeAsync(args);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
     }
+
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     private void CreatedOnSelect(ChangedEventArgs<DateTime> date)
     {
@@ -103,24 +93,28 @@ public partial class AdvancedRequisitionSearch : ComponentBase
         Model.DueEnd = _date.AddMonths(6);
     }
 
- private async Task OpenDialog()
+    protected override void OnParametersSet()
     {
-        await Task.Yield();
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
+
+    private async Task OpenDialog() => Context.Validate();
+
+    /*await Task.Yield();
         Model.Clear();
         Model.Status = "New,Open,Partially Filled";
         ShowRequisitions.Clear();
         ShowRequisitions.Add(new() {KeyValue = "%", Text = "All Requisitions"});
-        ShowRequisitions.Add(new() {KeyValue = "ADMIN", Text = "My Requisitions"});
-    }
-
+        ShowRequisitions.Add(new() {KeyValue = "ADMIN", Text = "My Requisitions"});*/
     private async Task SearchCandidateDialog(EditContext context)
     {
-        await Task.Yield();
-        //await General.CallSaveMethod(context, Spinner, FooterDialog, Dialog, Search);
+        VisibleSpinner = true;
+        await Search.InvokeAsync(Context);
+        await Dialog.HideAsync();
+        VisibleSpinner = false;
     }
 
-    public async Task ShowDialog()
-    {
-        await Dialog.ShowAsync();
-    }
+    public async Task ShowDialog() => await Dialog.ShowAsync();
 }

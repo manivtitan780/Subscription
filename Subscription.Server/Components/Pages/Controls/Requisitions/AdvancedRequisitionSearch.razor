@@ -43,13 +43,13 @@
 					</FormItem>
 				</FormGroup>
 
-				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCreatedBy" LabelText="Requisition Creator">
+				@*<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCreatedBy" LabelText="Requisition Creator">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedBy)">
 						<Template>
 							<DropDown @bind-Value="Model.CreatedBy" Model="ShowRequisitions" ID="dropCreatedBy" TItem="KeyValues" TValue="string" Placeholder="Show Requisitions:" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
-				</FormGroup>
+				</FormGroup>*@
 
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupCreatedDates" LabelText="Requisition Created Date Range">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CreatedOn)">
