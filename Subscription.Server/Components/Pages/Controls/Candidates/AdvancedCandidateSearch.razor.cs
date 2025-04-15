@@ -20,7 +20,7 @@ public partial class AdvancedCandidateSearch : ComponentBase
     [Parameter]
     public object AutoCompleteCityZip { get; set; }
 
-    public AutoCompleteButton AutoCompleteControl { get; set; }
+    /*public AutoCompleteButton AutoCompleteControl { get; set; }*/
 
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
@@ -72,7 +72,15 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
     private bool VisibleSpinner { get; set; }
 
-    private async Task CancelSearchDialog(MouseEventArgs args) => await General.CallCancelMethod(args, Spinner, DialogFooter, Dialog, Cancel);
+    private EditContext Context { get; set; }
+
+    private SfDataForm SearchForm { get; set; }
+
+    private async Task CancelSearchDialog(MouseEventArgs args)
+    {
+        await Task.CompletedTask;
+        //await General.CallCancelMethod(args, Spinner, DialogFooter, Dialog, Cancel);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,12 +108,16 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
     private void OpenDialog() => EditSearchForm.EditContext?.Validate();
 
-    private async Task SearchCandidateDialog(EditContext editContext) => await General.CallSaveMethod(editContext, Spinner, DialogFooter, Dialog, Save);
+    private async Task SearchCandidateDialog(EditContext editContext)
+    {
+        await Task.CompletedTask;
+        //await General.CallSaveMethod(editContext, Spinner, DialogFooter, Dialog, Save);
+    }
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
 
     public class CandidateCityZipAdaptor : DataAdaptor
     {
-        public override Task<object> ReadAsync(DataManagerRequest dm, string key = null) => General.GetAutocompleteAsync("GetCityZipList", "@CityZip", dm);
+        public override Task<object> ReadAsync(DataManagerRequest dm, string key = null) => General.GetAutocompleteAsync("GetCityZipList", dm, "@CityZip", "cityZip");
     }
 }
