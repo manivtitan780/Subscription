@@ -549,16 +549,16 @@ public partial class Requisitions
     }
 
     private List<StatusCode> _statusSearch = [];
-    private async Task PageChanging(PageChangingEventArgs page)
+    private async Task PageChanging(PageChangedEventArgs page)
     {
         Page = page.CurrentPage;
         SearchModel.Page = page.CurrentPage;
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 
-    private async Task PageSizeChanging(PageSizeChangingArgs page)
+    private async Task PageSizeChanging(PageSizeChangedArgs page)
     {
-        SearchModel.ItemCount = page.SelectedPageSize.ToInt32();
+        SearchModel.ItemCount = page.CurrentPageSize;
         SearchModel.Page = 1;
         await Grid.GoToPageAsync(1);
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);

@@ -21,7 +21,7 @@
 @if (HasViewRights)
 {
 	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" 
-				Name="@(SearchModel.Name)" PageChanging="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanging="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count" 
+				Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count" 
 				ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" 

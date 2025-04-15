@@ -67,7 +67,7 @@ public partial class GridHeader
     public int NumericCount { get; set; } = 7;
 
     [Parameter]
-    public EventCallback<PageChangingEventArgs> PageChanging { get; set; }
+    public EventCallback<PageChangedEventArgs> PageChanged { get; set; }
 
     private SfPager Pager { get; set; }
 
@@ -75,7 +75,7 @@ public partial class GridHeader
     public int PageSize { get; set; } = 25;
 
     [Parameter]
-    public EventCallback<PageSizeChangingArgs> PageSizeChanging { get; set; }
+    public EventCallback<PageSizeChangedArgs> PageSizeChanged { get; set; }
 
     [Parameter]
     public List<int> PageSizes { get; set; } = [5, 10, 15, 20, 25, 50, 75, 100];
