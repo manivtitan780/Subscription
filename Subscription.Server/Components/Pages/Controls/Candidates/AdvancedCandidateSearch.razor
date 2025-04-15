@@ -51,7 +51,7 @@
 					<FormItem ColumnSpan="2" Field="@nameof(Model.CityZip)">
 						<Template>
 							<SfSwitch @bind-Checked="Model.CityZip" ID="checkedNarrow" OffLabel="STATE" OnLabel="CITY/ZIP"/>
-							
+
 							<label class="e-form-label" for="checkedNarrow">Narrow Search By</label>
 						</Template>
 					</FormItem>
@@ -62,26 +62,25 @@
 												PlaceholderText="Select a City or Zip" Ref="AutoCompleteCityZip" TypeInstance="@typeof(CandidateCityZipAdaptor)"/>*@
 							<div style="display: flex; margin-top: 10px;">
 								<div style="width: 120px; margin-right: 10px;">
-									<DropDown @bind-Value="Model.Proximity" DataSource="@ProximityValue" ID="dropProximity" Placeholder="Proximity"
-											  Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
+									<DropDown @bind-Value="Model.Proximity" DataSource="@ProximityValue" ID="dropProximity" Placeholder="Proximity" Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
 								</div>
 								<div style="width: 120px;">
-									<DropDown @bind-Value="Model.ProximityUnit" DataSource="@ProximityUnit" ID="dropProximityUnit"Text="Value" TItem="IntValues" TValue="byte" Key="Key"/>
+									<DropDown @bind-Value="Model.ProximityUnit" DataSource="@ProximityUnit" ID="dropProximityUnit" Text="Value" TItem="IntValues" TValue="byte" Key="Key"/>
 								</div>
 							</div>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.StateID)" CssClass="@(Model.CityZip ? "e-hidden" : "")">
 						<Template>
-							<MultiSelect @bind-Value="Model.StateID" Model="StateDropDown" ID="multiState" FilterBarPlaceholder="Search State..." Placeholder="Select State(s)" 
-										 Text="Value" TItem="IntValues" TValue="string" Key="Key"/>
+							<MultiSelect @bind-Value="Model.StateID" Model="StateDropDown" ID="multiState" FilterBarPlaceholder="Search State..." Placeholder="Select State(s)"
+							             Text="Value" TItem="IntValues" TValue="string" Key="Key"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupEligibilityOptions" LabelText="Eligibility and Job Options">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Eligibility)">
 						<Template>
-							<DropDown @bind-Value="Model.Eligibility" Model="EligibilityDropDown" ID="dropEligibility"Placeholder="Eligibility" Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
+							<DropDown @bind-Value="Model.Eligibility" Model="EligibilityDropDown" ID="dropEligibility" Placeholder="Eligibility" Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.JobOptions)">
@@ -98,8 +97,8 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)">
 						<Template>
-							<DropDown @bind-Value="Model.SecurityClearance" Model="SecurityClearanceDropDown" ID="dropSecurityClearance" Placeholder="Security Clearance" Text="Value" TItem="KeyValues" 
-									  TValue="string" Key="Key"/>
+							<DropDown @bind-Value="Model.SecurityClearance" Model="SecurityClearanceDropDown" ID="dropSecurityClearance" Placeholder="Security Clearance" Text="Value" TItem="KeyValues"
+							          TValue="string" Key="Key"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -107,7 +106,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ActiveRequisitionsOnly)">
 						<Template>
 							<SfSwitch @bind-Checked="Model.ActiveRequisitionsOnly" ID="checkedActive" OffLabel="NO" OnLabel="YES"/>
-							
+
 							<label class="e-form-label" for="checkedActive">Active Requisitions Only</label>
 						</Template>
 					</FormItem>
