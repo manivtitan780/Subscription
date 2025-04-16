@@ -57,7 +57,7 @@
 						<Template>
 							<label class="e-form-label" for="autoZip">City/Zip:</label>
 							<SfAutoComplete Highlight="true" ID="autoZip" MinLength="2" Placeholder="Select Zip&hellip;" @ref="AutoCompleteZip" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="12%"
-							                @bind-Value="@Model.CityName">
+							                @bind-Value="@Model.CityName" >
 								<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateZipAdaptor)" Key="KeyValue"/>
 								<AutoCompleteFieldSettings Text="Text" Value="KeyValue"/>
 							</SfAutoComplete>

@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-13-2025 19:04
+// Last Updated On:     04-16-2025 16:04
 // *****************************************/
 
 #endregion
@@ -162,6 +162,9 @@ public partial class Candidates
     private CandidateRatingMPC RatingMPC { get; set; } = new();
 
     private MarkupString RatingNote { get; set; }
+
+    [Inject]
+    private RedisService RedisService { get; set; }
 
     private int RequisitionID { get; set; }
 
@@ -702,9 +705,7 @@ public partial class Candidates
                                     CacheObjects.Communications.ToString(), CacheObjects.DocumentTypes.ToString(), CacheObjects.Users.ToString()
                                 ];
 
-                                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-
-                                Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
+                                Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
 
                                 // Deserialize configuration data into master objects
                                 _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]);
@@ -764,7 +765,7 @@ public partial class Candidates
 
                                                                          string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
                                                                                                                               activity.Model);
-                                                                         
+
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
                                                                              _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
@@ -821,7 +822,7 @@ public partial class Candidates
                                                                              string _response = await General.ExecuteRest<string>("Candidate/UploadDocument", _parameters, null, true,
                                                                                                                                   DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                   DialogDocument.FileName);
-                                                                             
+
                                                                              if (_response.NotNullOrWhiteSpace() && _response == "[]")
                                                                              {
                                                                                  _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
@@ -840,7 +841,7 @@ public partial class Candidates
                                                                                                                         };
                                                                                string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters,
                                                                                                                                     _candidateEducation);
-                                                                               
+
                                                                                if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                {
                                                                                    return;
@@ -860,7 +861,7 @@ public partial class Candidates
                                                                                                                               {"user", User}
                                                                                                                           };
                                                                                  string _response = await General.ExecuteRest<string>("Candidate/SaveExperience", _parameters, _candidateExperience);
-                                                                                 
+
                                                                                  if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                  {
                                                                                      return;
@@ -879,7 +880,7 @@ public partial class Candidates
                                                                                                                         {"user", User}
                                                                                                                     };
                                                                            Dictionary<string, object> _response = await General.PostRest("Candidate/SaveMPC", _parameters, _mpc);
-                                                                           
+
                                                                            if (_response != null)
                                                                            {
                                                                                _candMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
@@ -900,7 +901,7 @@ public partial class Candidates
                                                                                                                   {"user", User}
                                                                                                               };
                                                                      string _response = await General.ExecuteRest<string>("Candidate/SaveNotes", _parameters, _candidateNotes);
-                                                                     
+
                                                                      if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                      {
                                                                          return;
@@ -919,7 +920,7 @@ public partial class Candidates
                                                                                                                            {"user", User}
                                                                                                                        };
                                                                               Dictionary<string, object> _response = await General.PostRest("Candidate/SaveRating", _parameters, _rating);
-                                                                              
+
                                                                               if (_response != null)
                                                                               {
                                                                                   _candRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
@@ -942,7 +943,7 @@ public partial class Candidates
                                                                                                                 };
 
                                                                        string _response = await General.ExecuteRest<string>("Candidate/SaveSkill", _parameters, _skill);
-                                                                       
+
                                                                        if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                        {
                                                                            return;
@@ -1226,7 +1227,7 @@ public partial class Candidates
                                                                                                                 {"roleID", RoleName}
                                                                                                             };
                                                                    string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
-                                                                   
+
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);

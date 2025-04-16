@@ -116,6 +116,9 @@ public partial class AdvancedCandidateSearch : ComponentBase
     {
     }
 
+    [Inject]
+    private static ZipCodeService ZipCodeService { get; set; }
+
     private void ValueChangedShowCandidates(ChangeArgs<bool> candidate)
     {
         SwitchIncludeAdminDisabled = candidate.Value;
@@ -124,6 +127,21 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
     public class CandidateZipAdaptor : DataAdaptor
     {
-        public override Task<object> ReadAsync(DataManagerRequest dm, string key = null) => General.GetAutocompleteAsync("GetCityZipList", dm, "@CityZip", "cityZip");
+        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
+        {
+            List<KeyValues> _list = await ZipCodeService.GetZipCodes();
+            if (_list == null)
+            {
+                return null;
+            }
+
+            List<KeyValues> _dataSource = _list.Where(zip => zip.KeyValue.StartsWith(dm.Where[0].value.ToString() ?? string.Empty)).ToList();
+
+            return dm.RequiresCounts ? new DataResult
+                                       {
+                                           Result = _dataSource,
+                                           Count = _dataSource.Count
+                                       } : _dataSource;
+        }
     }
 }

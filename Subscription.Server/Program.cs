@@ -63,6 +63,16 @@ _builder.Services.AddSingleton<OpenAIClient>(sp =>
                                                                                 };
                                                  return new(new(_apiKey ?? string.Empty), _options);
                                              });
+_builder.Services.AddSingleton<RedisService>(sp =>
+                                            {
+                                                string host = _config["Garnet:HostName"];
+                                                int port = (_config["Garnet:SslPort"] ?? string.Empty).ToInt32();
+                                                string access = _config["GarnetServer:Access"];
+
+                                                return new(host, port, access, false);
+                                            });
+
+_builder.Services.AddSingleton<ZipCodeService>();
 
 /*
 Log.Logger = new LoggerConfiguration()
