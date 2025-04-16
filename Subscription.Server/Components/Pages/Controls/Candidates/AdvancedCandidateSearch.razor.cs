@@ -8,7 +8,7 @@
 // File Name:           AdvancedCandidateSearch.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-14-2025 20:04
-// Last Updated On:     04-16-2025 15:04
+// Last Updated On:     04-16-2025 19:04
 // *****************************************/
 
 #endregion
@@ -56,6 +56,9 @@ public partial class AdvancedCandidateSearch : ComponentBase
     private bool SwitchIncludeAdminDisabled { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    [Inject]
+    private static ZipCodeService ZipCodeService { get; set; }
 
     private async Task CancelSearchDialog(MouseEventArgs args)
     {
@@ -116,9 +119,6 @@ public partial class AdvancedCandidateSearch : ComponentBase
     {
     }
 
-    [Inject]
-    private static ZipCodeService ZipCodeService { get; set; }
-
     private void ValueChangedShowCandidates(ChangeArgs<bool> candidate)
     {
         SwitchIncludeAdminDisabled = candidate.Value;
@@ -130,18 +130,25 @@ public partial class AdvancedCandidateSearch : ComponentBase
         public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
         {
             List<KeyValues> _list = await ZipCodeService.GetZipCodes();
-            if (_list == null)
+            if (_list is not {Count: > 0})
             {
                 return null;
             }
 
-            List<KeyValues> _dataSource = _list.Where(zip => zip.KeyValue.StartsWith(dm.Where[0].value.ToString() ?? string.Empty)).ToList();
+            IEnumerable<KeyValues> _zipCodes = _list.Where(zip => zip.KeyValue.StartsWith(dm.Where[0].value.ToString() ?? string.Empty)).ToList();
 
-            return dm.RequiresCounts ? new DataResult
-                                       {
-                                           Result = _dataSource,
-                                           Count = _dataSource.Count
-                                       } : _dataSource;
+            if (!dm.RequiresCounts)
+            {
+                return _zipCodes;
+            }
+
+            // Evaluate once and materialize the list
+            List<KeyValues> resultList = _zipCodes.ToList(); // Single allocation here
+            return new DataResult
+                   {
+                       Result = resultList,
+                       Count = resultList.Count
+                   };
         }
     }
 }

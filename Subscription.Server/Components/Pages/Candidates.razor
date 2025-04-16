@@ -280,6 +280,7 @@
 	<MPCCandidateDialog MPCGrid="_candMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
 	<RatingCandidateDialog RatingGrid="_candRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
 	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
+	<AdvancedCandidateSearch @ref="DialogSearch" Model="SearchModelClone" Search="SearchCandidate"/>
 }
 else
 {

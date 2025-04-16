@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-16-2025 16:04
+// Last Updated On:     04-16-2025 19:04
 // *****************************************/
 
 #endregion
@@ -96,6 +96,8 @@ public partial class Candidates
 
     private AddDocumentDialog DialogDocument { get; set; }
 
+    private AdvancedCandidateSearch DialogSearch { get; set; }
+
     private bool DownloadFormatted { get; set; }
 
     private bool DownloadOriginal { get; set; }
@@ -173,6 +175,8 @@ public partial class Candidates
     private string RoleName { get; set; }
 
     private CandidateSearch SearchModel { get; set; } = new();
+
+    private CandidateSearch SearchModelClone { get; set; }
 
     private CandidateActivity SelectedActivity { get; set; } = new();
 
@@ -989,6 +993,11 @@ public partial class Candidates
                                                                            }
                                                                        });
 
+    private async Task SearchCandidate(EditContext arg)
+    {
+        await Task.CompletedTask;
+    }
+
     private void SetCommunication()
     {
         string _returnValue = _candDetailsObject.Communication switch
@@ -1205,8 +1214,6 @@ public partial class Candidates
 
         string[] _parts = _stateName.Split([" - "], StringSplitOptions.TrimEntries);
         return _parts.Length != 2 ? ("", "") : (_parts[0].Trim('[', ']'), _parts[1]);
-
-        // Remove the brackets from the code
     }
 
     private async Task SubmitSelectedCandidate(MouseEventArgs arg)

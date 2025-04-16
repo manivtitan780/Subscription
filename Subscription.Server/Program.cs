@@ -52,7 +52,7 @@ _builder.Services.AddResponseCompression(options =>
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-_builder.Services.AddSingleton<OpenAIClient>(sp =>
+/*_builder.Services.AddSingleton<OpenAIClient>(sp =>
                                              {
                                                  // IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
                                                  string _apiKey = _config["AzureOpenAI:APIKey"];
@@ -62,7 +62,7 @@ _builder.Services.AddSingleton<OpenAIClient>(sp =>
                                                                                     Endpoint = new Uri(_endpoint ?? string.Empty)
                                                                                 };
                                                  return new(new(_apiKey ?? string.Empty), _options);
-                                             });
+                                             });*/
 _builder.Services.AddSingleton<RedisService>(sp =>
                                             {
                                                 string host = _config["Garnet:HostName"];
