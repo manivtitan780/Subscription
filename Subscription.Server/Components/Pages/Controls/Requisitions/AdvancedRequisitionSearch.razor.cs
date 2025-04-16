@@ -45,8 +45,6 @@ public partial class AdvancedRequisitionSearch : ComponentBase
 
     private SfDatePicker<DateTime> DueMax { get; set; }
 
-    internal DialogFooter FooterDialog { get; set; }
-
     [Parameter]
     public List<KeyValues> JobOption { get; set; }
 
@@ -59,8 +57,6 @@ public partial class AdvancedRequisitionSearch : ComponentBase
     private SfDataForm SearchForm { get; set; }
 
     private List<KeyValues> ShowRequisitions { get; } = [];
-
-    private SfSpinner Spinner { get; set; }
 
     [Parameter]
     public List<StatusCode> StatusDropDown { get; set; }

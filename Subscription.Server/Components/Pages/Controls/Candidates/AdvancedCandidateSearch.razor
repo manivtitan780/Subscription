@@ -21,17 +21,16 @@
 							<div class="divSwitchFlex">
 								<label class="e-form-label">Show:</label>
 								<div style="display: flex; width: 400px">
-									<SfRadioButton @bind-Checked="Model.AllCandidates" Label="All Candidates" Name="showCandidates" Value="true"></SfRadioButton>
-									<SfRadioButton @bind-Checked="Model.AllCandidates" Label="My Candidates" Name="showCandidates" Value="false"></SfRadioButton>
+									<SfRadioButton @bind-Checked="Model.AllCandidates" TChecked="bool" ValueChange="ValueChangedShowCandidates" Label="All Candidates" Name="showCandidates" Value="true"/>
+									<SfRadioButton @bind-Checked="Model.AllCandidates" TChecked="bool" ValueChange="ValueChangedShowCandidates" Label="My Candidates" Name="showCandidates" Value="false"/>
 								</div>
 							</div>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.IncludeAdmin)">
 						<Template>
-							<SfSwitch @bind-Checked="Model.IncludeAdmin" ID="checkedIncludeAdmin" OffLabel="NO" OnLabel="YES">
-							</SfSwitch>
 							<label class="e-form-label" for="checkedIncludeAdmin">Include Admin Candidates?</label>
+							<SfSwitch @bind-Checked="Model.IncludeAdmin" Disabled="@SwitchIncludeAdminDisabled" ID="checkedIncludeAdmin" OffLabel="NO" OnLabel="YES" @ref="SwitchIncludeAdmin"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -50,16 +49,18 @@
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupLocation" LabelText="Location">
 					<FormItem ColumnSpan="2" Field="@nameof(Model.CityZip)">
 						<Template>
-							<SfSwitch @bind-Checked="Model.CityZip" ID="checkedNarrow" OffLabel="STATE" OnLabel="CITY/ZIP"/>
-
 							<label class="e-form-label" for="checkedNarrow">Narrow Search By</label>
+							<SfSwitch @bind-Checked="Model.CityZip" ID="checkedNarrow" TChecked="bool" ValueChange="ValueChangedCityZip" OffLabel="STATE" OnLabel="ZIP"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.CityName)" CssClass="@(!Model.CityZip ? "e-hidden" : "")">
 						<Template>
-							<label class="e-form-label" for="autoCityZip">City/Zip:</label>
-							@*<AutoCompleteButton @bind-Value="Model.CityName" EnablePersistence="false" ID="autoCityZip" ModelValue="false"
-												PlaceholderText="Select a City or Zip" Ref="AutoCompleteCityZip" TypeInstance="@typeof(CandidateCityZipAdaptor)"/>*@
+							<label class="e-form-label" for="autoZip">City/Zip:</label>
+							<SfAutoComplete Highlight="true" ID="autoZip" MinLength="2" Placeholder="Select Zip&hellip;" @ref="AutoCompleteZip" ShowClearButton="true" TItem="KeyValues" TValue="string" Width="12%"
+							                @bind-Value="@Model.CityName">
+								<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateZipAdaptor)" Key="KeyValue"/>
+								<AutoCompleteFieldSettings Text="Text" Value="KeyValue"/>
+							</SfAutoComplete>
 							<div style="display: flex; margin-top: 10px;">
 								<div style="width: 120px; margin-right: 10px;">
 									<DropDown @bind-Value="Model.Proximity" DataSource="@ProximityValue" ID="dropProximity" Placeholder="Proximity" Text="Value" TItem="IntValues" TValue="int" Key="Key"/>
@@ -72,8 +73,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.StateID)" CssClass="@(Model.CityZip ? "e-hidden" : "")">
 						<Template>
-							<MultiSelect @bind-Value="Model.StateID" Model="StateDropDown" ID="multiState" FilterBarPlaceholder="Search State..." Placeholder="Select State(s)"
-							             Text="Value" TItem="IntValues" TValue="string" Key="Key"/>
+							<MultiSelect @bind-Value="Model.StateID" Model="StateDropDown" ID="multiState" Placeholder="Select State(s)" Text="Text" TItem="IntValues" TValue="string" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -85,29 +85,26 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.JobOptions)">
 						<Template>
-							<DropDown @bind-Value="Model.JobOptions" Model="JobOptionsDropDown" ID="dropJobOptions" Placeholder="Job Options" Text="Value" TItem="KeyValues" TValue="string" Key="Key"/>
+							<DropDown @bind-Value="Model.JobOptions" Model="JobOptionsDropDown" ID="dropJobOptions" Placeholder="Job Options" Text="Text" TItem="KeyValues" TValue="string" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupRelocateSecurity" LabelText="Relocate and Security">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Relocate)">
 						<Template>
-							<DropDown @bind-Value="Model.Relocate" Model="RelocateDropDown" ID="dropRelocate" Placeholder="Relocate" Text="Value" TItem="KeyValues" TValue="string" Key="Key"/>
+							<DropDown @bind-Value="Model.Relocate" Model="RelocateDropDown" ID="dropRelocate" Placeholder="Relocate" Text="Text" TItem="KeyValues" TValue="string" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)">
 						<Template>
-							<DropDown @bind-Value="Model.SecurityClearance" Model="SecurityClearanceDropDown" ID="dropSecurityClearance" Placeholder="Security Clearance" Text="Value" TItem="KeyValues"
-							          TValue="string" Key="Key"/>
+							<DropDown @bind-Value="Model.SecurityClearance" Model="SecurityClearanceDropDown" ID="dropSecurityClearance" Placeholder="Security Clearance" Text="Text" TItem="KeyValues"
+							          TValue="string" Key="KeyValue"/>
 						</Template>
 					</FormItem>
-				</FormGroup>
-				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupActiveRequisitions" LabelText="Requisition Options">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ActiveRequisitionsOnly)">
 						<Template>
+							<label class="e-form-label" for="checkedActive">Submitted to Active Requisitions:</label>
 							<SfSwitch @bind-Checked="Model.ActiveRequisitionsOnly" ID="checkedActive" OffLabel="NO" OnLabel="YES"/>
-
-							<label class="e-form-label" for="checkedActive">Active Requisitions Only</label>
 						</Template>
 					</FormItem>
 				</FormGroup>
