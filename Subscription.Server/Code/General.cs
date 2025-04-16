@@ -229,7 +229,6 @@ public class General() //(Container container)
     internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm, string methodName = "", string paramName = "")
     {
         List<KeyValues> _dataSource = [];
-
         if (dm.Where is not {Count: > 0} || dm.Where[0].value.NullOrWhiteSpace())
         {
             return dm.RequiresCounts ? new DataResult
@@ -245,6 +244,7 @@ public class General() //(Container container)
                                                      {
                                                          {"filter", dm.Where[0].value.ToString()}
                                                      };
+
             if (methodName.NotNullOrWhiteSpace())
             {
                 _parameters.Add("methodName", methodName);
