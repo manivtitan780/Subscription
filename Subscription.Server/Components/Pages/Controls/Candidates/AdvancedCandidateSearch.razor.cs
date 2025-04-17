@@ -8,8 +8,14 @@
 // File Name:           AdvancedCandidateSearch.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-14-2025 20:04
-// Last Updated On:     04-16-2025 19:04
+// Last Updated On:     04-17-2025 19:57
 // *****************************************/
+
+#endregion
+
+#region Using
+
+using FilteringEventArgs = Syncfusion.Blazor.DropDowns.FilteringEventArgs;
 
 #endregion
 
@@ -56,7 +62,7 @@ public partial class AdvancedCandidateSearch : ComponentBase
     private bool VisibleSpinner { get; set; }
 
     [Inject]
-    private static ZipCodeService ZipCodeService { get; set; }
+    private ZipCodeService ZipCodeService { get; set; }
 
     private async Task CancelSearchDialog(MouseEventArgs args)
     {
@@ -67,6 +73,24 @@ public partial class AdvancedCandidateSearch : ComponentBase
     }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    private IEnumerable<KeyValues> DataSource { get; set; } = [];
+
+    private async Task Filtering(FilteringEventArgs value)
+    {
+        if (value != null && value.Text.Length > 1)
+        {
+            List<KeyValues> _list = await ZipCodeService.GetZipCodes();
+            if (_list is not {Count: > 0})
+            {
+                DataSource = [];
+            }
+
+            IEnumerable<KeyValues> _zipCodes = _list.Where(zip => zip.KeyValue.StartsWith(value.Text)).ToList();
+
+            DataSource = _zipCodes;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,40 +137,9 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
 
-    private void ValueChangedCityZip()
-    {
-    }
-
     private void ValueChangedShowCandidates(ChangeArgs<bool> candidate)
     {
         SwitchIncludeAdminDisabled = candidate.Value;
         Model.IncludeAdmin = true;
-    }
-
-    public class CandidateZipAdaptor : DataAdaptor
-    {
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            List<KeyValues> _list = await ZipCodeService.GetZipCodes();
-            if (_list is not {Count: > 0})
-            {
-                return null;
-            }
-
-            IEnumerable<KeyValues> _zipCodes = _list.Where(zip => zip.KeyValue.StartsWith(dm.Where[0].value.ToString() ?? string.Empty)).ToList();
-
-            if (!dm.RequiresCounts)
-            {
-                return _zipCodes;
-            }
-
-            // Evaluate once and materialize the list
-            List<KeyValues> resultList = _zipCodes.ToList(); // Single allocation here
-            return new DataResult
-                   {
-                       Result = resultList,
-                       Count = resultList.Count
-                   };
-        }
     }
 }

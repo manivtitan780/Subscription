@@ -75,6 +75,9 @@ public partial class Candidates
 
     private MarkupString CandidateExperience { get; set; }
 
+    [Inject]
+    private ZipCodeService ZipCodeService { get; set; }
+
     private EditExperienceDialog CandidateExperienceDialog { get; set; }
 
     private MarkupString CandidateJobOptions { get; set; }
@@ -720,24 +723,24 @@ public partial class Candidates
                                 // Get configuration data from cache server
                                 List<string> _keys =
                                 [
-                                    CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(),
-                                    CacheObjects.TaxTerms.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.StatusCodes.ToString(), CacheObjects.Workflow.ToString(),
-                                    CacheObjects.Communications.ToString(), CacheObjects.DocumentTypes.ToString(), CacheObjects.Users.ToString()
+                                    nameof(CacheObjects.Roles), nameof(CacheObjects.States), nameof(CacheObjects.Eligibility), nameof(CacheObjects.Experience),
+                                    nameof(CacheObjects.TaxTerms), nameof(CacheObjects.JobOptions), nameof(CacheObjects.StatusCodes), nameof(CacheObjects.Workflow),
+                                    nameof(CacheObjects.Communications), nameof(CacheObjects.DocumentTypes), nameof(CacheObjects.Users)
                                 ];
 
                                 Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
 
                                 // Deserialize configuration data into master objects
-                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]);
-                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
-                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
-                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
-                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.TaxTerms.ToString()]);
-                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
-                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
-                                _workflow = General.DeserializeObject<List<Workflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
-                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.Communications.ToString()]);
-                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.DocumentTypes.ToString()]);
+                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[nameof(CacheObjects.Roles)]);
+                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.States)]);
+                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
+                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
+                                _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.TaxTerms)]);
+                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
+                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
+                                _workflow = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
+                                _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.Communications)]);
+                                _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.DocumentTypes)]);
                             });
 
         await base.OnInitializedAsync();

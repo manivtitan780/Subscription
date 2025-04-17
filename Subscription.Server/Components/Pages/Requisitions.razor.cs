@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-13-2025 15:04
+// Last Updated On:     04-17-2025 20:21
 // *****************************************/
 
 #endregion
@@ -34,6 +34,8 @@ public partial class Requisitions
 
     private List<StatusCode> _statusCodes;
 
+    private readonly List<StatusCode> _statusSearch = [];
+
     private Requisition _target;
 
     private readonly List<Workflow> _workflow = [];
@@ -57,6 +59,8 @@ public partial class Requisitions
     private EditActivityDialog DialogActivity { get; set; }
 
     private AddRequisitionDocument DialogDocument { get; set; }
+
+    private AdvancedRequisitionSearch DialogSearch { get; set; }
 
     private DocumentsPanel DocumentsPanel { get; set; }
 
@@ -112,8 +116,6 @@ public partial class Requisitions
 
     private bool VisibleSpinner { get; set; }
 
-    private AdvancedRequisitionSearch DialogSearch { get; set; }
-
     private Task AddDocument() => ExecuteMethod(async () =>
                                                 {
                                                     if (NewDocument == null)
@@ -129,10 +131,10 @@ public partial class Requisitions
                                                 });
 
     private Task AdvancedSearch() => ExecuteMethod(async () =>
-                                                                      {
-                                                                          SearchModelClone = SearchModel.Copy();
-                                                                          await DialogSearch.ShowDialog();
-                                                                      });
+                                                   {
+                                                       SearchModelClone = SearchModel.Copy();
+                                                       await DialogSearch.ShowDialog();
+                                                   });
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                     {
@@ -458,10 +460,10 @@ public partial class Requisitions
 
                                 List<string> _keys =
                                 [
-                                    CacheObjects.Roles.ToString(), CacheObjects.States.ToString(), CacheObjects.Eligibility.ToString(), CacheObjects.Education.ToString(),
-                                    CacheObjects.Experience.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.Users.ToString(), CacheObjects.Skills.ToString(),
-                                    CacheObjects.StatusCodes.ToString(), CacheObjects.Preferences.ToString(), CacheObjects.Companies.ToString(), CacheObjects.Workflow.ToString(),
-                                    CacheObjects.CompanyContacts.ToString()
+                                    nameof(CacheObjects.Roles), nameof(CacheObjects.States), nameof(CacheObjects.Eligibility), nameof(CacheObjects.Education),
+                                    nameof(CacheObjects.Experience), nameof(CacheObjects.JobOptions), nameof(CacheObjects.Users), nameof(CacheObjects.Skills),
+                                    nameof(CacheObjects.StatusCodes), nameof(CacheObjects.Preferences), nameof(CacheObjects.Companies), nameof(CacheObjects.Workflow),
+                                    nameof(CacheObjects.CompanyContacts)
                                 ];
 
                                 RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
@@ -470,15 +472,15 @@ public partial class Requisitions
 
                                 //_roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
 
-                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.States.ToString()]);
-                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Eligibility.ToString()]);
-                                _education = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Education.ToString()]);
-                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Experience.ToString()]);
-                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[CacheObjects.JobOptions.ToString()]);
+                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.States)]);
+                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
+                                _education = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Education)]);
+                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
+                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
 
                                 while (_recruiters == null)
                                 {
-                                    List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[CacheObjects.Users.ToString()]);
+                                    List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
                                     if (_users == null)
                                     {
                                         continue;
@@ -491,10 +493,10 @@ public partial class Requisitions
                                     }
                                 }
 
-                                Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[CacheObjects.Skills.ToString()]);
+                                Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Skills)]);
 
-                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[CacheObjects.StatusCodes.ToString()]);
-                                _preference = General.DeserializeObject<Preferences>(_cacheValues[CacheObjects.Preferences.ToString()]);
+                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
+                                _preference = General.DeserializeObject<Preferences>(_cacheValues[nameof(CacheObjects.Preferences)]);
 
                                 if (_statusCodes is {Count: > 0})
                                 {
@@ -508,7 +510,7 @@ public partial class Requisitions
                                     }
                                 }
 
-                                List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[CacheObjects.Companies.ToString()]);
+                                List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);
 
                                 //_companies = [];
                                 Companies = [];
@@ -535,20 +537,19 @@ public partial class Requisitions
                                     }
                                 }
 
-                                List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[CacheObjects.CompanyContacts.ToString()]);
+                                List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)]);
                                 foreach (CompanyContacts _companyContact in _companyContacts) //.Where(companyContact => _company.ID == companyContact.CompanyID))
                                 {
                                     CompanyContacts.Add(new() {CompanyID = _companyContact.CompanyID, ID = _companyContact.ID, ContactName = _companyContact.ContactName});
                                     // break;
                                 }
 
-                                _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[CacheObjects.Workflow.ToString()]);
+                                _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
                             });
 
         await base.OnInitializedAsync();
     }
 
-    private List<StatusCode> _statusSearch = [];
     private async Task PageChanging(PageChangedEventArgs page)
     {
         Page = page.CurrentPage;
@@ -663,6 +664,12 @@ public partial class Requisitions
         }
     }
 
+    private async Task SearchRequisition(EditContext arg)
+    {
+        SearchModel = SearchModelClone.Copy();
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+
     private async Task SetDataSource()
     {
         Dictionary<string, string> _parameters = new()
@@ -760,12 +767,6 @@ public partial class Requisitions
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
-
-    private async Task SearchRequisition(EditContext arg)
-    {
-        SearchModel = SearchModelClone.Copy();
-        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-    }
 }
 
 /*/// <summary>

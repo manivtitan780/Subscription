@@ -20,9 +20,8 @@ public class ZipCodeService(IMemoryCache cache, RedisService redisService)
     public Task<List<KeyValues>> GetZipCodes() => cache.GetOrCreateAsync("ZipCodes", async entry =>
                                                                                      {
                                                                                          entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(60);
-                                                                                         //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
 
-                                                                                         RedisValue _value = await redisService.GetAsync(CacheObjects.Zips.ToString());
+                                                                                         RedisValue _value = await redisService.GetAsync(nameof(CacheObjects.Zips));
 
                                                                                          if (_value.IsNullOrEmpty && _value == "[]")
                                                                                          {
