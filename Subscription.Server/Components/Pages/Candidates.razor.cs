@@ -176,7 +176,7 @@ public partial class Candidates
 
     private CandidateSearch SearchModel { get; set; } = new();
 
-    private CandidateSearch SearchModelClone { get; set; }
+    private CandidateSearch SearchModelClone { get; set; } = new();
 
     private CandidateActivity SelectedActivity { get; set; } = new();
 
@@ -216,6 +216,20 @@ public partial class Candidates
                                                     NewDocument.Clear();
                                                     return DialogDocument.ShowDialog();
                                                 });
+
+    private void AdvancedSearch() => ExecuteMethod(async () =>
+                                                   {
+                                                       SearchModelClone = SearchModel.Copy();
+                                                       if (SearchModelClone.Relocate.NullOrWhiteSpace())
+                                                       {
+                                                           SearchModelClone.Relocate = "%";
+                                                       }
+                                                       if (SearchModelClone.SecurityClearance.NullOrWhiteSpace())
+                                                       {
+                                                           SearchModelClone.SecurityClearance = "%";
+                                                       }
+                                                       await DialogSearch.ShowDialog();
+                                                   });
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                     {
@@ -541,7 +555,7 @@ public partial class Candidates
     private void GetMPCDate()
     {
         string _mpcDate = "";
-        if (_candDetailsObject.MPCNotes == "")
+        if (_candDetailsObject.MPCNotes.NullOrWhiteSpace())
         {
             MPCDate = _mpcDate.ToMarkupString();
             return;
@@ -556,7 +570,7 @@ public partial class Candidates
     private void GetMPCNote()
     {
         string _mpcNote = "";
-        if (_candDetailsObject.MPCNotes == "")
+        if (_candDetailsObject.MPCNotes.NullOrWhiteSpace())
         {
             MPCNote = _mpcNote.ToMarkupString();
             return;
@@ -571,7 +585,7 @@ public partial class Candidates
     private void GetRatingDate()
     {
         string _ratingDate = "";
-        if (_candDetailsObject.RateNotes == "")
+        if (_candDetailsObject.RateNotes.NullOrWhiteSpace())
         {
             RatingDate = _ratingDate.ToMarkupString();
             return;
@@ -586,7 +600,7 @@ public partial class Candidates
     private void GetRatingNote()
     {
         string _ratingNote = "";
-        if (_candDetailsObject.RateNotes == "")
+        if (_candDetailsObject.RateNotes.NullOrWhiteSpace())
         {
             RatingNote = _ratingNote.ToMarkupString();
             return;
@@ -1047,7 +1061,7 @@ public partial class Candidates
             string[] _splitJobOptions = _candDetailsObject.JobOptions.Split(',');
             foreach (string _str in _splitJobOptions)
             {
-                if (_str == "")
+                if (_str.NullOrWhiteSpace())
                 {
                     continue;
                 }
@@ -1075,7 +1089,7 @@ public partial class Candidates
             string[] _splitTaxTerm = _candDetailsObject.TaxTerm.Split(',');
             foreach (string _str in _splitTaxTerm)
             {
-                if (_str == "")
+                if (_str.NullOrWhiteSpace())
                 {
                     continue;
                 }
@@ -1098,47 +1112,46 @@ public partial class Candidates
     {
         string _generateAddress = _candDetailsObject.Address1;
 
-        if (_generateAddress == "")
+        if (_generateAddress.NullOrWhiteSpace())
         {
             _generateAddress = _candDetailsObject.Address2;
         }
         else
         {
-            _generateAddress += _candDetailsObject.Address2 == "" ? "" : "<br/>" + _candDetailsObject.Address2;
+            _generateAddress += _candDetailsObject.Address2.NullOrWhiteSpace() ? "" : $"<br/>{_candDetailsObject.Address2}";
         }
 
-        if (_generateAddress == "")
+        if (_generateAddress.NullOrWhiteSpace())
         {
             _generateAddress = _candDetailsObject.City;
         }
         else
         {
-            _generateAddress += _candDetailsObject.City == "" ? "" : "<br/>" + _candDetailsObject.City;
+            _generateAddress += _candDetailsObject.City.NullOrWhiteSpace() ? "" : $"<br/>{_candDetailsObject.City}";
         }
 
         if (_candDetailsObject.StateID > 0)
         {
-            if (_generateAddress == "")
+            if (_generateAddress.NullOrWhiteSpace())
             {
-                _generateAddress = SplitState(_candDetailsObject.StateID).Name; // _states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                _generateAddress = SplitState(_candDetailsObject.StateID).Name;
             }
             else
             {
                 try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                 {
-                    _generateAddress += ", " + SplitState(_candDetailsObject.StateID)
-                                           .Name; //_states.FirstOrDefault(state => state.Value == _candidateDetailsObject.StateID)?.Text?.Split('-')[0].Trim();
+                    _generateAddress += ", " + SplitState(_candDetailsObject.StateID).Name;
                 }
                 catch
                 {
-                    //
+                    //Ignore this error from IIS if it comes up ever.
                 }
             }
         }
 
         if (_candDetailsObject.ZipCode != "")
         {
-            if (_generateAddress == "")
+            if (_generateAddress.NullOrWhiteSpace())
             {
                 _generateAddress = _candDetailsObject.ZipCode;
             }

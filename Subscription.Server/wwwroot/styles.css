@@ -880,6 +880,16 @@ body, form, html {
     color: var(--c-wh);
 }
 
+.switchYesNo {
+    width: 60px;
+    height: 25px;
+}
+
+.switchSearch {
+    width: 70px;
+    height: 25px;
+}
+
 /* #endregion Switch */
 
 /* #region Tabs */
@@ -953,6 +963,10 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     line-height: 30px;
 }
 
+.e-hidden {
+    display: none;
+}
+
 .right {
     grid-column: 2;
     width: 100%;
@@ -1022,3 +1036,19 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
 }
 
 /* #endregion PDFViewer */
+
+/* #region RadioButton */
+
+.e-radio:checked + label::before {
+    border-color: var(--c-red) !important;
+}
+
+.e-radio:checked + label::after {
+    background-color: var(--c-red);
+    color: var(--c-red);
+}
+
+.radioMyCandidates {
+    margin-left: 10px;
+}
+/* #endregion RadioButton */

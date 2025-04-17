@@ -132,6 +132,13 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
         set;
     } = "100%";
 
+    [Parameter]
+    public bool Enabled
+    {
+        get;
+        set;
+    } = true;
+
     protected override Task OnInitializedAsync()
     {
         _value = default;

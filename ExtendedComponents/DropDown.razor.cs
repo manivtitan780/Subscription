@@ -8,7 +8,7 @@
 // File Name:           DropDown.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     03-02-2025 19:03
+// Last Updated On:     04-16-2025 20:04
 // *****************************************/
 
 #endregion
@@ -56,6 +56,13 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         get;
         set;
     }
+
+    [Parameter]
+    public bool Enabled
+    {
+        get;
+        set;
+    } = true;
 
     [Parameter]
     public string? ID
