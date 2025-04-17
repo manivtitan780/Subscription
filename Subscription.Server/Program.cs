@@ -143,6 +143,5 @@ _app.Use(async (context, next) =>
 
              await next.Invoke();
          });
-//ServiceLocator.Configure(_app.Services);
-// General.SetServiceProvider(_app.Services);
+
 await _app.RunAsync();

@@ -51,15 +51,15 @@
 					<FormItem ColumnSpan="2" Field="@nameof(Model.CityZip)">
 						<Template>
 							<label class="e-form-label" for="checkedNarrow">Narrow Search By</label>
-							<SfSwitch @bind-Checked="Model.CityZip" CssClass="switchSearch" ID="checkedNarrow" OffLabel="STATE" OnLabel="ZIP" TChecked="bool" ValueChange="ValueChangedCityZip"/>
+							<SfSwitch @bind-Checked="Model.CityZip" CssClass="switchSearch" ID="checkedNarrow" OffLabel="STATE" OnLabel="ZIP" TChecked="bool"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.CityName)" CssClass="@(!Model.CityZip ? "e-hidden" : "")">
 						<Template>
 							<label class="e-form-label" for="autoZip">City/Zip:</label>
-							<SfAutoComplete @bind-Value="@Model.CityName" Enabled="@(Model.CityZip)" Highlight="true" ID="autoZip" MinLength="2" Placeholder="Select Zip&hellip;" ShowClearButton="true"
-							                TItem="KeyValues" TValue="string" Width="50%">
-								<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CandidateZipAdaptor)" Key="KeyValue"/>
+							<SfAutoComplete @bind-Value="@Model.CityName" DataSource="@DataSource" Enabled="@(Model.CityZip)" Highlight="true" ID="autoZip" MinLength="2" Placeholder="Select Zip&hellip;" 
+											ShowClearButton="true" TItem="KeyValues" TValue="string" Width="50%">
+								<AutoCompleteEvents TItem="KeyValues" TValue="string" Filtering="Filtering" />
 								<AutoCompleteFieldSettings Text="Text" Value="KeyValue"/>
 							</SfAutoComplete>
 						</Template>
