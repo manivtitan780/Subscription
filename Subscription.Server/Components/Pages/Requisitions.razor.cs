@@ -128,7 +128,7 @@ public partial class Requisitions
                                                     await DialogDocument.ShowDialog();
                                                 });
 
-    private Task AdvancedSearch(MouseEventArgs args) => ExecuteMethod(async () =>
+    private Task AdvancedSearch() => ExecuteMethod(async () =>
                                                                       {
                                                                           SearchModelClone = SearchModel.Copy();
                                                                           await DialogSearch.ShowDialog();

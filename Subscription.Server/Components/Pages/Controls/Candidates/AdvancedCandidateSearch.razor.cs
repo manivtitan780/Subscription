@@ -17,8 +17,6 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 public partial class AdvancedCandidateSearch : ComponentBase
 {
-    private SfAutoComplete<string, KeyValues> AutoCompleteZip { get; set; }
-
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
 
@@ -27,10 +25,10 @@ public partial class AdvancedCandidateSearch : ComponentBase
     private SfDialog Dialog { get; set; }
 
     [Parameter]
-    public List<IntValues> EligibilityDropDown { get; set; } = [];
+    public List<IntValues> Eligibility { get; set; } = [];
 
     [Parameter]
-    public List<KeyValues> JobOptionsDropDown { get; set; } = [];
+    public List<KeyValues> JobOptions { get; set; } = [];
 
     [Parameter]
     public CandidateSearch Model { get; set; } = new();
@@ -39,14 +37,14 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
     private List<IntValues> ProximityValue { get; set; } = [];
 
-    private List<KeyValues> RelocateDropDown { get; set; } = [];
+    private List<KeyValues> Relocate { get; set; } = [];
 
     [Parameter]
     public EventCallback<EditContext> Search { get; set; }
 
     private SfDataForm SearchForm { get; set; }
 
-    private List<KeyValues> SecurityClearanceDropDown { get; set; } = [];
+    private List<KeyValues> SecurityClearance { get; set; } = [];
 
     [Parameter]
     public List<IntValues> StateDropDown { get; set; } = [];
@@ -89,11 +87,11 @@ public partial class AdvancedCandidateSearch : ComponentBase
         ProximityUnit.Clear();
         ProximityUnit = [new() {Text = "miles", KeyValue = 1}, new() {Text = "kilometers", KeyValue = 2}];
 
-        SecurityClearanceDropDown.Clear();
-        SecurityClearanceDropDown = [new() {KeyValue = "%", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
+        SecurityClearance.Clear();
+        SecurityClearance = [new() {KeyValue = "%", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
 
-        RelocateDropDown.Clear();
-        RelocateDropDown = [new() {KeyValue = "%", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
+        Relocate.Clear();
+        Relocate = [new() {KeyValue = "%", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
     }
 
     protected override void OnParametersSet()

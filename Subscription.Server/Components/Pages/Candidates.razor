@@ -20,12 +20,12 @@
 <PageHeader/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="AddCandidate" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates" 
-				Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count" 
-				ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
+	<GridHeader AddMethod="AddCandidate" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates"
+	            Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count"
+	            ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
 		<GridContent>
-			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" 
-					@ref="Grid" TValue="Candidate" Width="100%">
+			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
+			        @ref="Grid" TValue="Candidate" Width="100%">
 				@*<GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/>*@
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				@*@{
@@ -113,19 +113,19 @@
 							if (RequisitionID == 0)
 							{
 								<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-											 OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
+								             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action">
 									@* Visible="UserRights.EditCandidate" *@
 									<SpeedDialItems>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C." />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume" />
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment" />
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C."/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume"/>
+										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment"/>
 									</SpeedDialItems>
 								</SfSpeedDial>
 							}
@@ -153,10 +153,9 @@
 													<PanelDisplayText Label="Phone#" Text="@_candDetailsObject.Phone1.FormatPhoneNumber()"/>
 													<PanelDisplayText Label="Alternate Phone#" Text="@_candDetailsObject.Phone2.FormatPhoneNumber()"/>
 													<PanelDisplayText Label="Title" Text="@_candDetailsObject.Title"/>
-													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.ToString("C", new CultureInfo("en-US"))} - " +
-																									  $"{_candDetailsObject.HourlyRateHigh.ToString("C", new CultureInfo("en-US"))}")"/>
-													<PanelDisplayText Label="Salary Expected" Text="@($"{_candDetailsObject.SalaryLow.ToString("C", new CultureInfo("en-US"))} - " +
-																									  $"{_candDetailsObject.SalaryHigh.ToString("C", new CultureInfo("en-US"))}")"/>
+													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.CultureCurrency()} - " +
+													                                                  $"{_candDetailsObject.HourlyRateHigh.CultureCurrency()}")"/>
+													<PanelDisplayText Label="Salary Expected" Text="@($"{_candDetailsObject.SalaryLow.CultureCurrency()} - " + $"{_candDetailsObject.SalaryHigh.CultureCurrency()}")"/>
 												</div>
 												<div class="leftLayout">
 													<PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility"/>
@@ -215,8 +214,8 @@
 											<TabHeader Text="Notes"/>
 										</ChildContent>
 										<ContentTemplate>
-											<NotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)" Model="@_candidateNotesObject" 
-														@ref="NotesPanel" UserName="@User"/>
+											<NotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" IsRequisition="@(RequisitionID > 0)" Model="@_candidateNotesObject"
+											            @ref="NotesPanel" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -276,11 +275,11 @@
 	<EditEducationDialog Model="SelectedEducation" @ref="CandidateEducationDialog" Save="SaveEducation"/>
 	<EditExperienceDialog Model="SelectedExperience" @ref="CandidateExperienceDialog" Save="SaveExperience"/>
 	<EditNotesDialog Model="SelectedNotes" @ref="CandidateNotesDialog" Save="SaveNote" Title="Candidate" Entity="Candidate"/>
-	<AddDocumentDialog DocumentTypes="_documentTypes" Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/> @*AfterUpload="AfterDocument" BeforeUpload="BeforeDocument" *@
+	<AddDocumentDialog DocumentTypes="_documentTypes" Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
 	<MPCCandidateDialog MPCGrid="_candMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
 	<RatingCandidateDialog RatingGrid="_candRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
 	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
-	<AdvancedCandidateSearch @ref="DialogSearch" Model="SearchModelClone" Search="SearchCandidate"/>
+	<AdvancedCandidateSearch Eligibility="_eligibility" JobOptions="_jobOptions" Model="SearchModelClone" @ref="DialogSearch" Search="SearchCandidate" StateDropDown="_states"/>
 }
 else
 {
