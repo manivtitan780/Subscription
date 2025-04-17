@@ -8,14 +8,8 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     04-08-2025 20:04
+// Last Updated On:     04-17-2025 19:23
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using StackExchange.Redis;
 
 #endregion
 
@@ -199,17 +193,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         ;
     }*/
 
-    /// <summary>
-    ///     Deletes a candidate's document from the database.
-    /// </summary>
-    /// <param name="documentID">The ID of the document to be deleted.</param>
-    /// <param name="user">The user who is performing the delete operation.</param>
-    /// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to delete the document,
-    ///     and returns a dictionary containing the result of the operation.
-    ///     If the operation is successful, the dictionary will contain a list of remaining documents for the candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> DeleteCandidateDocument(int documentID, string user)
     {
@@ -237,19 +220,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_documents);
     }
 
-    /// <summary>
-    ///     Deletes a candidate's education record from the database.
-    /// </summary>
-    /// <param name="id">The ID of the education record to be deleted.</param>
-    /// <param name="candidateID">The ID of the candidate whose education record is to be deleted.</param>
-    /// <param name="user">The user who is performing the delete operation.</param>
-    /// <returns>A dictionary containing the updated list of education records for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to delete the education record,
-    ///     and returns a dictionary containing the updated list of education records.
-    ///     If the operation is successful, the dictionary will contain a list of remaining education records for the
-    ///     candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> DeleteEducation(int id, int candidateID, string user)
     {
@@ -285,19 +255,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_education);
     }
 
-    /// <summary>
-    ///     Deletes a candidate's experience record from the database.
-    /// </summary>
-    /// <param name="id">The ID of the experience record to be deleted.</param>
-    /// <param name="candidateID">The ID of the candidate whose experience record is to be deleted.</param>
-    /// <param name="user">The user who is performing the delete operation.</param>
-    /// <returns>A dictionary containing the updated list of experience records for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to delete the experience record,
-    ///     and returns a dictionary containing the updated list of experience records.
-    ///     If the operation is successful, the dictionary will contain a list of remaining experience records for the
-    ///     candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> DeleteExperience(int id, int candidateID, string user)
     {
@@ -332,18 +289,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_experiences);
     }
 
-    /// <summary>
-    ///     Deletes a candidate's note from the database.
-    /// </summary>
-    /// <param name="id">The ID of the note to be deleted.</param>
-    /// <param name="candidateID">The ID of the candidate whose note is to be deleted.</param>
-    /// <param name="user">The user who is performing the delete operation.</param>
-    /// <returns>A dictionary containing the updated list of notes for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to delete the note,
-    ///     and returns a dictionary containing the updated list of notes.
-    ///     If the operation is successful, the dictionary will contain a list of remaining notes for the candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> DeleteNotes(int id, int candidateID, string user)
     {
@@ -377,18 +322,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_notes);
     }
 
-    /// <summary>
-    ///     Deletes a candidate's skill record from the database.
-    /// </summary>
-    /// <param name="id">The ID of the skill record to be deleted.</param>
-    /// <param name="candidateID">The ID of the candidate whose skill record is to be deleted.</param>
-    /// <param name="user">The user who is performing the delete operation.</param>
-    /// <returns>A dictionary containing the updated list of skill records for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to delete the skill record,
-    ///     and returns a dictionary containing the updated list of skill records.
-    ///     If the operation is successful, the dictionary will contain a list of remaining skill records for the candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> DeleteSkill(int id, int candidateID, string user)
     {
@@ -422,20 +355,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_skills);
     }
 
-    /// <summary>
-    ///     Downloads a file associated with a specific document ID.
-    /// </summary>
-    /// <param name="documentID">
-    ///     The ID of the document to be downloaded.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="DocumentDetails" /> object containing details of the downloaded document.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to fetch the document details,
-    ///     and returns a <see cref="DocumentDetails" /> object containing the details of the document.
-    ///     If the document does not exist, null is returned.
-    /// </remarks>
     [HttpGet]
     public async Task<ActionResult<string>> DownloadFile(int documentID)
     {
@@ -463,22 +382,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_documentDetails);
     }
 
-    /// <summary>
-    ///     Downloads the resume of a candidate.
-    /// </summary>
-    /// <param name="candidateID">
-    ///     The ID of the candidate whose resume is to be downloaded.
-    /// </param>
-    /// <param name="resumeType">
-    ///     The type of the resume to be downloaded, Original or Formatted.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="DocumentDetails" /> object containing the details of the downloaded resume.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database using a stored procedure to download the candidate's resume.
-    ///     The resume details are then encapsulated in a <see cref="DocumentDetails" /> object and returned.
-    /// </remarks>
     [HttpGet]
     public async Task<ActionResult<string>> DownloadResume(int candidateID, string resumeType)
     {
@@ -566,24 +469,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return _tableExperience;
     }*/
 
-    /// <summary>
-    ///     Retrieves the detailed information of a candidate by their ID.
-    /// </summary>
-    /// <param name="candidateID">
-    ///     The ID of the candidate.
-    /// </param>
-    /// <param name="roleID">
-    ///     The role ID associated with the user making the request. This is used for access control and
-    ///     permissions management.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing the candidate's details, notes, skills, education, experience, activity, rating, MPC,
-    ///     RatingMPC, and documents.
-    /// </returns>
-    /// <remarks>
-    ///     This method performs a database operation using a stored procedure named "GetDetailCandidate".
-    ///     It reads multiple result sets from the database to populate various aspects of the candidate's information.
-    /// </remarks>
     [HttpGet]
     public async Task<ActionResult<ReturnCandidateDetails>> GetCandidateDetails(int candidateID, string roleID)
     {
@@ -713,19 +598,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         }
     }
 
-    /// <summary>
-    ///     Creates a location string based on the provided candidate details and state name.
-    /// </summary>
-    /// <param name="candidateDetails">
-    ///     An instance of <see cref="CandidateDetails" /> containing the city and zip code details of the candidate.
-    /// </param>
-    /// <param name="stateName">
-    ///     The name of the state.
-    /// </param>
-    /// <returns>
-    ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
-    ///     will be omitted from the string.
-    /// </returns>
     private static string GetCandidateLocation(CandidateDetails candidateDetails, string stateName)
     {
         string _location = "";
@@ -756,21 +628,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return _location;
     }
 
-    /// <summary>
-    ///     Retrieves a list of candidates based on the provided search model.
-    /// </summary>
-    /// <param name="searchModel">
-    ///     The search model containing the criteria for filtering candidates. This includes parameters such as
-    ///     item count, page number, sort field, sort direction, name, keywords, skills, city, state, proximity, eligibility,
-    ///     relocation, job options, security clearance, and user.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing the list of candidates and the total count of candidates matching the search criteria.
-    /// </returns>
-    /// <remarks>
-    ///     This method performs a database operation using a stored procedure named "GetCandidates".
-    ///     It reads the result set from the database to populate the list of candidates and the total count.
-    /// </remarks>
     [HttpGet]
     public async Task<ActionResult<ReturnGrid>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
     {
@@ -958,36 +815,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_parsedJSON);
     }*/
 
-    /// <summary>
-    ///     Asynchronously saves the details of a candidate to the database.
-    /// </summary>
-    /// <param name="candidateDetails">
-    ///     The details of the candidate to be saved.
-    /// </param>
-    /// <param name="jsonPath">
-    ///     The path to the JSON file containing the email template.
-    /// </param>
-    /// <param name="userName">
-    ///     The username of the user performing the operation. Default is an empty string.
-    /// </param>
-    /// <param name="emailAddress">
-    ///     The email address to which the operation result should be sent. Default is
-    ///     "maniv@titan-techs.com".
-    /// </param>
-    /// <returns>
-    ///     Returns an integer indicating the result of the operation. A return value of -1 indicates that the candidate
-    ///     details were null.
-    /// </returns>
-    /// <remarks>
-    ///     This method performs the following operations:
-    ///     - Opens a connection to the database.
-    ///     - Creates a new SQL command with the stored procedure "SaveCandidate".
-    ///     - Adds the details of the candidate as parameters to the SQL command.
-    ///     - Executes the SQL command and reads the result.
-    ///     - If there are any email templates, it sends an email with the operation result.
-    ///     - Closes the connection to the database.
-    ///     - Returns the result of the operation.
-    /// </remarks>
     [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public async Task<ActionResult<int>> SaveCandidate(CandidateDetails candidateDetails, string jsonPath = "", string userName = "", string emailAddress = "maniv@titan-techs.com")
     {
@@ -1137,26 +964,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(0);
     }
 
-    /// <summary>
-    ///     Saves a candidate's activity to the database.
-    /// </summary>
-    /// <param name="activity">The activity of the candidate to be saved.</param>
-    /// <param name="candidateID">The ID of the candidate.</param>
-    /// <param name="user">The user who is performing the save operation.</param>
-    /// <param name="roleID">The role ID of the user, default is "RS".</param>
-    /// <param name="isCandidateScreen">
-    ///     A flag indicating whether the operation is performed from the candidate screen, default
-    ///     is true.
-    /// </param>
-    /// <param name="emailAddress">The email address to which notifications will be sent, default is "maniv@titan-techs.com".</param>
-    /// <param name="uploadPath">The path where files will be uploaded, default is an empty string.</param>
-    /// <param name="jsonPath">The path where JSON files will be stored, default is an empty string.</param>
-    /// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the activity,
-    ///     and returns a dictionary containing the result of the operation.
-    ///     If the operation is successful, the dictionary will contain a list of activities for the candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
                                                                   string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")
@@ -1303,26 +1110,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_activities);
     }
 
-    /// <summary>
-    ///     Saves a candidate's education record to the database.
-    /// </summary>
-    /// <param name="education">
-    ///     The education record of the candidate to be saved.
-    /// </param>
-    /// <param name="candidateID">
-    ///     The ID of the candidate whose education record is to be saved.
-    /// </param>
-    /// <param name="user">
-    ///     The user who is performing the save operation.
-    /// </param>
-    /// <returns>
-    ///     A JSON formatted string containing the updated list of education records for the candidate.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the education record,
-    ///     and returns a JSON formatted string containing the updated list of education records.
-    ///     If the operation is successful, the JSON formatted string will contain a list of the candidate's education records.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> SaveEducation(CandidateEducation education, int candidateID, string user)
     {
@@ -1361,27 +1148,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_returnVal);
     }
 
-    /// <summary>
-    ///     Saves a candidate's experience record to the database.
-    /// </summary>
-    /// <param name="experience">
-    ///     The experience record of the candidate to be saved.
-    /// </param>
-    /// <param name="candidateID">
-    ///     The ID of the candidate whose experience record is to be saved.
-    /// </param>
-    /// <param name="user">
-    ///     The user who is performing the save operation.
-    /// </param>
-    /// <returns>
-    ///     A JSON formatted containing the updated list of experience records for the candidate.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the experience record,
-    ///     and returns a JSON formatted string containing the updated list of experience records.
-    ///     If the operation is successful, the JSON formatted string will contain a list of updated experience records for the
-    ///     candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> SaveExperience(CandidateExperience experience, int candidateID, string user)
     {
@@ -1421,24 +1187,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_returnVal);
     }
 
-    /// <summary>
-    ///     Saves the MPC (Most Placeable Candidate) rating for a candidate.
-    /// </summary>
-    /// <param name="mpc">
-    ///     An instance of <see cref="CandidateRatingMPC" /> representing the MPC rating and comments for a candidate.
-    /// </param>
-    /// <param name="user">
-    ///     A string representing the user who is saving the MPC rating.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing a list of all MPC ratings for the candidate and the first MPC rating.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the MPC rating, and retrieves all MPC
-    ///     ratings for the candidate.
-    ///     If the provided MPC rating is null, it returns a dictionary with an empty list and null as the first MPC.
-    ///     The method handles any exceptions that occur during the database operations and continues execution.
-    /// </remarks>
     [HttpPost]
     public async Task<Dictionary<string, object>> SaveMPC(CandidateRatingMPC mpc, string user)
     {
@@ -1511,27 +1259,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                };
     }
 
-    /// <summary>
-    ///     Saves the notes of a candidate in the database.
-    /// </summary>
-    /// <param name="candidateNote">
-    ///     An instance of <see cref="CandidateNotes" /> containing the note details.
-    /// </param>
-    /// <param name="candidateID">
-    ///     The ID of the candidate for whom the note is to be saved.
-    /// </param>
-    /// <param name="user">
-    ///     The user who is performing the save operation.
-    /// </param>
-    /// <returns>
-    ///     A JSON formatted containing the updated list of notes for the candidate.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the note,
-    ///     and returns a JSON formatted containing the updated list of notes.
-    ///     If the operation is successful, the JSON formatted will contain a list of notes for the candidate.
-    ///     If the candidateNote parameter is null, an empty list of notes is returned.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int candidateID, string user)
     {
@@ -1568,27 +1295,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_returnVal);
     }
 
-    /// <summary>
-    ///     Asynchronously saves the rating of a candidate.
-    /// </summary>
-    /// <param name="rating">An instance of <see cref="CandidateRatingMPC" /> representing the rating to be saved.</param>
-    /// <param name="user">A string representing the user who is saving the rating.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation. The task result contains a dictionary with two keys:
-    ///     "RatingList" - a list of <see cref="CandidateRating" /> objects representing the rating history of the candidate,
-    ///     and "FirstRating" - an instance of <see cref="CandidateRatingMPC" /> representing the first rating in the rating
-    ///     history.
-    /// </returns>
-    /// <remarks>
-    ///     This method performs a database operation using a stored procedure named "ChangeRating".
-    ///     If the rating parameter is null, the method returns a dictionary with "RatingList" key set to an empty list and
-    ///     "FirstRating" key set to null.
-    ///     If the rating parameter is not null, the method executes the stored procedure with the provided rating and user
-    ///     parameters,
-    ///     then parses the result to create a list of <see cref="CandidateRating" /> objects and an instance of
-    ///     <see cref="CandidateRatingMPC" />.
-    ///     These are then returned in a dictionary.
-    /// </remarks>
     [HttpPost]
     public async Task<Dictionary<string, object>> SaveRating(CandidateRatingMPC rating, string user)
     {
@@ -1661,27 +1367,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                };
     }
 
-    /// <summary>
-    ///     Saves a candidate's skill to the database.
-    /// </summary>
-    /// <param name="skill">
-    ///     The skill of the candidate to be saved.
-    /// </param>
-    /// <param name="candidateID">
-    ///     The ID of the candidate whose skill is to be saved.
-    /// </param>
-    /// <param name="user">
-    ///     The user who is performing the save operation.
-    /// </param>
-    /// <returns>
-    ///     A JSON formatted containing the updated list of skills for the candidate.
-    /// </returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to save the skill,
-    ///     and returns a JSON formatted containing the updated list of skills.
-    ///     If the operation is successful, the JSON formatted will contain a list of remaining skills for the
-    ///     candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> SaveSkill(CandidateSkills skill, int candidateID, string user)
     {
@@ -1693,7 +1378,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveSkill", _connection);
-        _command.CommandType = CommandType.StoredProcedure; 
+        _command.CommandType = CommandType.StoredProcedure;
         _command.Int("EntitySkillId", skill.ID);
         _command.Varchar("Skill", 100, skill.Skill);
         _command.Int("CandidateID", candidateID);
@@ -1718,23 +1403,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_returnVal);
     }
 
-    /// <summary>
-    ///     This asynchronous method, SearchCompanies, is designed to interact with the database to fetch a list of companies
-    ///     based on a provided search string.
-    ///     It accepts a single parameter, which is a string representing the company name or part of it.
-    ///     The method calls a stored procedure named 'SearchCompanies' in the database, passing the search string as a
-    ///     parameter.
-    ///     The stored procedure is expected to return a list of company names that match the search string.
-    ///     The method then reads these company names and returns them as a list of strings.
-    ///     If no matches are found, the method will return an empty list.
-    /// </summary>
-    /// <param name="filter">
-    ///     The company name or part of it to search for.
-    /// </param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation. The task result contains a list of company names matching the
-    ///     search string.
-    /// </returns>
     [HttpGet]
     public async Task<ActionResult<string>> SearchCandidates(string filter)
     {
@@ -1763,6 +1431,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_candidates);
     }
 
+    /*
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static DataTable Skills(JsonArray skills)
     {
@@ -1787,21 +1456,8 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
         return _tableSkills;
     }
+    */
 
-    /// <summary>
-    ///     Submits a candidate for a specific requisition.
-    /// </summary>
-    /// <param name="requisitionID">The ID of the requisition.</param>
-    /// <param name="candidateID">The ID of the candidate.</param>
-    /// <param name="notes">Additional notes about the submission (optional).</param>
-    /// <param name="user">The user who is performing the submission (optional).</param>
-    /// <param name="roleID">The role ID of the user (optional, default is "RS").</param>
-    /// <returns>A dictionary containing the status of the operation and any relevant data.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to submit the candidate for the requisition,
-    ///     and returns a dictionary containing the result of the operation.
-    ///     If the operation is successful, the dictionary will contain a list of activities for the candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<bool>> SubmitCandidateRequisition(int requisitionID, int candidateID, string notes = "", string user = "", string roleID = "RS")
     {
@@ -1950,22 +1606,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return true;
     }
 
-    /// <summary>
-    ///     Reverts the last activity of a candidate.
-    /// </summary>
-    /// <param name="submissionID">The ID of the submission related to the candidate's activity.</param>
-    /// <param name="user">The user who is performing the undo operation.</param>
-    /// <param name="roleID">The role ID of the user, default is "RS".</param>
-    /// <param name="isCandidateScreen">
-    ///     A boolean value indicating if the operation is performed from the candidate screen,
-    ///     default is true.
-    /// </param>
-    /// <returns>A dictionary containing the list of remaining activities for the candidate.</returns>
-    /// <remarks>
-    ///     This method connects to the database, executes a stored procedure to undo the candidate's last activity,
-    ///     and returns a dictionary containing the updated list of activities.
-    ///     If the operation is successful, the dictionary will contain a list of remaining activities for the candidate.
-    /// </remarks>
     [HttpPost]
     public async Task<ActionResult<string>> UndoCandidateActivity(int submissionID, string user, string roleID = "RS", bool isCandidateScreen = true)
     {
@@ -2001,21 +1641,6 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         return Ok(_activities);
     }
 
-    /// <summary>
-    ///     Uploads a document for a candidate.
-    /// </summary>
-    /// <param name="file">
-    ///     The file to be uploaded.
-    /// </param>
-    /// <returns>
-    ///     A JSON formatted containing the status of the operation and any relevant data.
-    /// </returns>
-    /// <remarks>
-    ///     This method creates a directory for the candidate's documents if it doesn't exist,
-    ///     saves the uploaded file to the server, and then saves the document details to the database
-    ///     using a stored procedure. If the operation is successful, the JSON formatted will contain a list
-    ///     of documents for the candidate.
-    /// </remarks>
     [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
     public async Task<ActionResult<string>> UploadDocument(IFormFile file)
     {

@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-16-2025 19:04
+// Last Updated On:     04-17-2025 19:23
 // *****************************************/
 
 #endregion
@@ -224,10 +224,12 @@ public partial class Candidates
                                                        {
                                                            SearchModelClone.Relocate = "%";
                                                        }
+
                                                        if (SearchModelClone.SecurityClearance.NullOrWhiteSpace())
                                                        {
                                                            SearchModelClone.SecurityClearance = "%";
                                                        }
+
                                                        await DialogSearch.ShowDialog();
                                                    });
 
