@@ -112,10 +112,10 @@ public partial class AdvancedCandidateSearch : ComponentBase
         ProximityUnit = [new() {Text = "miles", KeyValue = 1}, new() {Text = "kilometers", KeyValue = 2}];
 
         SecurityClearance.Clear();
-        SecurityClearance = [new() {KeyValue = "%", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
+        SecurityClearance = [new() {KeyValue = "", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
 
         Relocate.Clear();
-        Relocate = [new() {KeyValue = "%", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
+        Relocate = [new() {KeyValue = "", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
     }
 
     protected override void OnParametersSet()

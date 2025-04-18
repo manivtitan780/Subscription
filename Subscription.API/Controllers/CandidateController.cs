@@ -640,24 +640,24 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         _command.Int("PageNumber", searchModel.Page);
         _command.Int("SortColumn", searchModel.SortField);
         _command.TinyInt("SortDirection", searchModel.SortDirection);
-        _command.Varchar("Name", 30, searchModel.Name);
+        _command.Varchar("Name", 30, searchModel.Name ?? "");
         //_command.Varchar("Phone", 20, searchModel.Phone);
         //_command.Varchar("Email", 255, searchModel.EmailAddress);
         _command.Bit("MyCandidates", !searchModel.AllCandidates);
         _command.Bit("IncludeAdmin", searchModel.IncludeAdmin);
-        _command.Varchar("Keywords", 2000, searchModel.Keywords);
-        _command.Varchar("Skill", 2000, searchModel.Skills);
+        _command.Varchar("Keywords", 2000, searchModel.Keywords ?? "");
+        _command.Varchar("Skill", 2000, searchModel.Skills ?? "");
         _command.Bit("SearchState", !searchModel.CityZip);
-        _command.Varchar("City", 30, searchModel.CityName);
-        _command.Varchar("State", 1000, searchModel.StateID);
+        _command.Varchar("City", 30, searchModel.CityName ?? "");
+        _command.Varchar("State", 1000, searchModel.StateID ?? "");
         _command.Int("Proximity", searchModel.Proximity);
         _command.TinyInt("ProximityUnit", searchModel.ProximityUnit);
         _command.Varchar("Eligibility", 10, searchModel.Eligibility);
-        _command.Varchar("Reloc", 10, searchModel.Relocate);
-        _command.Varchar("JobOptions", 10, searchModel.JobOptions);
+        _command.Varchar("Reloc", 10, searchModel.Relocate ?? "");
+        _command.Varchar("JobOptions", 10, searchModel.JobOptions ?? "");
         //_command.Varchar("Communications",10, searchModel.Communication);
-        _command.Varchar("Security", 10, searchModel.SecurityClearance);
-        _command.Varchar("User", 10, searchModel.User);
+        _command.Varchar("Security", 10, searchModel.SecurityClearance ?? "");
+        _command.Varchar("User", 10, searchModel.User ?? "");
         //_command.Bit("ActiveRequisitionsOnly", searchModel.ActiveRequisitionsOnly);
         //_command.Int("OptionalCandidateID", candidateID);
         //_command.Bit("ThenProceed", thenProceed);
@@ -669,12 +669,12 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
             await _reader.ReadAsync();
-            _count = _reader.GetInt32(0);
+            _count = _reader.NInt32(0);
 
             await _reader.NextResultAsync();
             while (await _reader.ReadAsync())
             {
-                _candidates = _reader.NString(0);
+                _candidates = _reader.NString(0, "[]");
             }
 
             await _reader.CloseAsync();

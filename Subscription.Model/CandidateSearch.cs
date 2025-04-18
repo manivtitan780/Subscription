@@ -448,9 +448,9 @@ public class CandidateSearch
 		Proximity = 25;
 		ProximityUnit = 1;
 		Eligibility = 0;
-		Relocate = "%";
+		Relocate = "";
 		JobOptions = "";
-		SecurityClearance = "%";
+		SecurityClearance = "";
 		Page = 1;
 		ItemCount = 25;
 		SortField = 1;

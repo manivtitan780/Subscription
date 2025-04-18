@@ -8,12 +8,14 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-17-2025 19:23
+// Last Updated On:     04-17-2025 20:29
 // *****************************************/
 
 #endregion
 
 #region Using
+
+using System.Diagnostics;
 
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
@@ -74,9 +76,6 @@ public partial class Candidates
     private MarkupString CandidateEligibility { get; set; }
 
     private MarkupString CandidateExperience { get; set; }
-
-    [Inject]
-    private ZipCodeService ZipCodeService { get; set; }
 
     private EditExperienceDialog CandidateExperienceDialog { get; set; }
 
@@ -207,6 +206,9 @@ public partial class Candidates
     private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    [Inject]
+    private ZipCodeService ZipCodeService { get; set; }
 
     private async Task AddCandidate(MouseEventArgs arg)
     {
@@ -670,11 +672,16 @@ public partial class Candidates
                 SearchModel.Clear();
             }
 
+            //_stopwatch.Start();
             await SetDataSource();
+            //_stopwatch.Stop();
+            //await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
         }
 
         await base.OnAfterRenderAsync(firstRender);
     }
+
+    private readonly Stopwatch _stopwatch = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -1014,7 +1021,8 @@ public partial class Candidates
 
     private async Task SearchCandidate(EditContext arg)
     {
-        await Task.CompletedTask;
+        SearchModel = SearchModelClone.Copy();
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 
     private void SetCommunication()
@@ -1032,8 +1040,10 @@ public partial class Candidates
 
     private async Task SetDataSource()
     {
+        _stopwatch.Start();
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
-
+_stopwatch.Stop();
+await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
         await Grid.Refresh().ConfigureAwait(false);
     }
