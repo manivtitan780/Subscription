@@ -658,7 +658,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         //_command.Varchar("Communications",10, searchModel.Communication);
         _command.Varchar("Security", 10, searchModel.SecurityClearance ?? "");
         _command.Varchar("User", 10, searchModel.User ?? "");
-        //_command.Bit("ActiveRequisitionsOnly", searchModel.ActiveRequisitionsOnly);
+        _command.Bit("ActiveRequisitionsOnly", searchModel.ActiveRequisitionsOnly);
         //_command.Int("OptionalCandidateID", candidateID);
         //_command.Bit("ThenProceed", thenProceed);
 
@@ -667,7 +667,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
         {
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
+    
             await _reader.ReadAsync();
             _count = _reader.NInt32(0);
 

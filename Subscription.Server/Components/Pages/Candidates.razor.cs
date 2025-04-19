@@ -227,12 +227,12 @@ public partial class Candidates
                                                        SearchModelClone = SearchModel.Copy();
                                                        if (SearchModelClone.Relocate.NullOrWhiteSpace())
                                                        {
-                                                           SearchModelClone.Relocate = "%";
+                                                           SearchModelClone.Relocate = "";
                                                        }
 
                                                        if (SearchModelClone.SecurityClearance.NullOrWhiteSpace())
                                                        {
-                                                           SearchModelClone.SecurityClearance = "%";
+                                                           SearchModelClone.SecurityClearance = "";
                                                        }
 
                                                        await DialogSearch.ShowDialog();
@@ -660,11 +660,12 @@ public partial class Candidates
             {
                 if (await SessionStorage.ContainKeyAsync(StorageName))
                 {
-                    SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName);
+                    SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName).ConfigureAwait(false);
                 }
                 else
                 {
                     SearchModel.Clear();
+                    await SaveStorage().ConfigureAwait(false);
                 }
             }
             else
@@ -1040,10 +1041,10 @@ public partial class Candidates
 
     private async Task SetDataSource()
     {
-        _stopwatch.Start();
+        /*_stopwatch.Start();*/
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
-_stopwatch.Stop();
-await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
+        /*_stopwatch.Stop();
+        await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");*/
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
         await Grid.Refresh().ConfigureAwait(false);
     }
