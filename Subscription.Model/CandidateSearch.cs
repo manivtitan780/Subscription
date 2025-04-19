@@ -64,7 +64,7 @@ public class CandidateSearch
 	{
 		Name = name;
 		AllCandidates = allCandidates;
-		MyCandidates = myCandidates;
+		// MyCandidates = myCandidates;
 		IncludeAdmin = includeAdmin;
 		Keywords = keywords;
 		Skills = skills;
@@ -225,6 +225,7 @@ public class CandidateSearch
 		set;
 	}
 
+	/*
 	/// <summary>
 	///     Gets or sets a value indicating whether the search is limited to the user's candidates.
 	/// </summary>
@@ -240,6 +241,7 @@ public class CandidateSearch
 		get;
 		set;
 	}
+	*/
 
 	/// <summary>
 	///     Gets or sets the name used for candidate search.
@@ -437,7 +439,7 @@ public class CandidateSearch
 	{
 		Name = "";
 		AllCandidates = false;
-		MyCandidates = true;
+		// MyCandidates = true;
 		IncludeAdmin = false;
 		Keywords = "";
 		Skills = "";
