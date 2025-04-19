@@ -438,9 +438,9 @@ public class CandidateSearch
 	public void Clear()
 	{
 		Name = "";
-		AllCandidates = false;
+		AllCandidates = true;
 		// MyCandidates = true;
-		IncludeAdmin = false;
+		IncludeAdmin = true;
 		Keywords = "";
 		Skills = "";
 		State = true;

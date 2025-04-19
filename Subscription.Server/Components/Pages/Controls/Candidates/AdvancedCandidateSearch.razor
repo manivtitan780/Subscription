@@ -112,7 +112,7 @@
 					<FormItem ColumnSpan="2" Field="@nameof(Model.ActiveRequisitionsOnly)">
 						<Template>
 							<label class="e-form-label" for="checkedActive">Show Candidates submitted to Active Requisitions:</label>
-							<SfSwitch @bind-Checked="Model.ActiveRequisitionsOnly" CssClass="switchYesNo" ID="checkedActive" OffLabel="NO" OnLabel="YES"/>
+							<SfSwitch @bind-Checked="Model.ActiveRequisitionsOnly" CssClass="switchYesNo" ID="checkedActive" OffLabel="NO" OnLabel="YES" TChecked="bool"/>
 						</Template>
 					</FormItem>
 				</FormGroup>

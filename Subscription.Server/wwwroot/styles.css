@@ -1043,11 +1043,19 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     border-color: var(--c-red) !important;
 }
 
+.e-radio:hover + label::before {
+    border-color: var(--c-red) !important;
+}
+
 .e-radio:checked + label::after {
     background-color: var(--c-red);
     color: var(--c-red);
 }
 
+.e-radio:checked + label:hover::after {
+    background-color: var(--c-red);
+    color: var(--c-red);
+}
 .radioMyCandidates {
     margin-left: 10px;
 }
