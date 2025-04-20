@@ -116,6 +116,10 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
         Relocate.Clear();
         Relocate = [new() {KeyValue = "", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
+
+        SwitchIncludeAdminDisabled = Model.AllCandidates;
+        Model.IncludeAdmin = true;
+
     }
 
     protected override void OnParametersSet()
