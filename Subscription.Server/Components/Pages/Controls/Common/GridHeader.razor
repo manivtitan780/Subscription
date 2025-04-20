@@ -27,11 +27,11 @@
         @{
             if (ShowSearch)
             {
-                <SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Advanced Search" IconCss="e-icons e-search" @onclick="AdvancedSearch">Search</SfButton>
+                <SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Advanced Search" IconCss="e-icons e-filter" @onclick="AdvancedSearch">Search</SfButton>
             }
         }
         @{
-            if (ShowSubmit)
+            if (ShowSubmit) 
             {
                 <SfButton Content="" CssClass="e-topButton" IsPrimary="true" title="Submit" IconCss="e-icons e-save" @onclick="Submit">Submit</SfButton>
             }

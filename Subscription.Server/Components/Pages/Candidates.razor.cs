@@ -1023,6 +1023,7 @@ public partial class Candidates
     private async Task SearchCandidate(EditContext arg)
     {
         SearchModel = SearchModelClone.Copy();
+        SearchModel.Page = 1;
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 
@@ -1041,12 +1042,17 @@ public partial class Candidates
 
     private async Task SetDataSource()
     {
-        /*_stopwatch.Start();*/
+        /*
+        _stopwatch.Reset();
+        _stopwatch.Start();
+        */
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
-        /*_stopwatch.Stop();
-        await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");*/
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
         await Grid.Refresh().ConfigureAwait(false);
+        /*
+        _stopwatch.Stop();
+        await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
+    */
     }
 
     private void SetEligibility()
