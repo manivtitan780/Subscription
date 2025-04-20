@@ -285,6 +285,10 @@ body, form, html {
     cursor: pointer;
 }
 
+.e-topButton .e-btn-icon {
+    font-size: 12px;    
+}
+
 .e-btn.e-primary, .e-css.e-btn.e-primary {
     background: var(--c-red) !important;
     border-color: var(--c-red) !important;
@@ -589,6 +593,15 @@ body, form, html {
     -webkit-text-stroke: 1px #8e181b;
 }
 
+.ratingGridCandidate .e-rating-item-container {
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px;
+    display: block;
+    min-width: calc(1em + 8px);
+    min-height: calc(1em + 8px);
+    position: relative;
+}
 /*
 .e-rating-container.ratingBasicInfoCandidate .e-rating-item-container.e-rating-selected .e-rating-icon,
 .e-rating-container.ratingBasicInfoCandidate .e-rating-item-container.e-rating-intermediate .e-rating-icon {

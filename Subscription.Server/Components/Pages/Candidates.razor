@@ -20,9 +20,9 @@
 <PageHeader/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="AddCandidate" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Candidate/SearchCandidates"
-	            Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count"
-	            ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
+	<GridHeader AddMethod="AddCandidate" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" 
+				Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" 
+				TotalCount="@Count" ValueChange="AutocompleteValueChange" ShowSubmit="@(RequisitionID > 0)" ShowAdd="@(RequisitionID == 0)" Submit="SubmitSelectedCandidate" ShowSearch="@(RequisitionID == 0)">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
 			        @ref="Grid" TValue="Candidate" Width="100%">
@@ -47,7 +47,7 @@
 						</Template>
 					</GridColumn>
 					<GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-					<GridColumn Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="14%">
+					<GridColumn Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="12%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -59,7 +59,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Email)" HeaderText="Email" Width="19%">
+					<GridColumn Field="@nameof(Candidate.Email)" HeaderText="Email" Width="18%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -69,7 +69,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Location)" HeaderText="Location" Width="19%">
+					<GridColumn Field="@nameof(Candidate.Location)" HeaderText="Location" Width="18%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -81,7 +81,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Status)" HeaderText="Status" Width="14%">
+					<GridColumn Field="@nameof(Candidate.Status)" HeaderText="Status" Width="10%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -93,7 +93,17 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="14%">
+					<GridColumn Field="@nameof(Candidate.Rating)" HeaderText="Rating" Width="10%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Candidate _con)
+								{
+									<SfRating Value="@_con.Rating" CssClass="ratingGridCandidate" ID="candidateRating" ItemsCount="5" ShowTooltip="false" ReadOnly="true"/>
+								}
+							}
+						</Template>
+					</GridColumn>
+					<GridColumn Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="12%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
