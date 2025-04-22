@@ -371,7 +371,7 @@ public partial class Experience : ComponentBase
                                                                                                                        {"parameterName", "Experience"},
                                                                                                                        {"containDescription", "false"},
                                                                                                                        {"isString", "false"},
-                                                                                                                       {"cacheName", CacheObjects.Experience.ToString()}
+                                                                                                                       {"cacheName", nameof(CacheObjects.Experience)}
                                                                                                                    };
                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                                ExperienceRecordClone);

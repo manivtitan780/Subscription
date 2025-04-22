@@ -373,7 +373,7 @@ public partial class TaxTerm : ComponentBase
                                                                                                                     {"parameterName", "TaxTerm"},
                                                                                                                     {"containDescription", "true"},
                                                                                                                     {"isString", "true"},
-                                                                                                                    {"cacheName", CacheObjects.TaxTerms.ToString()}
+                                                                                                                    {"cacheName", nameof(CacheObjects.TaxTerms)}
                                                                                                                 };
                                                                        string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                             TaxTermRecordClone);

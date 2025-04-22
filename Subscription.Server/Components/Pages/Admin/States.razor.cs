@@ -366,7 +366,7 @@ public partial class States : ComponentBase
                                                                  {
                                                                      Dictionary<string, string> _parameters = new()
                                                                                                               {
-                                                                                                                  {"cacheName", CacheObjects.States.ToString()}
+                                                                                                                  {"cacheName", nameof(CacheObjects.States)}
                                                                                                               };
                                                                      string _response = await General.ExecuteRest<string>("Admin/SaveState", _parameters,
                                                                                                                           StateRecordClone);

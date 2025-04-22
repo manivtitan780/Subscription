@@ -371,7 +371,7 @@ public partial class Source : ComponentBase
                                                                                                                    {"parameterName", "LeadSource"},
                                                                                                                    {"containDescription", "false"},
                                                                                                                    {"isString", "false"},
-                                                                                                                   {"cacheName", CacheObjects.LeadSources.ToString()}
+                                                                                                                   {"cacheName", nameof(CacheObjects.LeadSources)}
                                                                                                                };
                                                                       string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                            SourceRecordClone);

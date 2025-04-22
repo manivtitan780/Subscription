@@ -59,7 +59,8 @@ public partial class AdvancedRequisitionSearch : ComponentBase
     private List<KeyValues> ShowRequisitions { get; } = [];
 
     [Parameter]
-    public List<StatusCode> StatusDropDown { get; set; }
+    //public List<KeyValues> StatusDropDown { get; set; }
+    public List<string> StatusDropDown { get; set; }
 
     private bool VisibleSpinner { get; set; }
 

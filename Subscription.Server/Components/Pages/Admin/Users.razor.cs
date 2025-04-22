@@ -259,7 +259,7 @@ public partial class Users : ComponentBase
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
 
                                     RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-                                    RedisValue _value = await _service.GetAsync(CacheObjects.Roles.ToString());
+                                    RedisValue _value = await _service.GetAsync(nameof(CacheObjects.Roles));
                                     string _roleString = _value.ToString();
                                     try
                                     {
@@ -309,7 +309,7 @@ public partial class Users : ComponentBase
                                                                 {
                                                                     Dictionary<string, string> _parameters = new()
                                                                                                              {
-                                                                                                                 {"cacheName", CacheObjects.Users.ToString()}
+                                                                                                                 {"cacheName", nameof(CacheObjects.Users)}
                                                                                                              };
                                                                     string _response = await General.ExecuteRest<string>("Admin/SaveUser", _parameters,
                                                                                                                          UserRecordClone);

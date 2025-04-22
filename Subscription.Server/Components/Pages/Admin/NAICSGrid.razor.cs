@@ -373,7 +373,7 @@ public partial class NAICSGrid : ComponentBase
                                                                  {
                                                                      Dictionary<string, string> _parameters = new()
                                                                                                               {
-                                                                                                                  {"cacheName", CacheObjects.NAICS.ToString()}
+                                                                                                                  {"cacheName", nameof(CacheObjects.NAICS)}
                                                                                                               };
                                                                      string _response = await General.ExecuteRest<string>("Admin/SaveNAICS", _parameters,
                                                                                                                           NAICSRecordClone);

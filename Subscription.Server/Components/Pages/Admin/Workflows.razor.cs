@@ -339,10 +339,10 @@ public partial class Workflows : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
-                                    List<string> _keys = [CacheObjects.TaxTerms.ToString()];
+                                    List<string> _keys = [nameof(CacheObjects.TaxTerms)];
                                     RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
 
-                                    RedisValue _cacheValues = await _service.GetAsync(CacheObjects.TaxTerms.ToString());
+                                    RedisValue _cacheValues = await _service.GetAsync(nameof(CacheObjects.TaxTerms));
                                     TaxTerms = _cacheValues.IsNull ? [] : JsonConvert.DeserializeObject<List<KeyValues>>(_cacheValues.ToString());
                                 }
                             });
@@ -378,7 +378,7 @@ public partial class Workflows : ComponentBase
                                                                      {
                                                                          Dictionary<string, string> _parameters = new()
                                                                                                                   {
-                                                                                                                      {"cacheName", CacheObjects.Workflow.ToString()}
+                                                                                                                      {"cacheName", nameof(CacheObjects.Workflow)}
                                                                                                                   };
                                                                          string _response = await General.ExecuteRest<string>("Admin/SaveWorkflow", _parameters,
                                                                                                                               WorkflowRecordClone);

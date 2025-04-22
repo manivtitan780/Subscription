@@ -371,7 +371,7 @@ public partial class Status : ComponentBase
                                                                                                                    {"parameterName", "LeadStatus"},
                                                                                                                    {"containDescription", "false"},
                                                                                                                    {"isString", "false"},
-                                                                                                                   {"cacheName", CacheObjects.LeadStatus.ToString()}
+                                                                                                                   {"cacheName", nameof(CacheObjects.LeadStatus)}
                                                                                                                };
                                                                       string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                            StatusRecordClone);
