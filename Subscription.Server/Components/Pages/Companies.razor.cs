@@ -331,11 +331,11 @@ public partial class Companies
     ///     Opens the company edit dialog for adding a new company or editing an existing one.
     /// </summary>
     /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
-    private Task EditCompany() => ExecuteMethod(async () =>
+    private Task EditCompany(bool isAdd = false) => ExecuteMethod(async () =>
                                                 {
                                                     VisibleSpinner = true;
 
-                                                    if (_target == null || _target.ID == 0)
+                                                    if (isAdd)
                                                     {
                                                         if (_companyDetailsClone == null)
                                                         {
@@ -354,7 +354,6 @@ public partial class Companies
                                                         _companyDetailsClone.IsAdd = false;
                                                     }
 
-                                                    await General.DisplaySpinner(Spinner, false);
                                                     VisibleSpinner = false;
                                                     await CompanyEditDialog.ShowDialog();
                                                 });
@@ -513,7 +512,7 @@ public partial class Companies
                                 if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
                                 {
                                     RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-                                    List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
+                                    List<string> _keys = [nameof(CacheObjects.NAICS), nameof(CacheObjects.States), nameof(CacheObjects.Roles)];
 
                                     Dictionary<string, string> _values = await _service.BatchGet(_keys);
                                     NAICS = General.DeserializeObject<List<IntValues>>(_values["NAICS"]);

@@ -358,7 +358,7 @@ public partial class Education : ComponentBase
                                                                                                                       {"parameterName", "Education"},
                                                                                                                       {"containDescription", "false"},
                                                                                                                       {"isString", "false"},
-                                                                                                                      {"cacheName", CacheObjects.Education.ToString()}
+                                                                                                                      {"cacheName", nameof(CacheObjects.Education)}
                                                                                                                   };
                                                                          string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                               EducationRecordClone);

@@ -373,7 +373,7 @@ public partial class DocumentType : ComponentBase
                                                                         {
                                                                             Dictionary<string, string> _parameters = new()
                                                                                                                      {
-                                                                                                                         {"cacheName", CacheObjects.DocumentTypes.ToString()}
+                                                                                                                         {"cacheName", nameof(CacheObjects.DocumentTypes)}
                                                                                                                      };
                                                                             string _response = await General.ExecuteRest<string>("Admin/SaveDocumentType", _parameters,
                                                                                                                                  DocumentTypeRecordClone);

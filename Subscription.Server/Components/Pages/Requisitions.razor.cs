@@ -34,7 +34,7 @@ public partial class Requisitions
 
     private List<StatusCode> _statusCodes;
 
-    private readonly List<StatusCode> _statusSearch = [];
+    private List<KeyValues> _statusSearch = [];
 
     private Requisition _target;
 
@@ -417,12 +417,11 @@ public partial class Requisitions
                 SearchModel.Clear();
             }
 
-            await SetDataSource().ConfigureAwait(false);
-            Grid.TotalItemCount = 378;
-            //await Grid.Refresh().ConfigureAwait(false);
+            await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
         }
     }
 
+    private List<string> _search = [];
     protected override async Task OnInitializedAsync()
     {
         // _initializationTaskSource = new();
@@ -500,14 +499,19 @@ public partial class Requisitions
 
                                 if (_statusCodes is {Count: > 0})
                                 {
-                                    foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
+                                    _search = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ").Select(statusCode => statusCode.Status).ToList();
+                                    _statusSearch = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ")
+                                                                .Select(statusCode => new KeyValues {Text = statusCode.Status, KeyValue = statusCode.Code}).ToList();
+                                    /*foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
                                     {
-                                        _statusSearch.Add(new()
+                                        //fill _search array
+                                        
+                                        /*_statusSearch.Add(new()
                                                           {
                                                               Status = _statusCode.Status,
                                                               Code = _statusCode.Code
-                                                          });
-                                    }
+                                                          });#1#
+                                    }*/
                                 }
 
                                 List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);

@@ -370,7 +370,7 @@ public partial class Eligibility : ComponentBase
                                                                                                                         {"parameterName", "Eligibility"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Eligibility.ToString()}
+                                                                                                                        {"cacheName", nameof(CacheObjects.Eligibility)}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                                 EligibilityRecordClone);

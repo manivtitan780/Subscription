@@ -333,10 +333,10 @@ public partial class JobOption : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
-                                    List<string> _keys = [CacheObjects.TaxTerms.ToString()];
+                                    List<string> _keys = [nameof(CacheObjects.TaxTerms)];
                                     RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
 
-                                    RedisValue _cacheValues = await _service.GetAsync(CacheObjects.TaxTerms.ToString());
+                                    RedisValue _cacheValues = await _service.GetAsync(nameof(CacheObjects.TaxTerms));
                                     TaxTerms = _cacheValues.IsNull ? [] : JsonConvert.DeserializeObject<List<KeyValues>>(_cacheValues.ToString());
                                 }
                             });
@@ -378,7 +378,7 @@ public partial class JobOption : ComponentBase
                                                                      {
                                                                          Dictionary<string, string> _parameters = new()
                                                                                                                   {
-                                                                                                                      {"cacheName", CacheObjects.JobOptions.ToString()}
+                                                                                                                      {"cacheName", nameof(CacheObjects.JobOptions)}
                                                                                                                   };
                                                                          string _response = await General.ExecuteRest<string>("Admin/SaveJobOptions", _parameters,
                                                                                                                               JobOptionRecordClone);

@@ -32,7 +32,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
-        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="29.1.38" />
+        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="29.1.39" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
         <PackageReference Include="System.Runtime.Caching" Version="9.0.4" />
         <PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />

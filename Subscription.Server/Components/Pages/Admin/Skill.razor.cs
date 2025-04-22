@@ -371,7 +371,7 @@ public partial class Skill : ComponentBase
                                                                                                                         {"parameterName", "Skill"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Skills.ToString()}
+                                                                                                                        {"cacheName", nameof(CacheObjects.Skills)}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                                 SkillRecordClone);

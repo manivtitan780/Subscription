@@ -62,7 +62,7 @@ public static class General
     public static async Task SetCache()
     {
         RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-        bool _keyExists = await _service.CheckKeyExists(CacheObjects.Companies.ToString());
+        bool _keyExists = await _service.CheckKeyExists(nameof(CacheObjects.Companies));
 
         if (!_keyExists)
         {
@@ -336,11 +336,10 @@ public static class General
 
             string[] _keys =
             [
-                CacheObjects.Companies.ToString(), CacheObjects.CompanyContacts.ToString(), CacheObjects.Titles.ToString(), CacheObjects.DocumentTypes.ToString(), CacheObjects.Education.ToString(),
-                CacheObjects.Eligibility.ToString(), CacheObjects.Experience.ToString(), CacheObjects.JobOptions.ToString(), CacheObjects.LeadIndustries.ToString(),
-                CacheObjects.LeadSources.ToString(), CacheObjects.LeadStatus.ToString(), CacheObjects.NAICS.ToString(), CacheObjects.Roles.ToString(), CacheObjects.Skills.ToString(),
-                CacheObjects.States.ToString(), CacheObjects.StatusCodes.ToString(), CacheObjects.TaxTerms.ToString(), CacheObjects.Users.ToString(), CacheObjects.Workflow.ToString(),
-                CacheObjects.Zips.ToString(), CacheObjects.Communications.ToString(), CacheObjects.Preferences.ToString()
+                nameof(CacheObjects.Companies), nameof(CacheObjects.CompanyContacts), nameof(CacheObjects.Titles), nameof(CacheObjects.DocumentTypes), nameof(CacheObjects.Education), nameof(CacheObjects.Eligibility),
+                nameof(CacheObjects.Experience), nameof(CacheObjects.JobOptions), nameof(CacheObjects.LeadIndustries), nameof(CacheObjects.LeadSources), nameof(CacheObjects.LeadStatus), nameof(CacheObjects.NAICS), 
+                nameof(CacheObjects.Roles), nameof(CacheObjects.Skills), nameof(CacheObjects.States), nameof(CacheObjects.StatusCodes), nameof(CacheObjects.TaxTerms), nameof(CacheObjects.Users), 
+                nameof(CacheObjects.Workflow), nameof(CacheObjects.Zips), nameof(CacheObjects.Communications), nameof(CacheObjects.Preferences)
             ];
 
             string[] _values =

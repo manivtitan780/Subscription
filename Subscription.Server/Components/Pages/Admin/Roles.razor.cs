@@ -368,7 +368,7 @@ public partial class Roles : ComponentBase
                                                                        {
                                                                            Dictionary<string, string> _parameters = new()
                                                                                                                     {
-                                                                                                                        {"cacheName", CacheObjects.Roles.ToString()}
+                                                                                                                        {"cacheName", nameof(CacheObjects.Roles)}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveRole", _parameters,
                                                                                                                                 RoleRecordClone);

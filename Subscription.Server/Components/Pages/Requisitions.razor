@@ -3,9 +3,9 @@
 @layout SubscriptionLayout
 
 <PageHeader />
-<GridHeader AddMethod="() => EditRequisition(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Requisition/SearchRequisitions"
-			Name="@(SearchModel.Title)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" TotalCount="@Count" AdvancedSearch="AdvancedSearch"
-			ValueChange="AutocompleteValueChange" ShowSearch="true" >
+<GridHeader AddMethod="() => EditRequisition(true)" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" 
+			Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" ShowSearch="true"
+			TotalCount="@Count" ValueChange="AutocompleteValueChange">
 	<GridContent>
 		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
 		        @ref="Grid" TValue="Requisition" Width="100%">
@@ -181,4 +181,4 @@
 <RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
                          Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 <EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
-<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_statusSearch" Model="SearchModelClone" Search="SearchRequisition"/>
+<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_search" Model="SearchModelClone" Search="SearchRequisition"/>

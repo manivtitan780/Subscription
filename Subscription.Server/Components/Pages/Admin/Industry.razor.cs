@@ -371,7 +371,7 @@ public partial class Industry : ComponentBase
                                                                                                                      {"parameterName", "Industry"},
                                                                                                                      {"containDescription", "false"},
                                                                                                                      {"isString", "false"},
-                                                                                                                     {"cacheName", CacheObjects.LeadIndustries.ToString()}
+                                                                                                                     {"cacheName", nameof(CacheObjects.LeadIndustries)}
                                                                                                                  };
                                                                         string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                              IndustryRecordClone);

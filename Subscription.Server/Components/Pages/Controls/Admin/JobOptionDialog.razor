@@ -29,7 +29,7 @@
                             <TextArea @bind-Value="Model.Description" ID="textDescription" MaxLength="2000" Placeholder="Description"></TextArea>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" Field="@nameof(Model.PercentText)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.Tax)">
                         <Template>
                             <label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
                             <SfMultiSelect @bind-Value="Model.Tax" DataSource="@TaxTerms" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues" TValue="string" Width="100%">

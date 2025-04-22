@@ -397,7 +397,7 @@ public partial class Designation
                                                                                                                         {"parameterName", "Designation"},
                                                                                                                         {"containDescription", "false"},
                                                                                                                         {"isString", "false"},
-                                                                                                                        {"cacheName", CacheObjects.Titles.ToString()}
+                                                                                                                        {"cacheName", nameof(CacheObjects.Titles)}
                                                                                                                     };
                                                                            string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
                                                                                                                                 DesignationRecordClone);

@@ -28,12 +28,16 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Option)">
 						<Template>
-							<DropDown @bind-Value="Model.Option" Model="JobOption" ID="dropJobOption" TItem="KeyValues" TValue="string" Placeholder="Job Option" Text="Text" Key="KeyValue"/>
+							<DropDown @bind-Value="Model.Option" Model="JobOption" ID="dropJobOption" TItem="KeyValues" TValue="string" Placeholder="Job Option" Text="Text" Key="KeyValue" ShowClearButton="true"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Status)">
 						<Template>
-							<MultiSelect @bind-Value="Model.Status" Model="StatusDropDown" ID="multiStatus" TItem="StatusCode" TValue="string" Placeholder="Select Status(s)" Text="Status" Key="Status" />
+							<label class="e-form-label" for="multiStatus">Select Status(es):</label>
+							<SfMultiSelect @bind-Value="Model.Status" DataSource="@StatusDropDown" ID="multiStatus" Mode="VisualMode.Box" Placeholder="Select Status(es)" TItem="string"
+										   TValue="string" Width="100%">
+									<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
+							</SfMultiSelect>
 						</Template>
 					</FormItem>
 				</FormGroup>
