@@ -46,9 +46,9 @@ _builder.Services.AddSingleton<OpenAIClient>(sp =>
                                                  string _endpoint = _config["AzureOpenAI:Endpoint"];
                                                  OpenAIClientOptions _options = new()
                                                                                 {
-                                                                                    Endpoint = new Uri(_endpoint ?? string.Empty)
+                                                                                    Endpoint = new Uri(_endpoint ?? "")
                                                                                 };
-                                                 return new(new(_apiKey ?? string.Empty), _options);
+                                                 return new(new(_apiKey ?? ""), _options);
                                              });
 
 /*GraphSenderOptions _graphOptions = new()

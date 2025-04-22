@@ -73,7 +73,7 @@ public class SubmitCandidateRequisition
 	/// </remarks>
 	public void Clear()
 	{
-		Text = string.Empty;
+		Text = "";
 	}
 
 	/// <summary>

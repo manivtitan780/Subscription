@@ -271,7 +271,7 @@ public partial class Roles : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(role.Value.NullOrWhiteSpace() ? string.Empty : role.Value);
+                                 await FilterSet(role.Value.NullOrWhiteSpace() ? "" : role.Value);
                                  await SetDataSource();
                              });
     }
@@ -294,7 +294,7 @@ public partial class Roles : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoRole");
 
-            RoleAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            RoleAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -380,7 +380,7 @@ public partial class Roles : ComponentBase
                                                                            //await Grid.Refresh(true);
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
-                                                                               await FilterSet(string.Empty);
+                                                                               await FilterSet("");
                                                                                DataSource = General.DeserializeObject<List<Role>>(_response);
                                                                            }
 
@@ -393,7 +393,7 @@ public partial class Roles : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetRoles"},
-                                                     {"filter", RoleAuto ?? string.Empty}
+                                                     {"filter", RoleAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<Role>>(_returnValue);

@@ -271,7 +271,7 @@ public partial class Workflows : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(workflow.Value.NullOrWhiteSpace() ? string.Empty : workflow.Value);
+                                 await FilterSet(workflow.Value.NullOrWhiteSpace() ? "" : workflow.Value);
                                  await SetDataSource();
                                  //await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
@@ -296,7 +296,7 @@ public partial class Workflows : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoWorkflow");
 
-            WorkflowAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            WorkflowAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -390,7 +390,7 @@ public partial class Workflows : ComponentBase
                                                                          //await Grid.Refresh(true);
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             await FilterSet(string.Empty);
+                                                                             await FilterSet("");
                                                                              DataSource = General.DeserializeObject<List<Workflow>>(_response);
                                                                          }
 
@@ -403,7 +403,7 @@ public partial class Workflows : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetWorkflow"},
-                                                     {"filter", WorkflowAuto ?? string.Empty}
+                                                     {"filter", WorkflowAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<Workflow>>(_returnValue);

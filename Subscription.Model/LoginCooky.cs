@@ -33,12 +33,12 @@ public class LoginCooky
     /// </remarks>
     public LoginCooky()
     {
-        UserID = string.Empty;
-        FirstName = string.Empty;
-        LastName = string.Empty;
-        Email = string.Empty;
-        Role = string.Empty;
-        RoleID = string.Empty;
+        UserID = "";
+        FirstName = "";
+        LastName = "";
+        Email = "";
+        Role = "";
+        RoleID = "";
         Login = default;
         LoginIP = "0.0.0.0";
     }

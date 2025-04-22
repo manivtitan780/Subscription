@@ -106,7 +106,7 @@ public static partial class Extensions
 	///     (if checkEmptyString is true).
 	/// </returns>
 	public static string NString(this SqlDataReader read, int index, string nullReplaceValue = "", bool checkEmptyString = false) =>
-        checkEmptyString ? read.IsDBNull(index) || read.GetString(index) == string.Empty ? nullReplaceValue : read.GetString(index).Trim() :
+        checkEmptyString ? read.IsDBNull(index) || read.GetString(index) == "" ? nullReplaceValue : read.GetString(index).Trim() :
         read.IsDBNull(index) ? nullReplaceValue : read.GetString(index).Trim();
 
 	/// <summary>

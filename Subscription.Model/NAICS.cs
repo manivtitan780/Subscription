@@ -44,7 +44,7 @@ public class NAICS
     public void Clear()
     {
         ID = 0;
-        Title = string.Empty;
+        Title = "";
         CreatedDate = DateTime.Today.CultureDate();
         UpdatedDate = DateTime.Today.CultureDate();
     }

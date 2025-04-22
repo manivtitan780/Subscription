@@ -159,24 +159,24 @@ public class CompanyDetails
 
     public void Clear()
     {
-        City = string.Empty;
+        City = "";
         CreatedBy = "ADMIN";
         CreatedDate = DateTime.Today;
-        DUNS = string.Empty;
-        EmailAddress = string.Empty;
+        DUNS = "";
+        EmailAddress = "";
         ID = 0;
         NAICSCode = 0;
-        Name = string.Empty;
-        Notes = string.Empty;
-        Phone = string.Empty;
-        State = string.Empty;
+        Name = "";
+        Notes = "";
+        Phone = "";
+        State = "";
         StateID = 1;
         Status = false;
-        StreetName = string.Empty;
-        UpdatedBy = string.Empty;
+        StreetName = "";
+        UpdatedBy = "";
         UpdatedDate = DateTime.Today;
-        Website = string.Empty;
-        ZipCode = string.Empty;
+        Website = "";
+        ZipCode = "";
         IsAdd = false;
     }
 

@@ -94,10 +94,10 @@ public class General() //(Container container)
     {
         if (!checkForNullOrEmptyArray)
         {
-            return JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+            return JsonConvert.DeserializeObject<T>(array?.ToString() ?? "");
         }
 
-        string _stringArray = array?.ToString() ?? string.Empty;
+        string _stringArray = array?.ToString() ?? "";
         if (_stringArray.NotNullOrWhiteSpace() || _stringArray == "[]")
         {
             return JsonConvert.DeserializeObject<T>(_stringArray);
@@ -289,7 +289,7 @@ public class General() //(Container container)
             return null;
         }
 
-        _response = _response?.Replace("\"", string.Empty);
+        _response = _response?.Replace("\"", "");
         JwtSecurityTokenHandler handler = new();
         JwtSecurityToken jwtToken = handler.ReadJwtToken(_response);
         IEnumerable<Claim> _claims = jwtToken.Claims.ToList();
@@ -346,7 +346,7 @@ public class General() //(Container container)
             {
                 if (_status.NotNullOrWhiteSpace())
                 {
-                    dm.Params["StatusList"] = string.Empty;
+                    dm.Params["StatusList"] = "";
                 }
 
                 return dm.RequiresCounts ? new DataResult
@@ -357,7 +357,7 @@ public class General() //(Container container)
             }
 
             //TODO: Use Cache
-            // Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? string.Empty);
+            // Requisitions.Skills = JsonConvert.DeserializeObject<List<IntValues>>(_restResponse["Skills"].ToString() ?? "");
             if (_status.NotNullOrWhiteSpace())
             {
                 dm.Params.Add("StatusList", _status);

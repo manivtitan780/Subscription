@@ -296,7 +296,7 @@ public partial class Designation
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(designation.Value.NullOrWhiteSpace() ? string.Empty : designation.Value);
+                                 await FilterSet(designation.Value.NullOrWhiteSpace() ? "" : designation.Value);
                                  await Grid.Refresh(true);
                              });
     }
@@ -319,7 +319,7 @@ public partial class Designation
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoTitle");
 
-            DesignationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            DesignationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -408,7 +408,7 @@ public partial class Designation
 
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
-                                                                               await FilterSet(string.Empty);
+                                                                               await FilterSet("");
                                                                                DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                            }
 
@@ -421,7 +421,7 @@ public partial class Designation
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetDesignations"},
-                                                     {"filter", DesignationAuto ?? string.Empty}
+                                                     {"filter", DesignationAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
@@ -467,7 +467,7 @@ public partial class Designation
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
-                                                                                 await FilterSet(string.Empty);
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
 

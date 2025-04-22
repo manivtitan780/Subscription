@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-20-2025 16:25
+// Last Updated On:     04-22-2025 20:07
 // *****************************************/
 
 #endregion
@@ -25,9 +25,11 @@ public partial class Requisitions
 
     private Preferences _preference;
     private List<KeyValues> _recruiters;
-    private MarkupString _reqDetailSkills = string.Empty.ToMarkupString();
+    private MarkupString _reqDetailSkills = "".ToMarkupString();
     private RequisitionDetails _reqDetailsObject = new(), _reqDetailsObjectClone = new();
     private List<RequisitionDocuments> _reqDocumentsObject = [];
+
+    private List<string> _search = [];
 
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -138,7 +140,7 @@ public partial class Requisitions
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                     {
-                                                                        SearchModel.Title = string.Empty;
+                                                                        SearchModel.Title = "";
                                                                         SearchModel.Page = 1;
                                                                         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                         //await Grid.Refresh();
@@ -220,45 +222,42 @@ public partial class Requisitions
                                                                _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response["Document"]);
                                                            });
 
-    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 if (_target != null && _target != requisition.Data)
-                                 {
-                                     // return when target is equal to args.data
-                                     await Grid.ExpandCollapseDetailRowAsync(_target);
-                                 }
+    private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition) => ExecuteMethod(async () =>
+                                                                                                    {
+                                                                                                        if (_target != null && _target != requisition.Data)
+                                                                                                        {
+                                                                                                            // return when target is equal to args.data
+                                                                                                            await Grid.ExpandCollapseDetailRowAsync(_target);
+                                                                                                        }
 
-                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(requisition.Data.ID);
-                                 if (_index != Grid.SelectedRowIndex)
-                                 {
-                                     await Grid.SelectRowAsync(_index);
-                                 }
+                                                                                                        int _index = await Grid.GetRowIndexByPrimaryKeyAsync(requisition.Data.ID);
+                                                                                                        if (_index != Grid.SelectedRowIndex)
+                                                                                                        {
+                                                                                                            await Grid.SelectRowAsync(_index);
+                                                                                                        }
 
-                                 _target = requisition.Data;
+                                                                                                        _target = requisition.Data;
 
-                                 VisibleSpinner = true;
+                                                                                                        VisibleSpinner = true;
 
-                                 Dictionary<string, string> _parameters = new()
-                                                                          {
-                                                                              {"requisitionID", _target.ID.ToString()}
-                                                                          };
+                                                                                                        Dictionary<string, string> _parameters = new()
+                                                                                                                                                 {
+                                                                                                                                                     {"requisitionID", _target.ID.ToString()}
+                                                                                                                                                 };
 
-                                 (string _requisition, string _activity, string _documents) = await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails", _parameters,
-                                                                                                                                                  null, false);
+                                                                                                        (string _requisition, string _activity, string _documents) =
+                                                                                                            await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails",
+                                                                                                                                                                _parameters, null, false);
 
-                                 _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
-                                 _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
-                                 _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
-                                 SetSkills();
+                                                                                                        _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
+                                                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
+                                                                                                        _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
+                                                                                                        SetSkills();
 
-                                 _selectedTab = _candActivityObject.Count > 0 ? 2 : 0;
+                                                                                                        _selectedTab = _candActivityObject.Count > 0 ? 2 : 0;
 
-                                 await Task.Delay(100);
-                                 VisibleSpinner = false;
-                             });
-    }
+                                                                                                        VisibleSpinner = false;
+                                                                                                    });
 
     [JSInvokable("DetailCollapse")]
     public void DetailRowCollapse() => _target = null;
@@ -361,7 +360,7 @@ public partial class Requisitions
         }
 
         return location;*/
-        string _location = string.Empty;
+        string _location = "";
         if (_reqDetailsObject == null)
         {
             return _location;
@@ -417,11 +416,12 @@ public partial class Requisitions
                 SearchModel.Clear();
             }
 
+            SearchModel.User = User;
             await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
         }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
-    private List<string> _search = [];
     protected override async Task OnInitializedAsync()
     {
         // _initializationTaskSource = new();
@@ -505,7 +505,7 @@ public partial class Requisitions
                                     /*foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
                                     {
                                         //fill _search array
-                                        
+
                                         /*_statusSearch.Add(new()
                                                           {
                                                               Status = _statusCode.Status,
@@ -709,19 +709,19 @@ public partial class Requisitions
             return;
         }
 
-        string _skillsRequired = _reqDetailsObject.SkillsRequired.NullOrWhiteSpace() ? string.Empty :
+        string _skillsRequired = _reqDetailsObject.SkillsRequired.NullOrWhiteSpace() ? "" :
                                      _reqDetailsObject.SkillsRequired.Split(',')
                                                       .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
-                                                      .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
-                                     ?? string.Empty;
+                                                      .Aggregate("", (current, text) => current == "" ? text : current + ", " + text)
+                                     ?? "";
 
-        string _skillsOptional = _reqDetailsObject.Optional.NullOrWhiteSpace() ? string.Empty :
+        string _skillsOptional = _reqDetailsObject.Optional.NullOrWhiteSpace() ? "" :
                                      _reqDetailsObject.Optional.Split(',')
                                                       .Select(skillString => Skills.FirstOrDefault(skill => skill.KeyValue == skillString.ToInt32())?.Text)
-                                                      .Aggregate(string.Empty, (current, text) => current == string.Empty ? text : current + ", " + text)
-                                     ?? string.Empty;
+                                                      .Aggregate("", (current, text) => current == "" ? text : current + ", " + text)
+                                     ?? "";
 
-        string _skillStringTemp = string.Empty;
+        string _skillStringTemp = "";
 
         if (!_skillsRequired.NullOrWhiteSpace())
         {
@@ -733,7 +733,7 @@ public partial class Requisitions
             _skillStringTemp += "<strong>Optional Skills:</strong> <br/>" + _skillsOptional;
         }
 
-        _reqDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? string.Empty : _skillStringTemp).ToMarkupString();
+        _reqDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? "" : _skillStringTemp).ToMarkupString();
     }
 
     private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)

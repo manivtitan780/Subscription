@@ -203,7 +203,7 @@ public partial class Users : ComponentBase
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
     private Task FilterGrid(ChangeEventArgs<string, KeyValues> user) => ExecuteMethod(async () =>
                                                                                       {
-                                                                                          await FilterSet(user.Value.NullOrWhiteSpace() ? string.Empty : user.Value);
+                                                                                          await FilterSet(user.Value.NullOrWhiteSpace() ? "" : user.Value);
                                                                                           await SetDataSource();
                                                                                       });
 
@@ -224,7 +224,7 @@ public partial class Users : ComponentBase
         if (firstRender)
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoUser");
-            UserAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            UserAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
             await SetDataSource();
         }
     }
@@ -320,7 +320,7 @@ public partial class Users : ComponentBase
 
                                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                     {
-                                                                        await FilterSet(string.Empty);
+                                                                        await FilterSet("");
                                                                         DataSource = General.DeserializeObject<List<User>>(_response);
                                                                     }
                                                                 });
@@ -330,7 +330,7 @@ public partial class Users : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetUsers"},
-                                                     {"filter", UserAuto ?? string.Empty}
+                                                     {"filter", UserAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<User>>(_returnValue);

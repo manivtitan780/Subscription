@@ -25,7 +25,7 @@ public class CompaniesList
     {
         get;
         set;
-    } = string.Empty;
+    } = "";
 
     public string UpdatedBy
     {

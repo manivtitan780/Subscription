@@ -129,9 +129,9 @@ public class DocumentDetails
 	public void Clear()
 	{
 		EntityID = 0;
-		DocumentName = string.Empty;
-		DocumentLocation = string.Empty;
-		InternalFileName = string.Empty;
+		DocumentName = "";
+		DocumentLocation = "";
+		InternalFileName = "";
 	}
 
 	/// <summary>

@@ -269,7 +269,7 @@ public partial class Industry : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(industry.Value.NullOrWhiteSpace() ? string.Empty : industry.Value);
+                                 await FilterSet(industry.Value.NullOrWhiteSpace() ? "" : industry.Value);
                                  await SetDataSource();
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
@@ -293,7 +293,7 @@ public partial class Industry : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoIndustry");
 
-            IndustryAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            IndustryAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -382,7 +382,7 @@ public partial class Industry : ComponentBase
 
                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                         {
-                                                                            await FilterSet(string.Empty);
+                                                                            await FilterSet("");
                                                                             DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                         }
 
@@ -395,7 +395,7 @@ public partial class Industry : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetIndustries"},
-                                                     {"filter", IndustryAuto ?? string.Empty}
+                                                     {"filter", IndustryAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
