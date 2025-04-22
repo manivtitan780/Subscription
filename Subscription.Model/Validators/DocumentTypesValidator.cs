@@ -59,7 +59,7 @@ public class DocumentTypesValidator : AbstractValidator<DocumentTypes>
     /// </remarks>
     private static bool CheckDocumentTypeExists(string docType, int id)
     {
-        /*RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        /*RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckText")
                                {
                                    RequestFormat = DataFormat.Json

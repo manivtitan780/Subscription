@@ -427,11 +427,11 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             }
 
             DataRow _row = _tableEducation.NewRow();
-            _row["Degree"] = _education["Course"]?.ToString() ?? string.Empty;
-            _row["College"] = _education["School"]?.ToString() ?? string.Empty;
-            _row["State"] = _education["State"]?.ToString() ?? string.Empty;
-            _row["Country"] = _education["Country"]?.ToString() ?? string.Empty;
-            _row["Year"] = _education["Period"]?.ToString() ?? string.Empty;
+            _row["Degree"] = _education["Course"]?.ToString() ?? "";
+            _row["College"] = _education["School"]?.ToString() ?? "";
+            _row["State"] = _education["State"]?.ToString() ?? "";
+            _row["Country"] = _education["Country"]?.ToString() ?? "";
+            _row["Year"] = _education["Period"]?.ToString() ?? "";
             _tableEducation.Rows.Add(_row);
         }
 
@@ -456,13 +456,13 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             }
 
             DataRow _row = _tableExperience.NewRow();
-            _row["Employer"] = _experience["Company"]?.ToString() ?? string.Empty;
+            _row["Employer"] = _experience["Company"]?.ToString() ?? "";
             //string[] _period = _experience?["Period"]?.ToString().Split('-');
-            _row["Start"] = _experience["Start"]?.ToString() ?? string.Empty;
-            _row["End"] = _experience["End"]?.ToString() ?? string.Empty;
-            _row["Location"] = _experience["Location"]?.ToString() ?? string.Empty;
-            _row["Title"] = _experience["Title"]?.ToString() ?? string.Empty;
-            _row["Description"] = _experience["Description"]?.ToString() ?? string.Empty;
+            _row["Start"] = _experience["Start"]?.ToString() ?? "";
+            _row["End"] = _experience["End"]?.ToString() ?? "";
+            _row["Location"] = _experience["Location"]?.ToString() ?? "";
+            _row["Title"] = _experience["Title"]?.ToString() ?? "";
+            _row["Description"] = _experience["Description"]?.ToString() ?? "";
             _tableExperience.Rows.Add(_row);
         }
 
@@ -720,7 +720,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             return BadRequest("No file has been uploaded.");
         }
 
-        string _fileContent = string.Empty;
+        string _fileContent = "";
         string _prompt = Start.Prompt;
         using (MemoryStream _stream = new())
         {
@@ -758,7 +758,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             new UserChatMessage(_detailedPrompt)
         ];
 
-        string _parsedJSON = string.Empty;
+        string _parsedJSON = "";
         string _tempJSONFileName = Path.Combine($"{Guid.NewGuid():N}.json");
         try
         {
@@ -770,13 +770,13 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             JsonNode _rootNode = JsonNode.Parse(_parsedJSON)!;
             if (_rootNode != null)
             {
-                string _firstName = _rootNode["FirstName"]?.ToString() ?? string.Empty;
-                string _lastName = _rootNode["LastName"]?.ToString() ?? string.Empty;
-                string _phone = _rootNode["PhoneNumbers"]?[0]?.ToString() ?? string.Empty;
-                string _email = _rootNode["EmailAddresses"]?[0]?.ToString() ?? string.Empty;
-                string _street = _rootNode["PostalAddress"]?["Street"]?.ToString() ?? string.Empty;
-                string _city = _rootNode["PostalAddress"]?["City"]?.ToString() ?? string.Empty;
-                string _stateName = _rootNode["PostalAddress"]?["State"]?.ToString() ?? string.Empty;
+                string _firstName = _rootNode["FirstName"]?.ToString() ?? "";
+                string _lastName = _rootNode["LastName"]?.ToString() ?? "";
+                string _phone = _rootNode["PhoneNumbers"]?[0]?.ToString() ?? "";
+                string _email = _rootNode["EmailAddresses"]?[0]?.ToString() ?? "";
+                string _street = _rootNode["PostalAddress"]?["Street"]?.ToString() ?? "";
+                string _city = _rootNode["PostalAddress"]?["City"]?.ToString() ?? "";
+                string _stateName = _rootNode["PostalAddress"]?["State"]?.ToString() ?? "";
                 int _stateID = 0;
                 if (_stateName.NotNullOrWhiteSpace())
                 {
@@ -792,9 +792,9 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
                     }
                 }
 
-                string _zip = _rootNode["PostalAddress"]?["Zip"]?.ToString() ?? string.Empty;
-                string _summary = _rootNode["CandidateSummary"]?.ToString() ?? string.Empty;
-                string _keywords = _rootNode["CandidateKeywords"]?.ToString() ?? string.Empty;
+                string _zip = _rootNode["PostalAddress"]?["Zip"]?.ToString() ?? "";
+                string _summary = _rootNode["CandidateSummary"]?.ToString() ?? "";
+                string _keywords = _rootNode["CandidateKeywords"]?.ToString() ?? "";
 
                 /*Education#1#
                 DataTable _tableEducation = Education(_rootNode["EducationInfo"] as JsonArray);
@@ -1448,7 +1448,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
             }
 
             DataRow _row = _tableSkills.NewRow();
-            _row["Skill"] = _skill["Skill"]?.ToString() ?? string.Empty;
+            _row["Skill"] = _skill["Skill"]?.ToString() ?? "";
             _row["LastUsed"] = _skill["PeriodOfUsage"]?.ToInt32() ?? 0;
             _row["Month"] = _skill["MonthsOfUsage"]?.ToInt32() ?? 0;
             _tableSkills.Rows.Add(_row);

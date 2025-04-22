@@ -68,7 +68,7 @@ public class AdminListValidator : AbstractValidator<AdminList>
     /// </remarks>
     private static bool CheckCodeExists(string code)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckTaxTermCode")
                                {
                                    RequestFormat = DataFormat.Json
@@ -96,7 +96,7 @@ public class AdminListValidator : AbstractValidator<AdminList>
     /// </remarks>
     private static bool CheckTextExists(string text, int id, string entity, string code)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckText")
                                {
                                    RequestFormat = DataFormat.Json

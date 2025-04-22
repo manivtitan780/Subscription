@@ -257,7 +257,7 @@ public partial class Education : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(education.Value.NullOrWhiteSpace() ? string.Empty : education.Value);
+                                 await FilterSet(education.Value.NullOrWhiteSpace() ? "" : education.Value);
                                  await SetDataSource();
                              });
     }
@@ -280,7 +280,7 @@ public partial class Education : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoEducation");
 
-            EducationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            EducationAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -369,7 +369,7 @@ public partial class Education : ComponentBase
 
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             await FilterSet(string.Empty);
+                                                                             await FilterSet("");
                                                                              DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                          }
 
@@ -384,7 +384,7 @@ public partial class Education : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetEducation"},
-                                                     {"filter", EducationAuto ?? string.Empty}
+                                                     {"filter", EducationAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);

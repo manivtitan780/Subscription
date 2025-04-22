@@ -915,7 +915,7 @@ public partial class Candidates
                                                                            if (_response != null)
                                                                            {
                                                                                _candMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
-                                                                               RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstMPC"]?.ToString() ?? string.Empty);
+                                                                               RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstMPC"]?.ToString() ?? "");
                                                                                GetMPCDate();
                                                                                GetMPCNote();
                                                                            }
@@ -955,7 +955,7 @@ public partial class Candidates
                                                                               if (_response != null)
                                                                               {
                                                                                   _candRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
-                                                                                  RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? string.Empty);
+                                                                                  RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? "");
                                                                                   _candDetailsObject.RateCandidate = RatingMPC.Rating.ToInt32();
                                                                                   GetRatingDate();
                                                                                   GetRatingNote();

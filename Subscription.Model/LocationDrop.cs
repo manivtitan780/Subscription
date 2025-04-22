@@ -64,11 +64,11 @@ public class LocationDrop
     public void Clear()
     {
         ID = 0;
-        Location = string.Empty;
-        StreetAddress = string.Empty;
-        City = string.Empty;
-        State = string.Empty;
-        Zip = string.Empty;
+        Location = "";
+        StreetAddress = "";
+        City = "";
+        State = "";
+        Zip = "";
         StateID = 0;
     }
 

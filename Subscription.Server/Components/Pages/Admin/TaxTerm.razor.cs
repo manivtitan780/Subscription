@@ -272,7 +272,7 @@ public partial class TaxTerm : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(taxTerm.Value.NullOrWhiteSpace() ? string.Empty : taxTerm.Value);
+                                 await FilterSet(taxTerm.Value.NullOrWhiteSpace() ? "" : taxTerm.Value);
                                  await SetDataSource();
                              });
     }
@@ -295,7 +295,7 @@ public partial class TaxTerm : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoTaxTerm");
 
-            TaxTermAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            TaxTermAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -385,7 +385,7 @@ public partial class TaxTerm : ComponentBase
                                                                        //await Grid.Refresh(true);
                                                                        if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                        {
-                                                                           await FilterSet(string.Empty);
+                                                                           await FilterSet("");
                                                                            DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                        }
 
@@ -398,7 +398,7 @@ public partial class TaxTerm : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetTaxTerms"},
-                                                     {"filter", TaxTermAuto ?? string.Empty}
+                                                     {"filter", TaxTermAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);

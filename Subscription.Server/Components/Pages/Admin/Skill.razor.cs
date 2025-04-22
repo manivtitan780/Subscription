@@ -269,7 +269,7 @@ public partial class Skill : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(skill.Value.NullOrWhiteSpace() ? string.Empty : skill.Value);
+                                 await FilterSet(skill.Value.NullOrWhiteSpace() ? "" : skill.Value);
                                  await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
@@ -293,7 +293,7 @@ public partial class Skill : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoSkill");
 
-            SkillAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            SkillAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -382,7 +382,7 @@ public partial class Skill : ComponentBase
 
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
-                                                                               await FilterSet(string.Empty);
+                                                                               await FilterSet("");
                                                                                DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                            }
 
@@ -395,7 +395,7 @@ public partial class Skill : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetSkills"},
-                                                     {"filter", SkillAuto ?? string.Empty}
+                                                     {"filter", SkillAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);

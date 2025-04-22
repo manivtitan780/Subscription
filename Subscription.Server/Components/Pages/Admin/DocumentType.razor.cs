@@ -276,7 +276,7 @@ public partial class DocumentType : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(documentType.Value.NullOrWhiteSpace() ? string.Empty : documentType.Value);
+                                 await FilterSet(documentType.Value.NullOrWhiteSpace() ? "" : documentType.Value);
                                  await SetDataSource();
                              });
     }
@@ -299,7 +299,7 @@ public partial class DocumentType : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoDocumentType");
 
-            DocumentTypeAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            DocumentTypeAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -398,7 +398,7 @@ public partial class DocumentType : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetDocumentTypes"},
-                                                     {"filter", DocumentTypeAuto ?? string.Empty}
+                                                     {"filter", DocumentTypeAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);

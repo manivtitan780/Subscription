@@ -265,7 +265,7 @@ public partial class JobOption : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(JobOption.Value.NullOrWhiteSpace() ? string.Empty : JobOption.Value);
+                                 await FilterSet(JobOption.Value.NullOrWhiteSpace() ? "" : JobOption.Value);
                                  await SetDataSource();
                                  //await Grid.Refresh(true);
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
@@ -290,7 +290,7 @@ public partial class JobOption : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoJobOption");
 
-            JobOptionAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            JobOptionAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -390,7 +390,7 @@ public partial class JobOption : ComponentBase
                                                                          //await Grid.Refresh(true);
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             await FilterSet(string.Empty);
+                                                                             await FilterSet("");
                                                                              DataSource = General.DeserializeObject<List<JobOptions>>(_response);
                                                                          }
 
@@ -403,7 +403,7 @@ public partial class JobOption : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetJobOptions"},
-                                                     {"filter", JobOptionAuto ?? string.Empty}
+                                                     {"filter", JobOptionAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);

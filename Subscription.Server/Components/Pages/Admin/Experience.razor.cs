@@ -269,7 +269,7 @@ public partial class Experience : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(experience.Value.NullOrWhiteSpace() ? string.Empty : experience.Value);
+                                 await FilterSet(experience.Value.NullOrWhiteSpace() ? "" : experience.Value);
                                  await SetDataSource();
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
@@ -293,7 +293,7 @@ public partial class Experience : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoExperience");
 
-            ExperienceAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            ExperienceAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -382,7 +382,7 @@ public partial class Experience : ComponentBase
 
                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                           {
-                                                                              await FilterSet(string.Empty);
+                                                                              await FilterSet("");
                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                           }
 
@@ -397,7 +397,7 @@ public partial class Experience : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetExperience"},
-                                                     {"filter", ExperienceAuto ?? string.Empty}
+                                                     {"filter", ExperienceAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);

@@ -269,7 +269,7 @@ public partial class Eligibility : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(eligibility.Value.NullOrWhiteSpace() ? string.Empty : eligibility.Value);
+                                 await FilterSet(eligibility.Value.NullOrWhiteSpace() ? "" : eligibility.Value);
                                  await SetDataSource();
                              });
     }
@@ -292,7 +292,7 @@ public partial class Eligibility : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoEligibility");
 
-            EligibilityAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            EligibilityAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -382,7 +382,7 @@ public partial class Eligibility : ComponentBase
                                                                            //await Grid.Refresh(true);
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
-                                                                               await FilterSet(string.Empty);
+                                                                               await FilterSet("");
                                                                                DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                            }
 
@@ -395,7 +395,7 @@ public partial class Eligibility : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetEligibility"},
-                                                     {"filter", EligibilityAuto ?? string.Empty}
+                                                     {"filter", EligibilityAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);

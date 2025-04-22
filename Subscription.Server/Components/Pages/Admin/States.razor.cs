@@ -269,7 +269,7 @@ public partial class States : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(state.Value.NullOrWhiteSpace() ? string.Empty : state.Value);
+                                 await FilterSet(state.Value.NullOrWhiteSpace() ? "" : state.Value);
                                  await SetDataSource();
                              });
     }
@@ -292,7 +292,7 @@ public partial class States : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoState");
 
-            StateAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            StateAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -378,7 +378,7 @@ public partial class States : ComponentBase
                                                                      //await Grid.Refresh(true);
                                                                      if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                      {
-                                                                         await FilterSet(string.Empty);
+                                                                         await FilterSet("");
                                                                          DataSource = General.DeserializeObject<List<State>>(_response);
                                                                      }
 
@@ -391,7 +391,7 @@ public partial class States : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetStates"},
-                                                     {"filter", StateAuto ?? string.Empty}
+                                                     {"filter", StateAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<State>>(_returnValue);

@@ -121,7 +121,7 @@ public partial class UserValidator : AbstractValidator<User>
     /// </remarks>
     private static bool CheckUserNameExists(string userName)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckText")
                                {
                                    RequestFormat = DataFormat.Json

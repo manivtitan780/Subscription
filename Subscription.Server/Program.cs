@@ -59,14 +59,14 @@ _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options
                                                  string _endpoint = _config["AzureOpenAI:Endpoint"];
                                                  OpenAIClientOptions _options = new()
                                                                                 {
-                                                                                    Endpoint = new Uri(_endpoint ?? string.Empty)
+                                                                                    Endpoint = new Uri(_endpoint ?? "")
                                                                                 };
-                                                 return new(new(_apiKey ?? string.Empty), _options);
+                                                 return new(new(_apiKey ?? ""), _options);
                                              });*/
 _builder.Services.AddSingleton<RedisService>(sp =>
                                             {
                                                 string host = _config["Garnet:HostName"];
-                                                int port = (_config["Garnet:SslPort"] ?? string.Empty).ToInt32();
+                                                int port = (_config["Garnet:SslPort"] ?? "").ToInt32();
                                                 string access = _config["GarnetServer:Access"];
 
                                                 return new(host, port, access, false);

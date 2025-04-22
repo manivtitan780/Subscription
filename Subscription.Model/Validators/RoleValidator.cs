@@ -63,7 +63,7 @@ public class RoleValidator : AbstractValidator<Role>
     /// <returns>Returns true if the role does not exist, false otherwise.</returns>
     private static bool CheckRoleExists(string roleID, string role)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckRole")
                                {
                                    RequestFormat = DataFormat.Json
@@ -82,7 +82,7 @@ public class RoleValidator : AbstractValidator<Role>
     /// <returns>Returns true if the Role ID does not exist, false otherwise.</returns>
     private static bool CheckRoleIDExists(string roleID)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckRoleID")
                                {
                                    RequestFormat = DataFormat.Json

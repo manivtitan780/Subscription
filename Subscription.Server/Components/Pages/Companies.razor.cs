@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     02-11-2025 20:02
+// Last Updated On:     04-22-2025 20:08
 // *****************************************/
 
 #endregion
@@ -30,233 +30,96 @@ public partial class Companies
 
     private Company _target;
 
-    /// <summary>
-    ///     Gets or sets the instance of the Address component. This component is used to display the address of the selected.
-    /// </summary>
-    private MarkupString Address
-    {
-        get;
-        set;
-    }
+    private MarkupString Address { get; set; }
 
-    private EditContact CompanyContactDialog
-    {
-        get;
-        set;
-    }
+    private EditContact CompanyContactDialog { get; set; }
 
-    /// <summary>
-    ///     Sets or gets the instance of the EditCompany component. This component is used to edit company details.
-    /// </summary>
-    private EditCompany CompanyEditDialog
-    {
-        get;
-        set;
-    }
+    private EditCompany CompanyEditDialog { get; set; }
 
-    private EditLocation CompanyLocationDialog
-    {
-        get;
-        set;
-    }
+    private EditLocation CompanyLocationDialog { get; set; }
 
     [Inject]
-    private IConfiguration Configuration
-    {
-        get;
-        set;
-    }
+    private IConfiguration Configuration { get; set; }
 
- public EditContext EditConCompany
-    {
-        get;
-        set;
-    }
+    private int Count { get; set; }
 
-    public EditContext EditConContact
-    {
-        get;
-        set;
-    }
+    private List<Company> DataSource { get; set; }
 
-    public EditContext EditConLocation
-    {
-        get;
-        set;
-    }
+    public EditContext EditConCompany { get; set; }
 
-    private SfGrid<Company> Grid
-    {
-        get;
-        set;
-    }
+    public EditContext EditConContact { get; set; }
 
-    private bool HasRendered
-    {
-        get;
-        set;
-    }
+    public EditContext EditConLocation { get; set; }
 
-    private bool HasViewRights
-    {
-        get;
-        set;
-    }
+    private SfGrid<Company> Grid { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the IJSRuntime interface. This interface provides methods for interacting with
-    ///     JavaScript from .NET code.
-    /// </summary>
-    /// <remarks>
-    ///     The IJSRuntime instance is used to invoke JavaScript functions from .NET code. In the Companies class, it is used
-    ///     to open a new browser tab for document download in the `Companies.DownloadDocument()` method.
-    /// </remarks>
-    [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private bool HasEditRights { get; set; }
+
+    private bool HasRendered { get; set; }
+
+    private bool HasViewRights { get; set; }
 
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
-    private List<IntValues> NAICS
-    {
-        get;
-        set;
-    } = [];
-
-    /// <summary>
-    ///     Gets or sets the instance of the NavigationManager service used in the Companies page.
-    ///     This service provides methods and properties to manage and interact with the URI of the application.
-    ///     It is used for tasks such as navigating to different pages and constructing URIs for use within the application.
-    ///     For example, it is used in the `DownloadDocument` method to construct a URI for downloading a document.
-    /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
-    private ContactPanel PanelContacts
-    {
-        get;
-        set;
-    }
+    private List<IntValues> NAICS { get; set; } = [];
 
-    private LocationPanel PanelLocations
-    {
-        get;
-        set;
-    }
-
-    private List<IntValues> Roles
-    {
-        get;
-        set;
-    } = [];
-
-    /// <summary>
-    ///     Gets or sets the SearchModel property of the Companies class. This property is of type CompaniesSearch and is used
-    ///     to manage
-    ///     search criteria for companies.
-    /// </summary>
-    private CompanySearch SearchModel
-    {
-        get;
-        set;
-    } = new();
-
-    private CompanyContacts SelectedContact
-    {
-        get;
-        set;
-    } = new();
-
-    private CompanyLocations SelectedLocation
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets an instance of the ILocalStorageService.
-    ///     This service is used for managing local storage in the application.
-    ///     It is used to store and retrieve the state of the Companies grid, including search parameters and pagination.
-    /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the SfSpinner component.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to manage the spinner in the Companies page.
-    ///     The spinner is shown by calling the `ShowAsync` method and hidden by calling the `HideAsync` method of this
-    ///     property.
-    ///     For example, it is used in the `Companies.DetailDataBind()` and `Companies.EditCompany()` methods to indicate a
-    ///     loading state
-    ///     while performing asynchronous operations.
-    /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    } = new();
+    private ContactPanel PanelContacts { get; set; }
 
-    private List<IntValues> State
-    {
-        get;
-        set;
-    } = [];
+    private LocationPanel PanelLocations { get; set; }
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private int RoleID { get; } = 5;
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
+
+    private List<IntValues> Roles { get; set; } = [];
+
+    private CompanySearch SearchModel { get; set; } = new();
+
+    private CompanyContacts SelectedContact { get; set; } = new();
+
+    private CompanyLocations SelectedLocation { get; set; } = new();
+
+    [Inject]
+    private ISessionStorageService SessionStorage { get; set; }
+
+    private SfSpinner Spinner { get; set; } = new();
+
+    private List<IntValues> State { get; set; } = [];
+
+    private string Title { get; set; } = "Edit";
+
+    private string User { get; set; }
+
+    private bool VisibleSpinner { get; set; }
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                     {
                                                                         SearchModel.CompanyName = "";
                                                                         SearchModel.Page = 1;
-                                                                        await SaveStorage();
+                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
                                                                                                      {
                                                                                                          SearchModel.CompanyName = filter.Value;
                                                                                                          SearchModel.Page = 1;
-                                                                                                         await SaveStorage();
+                                                                                                         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                                      });
 
     private Task ClearFilter() => ExecuteMethod(async () =>
                                                 {
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
-                                                    await SaveStorage();
+                                                    await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                 });
 
-    /// <summary>
-    ///     Handles the OnInitializedAsync lifecycle event of the Companies page.
-    /// </summary>
-    /// <returns></returns>
     private Task DataHandler() => ExecuteMethod(async () =>
                                                 {
                                                     DotNetObjectReference<Companies> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
@@ -268,95 +131,83 @@ public partial class Companies
                                                     }
                                                 });
 
-    /// <summary>
-    ///     Fires when the detail row is expanded in the Companies page grid view. This method is invoked from JavaScript.
-    /// </summary>
-    /// <param name="company"></param>
-    /// <returns></returns>
-    private Task DetailDataBind(DetailDataBoundEventArgs<Company> company)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 if (_target != null && _target != company.Data)
-                                 {
-                                     // return when target is equal to args.data
-                                     await Grid.ExpandCollapseDetailRowAsync(_target);
-                                 }
+    private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
+                                                                                            {
+                                                                                                if (_target != null && _target != company.Data)
+                                                                                                {
+                                                                                                    // return when target is equal to args.data
+                                                                                                    await Grid.ExpandCollapseDetailRowAsync(_target);
+                                                                                                }
 
-                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
-                                 if (_index != Grid.SelectedRowIndex)
-                                 {
-                                     await Grid.SelectRowAsync(_index);
-                                 }
+                                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
+                                                                                                if (_index != Grid.SelectedRowIndex)
+                                                                                                {
+                                                                                                    await Grid.SelectRowAsync(_index);
+                                                                                                }
 
-                                 _target = company.Data;
+                                                                                                _target = company.Data;
 
-                                 VisibleSpinner = true;
+                                                                                                VisibleSpinner = true;
 
-                                 Dictionary<string, string> _parameters = new()
-                                                                          {
-                                                                              {"companyID", _target.ID.ToString()},
-                                                                              {"user", User}
-                                                                          };
-                                 ReturnCompanyDetails _restResponse = await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
-                                                                                                                      false);
+                                                                                                Dictionary<string, string> _parameters = new()
+                                                                                                                                         {
+                                                                                                                                             {"companyID", _target.ID.ToString()},
+                                                                                                                                             {"user", User}
+                                                                                                                                         };
+                                                                                                (string _company, string _contacts, string _locations, string _documents) =
+                                                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
+                                                                                                                                                    false);
 
-                                 EditConCompany = new(_companyDetails);
-                                 try
-                                 {
-                                     _companyDetails = General.DeserializeObject<CompanyDetails>(_restResponse.Company);
-                                     _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_restResponse.Contacts) ?? [];
-                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_restResponse.Documents) ?? [];
-                                     _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_restResponse.Locations) ?? [];
-                                     SetupAddress();
-                                 }
-                                 catch (Exception ex)
-                                 {
-                                     Console.WriteLine(ex.Message);
-                                 }
+                                                                                                EditConCompany = new(_companyDetails);
+                                                                                                try
+                                                                                                {
+                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
+                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
+                                                                                                    _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
+                                                                                                    _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
+                                                                                                    SetupAddress();
+                                                                                                }
+                                                                                                catch (Exception ex)
+                                                                                                {
+                                                                                                    Console.WriteLine(ex.Message);
+                                                                                                }
 
-                                 _selectedTab = 0;
+                                                                                                _selectedTab = 0;
 
-                                 VisibleSpinner = false;
-                             });
-    }
+                                                                                                VisibleSpinner = false;
+                                                                                            });
 
-    /// <summary>
-    ///     Collapses the detail row in the Companies page grid view. This method is invoked from JavaScript.
-    /// </summary>
     [JSInvokable("DetailCollapse")]
     public void DetailRowCollapse() => _target = null;
 
-    /// <summary>
-    ///     Opens the company edit dialog for adding a new company or editing an existing one.
-    /// </summary>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     private Task EditCompany(bool isAdd = false) => ExecuteMethod(async () =>
-                                                {
-                                                    VisibleSpinner = true;
+                                                                  {
+                                                                      VisibleSpinner = true;
 
-                                                    if (isAdd)
-                                                    {
-                                                        if (_companyDetailsClone == null)
-                                                        {
-                                                            _companyDetailsClone = new();
-                                                        }
-                                                        else
-                                                        {
-                                                            _companyDetailsClone.Clear();
-                                                        }
+                                                                      if (isAdd)
+                                                                      {
+                                                                          Title = "Add";
+                                                                          if (_companyDetailsClone == null)
+                                                                          {
+                                                                              _companyDetailsClone = new();
+                                                                          }
+                                                                          else
+                                                                          {
+                                                                              _companyDetailsClone.Clear();
+                                                                          }
 
-                                                        _companyDetailsClone.IsAdd = true;
-                                                    }
-                                                    else
-                                                    {
-                                                        _companyDetailsClone = _companyDetails.Copy();
-                                                        _companyDetailsClone.IsAdd = false;
-                                                    }
+                                                                          _companyDetailsClone.IsAdd = true;
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          Title = "Edit";
+                                                                          _companyDetailsClone = _companyDetails.Copy();
+                                                                          _companyDetailsClone.IsAdd = false;
+                                                                      }
 
-                                                    VisibleSpinner = false;
-                                                    await CompanyEditDialog.ShowDialog();
-                                                });
+                                                                      VisibleSpinner = false;
+                                                                      await CompanyEditDialog.ShowDialog();
+                                                                  });
 
     private Task EditCompanyContact(int contact)
     {
@@ -416,22 +267,13 @@ public partial class Companies
                              });
     }
 
-    /// <summary>
-    ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
-    ///     immediately.
-    ///     If an exception occurs during the execution of the task, it will be logged using the provided logger.
-    /// </summary>
-    /// <param name="task">The task to be executed.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    /// </returns>
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
     private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
                                                                           {
                                                                               SearchModel.CompanyName = alphabet.ToString();
                                                                               SearchModel.Page = 1;
-                                                                              await SaveStorage();
+                                                                              await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                           });
 
     private async Task GridPageChanging(GridPageChangingEventArgs page) => await ExecuteMethod(async () =>
@@ -462,28 +304,16 @@ public partial class Companies
             else
             {
                 SearchModel.Clear();
-                SearchModel.User = User;
             }
 
-            _query ??= new();
-            _query = _query.AddParams("SearchModel", SearchModel);
-            HasRendered = true;
-            try
-            {
-                _initializationTaskSource.SetResult(true);
-            }
-            catch
-            {
-                //
-            }
+            await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
         }
-
         await base.OnAfterRenderAsync(firstRender);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        _initializationTaskSource = new();
+        // _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -520,7 +350,7 @@ public partial class Companies
                                     Roles = General.DeserializeObject<List<IntValues>>(_values["Roles"]);
                                 }
                             });
-        
+
         await base.OnInitializedAsync();
     }
 
@@ -854,30 +684,10 @@ public partial class Companies
 
     private void TabSelected(SelectEventArgs args) => _selectedTab = args.SelectedIndex;
 
-    /// <summary>
-    ///     The CompanyAdaptor class is a custom data adaptor for the Companies page grid view.
-    ///     It extends the DataAdaptor class and overrides the ReadAsync method to provide a custom data retrieval mechanism.
-    ///     The ReadAsync method retrieves company data for the grid view. If the CompaniesList is not null and contains data,
-    ///     the method does not retrieve new data. Otherwise, it calls the GetCompanyReadAdaptor method to retrieve company
-    ///     data.
-    ///     If there are any companies in the retrieved data, the first row in the grid view is selected.
-    /// </summary>
     public class CompanyAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
-        /// <summary>
-        ///     Asynchronously reads company data for the grid view on the Companies page.
-        ///     This method checks if the CompaniesList is not null and contains data, in which case it does not retrieve new data.
-        ///     If the CompaniesList is null or empty, it calls the GetCompanyReadAdaptor method to retrieve company data.
-        ///     If there are any companies in the retrieved data, it selects the first row in the grid view.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-        /// <param name="key">An optional key to identify a specific data item. Default is null.</param>
-        /// <returns>
-        ///     A Task that represents the asynchronous read operation. The value of the TResult parameter contains the
-        ///     retrieved data.
-        /// </returns>
         public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
         {
             if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
@@ -906,7 +716,7 @@ public partial class Companies
                     {
                         _companyReturn = dm.RequiresCounts ? new DataResult
                                                              {
-                                                                 Result = null, 
+                                                                 Result = null,
                                                                  Count = 1
                                                              } : null;
                     }

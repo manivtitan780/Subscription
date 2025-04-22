@@ -45,16 +45,16 @@ public static class General
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
     /// <returns>The deserialized object of type T.</returns>
-    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? string.Empty);
+    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? "");
 
     
     internal static byte[] GenerateRandomString(int length = 8)
     {
-        //string _randomString = Path.GetRandomFileName().Replace(".", string.Empty)[..length];
+        //string _randomString = Path.GetRandomFileName().Replace(".", "")[..length];
         StringBuilder _result = new(length);
         while (_result.Length < length)
         {
-            string _randomString = Path.GetRandomFileName().Replace(".", string.Empty);
+            string _randomString = Path.GetRandomFileName().Replace(".", "");
             _result.Append(_randomString);
         }
         return Encoding.UTF8.GetBytes(_result.ToString());

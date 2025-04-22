@@ -71,7 +71,7 @@ public class JobOptionsValidator : AbstractValidator<JobOptions>
     /// </remarks>
     private static bool CheckJobCodeExists(string jobCode)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckJobCode")
                                {
                                    RequestFormat = DataFormat.Json
@@ -90,7 +90,7 @@ public class JobOptionsValidator : AbstractValidator<JobOptions>
     /// <returns>Returns false if the job option already exists, otherwise true.</returns>
     private static bool CheckJobOptionExists(string code, string jobOption)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckJobOption")
                                {
                                    RequestFormat = DataFormat.Json

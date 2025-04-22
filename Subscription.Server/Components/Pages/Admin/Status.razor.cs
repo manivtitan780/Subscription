@@ -269,7 +269,7 @@ public partial class Status : ComponentBase
     {
         return ExecuteMethod(async () =>
                              {
-                                 await FilterSet(status.Value.NullOrWhiteSpace() ? string.Empty : status.Value);
+                                 await FilterSet(status.Value.NullOrWhiteSpace() ? "" : status.Value);
                                  await SetDataSource();
                                  //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
@@ -293,7 +293,7 @@ public partial class Status : ComponentBase
         {
             string _result = await LocalStorage.GetItemAsStringAsync("autoStatus");
 
-            StatusAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : string.Empty;
+            StatusAuto = _result.NotNullOrWhiteSpace() && _result != "null" ? _result : "";
 
             try
             {
@@ -382,7 +382,7 @@ public partial class Status : ComponentBase
 
                                                                       if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                       {
-                                                                          await FilterSet(string.Empty);
+                                                                          await FilterSet("");
                                                                           DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                       }
                                                                       // await Grid.Refresh(true);
@@ -396,7 +396,7 @@ public partial class Status : ComponentBase
         Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"methodName", "Admin_GetLeadStatuses"},
-                                                     {"filter", StatusAuto ?? string.Empty}
+                                                     {"filter", StatusAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);

@@ -184,7 +184,7 @@ public static partial class Extensions
         }
         catch
         {
-            return string.Empty;
+            return "";
         }
     }
 
@@ -383,7 +383,7 @@ public static partial class Extensions
     /// <returns>
     ///     A string containing only the numeric characters from the input string.
     /// </returns>
-    public static string StripPhoneNumber(this string s) => MyRegex().Replace(s, string.Empty);
+    public static string StripPhoneNumber(this string s) => MyRegex().Replace(s, "");
 
     /// <summary>
     ///     Converts a regular string to a Base64 encoded string.

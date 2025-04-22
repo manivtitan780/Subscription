@@ -68,7 +68,7 @@ public class StateValidator : AbstractValidator<State>
     /// </remarks>
     private static bool CheckStateCodeExists(string stateCode)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckStateCode")
                                {
                                    RequestFormat = DataFormat.Json
@@ -94,7 +94,7 @@ public class StateValidator : AbstractValidator<State>
     /// </remarks>
     private static bool CheckStateExists(string stateCode, string state)
     {
-        RestClient _restClient = new(GeneralClass.ApiHost ?? string.Empty);
+        RestClient _restClient = new(GeneralClass.ApiHost ?? "");
         RestRequest _request = new("Admin/CheckState")
                                {
                                    RequestFormat = DataFormat.Json
