@@ -19,6 +19,11 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CompanySearch
 {
+    public CompanySearch()
+    {
+        Clear();
+    }
+
     public string CompanyName
     {
         get;
