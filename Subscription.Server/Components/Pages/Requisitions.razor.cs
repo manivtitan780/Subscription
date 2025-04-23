@@ -85,7 +85,7 @@ public partial class Requisitions
 
     private List<KeyValues> NextSteps { get; } = [];
 
-    private int Page { get; set; } = 1;
+    // private int Page { get; set; } = 1;
 
     private int RequisitionID { get; set; }
 
@@ -390,7 +390,7 @@ public partial class Requisitions
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
                                                                                    {
-                                                                                       Page = page.CurrentPage;
+                                                                                       //Page = page.CurrentPage;
                                                                                        SearchModel.Page = page.CurrentPage;
 
                                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
@@ -422,6 +422,8 @@ public partial class Requisitions
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    private RedisService RedisService { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         // _initializationTaskSource = new();
@@ -446,7 +448,7 @@ public partial class Requisitions
 
                                     // Set user permissions
                                     HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewRequisitions");
-                                    HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditRequisitions");
+                                    HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditCompany");
                                 }
 
                                 if (Start.APIHost.NullOrWhiteSpace())
@@ -465,9 +467,9 @@ public partial class Requisitions
                                     nameof(CacheObjects.CompanyContacts)
                                 ];
 
-                                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                                //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
 
-                                Dictionary<string, string> _cacheValues = await _service.BatchGet(_keys);
+                                Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
 
                                 //_roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
 
@@ -556,7 +558,7 @@ public partial class Requisitions
 
     private async Task PageChanging(PageChangedEventArgs page)
     {
-        Page = page.CurrentPage;
+        //Page = page.CurrentPage;
         SearchModel.Page = page.CurrentPage;
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
@@ -565,16 +567,13 @@ public partial class Requisitions
     {
         SearchModel.ItemCount = page.CurrentPageSize;
         SearchModel.Page = 1;
-        await Grid.GoToPageAsync(1);
+        //await Grid.GoToPageAsync(1);
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 
     private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
 
-    private void RowSelected(RowSelectingEventArgs<Requisition> arg)
-    {
-        _target = arg.Data;
-    }
+    private void RowSelected(RowSelectingEventArgs<Requisition> arg) => _target = arg.Data;
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
                                                                      {
@@ -684,11 +683,11 @@ public partial class Requisitions
                                                      {"user", User}
                                                  };
         //(int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
-        (int _count, string _requisitions, string _, string _, string _status, int _) =
+        (Count, string _requisitions, string _, string _, string _status, int _) =
             await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
-        DataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
+        DataSource = Count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
 
-        Count = _count;
+        //Count = _count;
         if (_status.NotNullOrWhiteSpace() && _status != "[]")
         {
             await SessionStorage.SetItemAsync("StatusList", _status.CompressGZip()).ConfigureAwait(false);

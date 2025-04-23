@@ -4,27 +4,15 @@
 <PageHeader/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies" 
-				Name="@(SearchModel.CompanyName)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count" 
-				ValueChange="AutocompleteValueChange">
-		<GridContent>
-			<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
+<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies" 
+			Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count" 
+			ValueChange="AutocompleteValueChange">
+	<GridContent>
+		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
 			        @ref="Grid" TValue="Company" Width="100%">
-				@* <GridPageSettings CurrentPage="SearchModel.Page" PageCount="7" PageSize="25" PageSizes="@(new[] {"10", "25", "50", "75", "100"})"/> *@
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" TValue="Company"/>
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" RowSelecting="RowSelected" TValue="Company"/>
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
-				@*@{
-					if (true)
-					{
-						<SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(CompanyAdaptor)" Key="ID"/>
-					}
-				}*@
 				<GridColumns>
-					@*<GridSortSettings AllowUnsort="false">
-						$1$ <GridSortColumns>
-                    <GridSortColumn Direction="@SortDirectionProperty" Field="@SortField"></GridSortColumn>
-                    </GridSortColumns> #1#
-					</GridSortSettings>*@
 					<GridColumn Field="@nameof(Company.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.CompanyName)" HeaderText="Name" Width="17%">
 						<Template Context="aCon">

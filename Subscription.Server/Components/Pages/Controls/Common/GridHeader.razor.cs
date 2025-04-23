@@ -83,8 +83,8 @@ public partial class GridHeader
     [Parameter]
     public EventCallback<MouseEventArgs> RefreshGrid { get; set; }
 
-    [Parameter]
-    public CompanySearch SearchModel { get; set; } = new();
+    //[Parameter]
+    //public CompanySearch SearchModel { get; set; } = new();
 
     [Parameter]
     public bool ShowAdd { get; set; } = true;

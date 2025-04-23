@@ -18,7 +18,7 @@ namespace Subscription.Server.Components.Pages;
 public partial class Companies
 {
     private const string StorageName = "CompaniesGrid";
-    private static TaskCompletionSource<bool> _initializationTaskSource;
+    // private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CompanyContacts> _companyContacts = [];
 
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
@@ -32,6 +32,7 @@ public partial class Companies
 
     private MarkupString Address { get; set; }
 
+    // private int _pageSize = 25;
     private EditContact CompanyContactDialog { get; set; }
 
     private EditCompany CompanyEditDialog { get; set; }
@@ -306,10 +307,14 @@ public partial class Companies
                 SearchModel.Clear();
             }
 
+            //_pageSize = SearchModel.ItemCount;
             await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
         }
         await base.OnAfterRenderAsync(firstRender);
     }
+
+    [Inject]
+    private RedisService RedisService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -326,12 +331,14 @@ public partial class Companies
                                 {
                                     IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
                                     User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     if (User.NullOrWhiteSpace())
                                     {
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
                                     }
 
                                     HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCompanies");
+                                    HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditRequisitions");
                                 }
 
                                 if (Start.APIHost.NullOrWhiteSpace())
@@ -341,13 +348,13 @@ public partial class Companies
 
                                 if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
                                 {
-                                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                                    //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
                                     List<string> _keys = [nameof(CacheObjects.NAICS), nameof(CacheObjects.States), nameof(CacheObjects.Roles)];
 
-                                    Dictionary<string, string> _values = await _service.BatchGet(_keys);
-                                    NAICS = General.DeserializeObject<List<IntValues>>(_values["NAICS"]);
-                                    State = General.DeserializeObject<List<IntValues>>(_values["States"]);
-                                    Roles = General.DeserializeObject<List<IntValues>>(_values["Roles"]);
+                                    Dictionary<string, string> _values = await RedisService.BatchGet(_keys);
+                                    NAICS = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.NAICS)]);
+                                    State = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.States)]);
+                                    Roles = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.Roles)]);
                                 }
                             });
 
@@ -438,8 +445,22 @@ public partial class Companies
         await SessionStorage.SetItemAsync(StorageName, SearchModel);
         if (refreshGrid)
         {
-            await Grid.Refresh(true);
+            await SetDataSource().ConfigureAwait(false);
         }
+    }
+
+    private async Task SetDataSource()
+    {
+        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
+        DataSource = Count > 0 ? General.DeserializeObject<List<Company>>(_data) : [];
+        await Grid.Refresh().ConfigureAwait(false);
+
+        //Count = _count;
+        // await Task.Run(async () =>
+        //                {
+        //                    (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
+        //                    DataSource = JsonConvert.DeserializeObject<List<Company>>(_data);
+        //                });
     }
 
     private void SetupAddress(bool useLocation = false)
@@ -681,10 +702,30 @@ public partial class Companies
 
         return Task.CompletedTask;
     }
+    
+    private async Task PageChanged(PageChangedEventArgs page)
+    {
+        //Page = page.CurrentPage;
+        SearchModel.Page = page.CurrentPage;
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+
+    private async Task PageSizeChanged(PageSizeChangedArgs page)
+    {
+        SearchModel.ItemCount = page.CurrentPageSize;
+        //_pageSize = page.CurrentPageSize;
+        SearchModel.Page = 1;
+        //await Grid.GoToPageAsync(1);
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+    
+    private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
+    
+    private void RowSelected(RowSelectingEventArgs<Company> arg) => _target = arg.Data;
 
     private void TabSelected(SelectEventArgs args) => _selectedTab = args.SelectedIndex;
 
-    public class CompanyAdaptor : DataAdaptor
+    /*public class CompanyAdaptor : DataAdaptor
     {
         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
@@ -725,7 +766,7 @@ public partial class Companies
                         _companyReturn = dm.RequiresCounts ? new DataResult
                                                              {
                                                                  Result = _dataSource,
-                                                                 Count = _count /*_count*/
+                                                                 Count = _count /*_count#1#
                                                              } : _dataSource;
                     }
                 }
@@ -767,5 +808,5 @@ public partial class Companies
                 _semaphoreSlim.Release();
             }
         }
-    }
+    }*/
 }
