@@ -243,8 +243,15 @@ public static partial class Extensions
 	///     The long integer (Int64) representation of the object or nullValue if the object is null or cannot be
 	///     converted.
 	/// </returns>
-	public static long ToInt64(this object o, int nullValue = 0) => long.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
-																				  out long _out) ? _out : nullValue;
+	public static long ToInt64(this object? o, int nullValue = 0)
+	{
+		if (o is null)
+		{
+			return nullValue;
+		}
+		return long.TryParse(o.ToString(), NumberStyles.Number, CultureInfo.CurrentCulture.NumberFormat,
+							 out long _out) ? _out : nullValue;
+	}
 
 	/// <summary>
 	///     Converts the given string to a MarkupString.
