@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-22-2025 20:08
+// Last Updated On:     04-24-2025 15:45
 // *****************************************/
 
 #endregion
@@ -18,12 +18,34 @@ namespace Subscription.Server.Components.Pages;
 public partial class Companies
 {
     private const string StorageName = "CompaniesGrid";
+
     // private static TaskCompletionSource<bool> _initializationTaskSource;
     private List<CompanyContacts> _companyContacts = [];
 
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
+
+    /*
+    private async Task GridPageChanging(GridPageChangingEventArgs page) => await ExecuteMethod(async () =>
+                                                                                               {
+                                                                                                   if (page.CurrentPageSize != SearchModel.ItemCount)
+                                                                                                   {
+                                                                                                       SearchModel.ItemCount = page.CurrentPageSize;
+                                                                                                       SearchModel.Page = 1;
+                                                                                                       await Grid.GoToPageAsync(1);
+                                                                                                   }
+                                                                                                   else
+                                                                                                   {
+                                                                                                       SearchModel.Page = page.CurrentPage;
+                                                                                                       //await Grid.Refresh();
+                                                                                                   }
+
+                                                                                                   await SaveStorage(false);
+                                                                                               });
+                                                                                               */
+
+    private bool _isLoading = true;
     private Query _query = new();
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -74,6 +96,9 @@ public partial class Companies
     private ContactPanel PanelContacts { get; set; }
 
     private LocationPanel PanelLocations { get; set; }
+
+    [Inject]
+    private RedisService RedisService { get; set; }
 
     private int RoleID { get; } = 5;
 
@@ -133,53 +158,49 @@ public partial class Companies
                                                 });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
-                                                                                            {
-                                                                                                if (_target != null && _target != company.Data)
-                                                                                                {
-                                                                                                    // return when target is equal to args.data
-                                                                                                    await Grid.ExpandCollapseDetailRowAsync(_target);
-                                                                                                }
+                                                              {
+                                                                  int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
+                                                                  if (_index != Grid.SelectedRowIndex)
+                                                                  {
+                                                                      await Grid.SelectRowAsync(_index);
+                                                                  }
 
-                                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
-                                                                                                if (_index != Grid.SelectedRowIndex)
-                                                                                                {
-                                                                                                    await Grid.SelectRowAsync(_index);
-                                                                                                }
+                                                                  await Grid.CollapseAllDetailRowAsync();
+                                                                  await Grid.ExpandCollapseDetailRowAsync(company.Data);
+                                                                  _target = company.Data;
 
-                                                                                                _target = company.Data;
+                                                                  VisibleSpinner = true;
 
-                                                                                                VisibleSpinner = true;
+                                                                  Dictionary<string, string> _parameters = new()
+                                                                                                           {
+                                                                                                               {"companyID", _target.ID.ToString()},
+                                                                                                               {"user", User}
+                                                                                                           };
+                                                                  (string _company, string _contacts, string _locations, string _documents) =
+                                                                      await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
+                                                                                                                      false);
 
-                                                                                                Dictionary<string, string> _parameters = new()
-                                                                                                                                         {
-                                                                                                                                             {"companyID", _target.ID.ToString()},
-                                                                                                                                             {"user", User}
-                                                                                                                                         };
-                                                                                                (string _company, string _contacts, string _locations, string _documents) =
-                                                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
-                                                                                                                                                    false);
+                                                                  EditConCompany = new(_companyDetails);
+                                                                  try
+                                                                  {
+                                                                      _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
+                                                                      _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
+                                                                      _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
+                                                                      _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
+                                                                      SetupAddress();
+                                                                  }
+                                                                  catch (Exception ex)
+                                                                  {
+                                                                      Console.WriteLine(ex.Message);
+                                                                  }
 
-                                                                                                EditConCompany = new(_companyDetails);
-                                                                                                try
-                                                                                                {
-                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
-                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
-                                                                                                    _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
-                                                                                                    _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
-                                                                                                    SetupAddress();
-                                                                                                }
-                                                                                                catch (Exception ex)
-                                                                                                {
-                                                                                                    Console.WriteLine(ex.Message);
-                                                                                                }
+                                                                  _selectedTab = 0;
 
-                                                                                                _selectedTab = 0;
+                                                                  VisibleSpinner = false;
+                                                              });
 
-                                                                                                VisibleSpinner = false;
-                                                                                            });
-
-    [JSInvokable("DetailCollapse")]
-    public void DetailRowCollapse() => _target = null;
+    /*//[JSInvokable("DetailCollapse")]
+    //public void DetailRowCollapse() => _target = null;*/
 
     private Task EditCompany(bool isAdd = false) => ExecuteMethod(async () =>
                                                                   {
@@ -277,23 +298,6 @@ public partial class Companies
                                                                               await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                           });
 
-    private async Task GridPageChanging(GridPageChangingEventArgs page) => await ExecuteMethod(async () =>
-                                                                                               {
-                                                                                                   if (page.CurrentPageSize != SearchModel.ItemCount)
-                                                                                                   {
-                                                                                                       SearchModel.ItemCount = page.CurrentPageSize;
-                                                                                                       SearchModel.Page = 1;
-                                                                                                       await Grid.GoToPageAsync(1);
-                                                                                                   }
-                                                                                                   else
-                                                                                                   {
-                                                                                                       SearchModel.Page = page.CurrentPage;
-                                                                                                       //await Grid.Refresh();
-                                                                                                   }
-
-                                                                                                   await SaveStorage(false);
-                                                                                               });
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -307,18 +311,17 @@ public partial class Companies
                 SearchModel.Clear();
             }
 
-            //_pageSize = SearchModel.ItemCount;
             await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+            await Task.Delay(100);
+            
+            _isLoading = false;
         }
-        await base.OnAfterRenderAsync(firstRender);
-    }
 
-    [Inject]
-    private RedisService RedisService { get; set; }
+        //await base.OnAfterRenderAsync(firstRender);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        // _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
@@ -360,6 +363,31 @@ public partial class Companies
 
         await base.OnInitializedAsync();
     }
+
+    private async Task PageChanged(PageChangedEventArgs page)
+    {
+        SearchModel.Page = page.CurrentPage;
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+
+    private async Task PageSizeChanged(PageSizeChangedArgs page)
+    {
+        SearchModel.ItemCount = page.CurrentPageSize;
+        SearchModel.Page = 1;
+        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+    }
+
+    private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
+
+    /*private async Task RowSelected(RowSelectEventArgs<Company> company)
+    {
+        await Grid.CollapseAllDetailRowAsync();
+        if (!_isLoading)
+        {
+            await Grid.ExpandCollapseDetailRowAsync(company.Data);
+            await DetailBind(company.Data);
+        }
+    }*/
 
     private async Task SaveCompany() => await ExecuteMethod(async () =>
                                                             {
@@ -454,18 +482,10 @@ public partial class Companies
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
         DataSource = Count > 0 ? General.DeserializeObject<List<Company>>(_data) : [];
         await Grid.Refresh().ConfigureAwait(false);
-
-        //Count = _count;
-        // await Task.Run(async () =>
-        //                {
-        //                    (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
-        //                    DataSource = JsonConvert.DeserializeObject<List<Company>>(_data);
-        //                });
     }
 
     private void SetupAddress(bool useLocation = false)
     {
-        //NumberOfLines = 1;
         string _generateAddress = "";
 
         if (!useLocation)
@@ -489,13 +509,13 @@ public partial class Companies
                 {
                     if (_generateAddress == "")
                     {
-                        _generateAddress = $"<strong>{_state.Text.Trim()[7..]}</strong>";
+                        _generateAddress = $"<strong>{_state.Text}</strong>";
                     }
                     else
                     {
                         try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                         {
-                            _generateAddress += $", <strong>{_state.Text.Trim()[7..]}</strong>";
+                            _generateAddress += $", <strong>{_state.Text}</strong>";
                         }
                         catch
                         {
@@ -541,13 +561,13 @@ public partial class Companies
                     {
                         if (_generateAddress == "")
                         {
-                            _generateAddress = $"<strong>{_state.Text.Trim()[7..]}</strong>";
+                            _generateAddress = $"<strong>{_state.Text}</strong>";
                         }
                         else
                         {
                             try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
                             {
-                                _generateAddress += $", <strong>{_state.Text.Trim()[7..]}</strong>";
+                                _generateAddress += $", <strong>{_state.Text}</strong>";
                             }
                             catch
                             {
@@ -702,111 +722,6 @@ public partial class Companies
 
         return Task.CompletedTask;
     }
-    
-    private async Task PageChanged(PageChangedEventArgs page)
-    {
-        //Page = page.CurrentPage;
-        SearchModel.Page = page.CurrentPage;
-        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-    }
-
-    private async Task PageSizeChanged(PageSizeChangedArgs page)
-    {
-        SearchModel.ItemCount = page.CurrentPageSize;
-        //_pageSize = page.CurrentPageSize;
-        SearchModel.Page = 1;
-        //await Grid.GoToPageAsync(1);
-        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-    }
-    
-    private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
-    
-    private void RowSelected(RowSelectingEventArgs<Company> arg) => _target = arg.Data;
 
     private void TabSelected(SelectEventArgs args) => _selectedTab = args.SelectedIndex;
-
-    /*public class CompanyAdaptor : DataAdaptor
-    {
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-            {
-                return null;
-            }
-
-            if (_initializationTaskSource == null)
-            {
-                return null;
-            }
-
-            await _initializationTaskSource.Task;
-            try
-            {
-                CompanySearch _searchModel = General.DeserializeObject<CompanySearch>(dm.Params["SearchModel"].ToString());
-                List<Company> _dataSource = [];
-
-                object _companyReturn = null;
-                try
-                {
-                    (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, _searchModel, false);
-                    _dataSource = _count > 0 ? General.DeserializeObject<List<Company>>(_data) : [];
-
-                    if (_dataSource == null)
-                    {
-                        _companyReturn = dm.RequiresCounts ? new DataResult
-                                                             {
-                                                                 Result = null,
-                                                                 Count = 1
-                                                             } : null;
-                    }
-                    else
-                    {
-                        _companyReturn = dm.RequiresCounts ? new DataResult
-                                                             {
-                                                                 Result = _dataSource,
-                                                                 Count = _count /*_count#1#
-                                                             } : _dataSource;
-                    }
-                }
-                catch
-                {
-                    if (_dataSource == null)
-                    {
-                        _companyReturn = dm.RequiresCounts ? new DataResult
-                                                             {
-                                                                 Result = null,
-                                                                 Count = 1
-                                                             } : null;
-                    }
-                    else
-                    {
-                        _dataSource.Add(new());
-
-                        _companyReturn = dm.RequiresCounts ? new DataResult
-                                                             {
-                                                                 Result = _dataSource,
-                                                                 Count = 1
-                                                             } : _dataSource;
-                    }
-                }
-
-                // if (Count > 0)
-                // {
-                //     await Grid.SelectRowAsync(0);
-                // }
-
-                return _companyReturn;
-            }
-            catch
-            {
-                return null;
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }*/
 }
