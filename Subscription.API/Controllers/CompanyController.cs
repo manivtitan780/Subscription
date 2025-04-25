@@ -276,7 +276,7 @@ public class CompanyController : ControllerBase
     ///     database operation.
     /// </returns>
     [HttpPost]
-    public async Task<ActionResult<int>> SaveCompany(CompanyDetails company, string user)
+    public async Task<ActionResult<ReturnCompanyDetails>> SaveCompany(CompanyDetails company, string user)
     {
         if (company == null)
         {
@@ -284,7 +284,7 @@ public class CompanyController : ControllerBase
         }
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        int _returnCode = 0;
+        string _companyDetails = "[]", _companyLocations = "[]";
         await using SqlCommand _command = new("SaveCompany", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("ID", company.ID);
@@ -308,7 +308,20 @@ public class CompanyController : ControllerBase
         try
         {
             await _connection.OpenAsync();
-            _returnCode = (await _command.ExecuteScalarAsync())!.ToInt32();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
+            {
+                _companyDetails = _reader.NString(0);
+            }
+            
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _companyLocations = _reader.NString(0);
+            }
+
+            await _reader.CloseAsync();
+            //_returnCode = (await _command.ExecuteScalarAsync())!.ToInt32();
         }
         catch (Exception ex)
         {
@@ -320,7 +333,11 @@ public class CompanyController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_returnCode);
+        return Ok(new
+                  {
+                      Company = _companyDetails,
+                      Locations = _companyLocations
+                  });
     }
 
     /// <summary>

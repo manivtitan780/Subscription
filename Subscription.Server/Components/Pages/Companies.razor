@@ -1,4 +1,19 @@
-﻿@page "/company"
+﻿@* 
+    Copyright:           Titan-Techs.
+    Location:            Newtown, PA, USA
+    Solution:            Subscription
+    Project:             Subscription.Server
+    File Name:           Companies.razor
+    Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+    
+    Summary:
+        This page displays a list of companies with various details such as name, email, phone, location, website, status, and updated date.
+        It includes a grid with sorting, selection, and filtering capabilities.
+        The page also provides a speed dial for quick actions like editing company details, adding locations, contacts, and documents.
+        Detailed information about a company can be viewed and edited in a tabbed interface showing company info, locations, contacts, documents, and account information.
+*@
+
+@page "/company"
 @layout SubscriptionLayout
 
 <PageHeader/>
@@ -119,7 +134,7 @@
 										@* CSS used id .e-tab#tabCompany div[id^="e-content-tabCompany"]*@
 										<ContentTemplate>
 											<div class="layout-2">
-												<div class="leftLayout" style="flex: 1.2;">
+												<div class="leftLayout">
 													<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"/>
 													<PanelDisplayText Label="EIN#" Text="@(FormatEIN(_companyDetails.EIN))"/>
 													<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"/>
@@ -129,8 +144,8 @@
 													<PanelDisplayText Label="NAICS Code" Text="@(_companyDetails.NAICSCode == 0 ? "" : $"[{_companyDetails.NAICSCode}] - {_companyDetails.NAICS}")"/>
 													<PanelDisplayText Label="Status" Text="@(_companyDetails.Status ? "Active" : "Inactive")"/>
 												</div>
-												<div class="rightLayout" style="flex: 0.8">
-													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_companyDetails.Notes)"/>
+												<div class="rightLayout">
+													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" MarkupText="@(_companyDetails.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
 												</div>
 											</div>
 										</ContentTemplate>
