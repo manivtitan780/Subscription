@@ -215,7 +215,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     {
         get;
         set;
-    } = "98%";
+    } = "100%";
 
     /// <summary>
     ///     Asynchronously refreshes the data in the DropDown control.

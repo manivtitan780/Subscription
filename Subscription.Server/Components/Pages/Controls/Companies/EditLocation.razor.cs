@@ -18,63 +18,31 @@ namespace Subscription.Server.Components.Pages.Controls.Companies;
 public partial class EditLocation
 {
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private SfDataForm CompanyLocationEditForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm CompanyLocationEditForm { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
     [Parameter]
-    public CompanyLocations Model
-    {
-        get;
-        set;
-    }
+    public CompanyLocations Model { get; set; }
 
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
     [Parameter]
-    public List<IntValues> State
-    {
-        get;
-        set;
-    } = [];
+    public List<IntValues> State { get; set; } = [];
+
+    private bool VisibleSpinner { get; set; }
 
     private async Task CancelForm(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     private void DialogOpen(BeforeOpenEventArgs args)
@@ -91,10 +59,10 @@ public partial class EditLocation
 
     private async Task SaveCompanyLocation(EditContext args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
