@@ -45,7 +45,6 @@ public partial class Companies
                                                                                                });
                                                                                                */
 
-    private bool _isLoading = true;
     private Query _query = new();
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -313,8 +312,6 @@ public partial class Companies
 
             await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
             await Task.Delay(100);
-            
-            _isLoading = false;
         }
 
         //await base.OnAfterRenderAsync(firstRender);
@@ -334,12 +331,11 @@ public partial class Companies
                                 {
                                     IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
                                     User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
-                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     if (User.NullOrWhiteSpace())
                                     {
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
                                     }
-
+                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCompanies");
                                     HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditRequisitions");
                                 }
@@ -349,7 +345,7 @@ public partial class Companies
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
                                 }
 
-                                if (NAICS is not {Count: not 0} || State is not {Count: not 0} || Roles is not {Count: not 0})
+                                if (NAICS.Count != 0 || State.Count != 0 || Roles.Count != 0)
                                 {
                                     //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
                                     List<string> _keys = [nameof(CacheObjects.NAICS), nameof(CacheObjects.States), nameof(CacheObjects.Roles)];
@@ -418,7 +414,7 @@ public partial class Companies
                                                                 }
                                                                 else
                                                                 {
-                                                                    await Grid.Refresh(true);
+                                                                    await SetDataSource().ConfigureAwait(false);
                                                                 }
 
                                                                 StateHasChanged();
@@ -436,7 +432,7 @@ public partial class Companies
 
                                                                 if (_target == null)
                                                                 {
-                                                                    await Grid.Refresh(true);
+                                                                    await SetDataSource().ConfigureAwait(false);
                                                                 }
                                                             });
 
@@ -465,7 +461,7 @@ public partial class Companies
                                                                  }
                                                                  else
                                                                  {
-                                                                     await Grid.Refresh(true);
+                                                                     await SetDataSource().ConfigureAwait(false);
                                                                  }
                                                              });
 

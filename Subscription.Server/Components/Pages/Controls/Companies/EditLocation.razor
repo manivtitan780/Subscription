@@ -1,10 +1,10 @@
 ﻿<SfDialog CssClass="dialogPopup" Header="Edit Company Location" Height="97vh" IsModal="true" MinHeight="96vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="640px">
 	<ChildContent>
-		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="DialogOpen"/>
-		<SfDataForm EditContext="@Context" ID="locationEditForm" OnValidSubmit="SaveCompanyLocation" @ref="CompanyLocationEditForm" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+		<SfDataForm EditContext="@Context" ID="locationEditForm" OnValidSubmit="SaveCompanyLocation" @ref="CompanyLocationEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Location</SfButton>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelForm" type="button">Cancel</SfButton>
@@ -24,16 +24,9 @@
 							<TextBox @bind-Value="Model.City" ID="textCity" MaxLength="100" Placeholder="City"/>
 						</Template>
 					</FormItem>
-					@* <FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.StreetName)" LabelText="Address:" /> *@
-					@* <FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.City)" LabelText="City:" /> *@
-					@* <FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.EmailAddress)" LabelText="Email Address:" Placeholder="Email Address" /> *@
 					<FormItem ColumnSpan="3" Field="@nameof(Model.StateID)">
 						<Template>
 							<DropDown AllowFilter="true" @bind-Value="Model.StateID" ID="dropState" Key="KeyValue" Model="State" Placeholder="State" Text="Text" TItem="IntValues" TValue="int"/>
-							@*<label class="e-form-label">State:</label>
-							<SfDropDownList @bind-Value="Model.StateID" DataSource="State" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="KeyValue" />
-							</SfDropDownList>*@
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.ZipCode)">
