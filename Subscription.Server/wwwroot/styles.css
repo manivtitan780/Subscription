@@ -380,6 +380,9 @@ body, form, html {
     font-size: 12px;
 }
 
+.e-data-form .e-button-right .e-btn {
+    border-radius: 5px;
+}
 /* #endregion Data Form */
 
 /* #region Dialog for Popups */

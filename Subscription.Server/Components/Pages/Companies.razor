@@ -119,18 +119,18 @@
 										@* CSS used id .e-tab#tabCompany div[id^="e-content-tabCompany"]*@
 										<ContentTemplate>
 											<div class="layout-2">
-												<div class="leftLayout">
-													<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"></PanelDisplayText>
-													<PanelDisplayText Label="EIN#" Text="@(_companyDetails.EIN)"></PanelDisplayText>
-													<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"></PanelDisplayText>
-													<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.FormatPhoneNumber())"></PanelDisplayText>
-													<PanelDisplayText Label="Address" MarkupText="@(Address)"></PanelDisplayText>
-													<PanelDisplayText Label="D-U-N-S Number" Text="@(_companyDetails.DUNS)"></PanelDisplayText>
-													<PanelDisplayText Label="NAICS Code" Text="@(_companyDetails.NAICSCode.ToString())"></PanelDisplayText>
-													<PanelDisplayText Label="Status" Text="@(_companyDetails.Status ? "Active" : "Inactive")"></PanelDisplayText>
+												<div class="leftLayout" style="flex: 1.2;">
+													<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"/>
+													<PanelDisplayText Label="EIN#" Text="@(FormatEIN(_companyDetails.EIN))"/>
+													<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"/>
+													<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.FormatPhoneNumber())"/>
+													<PanelDisplayText Label="Address" MarkupText="@(Address)"/>
+													<PanelDisplayText Label="D-U-N-S Number" Text="@(FormatDUNS(_companyDetails.DUNS))"/>
+													<PanelDisplayText Label="NAICS Code" Text="@(_companyDetails.NAICSCode == 0 ? "" : $"[{_companyDetails.NAICSCode}] - {_companyDetails.NAICS}")"/>
+													<PanelDisplayText Label="Status" Text="@(_companyDetails.Status ? "Active" : "Inactive")"/>
 												</div>
-												<div class="rightLayout">
-													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_companyDetails.Notes)"></PanelDisplayText>
+												<div class="rightLayout" style="flex: 0.8">
+													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" Text="@(_companyDetails.Notes)"/>
 												</div>
 											</div>
 										</ContentTemplate>

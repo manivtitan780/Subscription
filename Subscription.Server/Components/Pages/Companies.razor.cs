@@ -498,7 +498,7 @@ public partial class Companies
             }
             else
             {
-                _generateAddress += _companyDetails.City == "" ? "" : $"<br/>{_companyDetails.City}";
+                _generateAddress += _companyDetails.City == "" ? "" : $"{_companyDetails.City}";
             }
 
             if (_companyDetails.StateID > 0)
@@ -550,7 +550,7 @@ public partial class Companies
                 }
                 else
                 {
-                    _generateAddress += _loc.City == "" ? "" : $"<br/>{_loc.City}";
+                    _generateAddress += _loc.City == "" ? "" : $"{_loc.City}";
                 }
 
                 if (_companyDetails.StateID > 0)
@@ -599,7 +599,27 @@ public partial class Companies
         Address = _generateAddress.ToMarkupString();
     }
 
-    private string SetupTargetAddress(bool useLocation = false)
+    public static string FormatEIN(string input)
+    {
+        if (input.NullOrWhiteSpace() || input.Length != 9)
+        {
+            return input; 
+        }
+
+        return $"{input[..2]}-{input[2..]}";
+    }
+    
+    public static string FormatDUNS(string input)
+     {
+         if (input.NullOrWhiteSpace() || input.Length != 9)
+         {
+             return input; 
+         }
+
+         return $"{input[..2]}-{input.Substring(2, 3)}-{input[5..]}";
+     }
+    
+   private string SetupTargetAddress(bool useLocation = false)
     {
         string _address = "";
         if (!useLocation)
