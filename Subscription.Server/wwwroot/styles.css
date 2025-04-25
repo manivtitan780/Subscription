@@ -167,6 +167,7 @@ body, form, html {
     flex: 1;
     height: 100%;
     margin-left: 0.75%;
+    overflow-y: auto;
     vertical-align: top;
     width: 48.0%;
 }

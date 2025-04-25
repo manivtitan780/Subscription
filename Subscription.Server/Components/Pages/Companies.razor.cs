@@ -393,11 +393,12 @@ public partial class Companies
                                                             {
                                                                 Dictionary<string, string> _parameters = new()
                                                                                                          {
-                                                                                                             {"userID", User}
+                                                                                                             {"user", User}
                                                                                                          };
 
-                                                                await General.ExecuteRest<int>("Company/SaveCompany", _parameters, _companyDetailsClone);
-                                                                _companyDetails = _companyDetailsClone.Copy();
+                                                                (string _company, _, string _locations, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", _parameters, _companyDetailsClone);
+                                                                _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
+                                                                _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations);
 
                                                                 if (_target != null)
                                                                 {
