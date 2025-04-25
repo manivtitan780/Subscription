@@ -6,8 +6,8 @@
 		<DialogEvents OnOpen="DialogOpen"/>
 		<SfDataForm EditContext="@Context" ID="companyEditForm" OnValidSubmit="SaveCompany" @ref="CompanyEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Company</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" type="submit" IconCss="e-icons e-save">Save Company</SfButton>
+				<SfButton CssClass="e-secondary" OnClick="CancelForm" type="button" IconCss="e-icons e-close">Cancel</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_companyValidator"/>
@@ -36,53 +36,63 @@
 					</FormItem>
 					<FormItem Field="@nameof(Model.DUNS)">
 						<Template>
-							<MaskedTextBox @bind-Value="Model.EIN" ID="maskedDUNS" Mask="00-000-0000" Placeholder="D-U-N-S Number" />
-						</Template>
-					</FormItem>	
-					<FormItem Field="@nameof(Model.NAICSCode)">
-						<Template>
-							<DropDown AllowFilter="true" @bind-Value="Model.NAICSCode" Model="NAICS" ID="dropNAICS" TItem="IntValues" TValue="int" Placeholder="NAICS" Text="Text" Key="KeyValue" />
+							<MaskedTextBox @bind-Value="Model.EIN" ID="maskedDUNS" Mask="00-000-0000" Placeholder="D-U-N-S Number"/>
 						</Template>
 					</FormItem>
-					<FormItem EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Company Notes:" Placeholder="Company Notes"/>
+					<FormItem Field="@nameof(Model.NAICSCode)">
+						<Template>
+							<DropDown AllowFilter="true" @bind-Value="Model.NAICSCode" ID="dropNAICS" Key="KeyValue" Model="NAICS" Placeholder="NAICS" Text="Text" TItem="IntValues" TValue="int"/>
+						</Template>
+					</FormItem>
+					<FormItem EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Company Notes:" Placeholder="Company Notes">
+						<Template>
+							<TextArea @bind-Value="Model.Notes" ID="textNotes" MaxLength="2000" Placeholder="Notes"></TextArea>
+						</Template>
+					</FormItem>
 					<FormItem EditorType="FormEditorType.Switch" Field="@nameof(Model.Status)" LabelText="Enabled"/>
 				</FormGroup>
 				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup formGroupSecond" ID="groupLocation" LabelText="Primary Location">
-					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.StreetName)" LabelText="Address:"/>
-					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextBox" Field="@nameof(Model.City)" LabelText="City:"/>
-					<FormItem ColumnSpan="3" Field="@nameof(Model.StateID)">
+					<FormItem ColumnSpan="3" Field="@nameof(Model.StreetName)">
 						<Template>
-							<label class="e-form-label">State:</label>
-							<SfDropDownList @bind-Value="Model.StateID" DataSource="State" TItem="IntValues" TValue="int">
-								<DropDownListFieldSettings Text="Text" Value="KeyValue"></DropDownListFieldSettings>
-							</SfDropDownList>
+							<TextBox @bind-Value="Model.StreetName" ID="textStreetName" MaxLength="500" Placeholder="Address"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.City)">
+						<Template>
+							<TextBox @bind-Value="Model.City" ID="textCity" MaxLength="100" Placeholder="City"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.StateID)">	
+						<Template>
+							<DropDown AllowFilter="true" @bind-Value="Model.StateID" ID="dropState" Key="KeyValue" Model="State" Placeholder="State" Text="Text" TItem="IntValues" TValue="int"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.ZipCode)">
 						<Template>
-							<label class="e-form-label" for="maskedZip">Zip Code:</label>
-							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="maskedZip" Mask="00000" Placeholder="Zip Code"/>
+							<MaskedTextBox @bind-Value="Model.ZipCode" ID="maskedZip" Mask="00000" Placeholder="Zip Code" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Phone)">
 						<Template>
-							<label class="e-form-label" for="maskedPhone">Primary Phone Number:</label>
-							<SfMaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number"/>
+							<MaskedTextBox @bind-Value="Model.EIN" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number" />
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Extension)">
 						<Template>
-							<label class="e-form-label" for="maskedExt">Extension:</label>
-							<SfMaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension"/>
+							<MaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension" />
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="3" Field="@nameof(Model.Fax)">
+					@*<FormItem ColumnSpan="3" Field="@nameof(Model.Fax)">
 						<Template>
 							<label class="e-form-label" for="maskedFax">Fax:</label>
 							<SfMaskedTextBox @bind-Value="Model.Fax" ID="maskedFax" Mask="(000) 000-0000" Placeholder="Fax"/>
 						</Template>
+					</FormItem>*@
+					<FormItem ColumnSpan="3" Field="@nameof(Model.LocationNotes)">
+						<Template>
+							<TextArea @bind-Value="Model.LocationNotes" ID="textLocationNotes" MaxLength="2000" Placeholder="Location Notes"></TextArea>
+						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="3" EditorType="FormEditorType.TextArea" Field="@nameof(Model.LocationNotes)" LabelText="Location Notes:" Placeholder="Location Notes"/>
 				</FormGroup>
 			</FormItems>
 		</SfDataForm>
