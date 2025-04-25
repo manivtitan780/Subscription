@@ -74,6 +74,12 @@ public partial class EditContact
         set;
     }
 
+    private bool VisibleSpinner
+    {
+        get;
+        set;
+    }
+
     private async Task CancelForm(MouseEventArgs args)
     {
         await General.DisplaySpinner(Spinner);

@@ -6,16 +6,16 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           EditLocation.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-22-2024 15:04
-// Last Updated On:     04-26-2024 14:04
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     04-25-2025 19:26
 // *****************************************/
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
-public partial class EditLocation
+public partial class EditLocation : IDisposable
 {
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
@@ -45,15 +45,31 @@ public partial class EditLocation
         VisibleSpinner = false;
     }
 
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        Context.Validate();
+    }
+
     private void DialogOpen(BeforeOpenEventArgs args)
     {
         CompanyLocationEditForm.EditContext.Validate();
         StateHasChanged();
     }
 
+    public void Dispose()
+    {
+        if (Context is not null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+
+        GC.SuppressFinalize(this);
+    }
+
     protected override void OnParametersSet()
     {
         Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
         base.OnParametersSet();
     }
 

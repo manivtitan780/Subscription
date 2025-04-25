@@ -230,63 +230,57 @@ public partial class Companies
                                                                       await CompanyEditDialog.ShowDialog();
                                                                   });
 
-    private Task EditCompanyContact(int contact)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 VisibleSpinner = true;
-                                 if (contact == 0)
-                                 {
-                                     if (SelectedContact == null)
-                                     {
-                                         SelectedContact = new();
-                                     }
-                                     else
-                                     {
-                                         SelectedContact.Clear();
-                                     }
+    private Task EditCompanyContact(int contact) => ExecuteMethod(async () =>
+                                                                  {
+                                                                      VisibleSpinner = true;
+                                                                      if (contact == 0)
+                                                                      {
+                                                                          if (SelectedContact == null)
+                                                                          {
+                                                                              SelectedContact = new();
+                                                                          }
+                                                                          else
+                                                                          {
+                                                                              SelectedContact.Clear();
+                                                                          }
 
-                                     SelectedContact.CompanyID = _target.ID;
-                                 }
-                                 else
-                                 {
-                                     SelectedContact = PanelContacts.SelectedRow != null ? PanelContacts.SelectedRow.Copy() : new();
-                                 }
+                                                                          SelectedContact.CompanyID = _target.ID;
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          SelectedContact = PanelContacts.SelectedRow != null ? PanelContacts.SelectedRow.Copy() : new();
+                                                                      }
 
-                                 EditConContact = new(SelectedContact!);
-                                 VisibleSpinner = false;
-                                 await CompanyContactDialog.ShowDialog();
-                             });
-    }
+                                                                      EditConContact = new(SelectedContact!);
+                                                                      VisibleSpinner = false;
+                                                                      await CompanyContactDialog.ShowDialog();
+                                                                  });
 
-    private Task EditLocation(int location)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 if (location == 0)
-                                 {
-                                     VisibleSpinner = true;
-                                     if (SelectedLocation == null)
-                                     {
-                                         SelectedLocation = new();
-                                     }
-                                     else
-                                     {
-                                         SelectedLocation.Clear();
-                                     }
+    private Task EditLocation(int location) => ExecuteMethod(async () =>
+                                                             {
+                                                                 if (location == 0)
+                                                                 {
+                                                                     VisibleSpinner = true;
+                                                                     if (SelectedLocation == null)
+                                                                     {
+                                                                         SelectedLocation = new();
+                                                                     }
+                                                                     else
+                                                                     {
+                                                                         SelectedLocation.Clear();
+                                                                     }
 
-                                     SelectedLocation.CompanyID = _target.ID;
-                                 }
-                                 else
-                                 {
-                                     SelectedLocation = PanelLocations.SelectedRow != null ? PanelLocations.SelectedRow.Copy() : new();
-                                 }
+                                                                     SelectedLocation.CompanyID = _target.ID;
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     SelectedLocation = PanelLocations.SelectedRow != null ? PanelLocations.SelectedRow.Copy() : new();
+                                                                 }
 
-                                 EditConLocation = new(SelectedLocation!);
-                                 VisibleSpinner = false;
-                                 await CompanyLocationDialog.ShowDialog();
-                             });
-    }
+                                                                 EditConLocation = new(SelectedLocation!);
+                                                                 VisibleSpinner = false;
+                                                                 await CompanyLocationDialog.ShowDialog();
+                                                             });
 
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 

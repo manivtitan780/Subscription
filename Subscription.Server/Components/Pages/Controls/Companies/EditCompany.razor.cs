@@ -6,99 +6,63 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           EditCompany.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-22-2024 15:04
-// Last Updated On:     10-29-2024 15:10
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     04-25-2025 19:25
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
-public partial class EditCompany
+public partial class EditCompany : IDisposable
 {
     private readonly CompanyDetailsValidator _companyValidator = new();
 
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private SfDataForm CompanyEditForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm CompanyEditForm { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
     [Parameter]
-    public CompanyDetails Model
-    {
-        get;
-        set;
-    } = new();
+    public CompanyDetails Model { get; set; } = new();
 
     [Parameter]
-    public List<IntValues> NAICS
-    {
-        get;
-        set;
-    } = [];
+    public List<IntValues> NAICS { get; set; } = [];
 
     [Parameter]
-    public EventCallback<EditContext> Save
+    public EventCallback<EditContext> Save { get; set; }
+
+    [Parameter]
+    public List<IntValues> State { get; set; } = [];
+
+    private bool VisibleSpinner { get; set; }
+
+    public void Dispose()
     {
-        get;
-        set;
+        if (Context is not null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+
+        GC.SuppressFinalize(this);
     }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
-
-    [Parameter]
-    public List<IntValues> State
-    {
-        get;
-        set;
-    } = [];
 
     private async Task CancelForm(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e)
-    {
-        Context.Validate();
-    }
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
-    private void DialogOpen(BeforeOpenEventArgs args)
-    {
-        CompanyEditForm.EditContext?.Validate();
-    }
+    private void DialogOpen(BeforeOpenEventArgs args) => CompanyEditForm.EditContext?.Validate();
 
     protected override void OnParametersSet()
     {
@@ -109,10 +73,10 @@ public partial class EditCompany
 
     private async Task SaveCompany(EditContext args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
