@@ -20,11 +20,11 @@
 @if (HasViewRights)
 {
 	<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies"
-	            Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count"
-	            ValueChange="AutocompleteValueChange">
+				Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count"
+				ValueChange="AutocompleteValueChange">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
-			        @ref="Grid" TValue="Company" Width="100%">
+					@ref="Grid" TValue="Company" Width="100%">
 				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" TValue="Company"/>@**@
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				<GridColumns>
@@ -107,7 +107,7 @@
 					<DetailTemplate>
 						@* Add Buttons Start *@
 						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
-						             Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
+									 Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
 							<SpeedDialItems>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCompany" Text="Edit Company" Title="Edit Company"/>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddLocation" Text="Add Location" Title="Add Location"/>
@@ -198,6 +198,7 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
+	<AddCompanyDocument Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
 	<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State"/>
 	<EditLocation Model="SelectedLocation" @ref="CompanyLocationDialog" Save="SaveLocation" State="State"/>
 	<EditContact Model="SelectedContact" @ref="CompanyContactDialog" Save="SaveContact"/>

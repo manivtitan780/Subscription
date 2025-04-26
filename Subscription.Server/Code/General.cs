@@ -98,7 +98,7 @@ public class General() //(Container container)
         }
 
         string _stringArray = array?.ToString() ?? "";
-        if (_stringArray.NotNullOrWhiteSpace() || _stringArray == "[]")
+        if (_stringArray.NotNullOrWhiteSpace() && _stringArray != "[]")
         {
             return JsonConvert.DeserializeObject<T>(_stringArray);
         }

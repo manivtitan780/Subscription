@@ -19,7 +19,7 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
 {
     private readonly CompanyDocumentValidator _companyDocumentValidator = new();
 
-    private MemoryStream AddedDocument { get; } = new();
+    internal MemoryStream AddedDocument { get; } = new();
 
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
