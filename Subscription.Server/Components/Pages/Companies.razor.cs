@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-24-2025 15:45
+// Last Updated On:     04-26-2025 15:50
 // *****************************************/
 
 #endregion
@@ -157,46 +157,46 @@ public partial class Companies
                                                 });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
-                                                              {
-                                                                  int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
-                                                                  if (_index != Grid.SelectedRowIndex)
-                                                                  {
-                                                                      await Grid.SelectRowAsync(_index);
-                                                                  }
+                                                                                            {
+                                                                                                int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
+                                                                                                if (_index != Grid.SelectedRowIndex)
+                                                                                                {
+                                                                                                    await Grid.SelectRowAsync(_index);
+                                                                                                }
 
-                                                                  await Grid.CollapseAllDetailRowAsync();
-                                                                  await Grid.ExpandCollapseDetailRowAsync(company.Data);
-                                                                  _target = company.Data;
+                                                                                                await Grid.CollapseAllDetailRowAsync();
+                                                                                                await Grid.ExpandCollapseDetailRowAsync(company.Data);
+                                                                                                _target = company.Data;
 
-                                                                  VisibleSpinner = true;
+                                                                                                VisibleSpinner = true;
 
-                                                                  Dictionary<string, string> _parameters = new()
-                                                                                                           {
-                                                                                                               {"companyID", _target.ID.ToString()},
-                                                                                                               {"user", User}
-                                                                                                           };
-                                                                  (string _company, string _contacts, string _locations, string _documents) =
-                                                                      await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
-                                                                                                                      false);
+                                                                                                Dictionary<string, string> _parameters = new()
+                                                                                                                                         {
+                                                                                                                                             {"companyID", _target.ID.ToString()},
+                                                                                                                                             {"user", User}
+                                                                                                                                         };
+                                                                                                (string _company, string _contacts, string _locations, string _documents) =
+                                                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
+                                                                                                                                                    false);
 
-                                                                  EditConCompany = new(_companyDetails);
-                                                                  try
-                                                                  {
-                                                                      _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
-                                                                      _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
-                                                                      _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
-                                                                      _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
-                                                                      SetupAddress();
-                                                                  }
-                                                                  catch (Exception ex)
-                                                                  {
-                                                                      Console.WriteLine(ex.Message);
-                                                                  }
+                                                                                                EditConCompany = new(_companyDetails);
+                                                                                                try
+                                                                                                {
+                                                                                                    _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
+                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
+                                                                                                    _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
+                                                                                                    _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
+                                                                                                    SetupAddress();
+                                                                                                }
+                                                                                                catch (Exception ex)
+                                                                                                {
+                                                                                                    Console.WriteLine(ex.Message);
+                                                                                                }
 
-                                                                  _selectedTab = 0;
+                                                                                                _selectedTab = 0;
 
-                                                                  VisibleSpinner = false;
-                                                              });
+                                                                                                VisibleSpinner = false;
+                                                                                            });
 
     /*//[JSInvokable("DetailCollapse")]
     //public void DetailRowCollapse() => _target = null;*/
@@ -284,6 +284,26 @@ public partial class Companies
 
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
+    public static string FormatDUNS(string input)
+    {
+        if (input.NullOrWhiteSpace() || input.Length != 9)
+        {
+            return input;
+        }
+
+        return $"{input[..2]}-{input.Substring(2, 3)}-{input[5..]}";
+    }
+
+    public static string FormatEIN(string input)
+    {
+        if (input.NullOrWhiteSpace() || input.Length != 9)
+        {
+            return input;
+        }
+
+        return $"{input[..2]}-{input[2..]}";
+    }
+
     private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
                                                                           {
                                                                               SearchModel.CompanyName = alphabet.ToString();
@@ -329,6 +349,7 @@ public partial class Companies
                                     {
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
                                     }
+
                                     RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewAllCompanies");
                                     HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditRequisitions");
@@ -386,7 +407,8 @@ public partial class Companies
                                                                                                              {"user", User}
                                                                                                          };
 
-                                                                (string _company, _, string _locations, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", _parameters, _companyDetailsClone);
+                                                                (string _company, _, string _locations, _) =
+                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", _parameters, _companyDetailsClone);
                                                                 _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
                                                                 _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations);
 
@@ -590,27 +612,7 @@ public partial class Companies
         Address = _generateAddress.ToMarkupString();
     }
 
-    public static string FormatEIN(string input)
-    {
-        if (input.NullOrWhiteSpace() || input.Length != 9)
-        {
-            return input; 
-        }
-
-        return $"{input[..2]}-{input[2..]}";
-    }
-    
-    public static string FormatDUNS(string input)
-     {
-         if (input.NullOrWhiteSpace() || input.Length != 9)
-         {
-             return input; 
-         }
-
-         return $"{input[..2]}-{input.Substring(2, 3)}-{input[5..]}";
-     }
-    
-   private string SetupTargetAddress(bool useLocation = false)
+    private string SetupTargetAddress(bool useLocation = false)
     {
         string _address = "";
         if (!useLocation)

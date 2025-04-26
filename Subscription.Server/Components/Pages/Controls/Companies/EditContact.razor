@@ -4,10 +4,11 @@
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="DialogOpen"/>
+		<div>
 		<SfDataForm EditContext="@Context" ID="notesEditForm" OnValidSubmit="SaveCompanyContact" @ref="CompanyContactEditForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Company</SfButton>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelForm" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Contact</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_companyContactValidator"/>
@@ -42,15 +43,17 @@
 					<FormItem ColumnSpan="9" Field="@nameof(Model.Title)">
 						<Template>
 							<TextBox @bind-Value="Model.Title" ID="textTitle" MaxLength="255" Placeholder="Title"/>
-						</Template></FormItem>
+						</Template>
+					</FormItem>
 					<FormItem ColumnSpan="9" Field="@nameof(Model.Department)">
 						<Template>
 							<TextBox @bind-Value="Model.Department" ID="textDepartment" MaxLength="255" Placeholder="Department"/>
-						</Template></FormItem>
+						</Template>
+					</FormItem>
 					<FormItem ColumnSpan="9" Field="@nameof(Model.LocationID)">
 						<Template>
-							<DropDown @bind-Value="Model.LocationID" ID="dropLocation" Key="ID" Model="Location" Placeholder="State" Text="Location" TItem="LocationDrop" TValue="int" 
-									  DropDownValueChange="LocationChanged" />
+							<DropDown @bind-Value="Model.LocationID" ID="dropLocation" Key="ID" Model="Location" Placeholder="State" Text="Location" TItem="LocationDrop" TValue="int"
+									  DropDownValueChange="LocationChanged"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.StreetName)" IsEnabled="false" LabelText="Address:"/>
@@ -60,26 +63,36 @@
 					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextBox" Field="@nameof(Model.EmailAddress)" LabelText="Email Address:"/>
 					<FormItem ColumnSpan="6" Field="@nameof(Model.Phone)">
 						<Template>
+							<MaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number"/>@*
 							<label class="e-form-label" for="maskedPhone">Primary Phone Number:</label>
-							<SfMaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number"/>
+							<SfMaskedTextBox @bind-Value="Model.Phone" ID="maskedPhone" Mask="(000) 000-0000" Placeholder="Phone Number"/>*@
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.Extension)">
 						<Template>
+							<MaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension"/>
+
+							@*
 							<label class="e-form-label" for="maskedExt">Extension:</label>
 							<SfMaskedTextBox @bind-Value="Model.Extension" ID="maskedExt" Mask="x0000" Placeholder="Extension"/>
+						*@
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="6" Field="@nameof(Model.Fax)">
+					@*<FormItem ColumnSpan="6" Field="@nameof(Model.Fax)">
 						<Template>
 							<label class="e-form-label" for="maskedFax">Fax:</label>
 							<SfMaskedTextBox @bind-Value="Model.Fax" ID="maskedFax" Mask="(000) 000-0000" Placeholder="Fax"/>
 						</Template>
-					</FormItem>
+					</FormItem>*@
 					<FormItem ColumnSpan="9" EditorType="FormEditorType.Switch" Field="@nameof(Model.PrimaryContact)" LabelText="Primary Contact"/>
-					<FormItem ColumnSpan="9" EditorType="FormEditorType.TextArea" Field="@nameof(Model.Notes)" LabelText="Contact Notes:" Placeholder="Contact Notes"/>
+					<FormItem ColumnSpan="9" Field="@nameof(Model.Notes)">
+						<Template>
+							<TextArea @bind-Value="Model.Notes" ID="textContactNotes" MaxLength="2000" Placeholder="Contact Notes"></TextArea>
+						</Template>
+					</FormItem>
 				</FormGroup>
 			</FormItems>
 		</SfDataForm>
+		</div>
 	</ChildContent>
 </SfDialog>
