@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-26-2025 15:50
+// Last Updated On:     04-26-2025 20:52
 // *****************************************/
 
 #endregion
@@ -67,6 +67,8 @@ public partial class Companies
 
     private List<Company> DataSource { get; set; }
 
+    private AddCompanyDocument DialogDocument { get; set; }
+
     public EditContext EditConCompany { get; set; }
 
     public EditContext EditConContact { get; set; }
@@ -91,6 +93,11 @@ public partial class Companies
 
     [Inject]
     private NavigationManager NavManager { get; set; }
+
+    private CompanyDocuments NewDocument
+    {
+        get;
+    } = new();
 
     private ContactPanel PanelContacts { get; set; }
 
@@ -451,6 +458,30 @@ public partial class Companies
                                                                     await SetDataSource().ConfigureAwait(false);
                                                                 }
                                                             });
+
+    private Task SaveDocument(EditContext document) => ExecuteMethod(async () =>
+                                                                     {
+                                                                         if (document.Model is CandidateDocument _document)
+                                                                         {
+                                                                             Dictionary<string, string> _parameters = new()
+                                                                                                                      {
+                                                                                                                          {"filename", DialogDocument.FileName},
+                                                                                                                          {"mime", DialogDocument.Mime},
+                                                                                                                          {"name", _document.Name},
+                                                                                                                          {"notes", _document.Notes},
+                                                                                                                          {"candidateID", _target.ID.ToString()},
+                                                                                                                          {"user", User},
+                                                                                                                          {"path", Start.UploadsPath},
+                                                                                                                          {"type", _document.DocumentTypeID.ToString()}
+                                                                                                                      };
+
+                                                                             string _response = await General.ExecuteRest<string>("Candidate/UploadDocument", _parameters, null, true,
+                                                                                                                                  DialogDocument.AddedDocument.ToStreamByteArray(),
+                                                                                                                                  DialogDocument.FileName);
+
+                                                                             _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_response);
+                                                                         }
+                                                                     });
 
     private async Task SaveLocation() => await ExecuteMethod(async () =>
                                                              {
