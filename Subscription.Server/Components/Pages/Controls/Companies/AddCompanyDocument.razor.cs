@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages.Controls.Companies;
 
 public partial class AddCompanyDocument : ComponentBase, IDisposable
 {
-    private readonly CompanyDocumentValidator _candidateDocumentValidator = new();
+    private readonly CompanyDocumentValidator _companyDocumentValidator = new();
 
     private MemoryStream AddedDocument { get; } = new();
 
