@@ -13,10 +13,6 @@
 
 #endregion
 
-#region Using
-
-#endregion
-
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
 public partial class EditContact : IDisposable
