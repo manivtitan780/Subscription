@@ -32,9 +32,6 @@
 					<FormItem ColumnSpan="3" Field="@nameof(Model.ZipCode)">
 						<Template>
 							<MaskedTextBox @bind-Value="Model.ZipCode" ID="maskedZip" Mask="00000" Placeholder="Zip Code"/>
-
-							@*<label class="e-form-label" for="maskedZip">Zip Code:</label>
-							<SfMaskedTextBox @bind-Value="Model.ZipCode" ID="maskedZip" Mask="00000" Placeholder="Zip Code"/>*@
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.EmailAddress)">

@@ -1077,3 +1077,28 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     margin-left: 10px;
 }
 /* #endregion RadioButton */
+
+/* #region Dialog Boxes buttons absolute */
+
+.e-button-right {
+    background: var(--c-yellowlight);
+    bottom: 0;
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    width: 100%;
+}
+
+.dialogPopup .e-dlg-content {
+    max-height: calc(100% - 105px);
+    overflow-y: auto;
+}
+
+.dialogPopup .e-dlg-content form {
+    height: auto;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+/* #endregion Dialog Boxes buttons absolute */

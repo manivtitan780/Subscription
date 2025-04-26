@@ -19,73 +19,45 @@
 
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
-public partial class EditContact
+public partial class EditContact : IDisposable
 {
     private readonly CompanyContactsValidator _companyContactValidator = new();
 
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private SfDataForm CompanyContactEditForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm CompanyContactEditForm { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
-    private List<LocationDrop> Location
-    {
-        get;
-        set;
-    } = [];
+    private List<LocationDrop> Location { get; set; } = [];
 
     [Parameter]
-    public CompanyContacts Model
-    {
-        get;
-        set;
-    } = new();
+    public CompanyContacts Model { get; set; } = new();
 
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
-    private bool VisibleSpinner
+    public void Dispose()
     {
-        get;
-        set;
+        if (Context is not null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     private async Task CancelForm(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e)
@@ -106,11 +78,12 @@ public partial class EditContact
 
     private void LocationChanged(ChangeEventArgs<int, LocationDrop> location)
     {
-        Model.StreetName = location.ItemData.StreetAddress;
-        Model.City = location.ItemData.City;
-        Model.State = location.ItemData.State;
-        Model.ZipCode = location.ItemData.Zip;
-        Model.StateID = location.ItemData.StateID;
+        LocationDrop _item = location.ItemData;
+        Model.StreetName = _item.StreetAddress;
+        Model.City = _item.City;
+        Model.State = _item.State;
+        Model.ZipCode = _item.Zip;
+        Model.StateID = _item.StateID;
         StateHasChanged();
     }
 
@@ -123,10 +96,10 @@ public partial class EditContact
 
     private async Task SaveCompanyContact(EditContext args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     internal async Task ShowDialog() => await Dialog.ShowAsync();
