@@ -18,51 +18,23 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CompanyDocuments
 {
-    public int CompanyID
-    {
-        get;
-        set;
-    }
+    public int CompanyID { get; set; }
 
-    public string CompanyName
-    {
-        get;
-        set;
-    }
+    public string CompanyName { get; set; }
 
-    public string DocumentName
-    {
-        get;
-        set;
-    }
+    public string DocumentName { get; set; }
 
-    public string FileName
-    {
-        get;
-        set;
-    }
+    public string InternalFileName { get; set; }
 
-    public int ID
-    {
-        get;
-        set;
-    }
+    public string FileName { get; set; }
 
-    public string Notes
-    {
-        get;
-        set;
-    }
+    public List<string> Files { get; set; }
 
-    public string UpdatedBy
-    {
-        get;
-        set;
-    }
+    public int ID { get; set; }
 
-    public DateTime UpdatedDate
-    {
-        get;
-        set;
-    }
+    public string Notes { get; set; }
+
+    public string UpdatedBy { get; set; }
+
+    public DateTime UpdatedDate { get; set; }
 }
