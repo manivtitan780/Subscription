@@ -18,6 +18,11 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CompanyDocuments
 {
+    public CompanyDocuments()
+    {
+        Clear();
+    }
+
     public int CompanyID { get; set; }
 
     public string CompanyName { get; set; }
@@ -37,4 +42,20 @@ public class CompanyDocuments
     public string UpdatedBy { get; set; }
 
     public DateTime UpdatedDate { get; set; }
+    
+    public void Clear()
+    {
+        CompanyID = 0;
+        CompanyName = "";
+        DocumentName = "";
+        InternalFileName = "";
+        FileName = "";
+        Files = [];
+        ID = 0;
+        Notes = "";
+        UpdatedBy = "";
+        UpdatedDate = DateTime.MinValue;
+    }
+    
+    public CompanyDocuments Copy() => MemberwiseClone() as CompanyDocuments;
 }

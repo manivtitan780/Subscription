@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-26-2025 20:52
+// Last Updated On:     04-28-2025 18:55
 // *****************************************/
 
 #endregion
@@ -130,6 +130,12 @@ public partial class Companies
     private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    private Task AddDocument() => ExecuteMethod(() =>
+                                                {
+                                                    NewDocument.Clear();
+                                                    return DialogDocument.ShowDialog();
+                                                });
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
                                                                     {
@@ -755,10 +761,10 @@ public partial class Companies
                 return EditLocation(0);
             case "itemAddContact":
                 _selectedTab = 2;
-                break;
+                return EditCompanyContact(0);
             case "itemAddDocument":
                 _selectedTab = 3;
-                break;
+                return AddDocument();
             case "itemEditAccount":
                 _selectedTab = 4;
                 break;
