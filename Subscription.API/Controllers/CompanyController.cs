@@ -313,7 +313,7 @@ public class CompanyController : ControllerBase
             {
                 _companyDetails = _reader.NString(0);
             }
-            
+
             await _reader.NextResultAsync();
             while (await _reader.ReadAsync())
             {
@@ -528,5 +528,55 @@ public class CompanyController : ControllerBase
         }
 
         return Ok(_companies);
+    }
+
+    [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
+    public async Task<ActionResult<string>> UploadDocument(IFormFile file)
+    {
+        string _fileName = file.FileName;
+        string _companyID = Request.Form["companyID"].ToString();
+        string _internalFileName = Guid.NewGuid().ToString("N");
+
+        // Create the folder path
+        string _blobPath = $"{Start.AzureBlobContainer}/Company/{_companyID}/{_internalFileName}";
+
+        await General.UploadToBlob(file, _blobPath);
+        /*// Create a BlobStorage instance
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        await using (Stream stream = file.OpenReadStream())
+        {
+            await _storage.WriteAsync(_blobPath, stream);
+        }*/
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        string _returnVal = "[]";
+        try
+        {
+            await using SqlCommand _command = new("SaveCompanyDocuments", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("CompanyId", _companyID.ToInt32());
+            _command.Varchar("DocumentName", 255, Request.Form["name"].ToString());
+            _command.Varchar("OriginalFileName", 255, _fileName);
+            _command.Varchar("InternalFileName", 50, _internalFileName);
+            _command.Varchar("Notes", 2000, Request.Form["notes"].ToString());
+            _command.Varchar("User", 10, Request.Form["user"].ToString());
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+            while (await _reader.ReadAsync())
+            {
+                _returnVal = _reader.NString(0, "[]");
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving company document. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+
+        return Ok(_returnVal);
     }
 }

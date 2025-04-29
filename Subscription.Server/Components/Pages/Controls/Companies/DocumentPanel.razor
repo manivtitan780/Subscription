@@ -1,6 +1,6 @@
 ﻿<div class="companyPanel">
 	<div>
-		<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" ID="gridCompanyTab" @ref="Grid" RowHeight="70" SelectedRowIndex="0" TValue="CompanyDocuments" Width="100%">
+		<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" ID="gridCompanyTab" @ref="Grid" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CompanyDocuments" Width="100%">
 			<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
 			<GridEvents RowSelected="RowSelected" TValue="CompanyDocuments" />
 			<GridColumns>
@@ -24,8 +24,11 @@
 							if (bCon is CompanyDocuments _con)
 							{
 								<div class="buttonContain">
-									@*<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditCompanyDocumentDialog(_con.ID)" />*@
-									<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteCompanyDocumentMethod(_con.ID)" title="Delete" />
+									<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)" title="Download"/>
+									@if (CanAdministerDocuments)
+									{
+										<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteCompanyDocumentMethod(_con.ID)" title="Delete" />
+									}
 								</div>
 							}
 						}
@@ -50,4 +53,3 @@
 		</SfGrid>
 	</div>
 </div>
-@*<ConfirmDialog Delete="() => DeleteCompanyLocation.InvokeAsync(_selectedID)" Entity="Company Location" Height="160px" @ref="DialogConfirm" Width="378px" />*@

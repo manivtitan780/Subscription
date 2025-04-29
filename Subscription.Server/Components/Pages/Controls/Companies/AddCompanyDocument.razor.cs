@@ -161,7 +161,7 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
     {
         foreach (UploadFiles _file in file.Files)
         {
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024); //60MB maximum
             await _str.CopyToAsync(AddedDocument);
             FileName = _file.FileInfo.Name;
             Mime = _file.FileInfo.MimeContentType;

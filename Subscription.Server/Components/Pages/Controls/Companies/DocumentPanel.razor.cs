@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           DocumentPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-22-2024 15:04
-// Last Updated On:     10-29-2024 15:10
+// Last Updated On:     04-28-2025 20:30
 // *****************************************/
 
 #endregion
@@ -26,8 +26,22 @@ public partial class DocumentPanel
         set;
     }
 
+    [Parameter]
+    public bool CanAdministerDocuments
+    {
+        get;
+        set;
+    } = false;
+
     [Inject]
     private SfDialogService DialogService
+    {
+        get;
+        set;
+    }
+
+    [Parameter]
+    public EventCallback<int> DownloadDocument
     {
         get;
         set;
@@ -58,7 +72,7 @@ public partial class DocumentPanel
     {
         get;
         set;
-    } = 40;
+    } = 45;
 
     private CompanyDocuments SelectedRow
     {
@@ -75,6 +89,14 @@ public partial class DocumentPanel
         {
             await DeleteCompanyDocument.InvokeAsync(_selectedID);
         }
+    }
+
+    private async Task DownloadDocumentDialog(int id)
+    {
+        _selectedID = id;
+        int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+        await Grid.SelectRowAsync(_index);
+        await DownloadDocument.InvokeAsync(id);
     }
 
     private async Task EditCompanyDocumentDialog(int id)

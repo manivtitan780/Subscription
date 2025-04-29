@@ -1678,7 +1678,7 @@ public class CandidateController(OpenAIClient openClient) : ControllerBase
 
             while (await _reader.ReadAsync())
             {
-                _returnVal = _reader.NString(0);
+                _returnVal = _reader.NString(0, "[]");
             }
 
             await _reader.CloseAsync();
