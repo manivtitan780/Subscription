@@ -467,21 +467,19 @@ public partial class Companies
 
     private Task SaveDocument(EditContext document) => ExecuteMethod(async () =>
                                                                      {
-                                                                         if (document.Model is CandidateDocument _document)
+                                                                         if (document.Model is CompanyDocuments _document)
                                                                          {
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
                                                                                                                           {"filename", DialogDocument.FileName},
                                                                                                                           {"mime", DialogDocument.Mime},
-                                                                                                                          {"name", _document.Name},
+                                                                                                                          {"name", _document.DocumentName},
                                                                                                                           {"notes", _document.Notes},
-                                                                                                                          {"candidateID", _target.ID.ToString()},
-                                                                                                                          {"user", User},
-                                                                                                                          {"path", Start.UploadsPath},
-                                                                                                                          {"type", _document.DocumentTypeID.ToString()}
+                                                                                                                          {"companyID", _target.ID.ToString()},
+                                                                                                                          {"user", User}
                                                                                                                       };
 
-                                                                             string _response = await General.ExecuteRest<string>("Candidate/UploadDocument", _parameters, null, true,
+                                                                             string _response = await General.ExecuteRest<string>("Company/UploadDocument", _parameters, null, true,
                                                                                                                                   DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                   DialogDocument.FileName);
 
