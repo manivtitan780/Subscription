@@ -53,3 +53,4 @@
 		</SfGrid>
 </div>
 <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000" />
+<ViewPDFDocument DocumentLocation="@SelectedRow.FileName" DocumentName="@SelectedRow.DocumentName" EntityID="@SelectedRow.ID" InternalFileName="@SelectedRow.InternalFileName" @ref="@DocumentViewPDF"/>

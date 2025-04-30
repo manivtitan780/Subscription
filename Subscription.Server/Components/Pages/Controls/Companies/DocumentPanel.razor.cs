@@ -78,9 +78,15 @@ public partial class DocumentPanel
     {
         get;
         set;
-    }
+    } = new();
 
     private bool VisibleSpinner
+    {
+        get;
+        set;
+    }
+
+    private ViewPDFDocument DocumentViewPDF
     {
         get;
         set;
