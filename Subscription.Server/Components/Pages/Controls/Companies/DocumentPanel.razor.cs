@@ -31,7 +31,7 @@ public partial class DocumentPanel
     {
         get;
         set;
-    } = false;
+    } = true;
 
     [Inject]
     private SfDialogService DialogService
@@ -74,7 +74,13 @@ public partial class DocumentPanel
         set;
     } = 45;
 
-    private CompanyDocuments SelectedRow
+    internal CompanyDocuments SelectedRow
+    {
+        get;
+        set;
+    }
+
+    private bool VisibleSpinner
     {
         get;
         set;
@@ -113,5 +119,10 @@ public partial class DocumentPanel
         {
             SelectedRow = document.Data;
         }
+    }
+
+    private Task ViewDocumentDialog(CompanyDocuments con)
+    {
+        return null;
     }
 }

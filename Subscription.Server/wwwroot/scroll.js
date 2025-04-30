@@ -74,3 +74,13 @@ window.insertTextAtCursor = function (inputID, text) {
         input.focus();
     }
 };
+
+window.downloadFileFromBytes = (filename, base64Content) => {
+    const link = document.createElement('a');
+    link.href = "data:application/octet-stream;base64," + base64Content;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.close();
+};

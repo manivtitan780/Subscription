@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     03-16-2025 20:03
+// Last Updated On:     04-30-2025 15:57
 // *****************************************/
 
 #endregion
@@ -47,7 +47,6 @@ public static class General
     /// <returns>The deserialized object of type T.</returns>
     internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? "");
 
-    
     internal static byte[] GenerateRandomString(int length = 8)
     {
         //string _randomString = Path.GetRandomFileName().Replace(".", "")[..length];
@@ -57,8 +56,21 @@ public static class General
             string _randomString = Path.GetRandomFileName().Replace(".", "");
             _result.Append(_randomString);
         }
+
         return Encoding.UTF8.GetBytes(_result.ToString());
     }
+
+    internal static async Task<byte[]> ReadFromBlob(string blobPath)
+    {
+        //Connect to the Azure Blob Storage
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        //Read the file into a Bytes Array
+        byte[] _memBytes = await _storage.ReadBytesAsync(blobPath);
+
+        return _memBytes;
+    }
+
     public static async Task SetCache()
     {
         RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
@@ -336,9 +348,11 @@ public static class General
 
             string[] _keys =
             [
-                nameof(CacheObjects.Companies), nameof(CacheObjects.CompanyContacts), nameof(CacheObjects.Titles), nameof(CacheObjects.DocumentTypes), nameof(CacheObjects.Education), nameof(CacheObjects.Eligibility),
-                nameof(CacheObjects.Experience), nameof(CacheObjects.JobOptions), nameof(CacheObjects.LeadIndustries), nameof(CacheObjects.LeadSources), nameof(CacheObjects.LeadStatus), nameof(CacheObjects.NAICS), 
-                nameof(CacheObjects.Roles), nameof(CacheObjects.Skills), nameof(CacheObjects.States), nameof(CacheObjects.StatusCodes), nameof(CacheObjects.TaxTerms), nameof(CacheObjects.Users), 
+                nameof(CacheObjects.Companies), nameof(CacheObjects.CompanyContacts), nameof(CacheObjects.Titles), nameof(CacheObjects.DocumentTypes), nameof(CacheObjects.Education),
+                nameof(CacheObjects.Eligibility),
+                nameof(CacheObjects.Experience), nameof(CacheObjects.JobOptions), nameof(CacheObjects.LeadIndustries), nameof(CacheObjects.LeadSources), nameof(CacheObjects.LeadStatus),
+                nameof(CacheObjects.NAICS),
+                nameof(CacheObjects.Roles), nameof(CacheObjects.Skills), nameof(CacheObjects.States), nameof(CacheObjects.StatusCodes), nameof(CacheObjects.TaxTerms), nameof(CacheObjects.Users),
                 nameof(CacheObjects.Workflow), nameof(CacheObjects.Zips), nameof(CacheObjects.Communications), nameof(CacheObjects.Preferences)
             ];
 
@@ -352,25 +366,6 @@ public static class General
         }
     }
 
-    internal static async Task UploadToBlob(IFormFile file, string blobPath)
-    {
-        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
-
-        await using Stream stream = file.OpenReadStream();
-        await _storage.WriteAsync(blobPath, stream);
-    }
-
-    internal static async Task<byte[]> ReadFromBlob(string blobPath)
-    {
-        //Connect to the Azure Blob Storage
-        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
-
-        //Read the file into a Bytes Array
-        byte[] _memBytes = await _storage.ReadBytesAsync(blobPath);
-        
-        return _memBytes;
-    }
-    
     // ReSharper disable once UnusedMember.Local
     private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
     {
@@ -410,4 +405,12 @@ public static class General
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
     public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.HashData(inputText);
+
+    internal static async Task UploadToBlob(IFormFile file, string blobPath)
+    {
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        await using Stream stream = file.OpenReadStream();
+        await _storage.WriteAsync(blobPath, stream);
+    }
 }

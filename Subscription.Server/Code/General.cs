@@ -6,18 +6,16 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           General.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-22-2024 15:04
-// Last Updated On:     01-08-2025 21:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 19:02
+// Last Updated On:     04-30-2025 15:57
 // *****************************************/
 
 #endregion
 
-using System.Configuration;
-
 namespace Subscription.Server.Code;
 
-public class General() //(Container container)
+public class General //(Container container)
 {
     // private Container _container = container;
 
@@ -102,10 +100,8 @@ public class General() //(Container container)
         {
             return JsonConvert.DeserializeObject<T>(_stringArray);
         }
-        else
-        {
-            return default;
-        }
+
+        return default;
     }
 
     /// <summary>
@@ -553,5 +549,16 @@ public class General() //(Container container)
         }
 
         return await _client.PostAsync<T>(_request);
+    }
+
+    internal static async Task<byte[]> ReadFromBlob(string blobPath)
+    {
+        //Connect to the Azure Blob Storage
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        //Read the file into a Bytes Array
+        byte[] _memBytes = await _storage.ReadBytesAsync(blobPath);
+
+        return _memBytes;
     }
 }
