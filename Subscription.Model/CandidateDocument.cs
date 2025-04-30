@@ -188,7 +188,7 @@ public class CandidateDocument
         get;
         set;
     }
-
+    
     /// <summary>
     ///     Resets the properties of the CandidateDocument instance to their default values.
     /// </summary>

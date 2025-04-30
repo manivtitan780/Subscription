@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           DownloadsPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-05-2024 21:12
-// Last Updated On:     12-06-2024 15:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     04-30-2025 20:15
 // *****************************************/
 
 #endregion
@@ -30,6 +30,9 @@ public partial class DownloadsPanel
     private int _candidateID, _selectedID;
     private string _internalFileName = "", _documentName = "", _documentLocation = "";
 
+    [Parameter]
+    public int CandidateID { get; set; }
+
     /// <summary>
     ///     Gets or sets the event callback that is triggered when a document is to be deleted.
     /// </summary>
@@ -37,11 +40,7 @@ public partial class DownloadsPanel
     ///     The event callback that takes an integer as a parameter, which represents the ID of the document to be deleted.
     /// </value>
     [Parameter]
-    public EventCallback<int> DeleteDocument
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DeleteDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets the ConfirmDialog instance used for confirming document deletion operations.
@@ -53,11 +52,7 @@ public partial class DownloadsPanel
     ///     This dialog is shown when a user attempts to delete a document. It provides the user with a final chance to confirm
     ///     or cancel the deletion.
     /// </remarks>
-    private ConfirmDialog DialogConfirm
-    {
-        get;
-        set;
-    }
+    private ConfirmDialog DialogConfirm { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -74,11 +69,9 @@ public partial class DownloadsPanel
     ///     to confirm actions before proceeding.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
+
+    private ViewPDFDocument DocumentViewPDF { get; set; }
 
     /*/// <summary>
     ///     Gets or sets the instance of the ViewPDFDocument component used for displaying PDF documents.
@@ -116,11 +109,7 @@ public partial class DownloadsPanel
     ///     The event callback that takes an integer as a parameter, which represents the ID of the document to be downloaded.
     /// </value>
     [Parameter]
-    public EventCallback<int> DownloadDocument
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DownloadDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the user has rights to edit the documents.
@@ -129,11 +118,7 @@ public partial class DownloadsPanel
     ///     <c>true</c> if the user can edit the documents; otherwise, <c>false</c>. The default value is <c>true</c>.
     /// </value>
     [Parameter]
-    public bool EditRights
-    {
-        get;
-        set;
-    } = true;
+    public bool EditRights { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the Syncfusion Blazor Grid component for managing candidate documents.
@@ -142,11 +127,7 @@ public partial class DownloadsPanel
     ///     The Syncfusion Blazor Grid component that displays the list of candidate documents and provides functionalities
     ///     such as downloading, deleting, and viewing the documents.
     /// </value>
-    private SfGrid<CandidateDocument> GridDownload
-    {
-        get;
-        set;
-    }
+    private SfGrid<CandidateDocument> GridDownload { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of candidate documents to be managed in the panel.
@@ -155,11 +136,7 @@ public partial class DownloadsPanel
     ///     The list of <see cref="CandidateDocument" /> objects representing the documents associated with a candidate.
     /// </value>
     [Parameter]
-    public List<CandidateDocument> Model
-    {
-        get;
-        set;
-    }
+    public List<CandidateDocument> Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the height of each row in the panel.
@@ -168,11 +145,7 @@ public partial class DownloadsPanel
     ///     The height of each row in pixels. The default value is 38.
     /// </value>
     [Parameter]
-    public int RowHeight
-    {
-        get;
-        set;
-    } = 42;
+    public int RowHeight { get; set; } = 42;
 
     /// <summary>
     ///     Gets or sets the selected row in the panel.
@@ -181,11 +154,7 @@ public partial class DownloadsPanel
     ///     The <see cref="CandidateDocument" /> object representing the document associated with the selected row in the
     ///     panel.
     /// </value>
-    public CandidateDocument SelectedRow
-    {
-        get;
-        private set;
-    }
+    public CandidateDocument SelectedRow { get; private set; }
 
     /// <summary>
     ///     Gets or sets the Syncfusion spinner control used in the DownloadsPanel.
@@ -197,17 +166,9 @@ public partial class DownloadsPanel
     ///     The spinner is used to indicate a loading state while the panel is processing tasks such as downloading or deleting
     ///     documents.
     /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
-    private ViewPDFDocument DocumentViewPDF
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Initiates the process of deleting a document.
@@ -314,7 +275,7 @@ public partial class DownloadsPanel
 
         string _response = await General.ExecuteRest<string>("Candidate/DownloadFile", _parameters, null, false);
         DocumentDetails _restResponse = JsonConvert.DeserializeObject<DocumentDetails>(_response);
-        
+
         if (_restResponse != null)
         {
             string _location = _restResponse.DocumentLocation;
