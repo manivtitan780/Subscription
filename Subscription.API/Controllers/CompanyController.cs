@@ -69,6 +69,33 @@ public class CompanyController : ControllerBase
         return _returnValue;
     }
 
+    [HttpPost]
+    public async Task<ActionResult<string>> DeleteCompanyDocument([FromQuery] int documentID, [FromQuery] string user)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        string _documents = "[]";
+        await using SqlCommand _command = new("DeleteCompanyDocument", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", documentID);
+        _command.Varchar("User", 10, user); //TODO: make sure you delete the associated document from Azure filesystem too.
+        try
+        {
+            await _connection.OpenAsync();
+            _documents = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error deleting company document. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_documents);
+    }
+
     /// <summary>
     ///     Retrieves the details of a company based on the provided company ID and user.
     ///     <para>

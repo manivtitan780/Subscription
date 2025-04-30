@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-28-2025 18:55
+// Last Updated On:     04-29-2025 20:40
 // *****************************************/
 
 #endregion
@@ -68,6 +68,12 @@ public partial class Companies
     private List<Company> DataSource { get; set; }
 
     private AddCompanyDocument DialogDocument { get; set; }
+
+    private DocumentPanel DocumentPanel
+    {
+        get;
+        set;
+    }
 
     public EditContext EditConCompany { get; set; }
 
@@ -169,6 +175,19 @@ public partial class Companies
                                                     }
                                                 });
 
+    private Task DeleteCompanyDocument(int arg) => ExecuteMethod(async () =>
+                                                                 {
+                                                                     Dictionary<string, string> _parameters = new()
+                                                                                                              {
+                                                                                                                  {"documentID", arg.ToString()},
+                                                                                                                  {"user", User}
+                                                                                                              };
+
+                                                                     string _response = await General.ExecuteRest<string>("Company/DeleteCompanyDocument", _parameters);
+
+                                                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_response);
+                                                                 });
+
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
                                                                                             {
                                                                                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(company.Data.ID);
@@ -210,6 +229,15 @@ public partial class Companies
 
                                                                                                 VisibleSpinner = false;
                                                                                             });
+
+    private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
+                                                            {
+                                                                SelectedDownload = DocumentPanel.SelectedRow;
+                                                                string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.FileName}^2".ToBase64String();
+                                                                await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
+                                                            });
+
+    private CompanyDocuments SelectedDownload { get; set; }
 
     /*//[JSInvokable("DetailCollapse")]
     //public void DetailRowCollapse() => _target = null;*/
