@@ -8,7 +8,7 @@
 // File Name:           DocumentPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-22-2024 15:04
-// Last Updated On:     04-28-2025 20:30
+// Last Updated On:     04-30-2025 20:15
 // *****************************************/
 
 #endregion
@@ -20,77 +20,33 @@ public partial class DocumentPanel
     private int _selectedID;
 
     [Parameter]
-    public EventCallback<int> DeleteCompanyDocument
-    {
-        get;
-        set;
-    }
+    public bool CanAdministerDocuments { get; set; } = true;
 
     [Parameter]
-    public bool CanAdministerDocuments
-    {
-        get;
-        set;
-    } = true;
+    public EventCallback<int> DeleteCompanyDocument { get; set; }
 
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
+
+    private ViewPDFDocument DocumentViewPDF { get; set; }
 
     [Parameter]
-    public EventCallback<int> DownloadDocument
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DownloadDocument { get; set; }
 
     [Parameter]
-    public EventCallback<int> EditCompanyDocument
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> EditCompanyDocument { get; set; }
 
-    private SfGrid<CompanyDocuments> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<CompanyDocuments> Grid { get; set; }
 
     [Parameter]
-    public List<CompanyDocuments> Model
-    {
-        get;
-        set;
-    }
+    public List<CompanyDocuments> Model { get; set; }
 
     [Parameter]
-    public double RowHeight
-    {
-        get;
-        set;
-    } = 45;
+    public double RowHeight { get; set; } = 45;
 
-    internal CompanyDocuments SelectedRow
-    {
-        get;
-        set;
-    } = new();
+    internal CompanyDocuments SelectedRow { get; set; } = new();
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
-
-    private ViewPDFDocument DocumentViewPDF
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DeleteCompanyDocumentMethod(int id)
     {
@@ -127,8 +83,16 @@ public partial class DocumentPanel
         }
     }
 
-    private Task ViewDocumentDialog(CompanyDocuments con)
+    private async Task ViewDocumentDialog(CompanyDocuments con)
     {
-        return null;
+        VisibleSpinner = true;
+        string _fileExtension = Path.GetExtension(con.FileName);
+        string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
+        if (_allowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            await DocumentViewPDF.ShowDialog();
+        }
+
+        VisibleSpinner = false;
     }
 }

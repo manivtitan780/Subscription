@@ -258,7 +258,8 @@
 											<TabHeader Text="Documents"/>
 										</ChildContent>
 										<ContentTemplate>
-											<DownloadsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candDocumentsObject" @ref="DownloadsPanel"/>
+											<DownloadsPanel CandidateID="_target.ID" DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candDocumentsObject"
+															@ref="DownloadsPanel"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
