@@ -8,7 +8,7 @@
 // File Name:           Industry.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
-// Last Updated On:     03-19-2025 20:03
+// Last Updated On:     05-01-2025 20:57
 // *****************************************/
 
 #endregion
@@ -23,29 +23,13 @@ public partial class Industry : ComponentBase
     ///     Gets or sets the 'AdminListDialog' instance used for managing Industry information in the administrative context.
     ///     This dialog is used for both creating new Industry and editing existing Industry.
     /// </summary>
-    private AdminListDialog AdminDialog
-    {
-        get;
-        set;
-    }
+    private AdminListDialog AdminDialog { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    public AdminGrid AdminGrid { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<AdminList> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -60,23 +44,11 @@ public partial class Industry : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<AdminList> Grid { get; set; }
 
-    private string IndustryAuto
-    {
-        get;
-        set;
-    }
+    private string IndustryAuto { get; set; }
 
     /// <summary>
     ///     Gets or sets the IndustryRecord property of the Industry class.
@@ -84,11 +56,7 @@ public partial class Industry : ComponentBase
     ///     It is used to hold the data of the selected Industry in the Industry grid.
     ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private AdminList IndustryRecord
-    {
-        get;
-        set;
-    } = new();
+    private AdminList IndustryRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a Industry record. This property is used to hold a copy of a Industry record for
@@ -96,11 +64,7 @@ public partial class Industry : ComponentBase
     ///     When adding a new Industry, a new instance of Industry is created and assigned to this property.
     ///     When editing an existing Industry, a copy of the Industry record to be edited is created and assigned to this property.
     /// </summary>
-    private AdminList IndustryRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private AdminList IndustryRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -109,11 +73,7 @@ public partial class Industry : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -122,27 +82,15 @@ public partial class Industry : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -151,40 +99,18 @@ public partial class Industry : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the Industry of the Industry Dialog in the administrative context.
     ///     The Industry changes based on the action being performed on the Industry record - "Add" when a new Industry is being added,
     ///     and "Edit" when an existing Industry's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -271,7 +197,6 @@ public partial class Industry : ComponentBase
                              {
                                  await FilterSet(industry.Value.NullOrWhiteSpace() ? "" : industry.Value);
                                  await SetDataSource();
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -345,7 +270,7 @@ public partial class Industry : ComponentBase
     ///     This method is used to update the grid component and reflect any changes made to the data.
     /// </summary>
     /// <returns>A Task that represents the asynchronous operation.</returns>
-    private async Task RefreshGrid() => await SetDataSource(); 
+    private async Task RefreshGrid() => await SetDataSource();
 
     /// <summary>
     ///     Handles the event of a row being selected in the Industry grid.
@@ -385,9 +310,6 @@ public partial class Industry : ComponentBase
                                                                             await FilterSet("");
                                                                             DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                         }
-
-                                                                        /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                        await Grid.SelectRowAsync(_index);*/
                                                                     });
 
     private async Task SetDataSource()
@@ -399,6 +321,8 @@ public partial class Industry : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -435,10 +359,9 @@ public partial class Industry : ComponentBase
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
                                                                          }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
 }
