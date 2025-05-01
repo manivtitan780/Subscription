@@ -1,7 +1,7 @@
 @page "/Admin/Workflow"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Workflow"/>
 <AdminGrid AddMethod="() => EditWorkflowAsync()" AutocompleteMethod="Admin_SearchWorkflow" AutocompleteParameter="@("Workflow")" Name="@WorkflowAuto" Entity="Workflow" HeaderContentPlural="Job Option"
            HeaderContentSingular="Workflow" Height="140px" Page="Workflow" PopupWidth="350px" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>

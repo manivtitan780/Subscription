@@ -1,7 +1,7 @@
 @page "/Admin/DocumentType"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Document Type"/>
 <AdminGrid AddMethod="() => EditDocumentTypeAsync()" AutocompleteMethod="Admin_SearchDocumentTypes" AutocompleteParameter="@("DocumentType")" Name="@DocumentTypeAuto"
            Entity="DocumentType" HeaderContentPlural="Document Types" HeaderContentSingular="Document Type" Height="140px" Page="DocumentType" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">

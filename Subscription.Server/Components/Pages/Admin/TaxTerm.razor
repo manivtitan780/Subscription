@@ -1,7 +1,7 @@
 @page "/Admin/TaxTerm"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Tax Term"/>
 <AdminGrid AddMethod="() => EditTaxTermAsync()" AutocompleteMethod="Admin_SearchTaxTerm" AutocompleteParameter="@("TaxTerm")" Name="@TaxTermAuto"
            Entity="TaxTerm" HeaderContentPlural="Tax Terms" HeaderContentSingular="TaxTerm" Height="140px" Page="TaxTerm" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">

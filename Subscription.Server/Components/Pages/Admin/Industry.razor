@@ -1,7 +1,7 @@
 @page "/Admin/Industry"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Lead Industry"/>
 <AdminGrid AddMethod="() => EditIndustryAsync()" AutocompleteMethod="Admin_SearchIndustry" AutocompleteParameter="@("Industry")" Name="@IndustryAuto"
            Entity="Industry" HeaderContentPlural="Lead Industries" HeaderContentSingular="Lead Industry" Height="140px" Page="Industry" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">

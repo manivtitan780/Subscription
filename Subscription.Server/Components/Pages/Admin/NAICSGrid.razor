@@ -1,7 +1,7 @@
 @page "/Admin/NAICS"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="NAICS"/>
 <AdminGrid AddMethod="() => EditNAICSAsync()" AutocompleteMethod="Admin_SearchNAICS" AutocompleteParameter="@("NAICS")" Name="@NAICSAuto"
            Entity="NAICS" HeaderContentPlural="North American Industry Classification System" HeaderContentSingular="NAICS" Height="140px" Page="NAICS" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
