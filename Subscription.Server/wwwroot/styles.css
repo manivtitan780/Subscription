@@ -147,7 +147,7 @@ body, form, html {
 }
 
 #divMainGrid > #divGrid {
-    height: calc(100% - 107px);
+    height: calc(100% - 49px);
     /*border: 1px solid red;*/
 }
 
@@ -1142,5 +1142,17 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
 .e-menu-popup .e-menu-item {
     margin: 0 !important;
     padding: 0 10px !important;
-}    
+}  
+
+.e-menu .e-caret {
+    color: white !important;
+}
+
+.e-menu .e-menu-item.e-selected .e-caret {
+    color: #0a53be !important;
+}
+
+.e-menu-popup .e-menu-item.e-focused {
+    background-color: var(--c-red-select) !important;
+}
 /* #endregion Menu on App Bar */
