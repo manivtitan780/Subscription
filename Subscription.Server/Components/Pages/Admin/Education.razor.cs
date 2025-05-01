@@ -8,7 +8,7 @@
 // File Name:           Education.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-12-2025 19:03
-// Last Updated On:     03-12-2025 19:03
+// Last Updated On:     05-01-2025 20:06
 // *****************************************/
 
 #endregion
@@ -23,42 +23,18 @@ public partial class Education : ComponentBase
     ///     Gets or sets the 'AdminListDialog' instance used for managing title information in the administrative context.
     ///     This dialog is used for both creating new title and editing existing title.
     /// </summary>
-    private AdminListDialog AdminDialog
-    {
-        get;
-        set;
-    }
+    private AdminListDialog AdminDialog { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    public AdminGrid AdminGrid { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<AdminList> DataSource { get; set; } = [];
 
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private string EducationAuto
-    {
-        get;
-        set;
-    }
+    private string EducationAuto { get; set; }
 
     /// <summary>
     ///     Gets or sets the EducationRecord property of the Education class.
@@ -66,11 +42,7 @@ public partial class Education : ComponentBase
     ///     It is used to hold the data of the selected title in the title grid.
     ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private AdminList EducationRecord
-    {
-        get;
-        set;
-    } = new();
+    private AdminList EducationRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a Education record. This property is used to hold a copy of a Education record for
@@ -78,17 +50,9 @@ public partial class Education : ComponentBase
     ///     When adding a new title, a new instance of Title is created and assigned to this property.
     ///     When editing an existing title, a copy of the Title record to be edited is created and assigned to this property.
     /// </summary>
-    private AdminList EducationRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private AdminList EducationRecordClone { get; set; } = new();
 
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<AdminList> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -97,11 +61,7 @@ public partial class Education : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -110,27 +70,15 @@ public partial class Education : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -139,40 +87,20 @@ public partial class Education : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     /// <summary>
     ///     Gets or sets the title of the Education Dialog in the administrative context.
     ///     The title changes based on the action being performed on the title record - "Add" when a new title is being added,
     ///     and "Edit" when an existing title's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -388,6 +316,8 @@ public partial class Education : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -415,7 +345,6 @@ public partial class Education : ComponentBase
                                                                                                                                     + (enabled ? "disable" : "enable") + "</strong> " +
                                                                                                                                     "this <i>Education</i>?")))
                                                                          {
-                                                                             
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
                                                                                                                           {"methodName", "Admin_ToggleEducationStatus"},
@@ -425,10 +354,9 @@ public partial class Education : ComponentBase
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
                                                                          }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
 }

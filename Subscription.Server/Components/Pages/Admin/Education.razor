@@ -11,7 +11,6 @@
 				ID="gridCompany" @ref="Grid" TValue="AdminList" Width="100%">
 			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
-			@* <SfDataManager Adaptor="Adaptors.CustomAdaptor" AdaptorInstance="@typeof(AdminEducationAdaptor)" Key="ID"/> *@
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AdminList"/>
 			<GridColumns>
 				<GridColumn Field="Text" HeaderText="Education" Width="50%">

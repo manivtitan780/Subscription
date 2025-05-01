@@ -8,7 +8,7 @@
 // File Name:           DocumentType.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-14-2025 20:03
-// Last Updated On:     03-19-2025 19:03
+// Last Updated On:     05-01-2025 20:06
 // *****************************************/
 
 #endregion
@@ -31,23 +31,11 @@ public partial class DocumentType : ComponentBase
     }
     */
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    public AdminGrid AdminGrid { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private List<DocumentTypes> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<DocumentTypes> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -62,23 +50,11 @@ public partial class DocumentType : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private string DocumentTypeAuto
-    {
-        get;
-        set;
-    }
+    private string DocumentTypeAuto { get; set; }
 
-    private DocumentTypeDialog DocumentTypeDialog
-    {
-        get;
-        set;
-    }
+    private DocumentTypeDialog DocumentTypeDialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the DocumentTypeRecord property of the DocumentType class.
@@ -86,11 +62,7 @@ public partial class DocumentType : ComponentBase
     ///     It is used to hold the data of the selected DocumentType in the DocumentType grid.
     ///     The data is encapsulated in a DocumentType object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private DocumentTypes DocumentTypeRecord
-    {
-        get;
-        set;
-    } = new();
+    private DocumentTypes DocumentTypeRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a DocumentType record. This property is used to hold a copy of a DocumentType record for
@@ -98,17 +70,9 @@ public partial class DocumentType : ComponentBase
     ///     When adding a new DocumentType, a new instance of DocumentType is created and assigned to this property.
     ///     When editing an existing DocumentType, a copy of the DocumentType record to be edited is created and assigned to this property.
     /// </summary>
-    private DocumentTypes DocumentTypeRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private DocumentTypes DocumentTypeRecordClone { get; set; } = new();
 
-    private SfGrid<DocumentTypes> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<DocumentTypes> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -117,11 +81,7 @@ public partial class DocumentType : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -130,27 +90,15 @@ public partial class DocumentType : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -159,40 +107,20 @@ public partial class DocumentType : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     /// <summary>
     ///     Gets or sets the DocumentType of the DocumentType Dialog in the administrative context.
     ///     The DocumentType changes based on the action being performed on the DocumentType record - "Add" when a new DocumentType is being added,
     ///     and "Edit" when an existing DocumentType's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -384,9 +312,10 @@ public partial class DocumentType : ComponentBase
 
                                                                             if (_response.NotNullOrWhiteSpace() && _response != "null")
                                                                             {
+                                                                                await FilterSet("");
                                                                                 DataSource = General.DeserializeObject<List<DocumentTypes>>(_response);
                                                                             }
-                                                                            
+
                                                                             //await Grid.Refresh(false);
 
                                                                             /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
@@ -402,5 +331,7 @@ public partial class DocumentType : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
+
+        await Grid.Refresh();
     }
 }
