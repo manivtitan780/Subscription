@@ -5,10 +5,9 @@
 <AdminGrid AddMethod="() => EditJobOptionAsync()" AutocompleteMethod="Admin_SearchJobOption" AutocompleteParameter="@("JobOption")" Name="@JobOptionAuto" Entity="JobOption" HeaderContentPlural="Job Options"
 		   HeaderContentSingular="JobOption" Height="140px" Page="JobOption" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
-		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" EnableHover="true" EnableStickyHeader="true" DataSource="@DataSource" Height="100%" ID="gridCompany"
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" EnableHover="true" EnableStickyHeader="true" DataSource="@DataSource" Height="100%" ID="gridCompany"
 		        TValue="JobOptions" @ref="Grid" Width="100%">
-			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="JobOptions"/>
 			<GridColumns>
@@ -42,4 +41,3 @@
 	</GridContent>
 </AdminGrid>
 <JobOptionDialog HeaderString="@($"{Title} JobOption")" Model="@JobOptionRecordClone" Placeholder="JobOption" @ref="JobOptionDialog" Save="SaveJobOption" TaxTerms="@TaxTerms"/>
-@* <AdminListDialog HeaderString="@($"{Title} JobOption")" Model="JobOptionRecordClone" Placeholder="JobOption" @ref="AdminDialog" Save="SaveJobOption"/> *@
