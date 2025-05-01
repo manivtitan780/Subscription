@@ -4,7 +4,30 @@
 	<AppBarSpacer></AppBarSpacer>
 	<SfMenu TValue="MenuItem" CssClass="appMenu">
 		<MenuItems>
-			<MenuItem Text="Admin" Url="javascript:void()"/>
+			<MenuItem Text="Admin" Url="javascript:void()">
+			<MenuItems>
+				<MenuItem Text="Users" Url="/subscription/admin/User" Disabled="@(PageName == "User")"/>
+				<MenuItem Text="Roles" Url="/subscription/admin/Role" Disabled="@(PageName == "Role")"/>
+				<MenuItem Text="Titles" Url="/subscription/admin/Title" Disabled="@(PageName == "Title")"/>
+				<MenuItem Text="Skills" Url="/subscription/admin/Skill" Disabled="@(PageName == "Skill")"/>
+				<MenuItem Text="States" Url="/subscription/admin/State" Disabled="@(PageName == "State")"/>
+				<MenuItem Text="Status Codes" Url="/subscription/admin/status" Disabled="@(PageName == "Status Code")"/>
+				<MenuItem Text="Tax Terms" Url="/subscription/admin/TaxTerm" Disabled="@(PageName == "Tax Term")"/>
+				<MenuItem Text="Lead Industries" Url="/subscription/admin/Industry" Disabled="@(PageName == "Lead Industry")"/>
+				<MenuItem Text="Lead Sources" Url="/subscription/admin/Source" Disabled="@(PageName == "Lead Source")"/>
+				<MenuItem Text="Lead Statuses" Url="/subscription/admin/Status" Disabled="@(PageName == "Lead Status")"/>
+				<MenuItem Text="Job Options" Url="/subscription/admin/JobOption" Disabled="@(PageName == "Job Option")"/>
+				<MenuItem Text="Workflows" Url="/subscription/admin/Workflow" Disabled="@(PageName == "Workflow")"/>
+				<MenuItem Text="NAICS" Url="/subscription/admin/NAICS" Disabled="@(PageName == "NAICS")"/>
+				<MenuItem Text="Document Types" Url="/subscription/admin/DocumentType" Disabled="@(PageName == "Document Type")"/>
+				<MenuItem Text="Education" Url="/subscription/admin/Education" Disabled="@(PageName == "Education")"/>
+				<MenuItem Text="Eligibilities" Url="/subscription/admin/Eligibility" Disabled="@(PageName == "Eligibility")"/>
+				<MenuItem Text="Experiences" Url="/subscription/admin/Experience" Disabled="@(PageName == "Experience")"/>
+				<MenuItem Text="Templates" Url="/subscription/admin/templates" Disabled="@(PageName == "Template")"/>
+				<MenuItem Text="Variable Commission" Url="javascript:void()" Disabled="@(PageName == "Variable Commission")"/>
+				<MenuItem Text="Preferences" Url="javascript:void()" Disabled="@(PageName == "Preference")"/>
+			</MenuItems>
+			</MenuItem>
 			<MenuItem Text="Candidates" Url="/subscription/candidate" Disabled="@(PageName == "Candidate")"/>
 			<MenuItem Text="Requisitions" Url="/subscription/requisition" Disabled="@(PageName == "Requisition")"/>
 			<MenuItem Text="Companies" Url="/subscription/company" Disabled="@(PageName == "Company")"/>

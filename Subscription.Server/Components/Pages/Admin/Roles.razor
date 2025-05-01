@@ -1,7 +1,7 @@
 @page "/Admin/Role"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Role"/>
 <AdminGrid AddMethod="() => EditRoleAsync()" AutocompleteMethod="Admin_SearchRole" AutocompleteParameter="@("Role")" Name="@RoleAuto"
            Entity="Role" HeaderContentPlural="Roles" HeaderContentSingular="Role" Height="140px" Page="Role" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">

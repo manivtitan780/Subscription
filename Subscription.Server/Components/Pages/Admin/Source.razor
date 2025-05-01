@@ -1,7 +1,7 @@
 @page "/Admin/Source"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Lead Source"/>
 <AdminGrid AddMethod="() => EditSourceAsync()" AutocompleteMethod="Admin_SearchLeadSource" AutocompleteParameter="@("LeadSource")" Name="@SourceAuto"
            Entity="LeadSource" HeaderContentPlural="Lead Sources" HeaderContentSingular="Lead Source" Height="140px" Page="Source" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">

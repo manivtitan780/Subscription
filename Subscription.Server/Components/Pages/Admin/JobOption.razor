@@ -1,7 +1,7 @@
 @page "/Admin/JobOption"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Job Option"/>
 <AdminGrid AddMethod="() => EditJobOptionAsync()" AutocompleteMethod="Admin_SearchJobOption" AutocompleteParameter="@("JobOption")" Name="@JobOptionAuto" Entity="JobOption" HeaderContentPlural="Job Options"
 		   HeaderContentSingular="JobOption" Height="140px" Page="JobOption" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>

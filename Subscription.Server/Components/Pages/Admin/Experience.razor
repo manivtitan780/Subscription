@@ -1,7 +1,7 @@
 @page "/Admin/Experience"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Experience"/>
 <AdminGrid AddMethod="() => EditExperienceAsync()" AutocompleteMethod="Admin_SearchExperience" AutocompleteParameter="@("Experience")" Name="@ExperienceAuto"
            Entity="Experience" HeaderContentPlural="Experiences" HeaderContentSingular="Experience" Height="140px" Page="Experience" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">

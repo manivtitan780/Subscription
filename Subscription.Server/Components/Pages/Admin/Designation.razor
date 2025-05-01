@@ -1,7 +1,7 @@
 @page "/Admin/Title"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Title"/>
 <AdminGrid AddMethod="() => EditDesignationAsync()" AutocompleteMethod="Admin_SearchDesignation" AutocompleteParameter="@("Designation")" Name="@DesignationAuto"
            Entity="Title" HeaderContentPlural="Candidate Titles" HeaderContentSingular="Title" Height="140px" Page="Designation" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
