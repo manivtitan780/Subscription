@@ -101,8 +101,6 @@ public partial class Eligibility : ComponentBase
     [Inject]
     private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner { get; set; }
-
     /// <summary>
     ///     Gets or sets the Eligibility of the Eligibility Dialog in the administrative context.
     ///     The Eligibility changes based on the action being performed on the Eligibility record - "Add" when a new Eligibility is being added,

@@ -89,8 +89,6 @@ public partial class Education : ComponentBase
     [Inject]
     private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner { get; set; }
-
     /// <summary>
     ///     Gets or sets the title of the Education Dialog in the administrative context.
     ///     The title changes based on the action being performed on the title record - "Add" when a new title is being added,
