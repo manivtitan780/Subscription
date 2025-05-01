@@ -8,7 +8,7 @@
 // File Name:           NAICSGrid.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-19-2025 21:03
-// Last Updated On:     03-20-2025 15:03
+// Last Updated On:     05-01-2025 21:18
 // *****************************************/
 
 #endregion
@@ -19,60 +19,11 @@ public partial class NAICSGrid : ComponentBase
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    /// <summary>
-    ///     Gets or sets the 'NAICSDialog' instance used for managing NAICS information in the administrative context.
-    ///     This dialog is used for both creating new NAICS and editing existing NAICS.
-    /// </summary>
-    /*
-    private NAICSDialog AdminDialog
-    {
-        get;
-        set;
-    }
-    */
+    private bool AdminScreens { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    private List<NAICS> DataSource { get; set; } = [];
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-
-    private List<NAICS> DataSource
-    {
-        get;
-        set;
-    } = [];
-
-    /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    /// </remarks>
-    [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
-
-    private SfGrid<NAICS> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<NAICS> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -81,23 +32,11 @@ public partial class NAICSGrid : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
-    private string NAICSAuto
-    {
-        get;
-        set;
-    }
+    private string NAICSAuto { get; set; }
 
-    private NAICSDialog NAICSDialog
-    {
-        get;
-        set;
-    }
+    private NAICSDialog NAICSDialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the NAICSRecord property of the NAICS class.
@@ -105,11 +44,7 @@ public partial class NAICSGrid : ComponentBase
     ///     It is used to hold the data of the selected NAICS in the NAICS grid.
     ///     The data is encapsulated in a NAICS object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private NAICS NAICSRecord
-    {
-        get;
-        set;
-    } = new();
+    private NAICS NAICSRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a NAICS record. This property is used to hold a copy of a NAICS record for
@@ -117,11 +52,7 @@ public partial class NAICSGrid : ComponentBase
     ///     When adding a new NAICS, a new instance of NAICS is created and assigned to this property.
     ///     When editing an existing NAICS, a copy of the NAICS record to be edited is created and assigned to this property.
     /// </summary>
-    private NAICS NAICSRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private NAICS NAICSRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -130,27 +61,15 @@ public partial class NAICSGrid : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -159,40 +78,18 @@ public partial class NAICSGrid : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the NAICS of the NAICS Dialog in the administrative context.
     ///     The NAICS changes based on the action being performed on the NAICS record - "Add" when a new NAICS is being added,
     ///     and "Edit" when an existing NAICS's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -382,7 +279,6 @@ public partial class NAICSGrid : ComponentBase
                                                                          NAICSRecord = NAICSRecordClone.Copy();
                                                                      }
 
-                                                                     //await Grid.Refresh(true);
                                                                      if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                      {
                                                                          await FilterSet("");
@@ -402,5 +298,7 @@ public partial class NAICSGrid : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<NAICS>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 }
