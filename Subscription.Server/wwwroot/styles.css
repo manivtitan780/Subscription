@@ -1117,11 +1117,30 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     font-weight: 600;
     text-transform: uppercase;
 }
-.appMenu li:not(.e-focused) .e-menu-url {
+
+.appMenu .e-menu-url {
     color: var(--c-wh) !important;
 }
 
 .appMenu li.e-focused .e-menu-url {
     color: #0a53be !important;
 }
+
+.e-menu-container .e-menu .e-menu-item.e-selected {
+    background-color: var(--c-wh) !important;
+}
+
+.e-menu-container .e-menu .e-menu-item.e-selected .e-menu-url{
+    color: #0a53be !important;
+}
+
+.e-menu-popup .e-menu-url {
+    font-size: 10pt;
+    color: var(--c-bk) !important;
+}
+
+.e-menu-popup .e-menu-item {
+    margin: 0 !important;
+    padding: 0 10px !important;
+}    
 /* #endregion Menu on App Bar */
