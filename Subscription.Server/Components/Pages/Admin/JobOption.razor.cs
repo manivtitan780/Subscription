@@ -25,21 +25,6 @@ public partial class JobOption : ComponentBase
 
     private List<JobOptions> DataSource { get; set; } = [];
 
-    /// <summary>
-    ///     Gets or sets the dialog service used for displaying confirmation dialogs.
-    /// </summary>
-    /// <value>
-    ///     An instance of <see cref="SfDialogService" /> that provides methods for showing dialogs and handling user
-    ///     interactions
-    ///     with those dialogs.
-    /// </value>
-    /// <remarks>
-    ///     The <see cref="SfDialogService" /> is used to display confirmation dialogs to the user. It provides methods such as
-    ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
-    /// </remarks>
-    [Inject]
-    private SfDialogService DialogService { get; set; }
-
     private SfGrid<JobOptions> Grid { get; set; }
 
     private string JobOptionAuto { get; set; }
