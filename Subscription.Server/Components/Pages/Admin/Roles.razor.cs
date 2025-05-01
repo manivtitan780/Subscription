@@ -8,12 +8,16 @@
 // File Name:           Roles.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-20-2025 15:03
-// Last Updated On:     03-20-2025 19:03
+// Last Updated On:     05-01-2025 21:25
 // *****************************************/
 
 #endregion
 
+#region Using
+
 using Role = Subscription.Model.Role;
+
+#endregion
 
 namespace Subscription.Server.Components.Pages.Admin;
 
@@ -21,33 +25,9 @@ public partial class Roles : ComponentBase
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    /// <summary>
-    ///     Gets or sets the 'RoleDialog' instance used for managing Role information in the administrative context.
-    ///     This dialog is used for both creating new Role and editing existing Role.
-    /// </summary>
-    private RoleDialog RoleDialog
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
-
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-
-    private List<Role> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<Role> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -62,47 +42,9 @@ public partial class Roles : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private string RoleAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the RoleRecord property of the Role class.
-    ///     The RoleRecord property represents a single Role in the application.
-    ///     It is used to hold the data of the selected Role in the Role grid.
-    ///     The data is encapsulated in a Role object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private Role RoleRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Role record. This property is used to hold a copy of a Role record for
-    ///     operations like editing or adding a Role.
-    ///     When adding a new Role, a new instance of Role is created and assigned to this property.
-    ///     When editing an existing Role, a copy of the Role record to be edited is created and assigned to this property.
-    /// </summary>
-    private Role RoleRecordClone
-    {
-        get;
-        set;
-    } = new();
-
-    private SfGrid<Role> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<Role> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -111,11 +53,7 @@ public partial class Roles : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -124,27 +62,39 @@ public partial class Roles : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
+
+    private string RoleAuto { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the 'RoleDialog' instance used for managing Role information in the administrative context.
+    ///     This dialog is used for both creating new Role and editing existing Role.
+    /// </summary>
+    private RoleDialog RoleDialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the RoleRecord property of the Role class.
+    ///     The RoleRecord property represents a single Role in the application.
+    ///     It is used to hold the data of the selected Role in the Role grid.
+    ///     The data is encapsulated in a Role object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private Role RoleRecord { get; set; } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Role record. This property is used to hold a copy of a Role record for
+    ///     operations like editing or adding a Role.
+    ///     When adding a new Role, a new instance of Role is created and assigned to this property.
+    ///     When editing an existing Role, a copy of the Role record to be edited is created and assigned to this property.
+    /// </summary>
+    private Role RoleRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -153,40 +103,18 @@ public partial class Roles : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the Role of the Role Dialog in the administrative context.
     ///     The Role changes based on the action being performed on the Role record - "Add" when a new Role is being added,
     ///     and "Edit" when an existing Role's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -213,40 +141,39 @@ public partial class Roles : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditRoleAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<Role> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                            {
+                                                                VisibleSpinner = true;
+                                                                if (id != 0)
+                                                                {
+                                                                    List<Role> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                    if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                    {
+                                                                        int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                        await Grid.SelectRowAsync(_index);
+                                                                    }
+                                                                }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (RoleRecordClone == null)
-                                                                           {
-                                                                               RoleRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               RoleRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           RoleRecordClone = RoleRecord.Copy();
-                                                                       }
+                                                                if (id == 0)
+                                                                {
+                                                                    Title = "Add";
+                                                                    if (RoleRecordClone == null)
+                                                                    {
+                                                                        RoleRecordClone = new();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        RoleRecordClone.Clear();
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    Title = "Edit";
+                                                                    RoleRecordClone = RoleRecord.Copy();
+                                                                }
 
-                                                                       VisibleSpinner = false;
-                                                                       //RoleRecordClone.Entity = "Role";
-                                                                       await RoleDialog.ShowDialog();
-                                                                   });
+                                                                VisibleSpinner = false;
+                                                                await RoleDialog.ShowDialog();
+                                                            });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -365,28 +292,25 @@ public partial class Roles : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveRole(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"cacheName", nameof(CacheObjects.Roles)}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveRole", _parameters,
-                                                                                                                                RoleRecordClone);
-                                                                           if (RoleRecordClone != null)
-                                                                           {
-                                                                               RoleRecord = RoleRecordClone.Copy();
-                                                                           }
+                                                                {
+                                                                    Dictionary<string, string> _parameters = new()
+                                                                                                             {
+                                                                                                                 {"cacheName", nameof(CacheObjects.Roles)}
+                                                                                                             };
+                                                                    string _response = await General.ExecuteRest<string>("Admin/SaveRole", _parameters,
+                                                                                                                         RoleRecordClone);
+                                                                    if (RoleRecordClone != null)
+                                                                    {
+                                                                        RoleRecord = RoleRecordClone.Copy();
+                                                                    }
 
-                                                                           //await Grid.Refresh(true);
-                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                           {
-                                                                               await FilterSet("");
-                                                                               DataSource = General.DeserializeObject<List<Role>>(_response);
-                                                                           }
-
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                    //await Grid.Refresh(true);
+                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                    {
+                                                                        await FilterSet("");
+                                                                        DataSource = General.DeserializeObject<List<Role>>(_response);
+                                                                    }
+                                                                });
 
     private async Task SetDataSource()
     {
@@ -397,5 +321,7 @@ public partial class Roles : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<Role>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 }
