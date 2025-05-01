@@ -17,4 +17,6 @@ namespace Subscription.Server.Components.Pages.Controls.Common;
 
 public partial class PageHeader
 {
+    [Parameter]
+    public string PageName { get; set; } = "Candidate";
 }

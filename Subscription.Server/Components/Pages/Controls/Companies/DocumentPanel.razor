@@ -3,10 +3,10 @@
 			<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
 			<GridEvents RowSelected="RowSelected" TValue="CompanyDocuments" />
 			<GridColumns>
-				<GridColumn Field="@nameof(CompanyDocuments.DocumentName)" HeaderText="Name" Width="20%">
+				<GridColumn Field="@nameof(CompanyDocuments.DocumentName)" HeaderText="Name" Width="35%">
 				</GridColumn>
 				<GridColumn Field="@nameof(CompanyDocuments.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" />
-				<GridColumn Field="@nameof(CompanyDocuments.FileName)" HeaderText="File Name" Width="20%" />
+				<GridColumn Field="@nameof(CompanyDocuments.FileName)" HeaderText="File Name" Width="35%" />
 				<GridColumn Field="@nameof(CompanyDocuments.UpdatedBy)" HeaderText="Updated By" Width="20%">
 					<Template Context="bCon">
 						@{

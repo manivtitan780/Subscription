@@ -2,7 +2,7 @@
 @using AnimationEffect = AnimationEffect
 @layout SubscriptionLayout
 
-<PageHeader />
+<PageHeader PageName="Requisition" />
 <GridHeader AddMethod="() => EditRequisition(true)" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" 
 			Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" ShowSearch="true"
 			TotalCount="@Count" ValueChange="AutocompleteValueChange">

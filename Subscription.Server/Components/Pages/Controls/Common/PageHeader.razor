@@ -1,5 +1,13 @@
-﻿<SfAppBar ColorMode="AppBarColor.Primary" Position="AppBarPosition.Top" style="height:55px">
-	<img alt="Logo" src="images/logo.png" style="height: 50px; width: 63px;" />
+﻿<SfAppBar ColorMode="AppBarColor.Primary" Position="AppBarPosition.Top" style="height: 55px">
+	<img alt="Logo" src="images/logo.png" style="height: 50px; width: 63px;"/>
 	<label class="appHeader">Subscription Application</label>
-	<AppBarSeparator></AppBarSeparator>
+	<AppBarSpacer></AppBarSpacer>
+	<SfMenu TValue="MenuItem" CssClass="appMenu">
+		<MenuItems>
+			<MenuItem Text="Admin" Url="javascript:void()"/>
+			<MenuItem Text="Candidates" Url="/subscription/candidate" Disabled="@(PageName == "Candidate")"/>
+			<MenuItem Text="Requisitions" Url="/subscription/requisition" Disabled="@(PageName == "Requisition")"/>
+			<MenuItem Text="Companies" Url="/subscription/company" Disabled="@(PageName == "Company")"/>
+		</MenuItems>
+	</SfMenu>
 </SfAppBar>

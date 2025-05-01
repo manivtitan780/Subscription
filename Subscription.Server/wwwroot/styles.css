@@ -1102,3 +1102,26 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
 }
 
 /* #endregion Dialog Boxes buttons absolute */
+
+/* #region Menu on App Bar */
+.appMenu{
+    margin-right: 50px;
+}
+
+.appMenu > ul > li {
+    margin-right: 10px;
+}
+
+.appMenu .e-menu-url {
+    font-size: large;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.appMenu li:not(.e-focused) .e-menu-url {
+    color: var(--c-wh) !important;
+}
+
+.appMenu li.e-focused .e-menu-url {
+    color: #0a53be !important;
+}
+/* #endregion Menu on App Bar */

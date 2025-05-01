@@ -154,19 +154,7 @@ public partial class DownloadsPanel
     ///     The <see cref="CandidateDocument" /> object representing the document associated with the selected row in the
     ///     panel.
     /// </value>
-    public CandidateDocument SelectedRow { get; private set; }
-
-    /// <summary>
-    ///     Gets or sets the Syncfusion spinner control used in the DownloadsPanel.
-    /// </summary>
-    /// <value>
-    ///     The Syncfusion spinner control.
-    /// </value>
-    /// <remarks>
-    ///     The spinner is used to indicate a loading state while the panel is processing tasks such as downloading or deleting
-    ///     documents.
-    /// </remarks>
-    private SfSpinner Spinner { get; set; }
+    public CandidateDocument SelectedRow { get; private set; } = new();
 
     private bool VisibleSpinner { get; set; }
 
@@ -243,7 +231,10 @@ public partial class DownloadsPanel
     /// </remarks>
     public async Task ShowResume(string documentLocation, int candidateID, string documentName, string internalFileName)
     {
-        if (documentLocation.EndsWith(".pdf") || documentLocation.EndsWith(".doc") || documentLocation.EndsWith(".docx") || documentLocation.EndsWith(".rtf"))
+        string _fileExtension = Path.GetExtension(documentLocation);
+        string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
+        /*if (documentLocation.EndsWith(".pdf") || documentLocation.EndsWith(".doc") || documentLocation.EndsWith(".docx") || documentLocation.EndsWith(".rtf"))*/
+        if (_allowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             _candidateID = candidateID;
             _documentName = documentName;
@@ -256,39 +247,25 @@ public partial class DownloadsPanel
     /// <summary>
     ///     Asynchronously displays a dialog for viewing a document.
     /// </summary>
-    /// <param name="documentID">
-    ///     The ID of the document to be viewed.
+    /// <param name="fileName">
+    ///     The FileName of the document to be viewed.
     /// </param>
     /// <remarks>
     ///     This method retrieves the document details from the server using the provided document ID.
     ///     If the document is in PDF, DOC, DOCX, or RTF format, it opens the corresponding dialog to view the document.
     ///     The method also manages the visibility of a loading spinner during the process.
     /// </remarks>
-    private async Task ViewDocumentDialog(int documentID)
+    private async Task ViewDocumentDialog(string fileName)
     {
-        await Spinner.ShowAsync();
+        VisibleSpinner = true;
 
-        Dictionary<string, string> _parameters = new()
-                                                 {
-                                                     {"documentID", documentID.ToString()}
-                                                 };
-
-        string _response = await General.ExecuteRest<string>("Candidate/DownloadFile", _parameters, null, false);
-        DocumentDetails _restResponse = JsonConvert.DeserializeObject<DocumentDetails>(_response);
-
-        if (_restResponse != null)
+        string _fileExtension = Path.GetExtension(fileName);
+        string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
+        if (_allowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
         {
-            string _location = _restResponse.DocumentLocation;
-            if (_location.EndsWith(".pdf") || _location.EndsWith(".doc") || _location.EndsWith(".docx") || _location.EndsWith(".rtf"))
-            {
-                _candidateID = _restResponse.EntityID;
-                _documentName = _restResponse.DocumentName;
-                _documentLocation = _location;
-                _internalFileName = _restResponse.InternalFileName;
-                await DocumentViewPDF.ShowDialog();
-            }
+            await DocumentViewPDF.ShowDialog();
         }
 
-        await Spinner.HideAsync();
+        VisibleSpinner = false;
     }
 }
