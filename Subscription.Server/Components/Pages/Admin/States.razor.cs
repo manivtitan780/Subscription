@@ -8,7 +8,7 @@
 // File Name:           States.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-21-2025 14:03
-// Last Updated On:     03-21-2025 15:03
+// Last Updated On:     05-01-2025 21:40
 // *****************************************/
 
 #endregion
@@ -19,23 +19,9 @@ public partial class States : ComponentBase
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-
-    private List<State> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<State> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -50,17 +36,9 @@ public partial class States : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private SfGrid<State> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<State> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -69,11 +47,7 @@ public partial class States : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -82,27 +56,15 @@ public partial class States : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -111,33 +73,15 @@ public partial class States : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
-
-    private string StateAuto
-    {
-        get;
-        set;
-    }
+    private string StateAuto { get; set; }
 
     /// <summary>
     ///     Gets or sets the 'StateDialog' instance used for managing State information in the administrative context.
     ///     This dialog is used for both creating new State and editing existing State.
     /// </summary>
-    private StateDialog StateDialog
-    {
-        get;
-        set;
-    }
+    private StateDialog StateDialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the StateRecord property of the State class.
@@ -145,11 +89,7 @@ public partial class States : ComponentBase
     ///     It is used to hold the data of the selected State in the State grid.
     ///     The data is encapsulated in a State object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private State StateRecord
-    {
-        get;
-        set;
-    } = new();
+    private State StateRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a State record. This property is used to hold a copy of a State record for
@@ -157,34 +97,18 @@ public partial class States : ComponentBase
     ///     When adding a new State, a new instance of State is created and assigned to this property.
     ///     When editing an existing State, a copy of the State record to be edited is created and assigned to this property.
     /// </summary>
-    private State StateRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private State StateRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the State of the State Dialog in the administrative context.
     ///     The State changes based on the action being performed on the State record - "Add" when a new State is being added,
     ///     and "Edit" when an existing State's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -395,5 +319,7 @@ public partial class States : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<State>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 }
