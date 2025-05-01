@@ -8,7 +8,7 @@
 // File Name:           Skill.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 20:03
-// Last Updated On:     03-13-2025 20:03
+// Last Updated On:     05-01-2025 21:30
 // *****************************************/
 
 #endregion
@@ -23,29 +23,11 @@ public partial class Skill : ComponentBase
     ///     Gets or sets the 'AdminListDialog' instance used for managing Skill information in the administrative context.
     ///     This dialog is used for both creating new Skill and editing existing Skill.
     /// </summary>
-    private AdminListDialog AdminDialog
-    {
-        get;
-        set;
-    }
+    private AdminListDialog AdminDialog { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-    
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<AdminList> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -60,47 +42,9 @@ public partial class Skill : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private string SkillAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the SkillRecord property of the Skill class.
-    ///     The SkillRecord property represents a single Skill in the application.
-    ///     It is used to hold the data of the selected Skill in the Skill grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private AdminList SkillRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Skill record. This property is used to hold a copy of a Skill record for
-    ///     operations like editing or adding a Skill.
-    ///     When adding a new Skill, a new instance of Skill is created and assigned to this property.
-    ///     When editing an existing Skill, a copy of the Skill record to be edited is created and assigned to this property.
-    /// </summary>
-    private AdminList SkillRecordClone
-    {
-        get;
-        set;
-    } = new();
-
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<AdminList> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -109,11 +53,7 @@ public partial class Skill : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -122,27 +62,15 @@ public partial class Skill : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -151,40 +79,36 @@ public partial class Skill : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private string SkillAuto { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the SkillRecord property of the Skill class.
+    ///     The SkillRecord property represents a single Skill in the application.
+    ///     It is used to hold the data of the selected Skill in the Skill grid.
+    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private AdminList SkillRecord { get; set; } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Skill record. This property is used to hold a copy of a Skill record for
+    ///     operations like editing or adding a Skill.
+    ///     When adding a new Skill, a new instance of Skill is created and assigned to this property.
+    ///     When editing an existing Skill, a copy of the Skill record to be edited is created and assigned to this property.
+    /// </summary>
+    private AdminList SkillRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the Skill of the Skill Dialog in the administrative context.
     ///     The Skill changes based on the action being performed on the Skill record - "Add" when a new Skill is being added,
     ///     and "Edit" when an existing Skill's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -211,40 +135,40 @@ public partial class Skill : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditSkillAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                   {
-                                                                       VisibleSpinner = true;
-                                                                       if (id != 0)
-                                                                       {
-                                                                           List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                           if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                           {
-                                                                               int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                               await Grid.SelectRowAsync(_index);
-                                                                           }
-                                                                       }
+                                                             {
+                                                                 VisibleSpinner = true;
+                                                                 if (id != 0)
+                                                                 {
+                                                                     List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                     if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                     {
+                                                                         int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                         await Grid.SelectRowAsync(_index);
+                                                                     }
+                                                                 }
 
-                                                                       if (id == 0)
-                                                                       {
-                                                                           Title = "Add";
-                                                                           if (SkillRecordClone == null)
-                                                                           {
-                                                                               SkillRecordClone = new();
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                               SkillRecordClone.Clear();
-                                                                           }
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                           Title = "Edit";
-                                                                           SkillRecordClone = SkillRecord.Copy();
-                                                                       }
+                                                                 if (id == 0)
+                                                                 {
+                                                                     Title = "Add";
+                                                                     if (SkillRecordClone == null)
+                                                                     {
+                                                                         SkillRecordClone = new();
+                                                                     }
+                                                                     else
+                                                                     {
+                                                                         SkillRecordClone.Clear();
+                                                                     }
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     Title = "Edit";
+                                                                     SkillRecordClone = SkillRecord.Copy();
+                                                                 }
 
-                                                                       VisibleSpinner = false;
-                                                                       SkillRecordClone.Entity = "Skill";
-                                                                       await AdminDialog.ShowDialog();
-                                                                   });
+                                                                 VisibleSpinner = false;
+                                                                 SkillRecordClone.Entity = "Skill";
+                                                                 await AdminDialog.ShowDialog();
+                                                             });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -270,8 +194,7 @@ public partial class Skill : ComponentBase
         return ExecuteMethod(async () =>
                              {
                                  await FilterSet(skill.Value.NullOrWhiteSpace() ? "" : skill.Value);
-                                 await Grid.Refresh(true);
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
+                                 await SetDataSource();
                              });
     }
 
@@ -364,31 +287,28 @@ public partial class Skill : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveSkill(EditContext context) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           Dictionary<string, string> _parameters = new()
-                                                                                                                    {
-                                                                                                                        {"methodName", "Admin_SaveSkill"},
-                                                                                                                        {"parameterName", "Skill"},
-                                                                                                                        {"containDescription", "false"},
-                                                                                                                        {"isString", "false"},
-                                                                                                                        {"cacheName", nameof(CacheObjects.Skills)}
-                                                                                                                    };
-                                                                           string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                                SkillRecordClone);
-                                                                           if (SkillRecordClone != null)
-                                                                           {
-                                                                               SkillRecord = SkillRecordClone.Copy();
-                                                                           }
+                                                                 {
+                                                                     Dictionary<string, string> _parameters = new()
+                                                                                                              {
+                                                                                                                  {"methodName", "Admin_SaveSkill"},
+                                                                                                                  {"parameterName", "Skill"},
+                                                                                                                  {"containDescription", "false"},
+                                                                                                                  {"isString", "false"},
+                                                                                                                  {"cacheName", nameof(CacheObjects.Skills)}
+                                                                                                              };
+                                                                     string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
+                                                                                                                          SkillRecordClone);
+                                                                     if (SkillRecordClone != null)
+                                                                     {
+                                                                         SkillRecord = SkillRecordClone.Copy();
+                                                                     }
 
-                                                                           if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                           {
-                                                                               await FilterSet("");
-                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
-                                                                           }
-
-                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                           await Grid.SelectRowAsync(_index);*/
-                                                                       });
+                                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                     {
+                                                                         await FilterSet("");
+                                                                         DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                     }
+                                                                 });
 
     private async Task SetDataSource()
     {
@@ -399,6 +319,8 @@ public partial class Skill : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+     
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -412,8 +334,6 @@ public partial class Skill : ComponentBase
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
                                                                      {
-                                                                         /*_selectedID = id;
-                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;*/
                                                                          List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
                                                                          if (_selectedList.Count == 0 || _selectedList.First().ID != id)
                                                                          {
@@ -435,10 +355,9 @@ public partial class Skill : ComponentBase
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
                                                                          }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
-
- }
+}

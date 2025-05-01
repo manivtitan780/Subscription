@@ -8,7 +8,7 @@
 // File Name:           Source.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
-// Last Updated On:     03-19-2025 21:03
+// Last Updated On:     05-01-2025 21:35
 // *****************************************/
 
 #endregion
@@ -23,29 +23,11 @@ public partial class Source : ComponentBase
     ///     Gets or sets the 'AdminListDialog' instance used for managing Source information in the administrative context.
     ///     This dialog is used for both creating new Source and editing existing Source.
     /// </summary>
-    private AdminListDialog AdminDialog
-    {
-        get;
-        set;
-    }
+    private AdminListDialog AdminDialog { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<AdminList> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -60,17 +42,9 @@ public partial class Source : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<AdminList> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -79,11 +53,7 @@ public partial class Source : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -92,27 +62,15 @@ public partial class Source : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -121,17 +79,9 @@ public partial class Source : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private string SourceAuto
-    {
-        get;
-        set;
-    }
+    private string SourceAuto { get; set; }
 
     /// <summary>
     ///     Gets or sets the SourceRecord property of the Source class.
@@ -139,11 +89,7 @@ public partial class Source : ComponentBase
     ///     It is used to hold the data of the selected Source in the Source grid.
     ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private AdminList SourceRecord
-    {
-        get;
-        set;
-    } = new();
+    private AdminList SourceRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a Source record. This property is used to hold a copy of a Source record for
@@ -151,40 +97,18 @@ public partial class Source : ComponentBase
     ///     When adding a new Source, a new instance of Source is created and assigned to this property.
     ///     When editing an existing Source, a copy of the Source record to be edited is created and assigned to this property.
     /// </summary>
-    private AdminList SourceRecordClone
-    {
-        get;
-        set;
-    } = new();
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private AdminList SourceRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the Source of the Source Dialog in the administrative context.
     ///     The Source changes based on the action being performed on the Source record - "Add" when a new Source is being added,
     ///     and "Edit" when an existing Source's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -271,7 +195,6 @@ public partial class Source : ComponentBase
                              {
                                  await FilterSet(source.Value.NullOrWhiteSpace() ? "" : source.Value);
                                  await SetDataSource();
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -399,6 +322,8 @@ public partial class Source : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -434,9 +359,9 @@ public partial class Source : ComponentBase
                                                                              string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
                                                                          }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
 }
