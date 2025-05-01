@@ -8,7 +8,7 @@
 // File Name:           Experience.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
-// Last Updated On:     03-19-2025 20:03
+// Last Updated On:     05-01-2025 20:48
 // *****************************************/
 
 #endregion
@@ -23,29 +23,13 @@ public partial class Experience : ComponentBase
     ///     Gets or sets the 'AdminListDialog' instance used for managing Experience information in the administrative context.
     ///     This dialog is used for both creating new Experience and editing existing Experience.
     /// </summary>
-    private AdminListDialog AdminDialog
-    {
-        get;
-        set;
-    }
+    private AdminListDialog AdminDialog { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    public AdminGrid AdminGrid { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<AdminList> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -60,17 +44,9 @@ public partial class Experience : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private string ExperienceAuto
-    {
-        get;
-        set;
-    }
+    private string ExperienceAuto { get; set; }
 
     /// <summary>
     ///     Gets or sets the ExperienceRecord property of the Experience class.
@@ -78,11 +54,7 @@ public partial class Experience : ComponentBase
     ///     It is used to hold the data of the selected Experience in the Experience grid.
     ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
     /// </summary>
-    private AdminList ExperienceRecord
-    {
-        get;
-        set;
-    } = new();
+    private AdminList ExperienceRecord { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the clone of a Experience record. This property is used to hold a copy of a Experience record for
@@ -90,17 +62,9 @@ public partial class Experience : ComponentBase
     ///     When adding a new Experience, a new instance of Experience is created and assigned to this property.
     ///     When editing an existing Experience, a copy of the Experience record to be edited is created and assigned to this property.
     /// </summary>
-    private AdminList ExperienceRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private AdminList ExperienceRecordClone { get; set; } = new();
 
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<AdminList> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -109,11 +73,7 @@ public partial class Experience : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -122,27 +82,15 @@ public partial class Experience : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -151,40 +99,18 @@ public partial class Experience : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
-
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the Experience of the Experience Dialog in the administrative context.
     ///     The Experience changes based on the action being performed on the Experience record - "Add" when a new Experience is being added,
     ///     and "Edit" when an existing Experience's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -271,7 +197,6 @@ public partial class Experience : ComponentBase
                              {
                                  await FilterSet(experience.Value.NullOrWhiteSpace() ? "" : experience.Value);
                                  await SetDataSource();
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -386,8 +311,6 @@ public partial class Experience : ComponentBase
                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                           }
 
-                                                                          /*await Grid.Refresh(true);*/
-
                                                                           /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
                                                                           await Grid.SelectRowAsync(_index);*/
                                                                       });
@@ -401,6 +324,8 @@ public partial class Experience : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -435,9 +360,9 @@ public partial class Experience : ComponentBase
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
                                                                          }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
-                                                                     });
+                                                                     });    
 }

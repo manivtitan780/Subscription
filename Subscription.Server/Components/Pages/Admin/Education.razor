@@ -6,10 +6,9 @@
            Entity="Education" HeaderContentPlural="Education" HeaderContentSingular="Education" Height="140px" Page="Education" @ref="AdminGrid"
            RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
-		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
-		<SfGrid AllowMultiSorting="false" AllowPaging="true" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" 
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
+		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" 
 				ID="gridCompany" @ref="Grid" TValue="AdminList" Width="100%">
-			<GridPageSettings CurrentPage="1" PageCount="1" PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AdminList"/>
 			<GridColumns>

@@ -109,8 +109,6 @@ public partial class DocumentType : ComponentBase
     [Inject]
     private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner { get; set; }
-
     /// <summary>
     ///     Gets or sets the DocumentType of the DocumentType Dialog in the administrative context.
     ///     The DocumentType changes based on the action being performed on the DocumentType record - "Add" when a new DocumentType is being added,
