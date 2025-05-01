@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-17-2025 20:29
+// Last Updated On:     04-30-2025 20:26
 // *****************************************/
 
 #endregion
@@ -51,6 +51,8 @@ public partial class Candidates
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
     private List<StatusCode> _statusCodes = [];
+
+    private readonly Stopwatch _stopwatch = new();
     private readonly SubmitCandidateRequisition _submitCandidateModel = new();
 
     private Candidate _target;
@@ -681,8 +683,6 @@ public partial class Candidates
 
         await base.OnAfterRenderAsync(firstRender);
     }
-
-    private readonly Stopwatch _stopwatch = new();
 
     protected override async Task OnInitializedAsync()
     {

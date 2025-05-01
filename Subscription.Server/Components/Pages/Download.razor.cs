@@ -3,41 +3,28 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            Profsvc_AppTrack
-// Project:             Profsvc_AppTrack.Client
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           Download.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          1-3-2024 20:12
-// Last Updated On:     1-3-2024 20:15
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          04-30-2025 16:04
+// Last Updated On:     04-30-2025 20:43
 // *****************************************/
 
 #endregion
-
 
 namespace Subscription.Server.Components.Pages;
 
 public partial class Download
 {
     [Parameter]
-    public string File
-    {
-        get;
-        set;
-    }
+    public string File { get; set; }
 
     [Inject]
-    private HttpClient HttpClient
-    {
-        get;
-        set;
-    }
+    private HttpClient HttpClient { get; set; }
 
     [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,15 +40,14 @@ public partial class Download
         }
 
         string _type = _decodedStringArray[3] switch
-                      {
-                          "1" => "Requisition",
-                          "2" => "Company",
-                          "3" => "Lead",
-                          _ => "Candidate"
-                      };
+                       {
+                           "1" => "Requisition",
+                           "2" => "Company",
+                           "3" => "Lead",
+                           _ => "Candidate"
+                       };
         string _blobPath = $"{Start.AzureBlobContainer}/{_type}/{_decodedStringArray[1]}/{_decodedStringArray[0]}";
-        byte[] _fileBytes = await General.ReadFromBlob(_blobPath); // System.IO.File.ReadAllBytes(_filePath);
-
+        byte[] _fileBytes = await General.ReadFromBlob(_blobPath);
         await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", _decodedStringArray[2], Convert.ToBase64String(_fileBytes));
     }
 }

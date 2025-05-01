@@ -16,7 +16,7 @@
 @page "/company"
 @layout SubscriptionLayout
 
-<PageHeader/>
+<PageHeader PageName="Company"/>
 @if (HasViewRights)
 {
 	<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies"

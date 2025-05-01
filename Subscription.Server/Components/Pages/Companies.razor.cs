@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-29-2025 20:40
+// Last Updated On:     04-30-2025 20:43
 // *****************************************/
 
 #endregion
@@ -69,11 +69,7 @@ public partial class Companies
 
     private AddCompanyDocument DialogDocument { get; set; }
 
-    private DocumentPanel DocumentPanel
-    {
-        get;
-        set;
-    }
+    private DocumentPanel DocumentPanel { get; set; }
 
     public EditContext EditConCompany { get; set; }
 
@@ -100,10 +96,7 @@ public partial class Companies
     [Inject]
     private NavigationManager NavManager { get; set; }
 
-    private CompanyDocuments NewDocument
-    {
-        get;
-    } = new();
+    private CompanyDocuments NewDocument { get; } = new();
 
     private ContactPanel PanelContacts { get; set; }
 
@@ -121,6 +114,8 @@ public partial class Companies
     private CompanySearch SearchModel { get; set; } = new();
 
     private CompanyContacts SelectedContact { get; set; } = new();
+
+    private CompanyDocuments SelectedDownload { get; set; }
 
     private CompanyLocations SelectedLocation { get; set; } = new();
 
@@ -236,8 +231,6 @@ public partial class Companies
                                                                 string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.FileName}^2".ToBase64String();
                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                             });
-
-    private CompanyDocuments SelectedDownload { get; set; }
 
     /*//[JSInvokable("DetailCollapse")]
     //public void DetailRowCollapse() => _target = null;*/

@@ -13,7 +13,7 @@
 						if (bCon is CandidateDocument _con)
 						{
 							<div class="buttonContain">
-								<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.ID)" title="View"/>
+								<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.Location)" title="View"/>
 								@if (EditRights)
 								{
 									<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)" title="Download"/>
@@ -46,6 +46,6 @@
 		</GridTemplates>
 	</SfGrid>
 </div>
-<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 <ViewPDFDocument DocumentLocation="@SelectedRow.Location" DocumentName="@SelectedRow.Name" EntityID="@CandidateID" InternalFileName="@SelectedRow.InternalFileName" EntityType="EntityType.Candidate"
 				 @ref="@DocumentViewPDF" />
