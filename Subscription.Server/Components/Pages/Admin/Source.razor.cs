@@ -337,8 +337,6 @@ public partial class Source : ComponentBase
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
                                                                      {
-                                                                         /*_selectedID = id;
-                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;*/
                                                                          List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
                                                                          if (_selectedList.Count == 0 || _selectedList.First().ID != id)
                                                                          {

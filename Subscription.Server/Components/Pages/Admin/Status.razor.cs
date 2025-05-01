@@ -8,7 +8,7 @@
 // File Name:           Status.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-13-2025 19:03
-// Last Updated On:     03-13-2025 19:03
+// Last Updated On:     05-01-2025 21:42
 // *****************************************/
 
 #endregion
@@ -23,29 +23,11 @@ public partial class Status : ComponentBase
     ///     Gets or sets the 'AdminListDialog' instance used for managing Status information in the administrative context.
     ///     This dialog is used for both creating new Status and editing existing Status.
     /// </summary>
-    private AdminListDialog AdminDialog
-    {
-        get;
-        set;
-    }
+    private AdminListDialog AdminDialog { get; set; }
 
-    public AdminGrid AdminGrid
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
-
-    private List<AdminList> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<AdminList> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -60,47 +42,9 @@ public partial class Status : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private string StatusAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the StatusRecord property of the Status class.
-    ///     The StatusRecord property represents a single Status in the application.
-    ///     It is used to hold the data of the selected Status in the Status grid.
-    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private AdminList StatusRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Status record. This property is used to hold a copy of a Status record for
-    ///     operations like editing or adding a Status.
-    ///     When adding a new Status, a new instance of Status is created and assigned to this property.
-    ///     When editing an existing Status, a copy of the Status record to be edited is created and assigned to this property.
-    /// </summary>
-    private AdminList StatusRecordClone
-    {
-        get;
-        set;
-    } = new();
-
-    private SfGrid<AdminList> Grid
-    {
-        get;
-        set;
-    }
+    private SfGrid<AdminList> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -109,11 +53,7 @@ public partial class Status : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -122,27 +62,15 @@ public partial class Status : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -151,40 +79,36 @@ public partial class Status : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private string StatusAuto { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the StatusRecord property of the Status class.
+    ///     The StatusRecord property represents a single Status in the application.
+    ///     It is used to hold the data of the selected Status in the Status grid.
+    ///     The data is encapsulated in a AdminList object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private AdminList StatusRecord { get; set; } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Status record. This property is used to hold a copy of a Status record for
+    ///     operations like editing or adding a Status.
+    ///     When adding a new Status, a new instance of Status is created and assigned to this property.
+    ///     When editing an existing Status, a copy of the Status record to be edited is created and assigned to this property.
+    /// </summary>
+    private AdminList StatusRecordClone { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the Status of the Status Dialog in the administrative context.
     ///     The Status changes based on the action being performed on the Status record - "Add" when a new Status is being added,
     ///     and "Edit" when an existing Status's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -271,7 +195,6 @@ public partial class Status : ComponentBase
                              {
                                  await FilterSet(status.Value.NullOrWhiteSpace() ? "" : status.Value);
                                  await SetDataSource();
-                                 //Count = await General.SetCountAndSelect(AdminGrid.Grid);
                              });
     }
 
@@ -385,10 +308,6 @@ public partial class Status : ComponentBase
                                                                           await FilterSet("");
                                                                           DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                       }
-                                                                      // await Grid.Refresh(true);
-
-                                                                      /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                      await Grid.SelectRowAsync(_index);*/
                                                                   });
 
     private async Task SetDataSource()
@@ -400,6 +319,8 @@ public partial class Status : ComponentBase
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
         DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        
+        await Grid.Refresh();
     }
 
     /// <summary>
@@ -413,8 +334,6 @@ public partial class Status : ComponentBase
     /// <returns>A Task representing the asynchronous operation.</returns>
     private Task ToggleMethod(int id, bool enabled) => ExecuteMethod(async () =>
                                                                      {
-                                                                         /*_selectedID = id;
-                                                                         _toggleValue = enabled ? (byte)2 : (byte)1;*/
                                                                          List<AdminList> _selectedList = await Grid.GetSelectedRecordsAsync();
                                                                          if (_selectedList.Count == 0 || _selectedList.First().ID != id)
                                                                          {
@@ -433,16 +352,12 @@ public partial class Status : ComponentBase
                                                                                                                           {"id", id.ToString()}
                                                                                                                       };
                                                                              string _response = await General.ExecuteRest<string>("Admin/ToggleAdminList", _parameters);
-                                                                             
+
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
+                                                                                 await FilterSet("");
                                                                                  DataSource = General.DeserializeObject<List<AdminList>>(_response);
                                                                              }
-                                                                             /*await Grid.Refresh(true);
-
-                                                                             int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                             await Grid.SelectRowAsync(_index);*/
                                                                          }
-                                                                         // await AdminGrid.DialogConfirm.ShowDialog();
                                                                      });
 }
