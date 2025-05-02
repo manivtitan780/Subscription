@@ -8,7 +8,7 @@
 // File Name:           UserDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-21-2025 21:03
-// Last Updated On:     03-24-2025 19:03
+// Last Updated On:     05-02-2025 15:21
 // *****************************************/
 
 #endregion
@@ -28,17 +28,9 @@ public partial class UserDialog : ComponentBase
     ///     on the Cancel button in the dialog.
     /// </remarks>
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
     /// <summary>
     ///     Gets or sets the SfDialog control for the UserDialog.
@@ -48,17 +40,9 @@ public partial class UserDialog : ComponentBase
     ///     The SfDialog control is a part of Syncfusion Blazor UI components and provides a modal dialog box functionality.
     ///     The value of this property is bound to the Dialog attribute of the SfDialog component in the Razor markup.
     /// </remarks>
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
-    private SfDataForm EditUserForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm EditUserForm { get; set; }
 
     /// <summary>
     ///     Gets or sets the header string for the UserDialog.
@@ -68,11 +52,7 @@ public partial class UserDialog : ComponentBase
     ///     The value of this property is bound to the Header attribute of the SfDialog component in the Razor markup.
     /// </remarks>
     [Parameter]
-    public string HeaderString
-    {
-        get;
-        set;
-    }
+    public string HeaderString { get; set; }
 
     /// <summary>
     ///     Gets or sets the Model for the UserDialog.
@@ -83,11 +63,7 @@ public partial class UserDialog : ComponentBase
     ///     The value of this property is bound to the Model attribute of the EditForm component.
     /// </remarks>
     [Parameter]
-    public User Model
-    {
-        get;
-        set;
-    }
+    public User Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the placeholder text for the TextBoxControl in the UserDialog.
@@ -98,11 +74,10 @@ public partial class UserDialog : ComponentBase
     ///     The value of this property is bound to the Placeholder attribute of the TextBoxControl in the Razor markup.
     /// </remarks>
     [Parameter]
-    public string Placeholder
-    {
-        get;
-        set;
-    }
+    public string Placeholder { get; set; }
+
+    [Parameter]
+    public List<IntValues> RolesList { get; set; }
 
     /// <summary>
     ///     Gets or sets the Save event callback that is triggered when the Save operation is performed in the UserDialog.
@@ -112,11 +87,7 @@ public partial class UserDialog : ComponentBase
     ///     the Save button in the dialog.
     /// </remarks>
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
     /// <summary>
     ///     Gets or sets the SfSpinner control for the UserDialog.
@@ -128,24 +99,9 @@ public partial class UserDialog : ComponentBase
     ///     process.
     ///     The value of this property is bound to the SfSpinner component in the Razor markup.
     /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
-    [Parameter]
-    public List<IntValues> RolesList
-    {
-        get;
-        set;
-    }
-
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.

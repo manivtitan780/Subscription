@@ -56,7 +56,7 @@ public class JobOptionsValidator : AbstractValidator<JobOptions>
         RuleFor(x => x.RateText).NotEmpty().WithMessage("Rate Text should not be empty.")
                                 .Length(2, 255).WithMessage("Rate Text should be between {MinLength} and {MaxLength} characters.");
 
-        RuleFor(x => x.Tax).MaximumLength(20).WithMessage("Job Option Description should be less than {MaxLength} characters.");
+        RuleFor(x => x.Tax).MaximumLength(20).WithMessage("Tax Terms should be less than {MaxLength} characters.");
     }
 
     /*/// <summary>

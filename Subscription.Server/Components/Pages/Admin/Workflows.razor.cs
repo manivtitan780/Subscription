@@ -8,7 +8,7 @@
 // File Name:           Workflows.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-24-2025 20:03
-// Last Updated On:     03-25-2025 15:03
+// Last Updated On:     05-02-2025 15:23
 // *****************************************/
 
 #endregion
@@ -21,17 +21,9 @@ public partial class Workflows : ComponentBase
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    private bool AdminScreens
-    {
-        get;
-        set;
-    }
+    private bool AdminScreens { get; set; }
 
-    private List<Workflow> DataSource
-    {
-        get;
-        set;
-    } = [];
+    private List<Workflow> DataSource { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -46,57 +38,9 @@ public partial class Workflows : ComponentBase
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
-    private SfGrid<Workflow> Grid
-    {
-        get;
-        set;
-    }
-
-    private string WorkflowAuto
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the 'WorkflowDialog' instance used for managing Workflow information in the administrative context.
-    ///     This dialog is used for both creating new Workflow and editing existing Workflow.
-    /// </summary>
-    private WorkflowDialog WorkflowDialog
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the WorkflowRecord property of the Workflow class.
-    ///     The WorkflowRecord property represents a single Workflow in the application.
-    ///     It is used to hold the data of the selected Workflow in the Workflow grid.
-    ///     The data is encapsulated in a Workflow object, which is defined in the ProfSvc_Classes namespace.
-    /// </summary>
-    private Workflow WorkflowRecord
-    {
-        get;
-        set;
-    } = new();
-
-    /// <summary>
-    ///     Gets or sets the clone of a Workflow record. This property is used to hold a copy of a Workflow record for
-    ///     operations like editing or adding a Workflow.
-    ///     When adding a new Workflow, a new instance of Workflow is created and assigned to this property.
-    ///     When editing an existing Workflow, a copy of the Workflow record to be edited is created and assigned to this property.
-    /// </summary>
-    private Workflow WorkflowRecordClone
-    {
-        get;
-        set;
-    } = new();
+    private SfGrid<Workflow> Grid { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -105,11 +49,7 @@ public partial class Workflows : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the NavigationManager. This service is used for managing navigation across the
@@ -118,27 +58,15 @@ public partial class Workflows : ComponentBase
     ///     For example, if the user's role is not "AD" (Administrator), the user is redirected to the Dashboard page.
     /// </summary>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
-    private string RoleID
-    {
-        get;
-        set;
-    }
+    private string RoleID { get; set; }
 
-    private string RoleName
-    {
-        get;
-        set;
-    }
+    private string RoleName { get; set; }
 
     /// <summary>
     ///     Gets or sets the instance of the ILocalStorageService. This service is used for managing the local storage of the
@@ -147,46 +75,44 @@ public partial class Workflows : ComponentBase
     ///     `LoginCookyUser` object.
     /// </summary>
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
-
-    private List<KeyValues> TaxTerms
-    {
-        get;
-        set;
-    } = [];
+    private List<KeyValues> TaxTerms { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the Workflow of the Workflow Dialog in the administrative context.
     ///     The Workflow changes based on the action being performed on the Workflow record - "Add" when a new Workflow is being added,
     ///     and "Edit" when an existing Workflow's details are being modified.
     /// </summary>
-    private string Title
-    {
-        get;
-        set;
-    } = "Edit";
+    private string Title { get; set; } = "Edit";
 
-    private string User
-    {
-        get;
-        set;
-    }
+    private string User { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
+
+    private string WorkflowAuto { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the 'WorkflowDialog' instance used for managing Workflow information in the administrative context.
+    ///     This dialog is used for both creating new Workflow and editing existing Workflow.
+    /// </summary>
+    private WorkflowDialog WorkflowDialog { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the WorkflowRecord property of the Workflow class.
+    ///     The WorkflowRecord property represents a single Workflow in the application.
+    ///     It is used to hold the data of the selected Workflow in the Workflow grid.
+    ///     The data is encapsulated in a Workflow object, which is defined in the ProfSvc_Classes namespace.
+    /// </summary>
+    private Workflow WorkflowRecord { get; set; } = new();
+
+    /// <summary>
+    ///     Gets or sets the clone of a Workflow record. This property is used to hold a copy of a Workflow record for
+    ///     operations like editing or adding a Workflow.
+    ///     When adding a new Workflow, a new instance of Workflow is created and assigned to this property.
+    ///     When editing an existing Workflow, a copy of the Workflow record to be edited is created and assigned to this property.
+    /// </summary>
+    private Workflow WorkflowRecordClone { get; set; } = new();
 
     private async Task DataBound(object arg)
     {
@@ -213,40 +139,40 @@ public partial class Workflows : ComponentBase
     ///     - Shows the admin dialog.
     /// </remarks>
     private Task EditWorkflowAsync(int id = 0) => ExecuteMethod(async () =>
-                                                                     {
-                                                                         VisibleSpinner = true;
-                                                                         if (id != 0)
-                                                                         {
-                                                                             List<Workflow> _selectedList = await Grid.GetSelectedRecordsAsync();
-                                                                             if (_selectedList.Count == 0 || _selectedList.First().ID != id)
-                                                                             {
-                                                                                 int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
-                                                                                 await Grid.SelectRowAsync(_index);
-                                                                             }
-                                                                         }
+                                                                {
+                                                                    VisibleSpinner = true;
+                                                                    if (id != 0)
+                                                                    {
+                                                                        List<Workflow> _selectedList = await Grid.GetSelectedRecordsAsync();
+                                                                        if (_selectedList.Count == 0 || _selectedList.First().ID != id)
+                                                                        {
+                                                                            int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
+                                                                            await Grid.SelectRowAsync(_index);
+                                                                        }
+                                                                    }
 
-                                                                         if (id == 0)
-                                                                         {
-                                                                             Title = "Add";
-                                                                             if (WorkflowRecordClone == null)
-                                                                             {
-                                                                                 WorkflowRecordClone = new();
-                                                                             }
-                                                                             else
-                                                                             {
-                                                                                 WorkflowRecordClone.Clear();
-                                                                             }
-                                                                         }
-                                                                         else
-                                                                         {
-                                                                             Title = "Edit";
-                                                                             WorkflowRecordClone = WorkflowRecord.Copy();
-                                                                         }
+                                                                    if (id == 0)
+                                                                    {
+                                                                        Title = "Add";
+                                                                        if (WorkflowRecordClone == null)
+                                                                        {
+                                                                            WorkflowRecordClone = new();
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            WorkflowRecordClone.Clear();
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Title = "Edit";
+                                                                        WorkflowRecordClone = WorkflowRecord.Copy();
+                                                                    }
 
-                                                                         VisibleSpinner = false;
-                                                                         /*WorkflowRecordClone.Entity = "Workflow";*/
-                                                                         //await WorkflowDialog.ShowDialog();
-                                                                     });
+                                                                    VisibleSpinner = false;
+                                                                    /*WorkflowRecordClone.Entity = "Workflow";*/
+                                                                    //await WorkflowDialog.ShowDialog();
+                                                                });
 
     /// <summary>
     ///     Executes the provided task within a semaphore lock. If the semaphore is currently locked, the method will return
@@ -375,28 +301,28 @@ public partial class Workflows : ComponentBase
     ///     After the save operation, it refreshes the grid and selects the updated row.
     /// </remarks>
     private Task SaveWorkflow(EditContext context) => ExecuteMethod(async () =>
-                                                                     {
-                                                                         Dictionary<string, string> _parameters = new()
-                                                                                                                  {
-                                                                                                                      {"cacheName", nameof(CacheObjects.Workflow)}
-                                                                                                                  };
-                                                                         string _response = await General.ExecuteRest<string>("Admin/SaveWorkflow", _parameters,
-                                                                                                                              WorkflowRecordClone);
-                                                                         if (WorkflowRecordClone != null)
-                                                                         {
-                                                                             WorkflowRecord = WorkflowRecordClone.Copy();
-                                                                         }
+                                                                    {
+                                                                        Dictionary<string, string> _parameters = new()
+                                                                                                                 {
+                                                                                                                     {"cacheName", nameof(CacheObjects.Workflow)}
+                                                                                                                 };
+                                                                        string _response = await General.ExecuteRest<string>("Admin/SaveWorkflow", _parameters,
+                                                                                                                             WorkflowRecordClone);
+                                                                        if (WorkflowRecordClone != null)
+                                                                        {
+                                                                            WorkflowRecord = WorkflowRecordClone.Copy();
+                                                                        }
 
-                                                                         //await Grid.Refresh(true);
-                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                                         {
-                                                                             await FilterSet("");
-                                                                             DataSource = General.DeserializeObject<List<Workflow>>(_response);
-                                                                         }
+                                                                        //await Grid.Refresh(true);
+                                                                        if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                                        {
+                                                                            await FilterSet("");
+                                                                            DataSource = General.DeserializeObject<List<Workflow>>(_response);
+                                                                        }
 
-                                                                         /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
-                                                                         await Grid.SelectRowAsync(_index);*/
-                                                                     });
+                                                                        /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
+                                                                        await Grid.SelectRowAsync(_index);*/
+                                                                    });
 
     private async Task SetDataSource()
     {

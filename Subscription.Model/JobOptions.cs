@@ -294,6 +294,12 @@ public class JobOptions
 	{
 		get;
 		set;
+	} = "";
+	
+	public List<string> TaxList
+	{
+		get => Tax.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+		set => Tax = string.Join(",", value);
 	}
 
 	/// <summary>

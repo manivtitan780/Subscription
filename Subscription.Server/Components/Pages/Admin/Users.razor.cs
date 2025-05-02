@@ -8,7 +8,7 @@
 // File Name:           Users.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-21-2025 21:03
-// Last Updated On:     04-12-2025 15:04
+// Last Updated On:     05-02-2025 15:21
 // *****************************************/
 
 #endregion
@@ -23,7 +23,6 @@ namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Users : ComponentBase
 {
-    //private bool _runFilter;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     private bool AdminScreens { get; set; }
@@ -178,7 +177,6 @@ public partial class Users : ComponentBase
                                                                     }
 
                                                                     VisibleSpinner = false;
-                                                                    //UserRecordClone.Entity = "User";
                                                                     await UserDialog.ShowDialog();
                                                                 });
 

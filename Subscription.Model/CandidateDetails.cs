@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           CandidateDetails.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          05-10-2024 21:05
-// Last Updated On:     10-29-2024 15:10
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-02-2025 19:05
 // *****************************************/
 
 #endregion
@@ -22,9 +22,7 @@ namespace Subscription.Model;
 ///     This class is used to manage and manipulate candidate data, including personal information, contact details, and
 ///     preferences.
 /// </remarks>
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CandidateDetails
 {
 	/// <summary>
@@ -47,11 +45,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and its length should be between 1 and 255 characters.
 	/// </remarks>
-	public string Address1
-    {
-        get;
-        set;
-    }
+	public string Address1 { get; set; }
 
 	/// <summary>
 	///     Gets or sets the secondary address line for the candidate.
@@ -63,11 +57,7 @@ public class CandidateDetails
 	///     This property is used when the candidate's address requires an additional line for more detailed information.
 	///     The maximum length of this property is 255 characters.
 	/// </remarks>
-	public string Address2
-    {
-        get;
-        set;
-    }
+	public string Address2 { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the background check has been completed for the candidate.
@@ -78,11 +68,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     Use this property to track the status of the candidate's background check process.
 	/// </remarks>
-	public bool Background
-    {
-        get;
-        set;
-    }
+	public bool Background { get; set; }
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the candidate.
@@ -93,11 +79,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used to uniquely identify a candidate in the system.
 	/// </remarks>
-	public int CandidateID
-    {
-        get;
-        set;
-    }
+	public int CandidateID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the city of the candidate.
@@ -108,11 +90,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and should be between 1 and 50 characters.
 	/// </remarks>
-	public string City
-    {
-        get;
-        set;
-    }
+	public string City { get; set; }
 
 	/// <summary>
 	///     Gets or sets the communication rating of the candidate.
@@ -128,11 +106,7 @@ public class CandidateDetails
 	///     - "X" => "Excellent"
 	///     - Any other value => "Fair"
 	/// </remarks>
-	public string Communication
-    {
-        get;
-        set;
-    }
+	public string Communication { get; set; }
 
 	/// <summary>
 	///     Gets or sets the creation date of the candidate details.
@@ -143,11 +117,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used to track when the candidate details were first created.
 	/// </remarks>
-	public string Created
-    {
-        get;
-        set;
-    }
+	public string Created { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the candidate has Equal Employment Opportunity (EEO) status.
@@ -159,11 +129,7 @@ public class CandidateDetails
 	///     This property is used to track the EEO status of the candidate. EEO status is a legal framework that prohibits
 	///     employment discrimination.
 	/// </remarks>
-	public bool EEO
-    {
-        get;
-        set;
-    }
+	public bool EEO { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Equal Employment Opportunity (EEO) file associated with the candidate.
@@ -174,11 +140,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used to store and retrieve the EEO file of the candidate.
 	/// </remarks>
-	public string EEOFile
-    {
-        get;
-        set;
-    }
+	public string EEOFile { get; set; }
 
 	/// <summary>
 	///     Gets or sets the eligibility ID of the candidate.
@@ -192,11 +154,7 @@ public class CandidateDetails
 	///     EditCandidateDialog component,
 	///     to determine and display the eligibility status of the candidate.
 	/// </remarks>
-	public int EligibilityID
-    {
-        get;
-        set;
-    }
+	public int EligibilityID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the email address of the candidate.
@@ -209,11 +167,7 @@ public class CandidateDetails
 	///     The length of the email address should be between 5 and 255 characters.
 	///     The email address is also validated to check if the candidate already exists.
 	/// </remarks>
-	public string Email
-    {
-        get;
-        set;
-    }
+	public string Email { get; set; }
 
 	/// <summary>
 	///     Gets or sets the experience ID of the candidate.
@@ -222,11 +176,7 @@ public class CandidateDetails
 	///     The experience ID is an integer that represents the candidate's experience level.
 	///     It is used to match the candidate's experience with the requirements of the job position.
 	/// </value>
-	public int ExperienceID
-    {
-        get;
-        set;
-    }
+	public int ExperienceID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Facebook profile ID of the candidate.
@@ -237,11 +187,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when saving candidate details in the `CandidatesController.SaveCandidate()` method.
 	/// </remarks>
-	public string Facebook
-    {
-        get;
-        set;
-    }
+	public string Facebook { get; set; }
 
 	/// <summary>
 	///     Gets or sets the first name of the candidate.
@@ -252,11 +198,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated by the CheckCandidateExists method in the Validations class.
 	/// </remarks>
-	public string FirstName
-	{
-		get;
-		set;
-	} = "";
+	public string FirstName { get; set; } = "";
 
 	/// <summary>
 	///     Gets or sets the formatted resume of the candidate.
@@ -267,11 +209,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when saving candidate details to the database via the 'SaveCandidate' stored procedure.
 	/// </remarks>
-	public string FormattedResume
-    {
-        get;
-        set;
-    }
+	public string FormattedResume { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Google+ profile ID of the candidate.
@@ -283,11 +221,7 @@ public class CandidateDetails
 	///     This property is used to store the Google+ profile ID of the candidate. It can be used to access the candidate's
 	///     Google+ profile.
 	/// </remarks>
-	public string GooglePlus
-    {
-        get;
-        set;
-    }
+	public string GooglePlus { get; set; }
 
 	/// <summary>
 	///     Gets or sets the hourly rate for the candidate.
@@ -299,11 +233,7 @@ public class CandidateDetails
 	///     This property is used to represent the candidate's expected hourly compensation.
 	///     An error message is displayed if the value is not within the specified range.
 	/// </remarks>
-	public decimal HourlyRate
-    {
-        get;
-        set;
-    }
+	public decimal HourlyRate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the upper limit of the hourly rate for the candidate.
@@ -314,11 +244,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to be between $0 and $2,000.
 	/// </remarks>
-	public decimal HourlyRateHigh
-    {
-        get;
-        set;
-    }
+	public decimal HourlyRateHigh { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether a new candidate is being added.
@@ -330,11 +256,7 @@ public class CandidateDetails
 	///     This property is used in the Candidate page in the ProfSvc_AppTrack application to distinguish between adding a new
 	///     candidate and editing an existing one.
 	/// </remarks>
-	public bool IsAdd
-    {
-        get;
-        set;
-    }
+	public bool IsAdd { get; set; }
 
 	/// <summary>
 	///     Gets or sets the job options for the candidate.
@@ -345,11 +267,9 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property can be used to store and retrieve the job options that a candidate is interested in.
 	/// </remarks>
-	public string JobOptions
-    {
-        get;
-        set;
-    }
+	public string JobOptions { get; set; }
+
+	public List<string> JobOptionsList { get => JobOptions.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList(); set => JobOptions = string.Join(",", value); }
 
 	/// <summary>
 	///     Gets or sets the keywords associated with the candidate.
@@ -360,11 +280,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The keywords are used to categorize the candidate and improve searching.
 	/// </remarks>
-	public string Keywords
-    {
-        get;
-        set;
-    }
+	public string Keywords { get; set; }
 
 	/// <summary>
 	///     Gets or sets the last name of the candidate.
@@ -373,11 +289,7 @@ public class CandidateDetails
 	///     This property is required and must be between 1 and 50 characters.
 	///     It also uses custom validation to check if the candidate exists.
 	/// </remarks>
-	public string LastName
-    {
-        get;
-        set;
-    }
+	public string LastName { get; set; }
 
 	/// <summary>
 	///     Gets or sets the LinkedIn profile ID of the candidate.
@@ -388,11 +300,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The LinkedIn profile ID should be less than 255 characters.
 	/// </remarks>
-	public string LinkedIn
-    {
-        get;
-        set;
-    }
+	public string LinkedIn { get; set; }
 
 	/// <summary>
 	///     Gets or sets the middle name of the candidate.
@@ -403,11 +311,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to ensure that the middle name is no more than 50 characters in length.
 	/// </remarks>
-	public string MiddleName
-    {
-        get;
-        set;
-    }
+	public string MiddleName { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the MPC condition is met.
@@ -418,11 +322,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     Use this property to check or define the MPC status of the candidate.
 	/// </remarks>
-	public bool MPC
-    {
-        get;
-        set;
-    }
+	public bool MPC { get; set; }
 
 	/// <summary>
 	///     Gets or sets the notes associated with the candidate in the MPC context.
@@ -434,11 +334,7 @@ public class CandidateDetails
 	///     This property is used in the Candidate page of the ProfSvc_AppTrack application for retrieving the most recent note
 	///     from the CandidateMPC object list and for retrieving the most recent date from the CandidateMPC list.
 	/// </remarks>
-	public string MPCNotes
-    {
-        get;
-        set;
-    }
+	public string MPCNotes { get; set; }
 
 	/// <summary>
 	///     Gets or sets the original resume of the candidate.
@@ -450,11 +346,7 @@ public class CandidateDetails
 	///     This property is used to store the original format of the candidate's resume.
 	///     It is used in the `SaveCandidate` method of the `CandidatesController` class.
 	/// </remarks>
-	public string OriginalResume
-    {
-        get;
-        set;
-    }
+	public string OriginalResume { get; set; }
 
 	/// <summary>
 	///     Gets or sets the primary phone number of the candidate.
@@ -466,11 +358,7 @@ public class CandidateDetails
 	///     This property is required and should be in proper phone number format. The phone number should be 10 digits long,
 	///     including the area code.
 	/// </remarks>
-	public string Phone1
-    {
-        get;
-        set;
-    }
+	public string Phone1 { get; set; }
 
 	/// <summary>
 	///     Gets or sets the secondary phone number of the candidate.
@@ -481,11 +369,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when the candidate has more than one phone number.
 	/// </remarks>
-	public string Phone2
-    {
-        get;
-        set;
-    }
+	public string Phone2 { get; set; }
 
 	/// <summary>
 	///     Gets or sets the third phone number of the candidate.
@@ -496,11 +380,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when the candidate has more than two phone numbers.
 	/// </remarks>
-	public string Phone3
-    {
-        get;
-        set;
-    }
+	public string Phone3 { get; set; }
 
 	/// <summary>
 	///     Gets or sets the phone extension for the candidate.
@@ -511,11 +391,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used when more than one phone line is associated with the same phone number.
 	/// </remarks>
-	public string PhoneExt
-    {
-        get;
-        set;
-    }
+	public string PhoneExt { get; set; }
 
 	/// <summary>
 	///     Gets or sets the rating of the candidate.
@@ -527,11 +403,7 @@ public class CandidateDetails
 	///     This property is used to store the rating of the candidate. The value is an integer where a higher value indicates
 	///     a better rating.
 	/// </remarks>
-	public int RateCandidate
-    {
-        get;
-        set;
-    }
+	public int RateCandidate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the rate notes for the candidate.
@@ -544,11 +416,7 @@ public class CandidateDetails
 	///     It is used in the Candidate page of the ProfSvc_AppTrack application to retrieve and display the rating note for a
 	///     candidate.
 	/// </remarks>
-	public string RateNotes
-    {
-        get;
-        set;
-    }
+	public string RateNotes { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the candidate is referred or not.
@@ -560,11 +428,7 @@ public class CandidateDetails
 	///     This property is used to track the referral status of a candidate. If the candidate is referred by someone, this
 	///     property will be set to <c>true</c>; otherwise, it will be set to <c>false</c>.
 	/// </remarks>
-	public bool Refer
-    {
-        get;
-        set;
-    }
+	public bool Refer { get; set; }
 
 	/// <summary>
 	///     Gets or sets the account manager reference for the candidate.
@@ -576,11 +440,7 @@ public class CandidateDetails
 	///     This property is used when the candidate is referred by an account manager.
 	///     The value corresponds to the account manager's identifier.
 	/// </remarks>
-	public string ReferAccountManager
-    {
-        get;
-        set;
-    }
+	public string ReferAccountManager { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the candidate is willing to relocate.
@@ -591,11 +451,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is used to understand the candidate's flexibility in terms of job location.
 	/// </remarks>
-	public bool Relocate
-    {
-        get;
-        set;
-    }
+	public bool Relocate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the relocation notes for the candidate.
@@ -607,11 +463,7 @@ public class CandidateDetails
 	///     This property is used to store any additional notes or details about the candidate's relocation preferences or
 	///     requirements.
 	/// </remarks>
-	public string RelocationNotes
-    {
-        get;
-        set;
-    }
+	public string RelocationNotes { get; set; }
 
 	/// <summary>
 	///     Gets or sets the maximum expected salary for the candidate.
@@ -622,11 +474,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to be within the range of $0 to $1,000,000.
 	/// </remarks>
-	public decimal SalaryHigh
-    {
-        get;
-        set;
-    }
+	public decimal SalaryHigh { get; set; }
 
 	/// <summary>
 	///     Gets or sets the lower limit of the salary range for the candidate.
@@ -638,11 +486,7 @@ public class CandidateDetails
 	///     The value should be between $0 and $1,000,000. An error message will be displayed if the value is outside this
 	///     range.
 	/// </remarks>
-	public decimal SalaryLow
-    {
-        get;
-        set;
-    }
+	public decimal SalaryLow { get; set; }
 
 	/// <summary>
 	///     Gets or sets the security notes for the candidate.
@@ -654,11 +498,7 @@ public class CandidateDetails
 	///     This property is used to store any security-related notes or comments about the candidate.
 	///     The length of the notes should be less than 2000 characters.
 	/// </remarks>
-	public string SecurityNotes
-    {
-        get;
-        set;
-    }
+	public string SecurityNotes { get; set; }
 
 	/// <summary>
 	///     Gets or sets the identifier for the state of the candidate.
@@ -670,11 +510,7 @@ public class CandidateDetails
 	///     This property is used to link the candidate to a specific state.
 	///     The value corresponds to the key of the state in the state's dictionary.
 	/// </remarks>
-	public int StateID
-    {
-        get;
-        set;
-    }
+	public int StateID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the status of the candidate.
@@ -685,11 +521,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The status of the candidate can be used to track the candidate's progress in the recruitment process.
 	/// </remarks>
-	public string Status
-    {
-        get;
-        set;
-    }
+	public string Status { get; set; }
 
 	/// <summary>
 	///     Gets or sets the summary of the candidate's profile.
@@ -702,11 +534,7 @@ public class CandidateDetails
 	///     of the candidate's profile.
 	///     The summary should be less than 32767 characters.
 	/// </remarks>
-	public string Summary
-    {
-        get;
-        set;
-    }
+	public string Summary { get; set; }
 
 	/// <summary>
 	///     Gets or sets the tax term for the candidate.
@@ -719,11 +547,9 @@ public class CandidateDetails
 	///     This property is used in the `Candidate.SetTaxTerm()` method in the `Candidate` class and the
 	///     `EditCandidateDialog.BuildRenderTree()` method in the `EditCandidateDialog` class.
 	/// </remarks>
-	public string TaxTerm
-    {
-        get;
-        set;
-    } = "";
+	public string TaxTerm { get; set; } = "";
+
+    public List<string> TaxTerms { get => TaxTerm.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList(); set => TaxTerm = string.Join(",", value); }
 
 	/// <summary>
 	///     Gets or sets the text resume of the candidate.
@@ -734,11 +560,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to ensure that the text resume is less than 262,136 characters.
 	/// </remarks>
-	public string TextResume
-    {
-        get;
-        set;
-    }
+	public string TextResume { get; set; }
 
 	/// <summary>
 	///     Gets or sets the title of the candidate.
@@ -749,11 +571,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and its length should be between 1 and 200 characters.
 	/// </remarks>
-	public string Title
-    {
-        get;
-        set;
-    }
+	public string Title { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Twitter profile ID of the candidate.
@@ -764,11 +582,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is validated to ensure that the Twitter profile ID is less than 255 characters.
 	/// </remarks>
-	public string Twitter
-    {
-        get;
-        set;
-    }
+	public string Twitter { get; set; }
 
 	/// <summary>
 	///     Gets or sets the timestamp of the last update made to the candidate details.
@@ -779,11 +593,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     The value is typically set automatically when changes are made to the candidate details.
 	/// </remarks>
-	public string Updated
-    {
-        get;
-        set;
-    }
+	public string Updated { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Zip Code of the candidate.
@@ -794,11 +604,7 @@ public class CandidateDetails
 	/// <remarks>
 	///     This property is required and must be a minimum of 5 digits and a maximum of 10 digits.
 	/// </remarks>
-	public string ZipCode
-    {
-        get;
-        set;
-    }
+	public string ZipCode { get; set; }
 
 	/// <summary>
 	///     Clears all the properties of the CandidateDetails instance.
@@ -870,18 +676,18 @@ public class CandidateDetails
 	/// </remarks>
 	public CandidateDetails Copy() => MemberwiseClone() as CandidateDetails;
 
-	/*/// <summary>
-	///     Enumerates the possible communication ratings for a candidate.
-	/// </summary>
-	/// <remarks>
-	///     This enum is used to represent the candidate's communication rating in the CandidateDetails class.
-	///     The values are:
-	///     - A (1) => Average
-	///     - X (2) => Excellent
-	///     - G (3) => Good
-	///     - F (4) => Fair
-	/// </remarks>*/
-	/*private enum CommunicationEnum
+    /*/// <summary>
+    ///     Enumerates the possible communication ratings for a candidate.
+    /// </summary>
+    /// <remarks>
+    ///     This enum is used to represent the candidate's communication rating in the CandidateDetails class.
+    ///     The values are:
+    ///     - A (1) => Average
+    ///     - X (2) => Excellent
+    ///     - G (3) => Good
+    ///     - F (4) => Fair
+    /// </remarks>*/
+    /*private enum CommunicationEnum
     {
         A = 1, X = 2, G = 3, F = 4
     }*/

@@ -6,8 +6,8 @@
 		<DialogEvents OnOpen="DialogOpen"/>
 		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="SaveCandidateDialog" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Candidate</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Candidate</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateDetailsValidator"/>
@@ -46,7 +46,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
 						<Template>
-							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="KeyValue" />
+							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)">
@@ -91,7 +91,7 @@
 				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Financial Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRate)">
 						<Template>
-							<NumericTextBox @bind-Value="Model.HourlyRate" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)	" TValue="decimal" />
+							<NumericTextBox @bind-Value="Model.HourlyRate" ID="numericHourlyLow" Max="2000" Placeholder="Hourly Rate (Min.)	" TValue="decimal"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.HourlyRateHigh)">
@@ -113,37 +113,35 @@
 				<FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupGeneralInfo" LabelText="General Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.EligibilityID)">
 						<Template>
-							<DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="KeyValue" />
+							<DropDown @bind-Value="Model.EligibilityID" Model="Eligibility" ID="dropEligibility" TItem="IntValues" TValue="int" Placeholder="Eligibility" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ExperienceID)">
 						<Template>
-							<DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="KeyValue" />
+							<DropDown @bind-Value="Model.ExperienceID" Model="Experience" ID="dropExperience" TItem="IntValues" TValue="int" Placeholder="Experience" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Communication)">
 						<Template>
-							<DropDown @bind-Value="Model.Communication" Model="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string" Placeholder="Communication" Text="Text" Key="KeyValue" />
+							<DropDown @bind-Value="Model.Communication" Model="Communication" ID="dropCommunication" TItem="KeyValues" TValue="string" Placeholder="Communication" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerm)">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerms)">
 						<Template>
-							<MultiSelect @bind-Value="Model.TaxTerm" Model="TaxTerms" ID="multiTaxTerms" Placeholder="Select Tax Terms(s)" TItem="KeyValues" TValue="string" Text="Text" Key="KeyValue"/>
-							@*<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
-							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerm" DataSource="TaxTerms" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiTaxTerms"
-							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
+							<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerms" DataSource="TaxTerms" FilterBarPlaceholder="Search..." ID="multiTaxTerms"
+							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="List<string>">
 								<MultiSelectFieldSettings Text="Text" Value="KeyValue" />
-							</SfMultiSelect>*@
+							</SfMultiSelect>
 						</Template>
 					</FormItem>
-					<FormItem ColumnSpan="2" Field="@nameof(Model.JobOptions)">
+					<FormItem ColumnSpan="2" Field="@nameof(Model.JobOptionsList)">
 						<Template>
-							<MultiSelect @bind-Value="Model.JobOptions" Model="JobOptions" ID="multiJobOptions" Placeholder="Select Job Option(s)" TItem="KeyValues" TValue="string" Text="Text" Key="KeyValue"/>
-							@*<label class="e-form-label" for="multiJobOptions">Job Options:</label>
-							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptions" DataSource="JobOptions" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="multiJobOptions"
-							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="string">
+							<label class="e-form-label" for="multiJobOptions">Job Options:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptionsList" DataSource="JobOptions" FilterBarPlaceholder="Search..." ID="multiJobOptions"
+							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="List<string>">
 								<MultiSelectFieldSettings Text="Text" Value="KeyValue" />
-							</SfMultiSelect>*@
+							</SfMultiSelect>
 						</Template>
 					</FormItem>
 				</FormGroup>
