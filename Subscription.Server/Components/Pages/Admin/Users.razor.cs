@@ -372,6 +372,7 @@ public partial class Users : ComponentBase
 
                                                                                 if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                                 {
+                                                                                    await FilterSet("");
                                                                                     DataSource = General.DeserializeObject<List<User>>(_response);
                                                                                 }
                                                                             }
