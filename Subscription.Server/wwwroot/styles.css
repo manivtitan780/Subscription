@@ -147,10 +147,14 @@ body, form, html {
 }
 
 #divMainGrid > #divGrid {
-    height: calc(100% - 49px);
+    height: calc(100% - 107px);
     /*border: 1px solid red;*/
 }
 
+#divMainGrid > #divAdminGrid {
+    height: calc(100% - 49px);
+    /*border: 1px solid red;*/
+}
 #divMainGrid > #divFooter {
     height: 50px;
 }

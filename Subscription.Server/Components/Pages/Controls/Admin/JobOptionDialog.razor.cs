@@ -8,7 +8,7 @@
 // File Name:           JobOptionDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-17-2025 19:03
-// Last Updated On:     03-20-2025 19:03
+// Last Updated On:     05-02-2025 15:48
 // *****************************************/
 
 #endregion
@@ -18,6 +18,19 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 public partial class JobOptionDialog : ComponentBase
 {
     private readonly JobOptionsValidator _jobOptionsValidator = new();
+    private List<string> _statusList;
+
+    private List<string> SelectedTaxTerms
+    {
+        get => _statusList ??= Model.Tax.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                      .Select(s => s.Trim())
+                                      .ToList() ?? [];
+        set
+        {
+            _statusList = value;
+            Model.Tax = string.Join(",", _statusList);
+        }
+    }
 
     /// <summary>
     ///     Gets or sets the Cancel event callback that is triggered when the Cancel operation is performed in the
@@ -28,17 +41,9 @@ public partial class JobOptionDialog : ComponentBase
     ///     on the Cancel button in the dialog.
     /// </remarks>
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
     /// <summary>
     ///     Gets or sets the SfDialog control for the AdminListDialog.
@@ -48,11 +53,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     The SfDialog control is a part of Syncfusion Blazor UI components and provides a modal dialog box functionality.
     ///     The value of this property is bound to the Dialog attribute of the SfDialog component in the Razor markup.
     /// </remarks>
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the EditForm component for the AdminListDialog.
@@ -63,17 +64,9 @@ public partial class JobOptionDialog : ComponentBase
     ///     The form includes a TextBoxControl for input and a SwitchControl for toggling the status of the AdminList.
     ///     The form's Model is bound to the AdminList and its OnValidSubmit event is bound to the SaveAdminList method.
     /// </remarks>
-    private EditForm EditAdminForm
-    {
-        get;
-        set;
-    }
+    private EditForm EditAdminForm { get; set; }
 
-    private SfDataForm EditJobOptionsForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm EditJobOptionsForm { get; set; }
 
     /// <summary>
     ///     Gets or sets the header string for the AdminListDialog.
@@ -83,11 +76,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     The value of this property is bound to the Header attribute of the SfDialog component in the Razor markup.
     /// </remarks>
     [Parameter]
-    public string HeaderString
-    {
-        get;
-        set;
-    }
+    public string HeaderString { get; set; }
 
     /// <summary>
     ///     Gets or sets the Model for the AdminListDialog.
@@ -98,11 +87,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     The value of this property is bound to the Model attribute of the EditForm component.
     /// </remarks>
     [Parameter]
-    public JobOptions Model
-    {
-        get;
-        set;
-    }
+    public JobOptions Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the placeholder text for the TextBoxControl in the AdminListDialog.
@@ -113,11 +98,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     The value of this property is bound to the Placeholder attribute of the TextBoxControl in the Razor markup.
     /// </remarks>
     [Parameter]
-    public string Placeholder
-    {
-        get;
-        set;
-    }
+    public string Placeholder { get; set; }
 
     /// <summary>
     ///     Gets or sets the Save event callback that is triggered when the Save operation is performed in the AdminListDialog.
@@ -127,11 +108,7 @@ public partial class JobOptionDialog : ComponentBase
     ///     the Save button in the dialog.
     /// </remarks>
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
     /// <summary>
     ///     Gets or sets the SfSpinner control for the AdminListDialog.
@@ -143,24 +120,12 @@ public partial class JobOptionDialog : ComponentBase
     ///     process.
     ///     The value of this property is bound to the SfSpinner component in the Razor markup.
     /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     [Parameter]
-    public List<KeyValues> TaxTerms
-    {
-        get;
-        set;
-    }
+    public List<KeyValues> TaxTerms { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    } = false;
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.
@@ -180,6 +145,16 @@ public partial class JobOptionDialog : ComponentBase
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
+    private void MultiSelectValueChange(MultiSelectChangeEventArgs<List<string>> taxTerms)
+    {
+        Model.Tax = string.Join(",", taxTerms.Value);
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Tax)));
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+    }
+
     protected override void OnParametersSet()
     {
         Context = new(Model);
@@ -195,7 +170,14 @@ public partial class JobOptionDialog : ComponentBase
     ///     This method is invoked when the dialog is about to be opened. It yields control back to the caller before
     ///     validating the EditForm's context.
     /// </remarks>
-    private void OpenDialog(BeforeOpenEventArgs arg) => Context.Validate();
+    private void OpenDialog(BeforeOpenEventArgs arg)
+    {
+        /*if (Model.Tax.NotNullOrWhiteSpace())
+        {
+            _taxTerms = Model.Tax.Split(',').Select(term => term.Trim()).ToList();
+        }*/
+        Context.Validate();
+    }
 
     /// <summary>
     ///     Asynchronously saves the administrative list in the AdminListDialog.

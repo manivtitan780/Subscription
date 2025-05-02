@@ -29,10 +29,11 @@
                             <TextArea @bind-Value="Model.Description" ID="textDescription" MaxLength="2000" Placeholder="Description"></TextArea>
                         </Template>
                     </FormItem>
-                    <FormItem ColumnSpan="3" Field="@nameof(Model.Tax)">
+                    <FormItem ColumnSpan="3" Field="@nameof(Model.TaxList)">
                         <Template>
                             <label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
-                            <SfMultiSelect @bind-Value="Model.Tax" DataSource="@TaxTerms" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues" TValue="string" Width="100%">
+                            <SfMultiSelect @bind-Value="Model.TaxList" DataSource="@TaxTerms" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues" 
+                                           TValue="List<string>" Width="100%">
                                 <MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
                             </SfMultiSelect>
                         </Template>
