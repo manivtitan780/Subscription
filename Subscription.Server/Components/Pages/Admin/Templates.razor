@@ -7,37 +7,47 @@
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%"
-		        ID="gridCompany" @ref="Grid" TValue="AdminList" Width="100%">
+		        ID="gridCompany" @ref="Grid" TValue="AppTemplate" Width="100%">
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
-			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AdminList"/>
+			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="AppTemplate"/>
 			<GridColumns>
-				<GridColumn Field="Text" HeaderText="Template" Width="50%">
+				<GridColumn Field="Text" HeaderText="Template" Width="20%">
 					<Template Context="aCon">
 						@{
-							if (aCon is AdminList _con)
+							if (aCon is AppTemplate _con)
 							{
-								<span class="point" @onclick="() => EditTemplateAsync()">@_con.Text</span>
+								<span class="point" @onclick="() => EditTemplateAsync()">@_con.TemplateName</span>
 							}
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn Field="@nameof(AdminList.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-				<GridColumn Field="@nameof(AdminList.Enabled)" HeaderText="Status" Width="10%">
+				<GridColumn Field="Text" HeaderText="Template Action" Width="30%">
 					<Template Context="aCon">
 						@{
-							if (aCon is AdminList _con)
+							if (aCon is AppTemplate _con)
+							{
+								<span class="point" @onclick="() => EditTemplateAsync()">@_con.ActionText</span>
+							}
+						}
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@nameof(AppTemplate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+				<GridColumn Field="@nameof(AppTemplate.Status)" HeaderText="Status" Width="10%">
+					<Template Context="aCon">
+						@{
+							if (aCon is AppTemplate _con)
 							{
 								<span>@(_con.IsEnabled ? "Active" : "Inactive")</span>
 							}
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn Field="@nameof(AdminList.UpdatedDate)" Format="d" HeaderText="Last Updated" Width="15%"/>
-				<GridColumn Field="@nameof(AdminList.CreatedDate)" HeaderText="Created" Width="15%"/>
+				<GridColumn Field="@nameof(AppTemplate.UpdatedDate)" Format="d" HeaderText="Last Updated" Width="15%"/>
+				<GridColumn Field="@nameof(AppTemplate.CreatedDate)" HeaderText="Created" Width="15%"/>
 				<GridColumn Width="10%">
 					<Template Context="aCon">
 						@{
-							if (aCon is AdminList _con)
+							if (aCon is AppTemplate _con)
 							{
 								<div class="buttonContain">
 									<SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditTemplateAsync(_con.ID)" title="Edit Title"/>
@@ -53,70 +63,5 @@
 	</GridContent>
 </AdminGrid>
 
-@*<AdminGrid AdaptorInstance="@typeof(AdminTemplateAdaptor)" AddMethod="() => EditTemplateAsync()" AutocompleteMethod="Admin_SearchTemplate" AutocompleteParameter="@("@Template")" Count="@Count" DataHandler="DataHandler"
-		   Entity="Template" FilterGrid="FilterGrid" HeaderContentPlural="Templates" HeaderContentSingular="Template" Height="140px" Key="ID" Page="" @ref="AdminGrid" RefreshGrid="RefreshGrid" RoleID="@RoleID"
-		   RowSelected="RowSelected" ToggleMethod="() => ToggleStatusAsync(_selectedID)" ToggleValue="_toggleValue" TValue="AppTemplate" Width="381px">
-	<GridColumn Field="Text" HeaderText="Template" Width="50%">
-		<Template Context="aCon">
-			@{
-				if (aCon is AppTemplate _con)
-				{
-					if (_con.TemplateName.NullOrWhiteSpace())
-					{
-						<span class="point" @onclick="() => EditTemplateAsync(_con.ID)">
-							<i style="font-size: smaller">--No Name--</i>
-						</span>
-					}
-					else
-					{
-						<span class="point" @onclick="() => EditTemplateAsync(_con.ID)">@(_con.TemplateName)</span>
-					}
-				}
-			}
-		</Template>
-	</GridColumn>
-	<GridColumn Field="@nameof(AppTemplate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0" />
-	<GridColumn HeaderText="Status" Width="10%">
-		<Template Context="aCon">
-			@{
-				if (aCon is AppTemplate _con)
-				{
-					<span>@(_con.Status)</span>
-				}
-			}
-		</Template>
-	</GridColumn>
-	<GridColumn HeaderText="Last Updated" Width="15%">
-		<Template Context="aCon">
-			@{
-				if (aCon is AppTemplate _con)
-				{
-					<span>@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy.ToUpperInvariant()}]")</span>
-				}
-			}
-		</Template>
-	</GridColumn>
-	<GridColumn HeaderText="Created" Width="15%">
-		<Template Context="aCon">
-			@{
-				if (aCon is AppTemplate _con)
-				{
-					<span>@($"{_con.CreatedDate.CultureDate()} [{_con.CreatedBy.ToUpperInvariant()}]")</span>
-				}
-			}
-		</Template>
-	</GridColumn>
-	<GridColumn Width="10%">
-		<Template Context="aCon">
-			@{
-				if (aCon is AppTemplate _con)
-				{
-					<SfButton Content="" IconCss="editIcon" @onclick="() => EditTemplateAsync(_con.ID)" title="Edit Template" />
-					<SfButton Content="" IconCss="@(_con.IsEnabled ? "statusOnIcon" : "statusOffIcon")" @onclick="() => ToggleMethod(_con.ID, _con.IsEnabled)"
-							  title="@($"{(_con.IsEnabled ? "Disable" : "Enable")} Template")" />
-				}
-			}
-		</Template>
-	</GridColumn>
-</AdminGrid>
+@*
 <TemplateDialog HeaderString="@($"{Title} Template")" Model="AppTemplateRecordClone" OriginalTemplateName="@(AppTemplateRecord.TemplateName)" @ref="TemplateDialog" Save="SaveTemplate" />*@

@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-30-2025 15:57
+// Last Updated On:     05-03-2025 19:32
 // *****************************************/
 
 #endregion
@@ -435,6 +435,21 @@ public class General //(Container container)
         }
     }
 
+    public static async Task<List<T>> LoadDataAsync<T>(string methodName, string filter)
+    {
+        Dictionary<string, string> parameters = new()
+                                                {
+                                                    {"methodName", methodName},
+                                                    {"filter", filter ?? string.Empty}
+                                                };
+
+        string response = await ExecuteRest<string>("Admin/GetAdminList", parameters, null, false);
+
+        List<T> result = JsonConvert.DeserializeObject<List<T>>(response);
+
+        return result;
+    }
+
     /// <summary>
     ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.
     /// </summary>
@@ -560,5 +575,33 @@ public class General //(Container container)
         byte[] _memBytes = await _storage.ReadBytesAsync(blobPath);
 
         return _memBytes;
+    }
+
+    public static async Task<List<T>> SaveEntityAndRefreshAsync<TRecord, T>(string apiUrl, string methodName, string parameterName, string cacheName, TRecord recordClone,
+                                                                            Action<TRecord> updateOriginalRecord, Func<Task> clearFilterCallback)
+    {
+        Dictionary<string, string> parameters = new()
+                                                {
+                                                    {"methodName", methodName},
+                                                    {"parameterName", parameterName},
+                                                    {"containDescription", "false"},
+                                                    {"isString", "false"},
+                                                    {"cacheName", cacheName}
+                                                };
+
+        string response = await ExecuteRest<string>(apiUrl, parameters, recordClone);
+
+        if (recordClone is not null)
+        {
+            updateOriginalRecord(recordClone); // e.g., assign to main record
+        }
+
+        if (response.NullOrWhiteSpace() || response == "[]")
+        {
+            return [];
+        }
+
+        await clearFilterCallback.Invoke();
+        return DeserializeObject<List<T>>(response);
     }
 }
