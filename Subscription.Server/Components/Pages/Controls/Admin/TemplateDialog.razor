@@ -1,0 +1,46 @@
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+	<ChildContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"></DialogPositionData>
+		<DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="jobOptionsEditForm" OnValidSubmit="SaveTemplate" @ref="EditTemplateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelTemplate" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Job Options</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator></FluentValidationValidator>@* Validator="_jobOptionsValidator"/>*@
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.TemplateName)">
+						<Template>
+							<TextBox @bind-Value="Model.TemplateName" ID="textTemplateName" MaxLength="50" Placeholder="Template Name"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Action)">
+						<Template>
+							<DropDown @bind-Value="Model.Action" Model="ActionList" ID="dropAction" TItem="IntValues" TValue="byte" Placeholder="Action" Text="Text" Key="KeyValue"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.CC)">
+						<Template>
+							<TextBox @bind-Value="Model.CC" ID="textCC" MaxLength="2000" Placeholder="Enter CC (separate multiple emails with a comma or semicolon)"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Subject)">
+						<Template>
+							<TextBox @bind-Value="Model.Subject" ID="textSubject" MaxLength="255" Placeholder="Enter Subject"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)">
+						<Template>
+							<TextArea @bind-Value="Model.Notes" ID="textNotes" Placeholder="Notes" MaxLength="500"></TextArea>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

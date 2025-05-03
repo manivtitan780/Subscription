@@ -18,6 +18,8 @@
 global using System.IdentityModel.Tokens.Jwt;
 global using System.IO.Compression;
 global using System.Security.Claims;
+global using System.Text.RegularExpressions;
+
 global using Blazored.LocalStorage;
 global using Blazored.SessionStorage;
 global using Extensions;

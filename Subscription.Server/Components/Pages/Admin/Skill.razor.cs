@@ -189,14 +189,11 @@ public partial class Skill : ComponentBase
     /// </summary>
     /// <param name="skill">The selected skill in the grid, encapsulated in a ChangeEventArgs object.</param>
     /// <returns>A Task representing the asynchronous operation of refreshing the grid.</returns>
-    private Task FilterGrid(ChangeEventArgs<string, KeyValues> skill)
-    {
-        return ExecuteMethod(async () =>
-                             {
-                                 await FilterSet(skill.Value.NullOrWhiteSpace() ? "" : skill.Value);
-                                 await SetDataSource();
-                             });
-    }
+    private Task FilterGrid(ChangeEventArgs<string, KeyValues> skill) => ExecuteMethod(async () =>
+                                                                                       {
+                                                                                           await FilterSet(skill.Value.NullOrWhiteSpace() ? "" : skill.Value);
+                                                                                           await SetDataSource();
+                                                                                       });
 
     /// <summary>
     ///     Sets the filter value for the Skill component.
@@ -296,8 +293,7 @@ public partial class Skill : ComponentBase
                                                                                                                   {"isString", "false"},
                                                                                                                   {"cacheName", nameof(CacheObjects.Skills)}
                                                                                                               };
-                                                                     string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters,
-                                                                                                                          SkillRecordClone);
+                                                                     string _response = await General.ExecuteRest<string>("Admin/SaveAdminList", _parameters, SkillRecordClone);
                                                                      if (SkillRecordClone != null)
                                                                      {
                                                                          SkillRecord = SkillRecordClone.Copy();
