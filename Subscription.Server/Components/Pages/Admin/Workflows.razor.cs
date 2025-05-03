@@ -171,7 +171,7 @@ public partial class Workflows : ComponentBase
 
                                                                     VisibleSpinner = false;
                                                                     /*WorkflowRecordClone.Entity = "Workflow";*/
-                                                                    //await WorkflowDialog.ShowDialog();
+                                                                    await WorkflowDialog.ShowDialog();
                                                                 });
 
     /// <summary>
