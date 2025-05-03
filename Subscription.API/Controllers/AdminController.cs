@@ -448,8 +448,6 @@ public class AdminController(RedisService redisService) : ControllerBase
                 _returnCode = _reader.NString(0, "[]");
             }
 
-            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-            
             await _reader.NextResultAsync();
             while (await _reader.ReadAsync())
             {
