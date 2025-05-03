@@ -38,6 +38,14 @@ Log.Logger = new LoggerConfiguration()
                                  new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true},
                                  columnOptions: columnOptions).CreateLogger();
 _builder.Host.UseSerilog();
+_builder.Services.AddSingleton<RedisService>(_ =>
+                                             {
+                                                 string host = _config["Garnet:HostName"];
+                                                 int port = (_config["Garnet:SslPort"] ?? "").ToInt32();
+                                                 string access = _config["GarnetServer:Access"];
+
+                                                 return new(host, port, access, false);
+                                             });
 
 _builder.Services.AddSingleton<OpenAIClient>(sp =>
                                              {

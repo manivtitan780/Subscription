@@ -16,8 +16,10 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class AdminController : ControllerBase
+public class AdminController(RedisService redisService) : ControllerBase
 {
+    // private RedisService _redisService = redisService;
+
     /// <summary>
     ///     Retrieves a list of administrative items based on the specified method and filter.
     /// </summary>
@@ -422,6 +424,54 @@ public class AdminController : ControllerBase
         return Ok(_returnCode);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveWorkflow([FromBody] Workflow workflow, string cacheName = nameof(CacheObjects.Workflow))
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+
+        string _returnCode = "", _cacheValue = "";
+        await using SqlCommand _command = new("Admin_SaveWorkflow", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", workflow.ID.DBNull());
+        _command.Varchar("Next", 100, workflow.Next);
+        _command.Bit("IsLast", workflow.IsLast);
+        _command.Varchar("Role", 50, workflow.RoleIDs);
+        _command.Bit("Schedule", workflow.Schedule);
+        _command.Bit("AnyStage", workflow.AnyStage);
+        _command.Varchar("User", 10, "ADMIN");
+        try
+        {
+            await _con.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
+            {
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+            
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving user. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving user.");
+            // ignored
+        }
+
+        return Ok(_returnCode);
+    }
+    
     /// <summary>
     ///     Toggles the administrative list based on the provided method name, ID, and username.
     /// </summary>
