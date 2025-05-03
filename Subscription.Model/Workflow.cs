@@ -130,6 +130,12 @@ public class Workflow
         get;
         set;
     }
+	
+	public List<string> NextList
+	{
+		get => Next.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+		set => Next = string.Join(",", value);
+	}
 
 	/// <summary>
 	///     Gets or sets the full name of the next step in the AppWorkflow instance.
@@ -180,6 +186,12 @@ public class Workflow
         get;
         set;
     }
+	
+	public List<string> RoleIDList
+	{
+		get => RoleIDs.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+		set => RoleIDs = string.Join(",", value);
+	}
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the workflow step is schedulable.

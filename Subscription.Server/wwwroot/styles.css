@@ -1160,3 +1160,31 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     background-color: var(--c-red-select) !important;
 }
 /* #endregion Menu on App Bar */
+
+/* #region Multiselect */
+
+.e-multi-select-wrapper .e-chips {
+    background-color: var(--c-red);
+    border-radius: 4px;
+    height: 25px;
+    padding: 6px;
+}
+
+.e-multiselect .e-multi-select-wrapper .e-chips .e-chipcontent {
+    font-size: 12px;
+    -webkit-text-fill-color: white;
+}
+
+.e-multi-select-wrapper .e-chips .e-chips-close::before {
+    font-size: 9px;
+    -webkit-text-fill-color: white;
+}
+.e-multi-select-wrapper .e-chips-close {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+.e-multiselect:not(.e-disabled) .e-multi-select-wrapper .e-chips:hover {
+    background-color: var(--c-red-light);
+}
+/* #endregion Multiselect*/

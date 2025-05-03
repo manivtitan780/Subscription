@@ -15,7 +15,7 @@
 
 namespace Subscription.Server.Components.Pages.Controls.Admin;
 
-public partial class JobOptionDialog : ComponentBase
+public partial class JobOptionDialog : ComponentBase, IDisposable
 {
     private readonly JobOptionsValidator _jobOptionsValidator = new();
     private List<string> _statusList;
@@ -110,22 +110,20 @@ public partial class JobOptionDialog : ComponentBase
     [Parameter]
     public EventCallback<EditContext> Save { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the SfSpinner control for the AdminListDialog.
-    /// </summary>
-    /// <remarks>
-    ///     This property is used to control the spinner animation in the dialog. It is displayed when an operation is in
-    ///     progress, such as saving or cancelling.
-    ///     The SfSpinner control is a part of Syncfusion Blazor UI components and provides a visual indication of an ongoing
-    ///     process.
-    ///     The value of this property is bound to the SfSpinner component in the Razor markup.
-    /// </remarks>
-    private SfSpinner Spinner { get; set; }
-
     [Parameter]
     public List<KeyValues> TaxTerms { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    public void Dispose()
+    {
+        if (Context is not null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     ///     Asynchronously cancels the administrative list operation.
@@ -149,10 +147,6 @@ public partial class JobOptionDialog : ComponentBase
     {
         Model.Tax = string.Join(",", taxTerms.Value);
         Context.NotifyFieldChanged(Context.Field(nameof(Model.Tax)));
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
     }
 
     protected override void OnParametersSet()

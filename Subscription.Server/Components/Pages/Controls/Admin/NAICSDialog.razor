@@ -6,8 +6,8 @@
         <DialogEvents OnOpen="OpenDialog"></DialogEvents>
         <SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveNAICS" @ref="EditNAICSForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
-                <SfButton CssClass="e-primary" type="submit">@($"Save {Placeholder}")</SfButton>
-                <SfButton CssClass="e-secondary" OnClick="CancelNAICS" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelNAICS" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">@($"Save {Placeholder}")</SfButton>
             </FormButtons>
             <FormValidator>
                 <FluentValidationValidator Validator="_naicsValidator"/>

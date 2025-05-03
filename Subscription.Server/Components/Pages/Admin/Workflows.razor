@@ -2,12 +2,12 @@
 @layout SubscriptionLayout
 
 <PageHeader PageName="Workflow"/>
-<AdminGrid AddMethod="() => EditWorkflowAsync()" AutocompleteMethod="Admin_SearchWorkflow" AutocompleteParameter="@("Workflow")" Entity="Workflow" HeaderContentPlural="Job Option" 
-		   HeaderContentSingular="Workflow" Height="140px" Name="@WorkflowAuto" Page="Workflow" PopupWidth="350px" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
+<AdminGrid AddMethod="() => EditWorkflowAsync()" AutocompleteMethod="Admin_SearchWorkflow" AutocompleteParameter="@("Workflow")" Entity="Workflow" HeaderContentPlural="Job Option"
+           HeaderContentSingular="Workflow" Height="140px" Name="@WorkflowAuto" Page="Workflow" PopupWidth="350px" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
-		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%" 
-				ID="gridCompany" @ref="Grid" TValue="Workflow" Width="100%">
+		<SfGrid AllowMultiSorting="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" EnableVirtualization="true" Height="100%"
+		        ID="gridCompany" @ref="Grid" TValue="Workflow" Width="100%">
 			<GridPageSettings PageSize="2000"/>
 			<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 			<GridEvents DataBound="DataBound" RowSelecting="RowSelected" TValue="Workflow"/>
@@ -28,7 +28,7 @@
 						@{
 							if (aCon is Workflow _con)
 							{
-								<span title="@_con.NextFull">@_con.NextFull</span>
+								<div title="@_con.NextFull" style="width:100%;word-wrap: break-word; white-space: normal;">@(_con.NextFull)</div>/*.Replace(",", "<br/>").ToMarkupString()*/
 							}
 						}
 					</Template>
@@ -39,7 +39,7 @@
 						@{
 							if (aCon is Workflow _con)
 							{
-								<span title="@_con.RoleFull">@_con.RoleFull</span>
+								<span title="@_con.RoleFull" style="width:100%;word-wrap: break-word; white-space: normal;">@(_con.RoleFull)</span>
 							}
 						}
 					</Template>
@@ -62,4 +62,4 @@
 		</SfGrid>
 	</GridContent>
 </AdminGrid>
-@*<WorkflowDialog HeaderString="@($"{Title} Workflow")" Model="@WorkflowRecordClone" Placeholder="Workflow" @ref="WorkflowDialog" Save="SaveWorkflow" TaxTerms="@TaxTerms"/>*@
+<WorkflowDialog HeaderString="@($"{Title} Workflow")" Model="@WorkflowRecordClone" Placeholder="Workflow" @ref="WorkflowDialog" Save="SaveWorkflow"/>

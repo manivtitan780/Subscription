@@ -6,8 +6,8 @@
         <DialogEvents OnOpen="OpenDialog"></DialogEvents>
         <SfDataForm EditContext="Context" ID="UserEditForm" OnValidSubmit="SaveUser" @ref="EditUserForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
-                <SfButton CssClass="e-primary" type="submit">Save User</SfButton>
-                <SfButton CssClass="e-secondary" OnClick="CancelUser" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelUser" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save User</SfButton>
             </FormButtons>
             <FormValidator>
                 <FluentValidationValidator Validator="_userValidator"/>

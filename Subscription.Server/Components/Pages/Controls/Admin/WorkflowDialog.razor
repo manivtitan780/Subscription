@@ -1,5 +1,47 @@
-<h3>WorkflowDialog</h3>
-
-@code {
-	
-}
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+	<ChildContent>
+		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"></DialogPositionData>
+		<DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="jobOptionsEditForm" OnValidSubmit="SaveJobOptions" @ref="EditWorkflowForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelJobOptions" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Workflow</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_workflowValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Step)">
+						<Template>
+							<TextBox @bind-Value="Model.Step" ID="textStep" MaxLength="50" Placeholder="Step" Readonly="true"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.NextList)">
+						<Template>
+							<label class="e-form-label" for="multiNext">Select Next Step(s):</label>
+							<SfMultiSelect @bind-Value="Model.NextList" DataSource="@Next" ID="multiNext" Mode="VisualMode.Box" Placeholder="Select Next Step(s)" TItem="KeyValues"
+							               TValue="List<string>" Width="100%">
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
+							</SfMultiSelect>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.IsLast)" LabelText="Is Last Step?" ID="checkedLast" EditorType="FormEditorType.Switch"/>
+					<FormItem ColumnSpan="3" Field="@nameof(Model.RoleIDList)">
+						<Template>
+							<label class="e-form-label" for="multiRole">Select Role(s):</label>
+							<SfMultiSelect @bind-Value="Model.RoleIDList" DataSource="@Role" ID="multiRole" Mode="VisualMode.Box" Placeholder="Select Role(s)" TItem="KeyValues"
+							               TValue="List<string>" Width="100%">
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
+							</SfMultiSelect>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Schedule)" LabelText="Schedule Interview?" ID="checkedSchedule" EditorType="FormEditorType.Switch" />
+					<FormItem ColumnSpan="1" Field="@nameof(Model.AnyStage)" LabelText="Visible in Any Stage?" ID="checkedAnyStage" EditorType="FormEditorType.Switch"/>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>
