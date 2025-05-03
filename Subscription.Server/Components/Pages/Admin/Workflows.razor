@@ -62,4 +62,4 @@
 		</SfGrid>
 	</GridContent>
 </AdminGrid>
-<WorkflowDialog HeaderString="@($"{Title} Workflow")" Model="@WorkflowRecordClone" Placeholder="Workflow" @ref="WorkflowDialog" Save="SaveWorkflow"/>
+<WorkflowDialog HeaderString="@($"{Title} Workflow")" Model="@WorkflowRecordClone" @ref="WorkflowDialog" Save="SaveWorkflow" Role="@Roles" Next="@Next"/>

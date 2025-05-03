@@ -13,6 +13,8 @@
 
 #endregion
 
+using Role = Subscription.Model.Role;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Workflows : ComponentBase
@@ -236,6 +238,13 @@ public partial class Workflows : ComponentBase
         }
     }
 
+    [Inject]
+    private RedisService RedisService { get; set; }
+    
+    private List<KeyValues> Roles { get; set; } = [];
+    
+    private List<KeyValues> Next { get; set; } = [];
+
     /// <summary>
     ///     This method is called when the component is initialized.
     ///     It retrieves the user's login information from the local storage and checks the user's role.
@@ -265,15 +274,26 @@ public partial class Workflows : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
-                                    List<string> _keys = [nameof(CacheObjects.TaxTerms)];
-                                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+                                    List<string> _keys = [nameof(CacheObjects.StatusCodes), nameof(CacheObjects.Roles)];
 
-                                    RedisValue _cacheValues = await _service.GetAsync(nameof(CacheObjects.TaxTerms));
-                                    TaxTerms = _cacheValues.IsNull ? [] : JsonConvert.DeserializeObject<List<KeyValues>>(_cacheValues.ToString());
+                                    Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
+                                    List<StatusCode> _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
+                                    List<Role> _roles = General.DeserializeObject<List<Role>>(_cacheValues[nameof(CacheObjects.Roles)]);
+                                    if (_statusCodes != null)
+                                    {
+                                        Next = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "SCN")
+                                                           .Select(statusCode => new KeyValues {KeyValue = statusCode.Code, Text = $"[{statusCode.Code}] - {statusCode.Status}"})
+                                                           .ToList();
+                                    }
+                                    
+                                    if (_roles != null)
+                                    {
+                                        Roles = _roles.Select(role => new KeyValues {KeyValue = role.RoleName, Text = $"[{role.RoleName}] - {role.Description}"})
+                                                      .ToList();
+                                    }
                                 }
                             });
 
-        //_initializationTaskSource.SetResult(true);
         await base.OnInitializedAsync();
     }
 
