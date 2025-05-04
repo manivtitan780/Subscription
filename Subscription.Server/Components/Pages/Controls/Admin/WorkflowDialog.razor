@@ -4,7 +4,7 @@
 		<DialogPositionData X="right" Y="center"></DialogPositionData>
 		<DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="Context" ID="jobOptionsEditForm" OnValidSubmit="SaveJobOptions" @ref="EditWorkflowForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+		<SfDataForm EditContext="Context" ID="templateEditForm" OnValidSubmit="SaveJobOptions" @ref="EditWorkflowForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelJobOptions" type="button">Cancel</SfButton>
 				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Workflow</SfButton>

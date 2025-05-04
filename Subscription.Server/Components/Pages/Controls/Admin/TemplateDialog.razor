@@ -4,19 +4,19 @@
 		<DialogPositionData X="right" Y="center"></DialogPositionData>
 		<DialogAnimationSettings Effect="DialogEffect.SlideRight"/>
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
-		<SfDataForm EditContext="Context" ID="jobOptionsEditForm" OnValidSubmit="SaveTemplate" @ref="EditTemplateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+		<SfDataForm EditContext="Context" ID="templateEditForm" OnValidSubmit="SaveTemplate" @ref="EditTemplateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelTemplate" type="button">Cancel</SfButton>
-				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Job Options</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Template</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator></FluentValidationValidator>@* Validator="_jobOptionsValidator"/>*@
 			</FormValidator>
 			<FormItems>
-				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Job Options Information">
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Template Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.TemplateName)">
 						<Template>
-							<TextBox @bind-Value="Model.TemplateName" ID="textTemplateName" MaxLength="50" Placeholder="Template Name"/>
+							<TextBox @bind-Value="Model.TemplateName" ID="textTemplateName" MaxLength="50" Placeholder="Template Name" Readonly="@(Model.ID != 0)"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Action)">
