@@ -16,7 +16,7 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class CandidateController(OpenAIClient openClient) : ControllerBase
+public class CandidateController : ControllerBase
 {
     private static readonly string[] JSONSerializable = ["Skill"];
 

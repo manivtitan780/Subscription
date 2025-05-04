@@ -62,6 +62,30 @@ public partial class TemplateDialog : ComponentBase, IDisposable
         new() {KeyValue = 10, Text = "No Action"}
     ];
 
+    private IEnumerable<KeyValues> FieldTokens { get; } = [
+        new() {KeyValue = "{TODAY}", Text = "Today's Date"}, 
+        new() {KeyValue = "{CandidateID}", Text = "Candidate ID"}, 
+        new() {KeyValue = "{FullName}", Text = "Candidate Full Name"},
+        new() {KeyValue = "{FirstName}", Text = "Candidate First Name"}, 
+        new() {KeyValue = "{LastName}", Text = "Candidate Last Name"}, 
+        new() {KeyValue = "{CandidateLocation}", Text = "Candidate Location"},
+        new() {KeyValue = "{CandidatePhone}", Text = "Candidate Phone"}, 
+        new() {KeyValue = "{CandidateSummary}", Text = "Candidate Summary"},
+        new() {KeyValue = "{RequisitionID}", Text = "Requisition ID"}, 
+        new() {KeyValue = "{RequisitionTitle}", Text = "Requisition Title"}, 
+        new() {KeyValue = "{Company}", Text = "Company Name"}, 
+        new() {KeyValue = "{RequisitionLocation}", Text = "Requisition Location"}, 
+        new() {KeyValue = "{RequisitionDescription}", Text = "Requisition Description"}, 
+        new() {KeyValue = "{SubmissionNotes}", Text = "Candidate Submission Notes"}, 
+        new() {KeyValue = "{LoggedInUser}", Text = "Logged In User"}];
+
+    private readonly List<ToolbarItemModel> _tools =
+    [
+        new() {Command = ToolbarCommand.Bold}, new() {Command = ToolbarCommand.Italic}, new() {Command = ToolbarCommand.Underline}, new() {Command = ToolbarCommand.StrikeThrough},
+        new() {Command = ToolbarCommand.LowerCase}, new() {Command = ToolbarCommand.UpperCase}, new() {Command = ToolbarCommand.SuperScript}, new() {Command = ToolbarCommand.SubScript},
+        new() {Command = ToolbarCommand.Separator}, new() {Command = ToolbarCommand.ClearFormat}, new() {Command = ToolbarCommand.Separator}, new() {Command = ToolbarCommand.Undo},
+        new() {Command = ToolbarCommand.Redo}, new() {Name = "Tokens",  TooltipText = "Insert Token"}
+    ];
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     protected override void OnParametersSet()
