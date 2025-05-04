@@ -8,7 +8,7 @@
 // File Name:           AdminController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-10-2025 15:03
-// Last Updated On:     03-26-2025 20:03
+// Last Updated On:     05-04-2025 20:27
 // *****************************************/
 
 #endregion
@@ -18,8 +18,6 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class AdminController(RedisService redisService) : ControllerBase
 {
-    // private RedisService _redisService = redisService;
-
     /// <summary>
     ///     Retrieves a list of administrative items based on the specified method and filter.
     /// </summary>
@@ -131,104 +129,74 @@ public class AdminController(RedisService redisService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> SaveAdminList([FromBody] AdminList adminList, string methodName, string parameterName, bool containDescription, bool isString, string cacheName = "")
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
-        string _returnCode = "";
-        await using SqlCommand _command = new(methodName, _con);
-        _command.CommandType = CommandType.StoredProcedure;
-        if (isString)
-        {
-            _command.Char("Code", 1, adminList.Code.DBNull());
-        }
-        else
-        {
-            _command.Int("ID", adminList.ID.DBNull());
-        }
+        return await SaveEntityAsync(methodName, (command, list) =>
+                                                 {
+                                                     if (isString)
+                                                     {
+                                                         command.Char("Code", 1, list.Code.DBNull());
+                                                     }
+                                                     else
+                                                     {
+                                                         command.Int("ID", list.ID.DBNull());
+                                                     }
 
-        _command.Varchar(parameterName, 100, adminList.Text);
-        if (containDescription)
-        {
-            _command.Varchar("Desc", 500, adminList.Text);
-        }
+                                                     command.Varchar(parameterName, 100, list.Text);
 
-        _command.Varchar("User", 10, "ADMIN");
-        _command.Bit("Enabled", adminList.IsEnabled);
-        try
-        {
-            await _con.OpenAsync();
+                                                     if (containDescription)
+                                                     {
+                                                         command.Varchar("Desc", 500, list.Text);
+                                                     }
 
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (_reader.Read())
-            {
-                _returnCode = _reader.NString(0, "[]");
-            }
-
-            string _cacheValue = "[]";
-            await _reader.NextResultAsync();
-            while (_reader.Read())
-            {
-                _cacheValue = _reader.NString(0, "[]");
-            }
-
-            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
-            {
-                await redisService.CreateAsync(cacheName, _cacheValue);
-            }
-        }
-        catch (Exception ex)
-        {
-#pragma warning disable CA2254
-            Log.Error(ex, "Error saving " + parameterName + ". {ExceptionMessage}", ex.Message);
-#pragma warning restore CA2254
-            return StatusCode(500, $"Error saving {parameterName}.");
-        }
-        finally
-        {
-            await _con.CloseAsync();
-        }
-
-        return Ok(_returnCode);
+                                                     command.Varchar("User", 10, "ADMIN");
+                                                     command.Bit("Enabled", list.IsEnabled);
+                                                 }, cacheName, adminList, parameterName);
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveDocumentType([FromBody] DocumentTypes documentType, string cacheName = nameof(CacheObjects.DocumentTypes))
     {
+        return await SaveEntityAsync("Admin_SaveDocumentType", (command, entity) =>
+                                                               {
+                                                                   command.Int("ID", entity.KeyValue.DBNull());
+                                                                   command.Varchar("DocumentType", 100, entity.Text);
+                                                               }, cacheName, documentType, "Document Type");
+    }
+
+     private async Task<ActionResult<string>> SaveEntityAsync<T>(string procedureName, Action<SqlCommand, T> parameterBinder, string cacheName, T entity, string logContext)
+    {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
-        await using SqlCommand _command = new("Admin_SaveDocumentType", _con);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", documentType.KeyValue.DBNull());
-
-        _command.Varchar("DocumentType", 100, documentType.Text);
-
         try
         {
-            await _con.OpenAsync();
+            await using SqlCommand _command = new(procedureName, _con);
+            _command.CommandType = CommandType.StoredProcedure;
 
+            parameterBinder(_command, entity);
+
+            await _con.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (_reader.Read())
+
+            while (await _reader.ReadAsync())
             {
                 _returnCode = _reader.NString(0, "[]");
             }
 
-            string _cacheValue = "[]";
             await _reader.NextResultAsync();
-            while (_reader.Read())
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
             {
                 _cacheValue = _reader.NString(0, "[]");
             }
 
-            // _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
             if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
             {
-                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
                 await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error saving Document Type. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, "Error saving Document Type.");
+            Log.Error(ex, "Error saving {LogContext}. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, $"Error saving {logContext}.");
         }
         finally
         {
@@ -241,69 +209,36 @@ public class AdminController(RedisService redisService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = nameof(CacheObjects.JobOptions))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
-        string _returnCode = "";
-        await using SqlCommand _command = new("Admin_SaveJobOptions", _con);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Char("Code", 1, jobOption.KeyValue);
-        _command.Varchar("JobOptions", 50, jobOption.Text);
-        _command.Varchar("Desc", 500, jobOption.Description);
-        _command.Bit("Duration", jobOption.Duration);
-        _command.Bit("Rate", jobOption.Rate);
-        _command.Bit("Sal", jobOption.Sal);
-        _command.Varchar("TaxTerms", 20, jobOption.Tax);
-        _command.Bit("Expenses", jobOption.Exp);
-        _command.Bit("PlaceFee", jobOption.PlaceFee);
-        _command.Bit("Benefits", jobOption.Benefits);
-        _command.Bit("ShowHours", jobOption.ShowHours);
-        _command.Varchar("RateText", 255, jobOption.RateText);
-        _command.Varchar("PercentText", 255, jobOption.PercentText);
-        _command.Decimal("CostPercent", 5, 2, jobOption.CostPercent);
-        _command.Bit("ShowPercent", jobOption.ShowPercent);
-        _command.Varchar("User", 10, "ADMIN");
-
-        try
-        {
-            await _con.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (await _reader.ReadAsync())
-            {
-                _returnCode = _reader.NString(0, "[]");
-            }
-
-            await _reader.NextResultAsync();
-            string _cacheValue = "[]";
-            while (await _reader.ReadAsync())
-            {
-                _cacheValue = _reader.NString(0, "[]");
-            }
-
-            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
-            {
-                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await redisService.CreateAsync(cacheName, _cacheValue);
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving job options. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, "Error saving Job Options.");
-            // ignored
-        }
-        finally
-        {
-            await _con.CloseAsync();
-        }
-
-        return Ok(_returnCode);
+        return await SaveEntityAsync("Admin_SaveJobOptions", (command, entity) =>
+                                                               {
+                                                                   command.Char("Code", 1, entity.KeyValue);
+                                                                   command.Varchar("JobOptions", 50, entity.Text);
+                                                                   command.Varchar("Desc", 500, entity.Description);
+                                                                   command.Bit("Duration", entity.Duration);
+                                                                   command.Bit("Rate", entity.Rate);
+                                                                   command.Bit("Sal", entity.Sal);
+                                                                   command.Varchar("TaxTerms", 20, entity.Tax);
+                                                                   command.Bit("Expenses", entity.Exp);
+                                                                   command.Bit("PlaceFee", entity.PlaceFee);
+                                                                   command.Bit("Benefits", entity.Benefits);
+                                                                   command.Bit("ShowHours", entity.ShowHours);
+                                                                   command.Varchar("RateText", 255, entity.RateText);
+                                                                   command.Varchar("PercentText", 255, entity.PercentText);
+                                                                   command.Decimal("CostPercent", 5, 2, entity.CostPercent);
+                                                                   command.Bit("ShowPercent", entity.ShowPercent);
+                                                                   command.Varchar("User", 10, "ADMIN");
+                                                               }, cacheName, jobOption, "Job Options");
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = nameof(CacheObjects.NAICS))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
+        return await SaveEntityAsync("Admin_SaveNAICS", (command, entity) =>
+                                                               {
+                                                                   command.Int("ID", entity.ID.DBNull());
+                                                                   command.Varchar("NAICS", 100, entity.Title);
+                                                               }, cacheName, naics, "NAICS");
+        /*await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
         await using SqlCommand _command = new("Admin_SaveNAICS", _con);
         _command.CommandType = CommandType.StoredProcedure;
@@ -346,13 +281,34 @@ public class AdminController(RedisService redisService) : ControllerBase
             await _con.CloseAsync();
         }
 
-        return Ok(_returnCode);
+        return Ok(_returnCode);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveRole([FromBody] Role role, string cacheName = nameof(CacheObjects.Roles))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
+        return await SaveEntityAsync("Admin_SaveRole", (command, entity) =>
+                                                               {
+                                                                   command.Int("ID", entity.ID.DBNull());
+                                                                   command.Varchar("RoleName", 10, entity.RoleName);
+                                                                   command.Varchar("RoleDescription", 255, entity.Description);
+                                                                   command.Bit("CreateOrEditCompany", entity.CreateOrEditCompany);
+                                                                   command.Bit("CreateOrEditCandidate", entity.CreateOrEditCandidate);
+                                                                   command.Bit("ViewAllCompanies", entity.ViewAllCompanies);
+                                                                   command.Bit("ViewMyCompanyProfile", entity.ViewMyCompanyProfile);
+                                                                   command.Bit("EditMyCompanyProfile", entity.EditMyCompanyProfile);
+                                                                   command.Bit("CreateOrEditRequisitions", entity.CreateOrEditRequisitions);
+                                                                   command.Bit("ViewOnlyMyCandidates", entity.ViewOnlyMyCandidates);
+                                                                   command.Bit("ViewAllCandidates", entity.ViewAllCandidates);
+                                                                   command.Bit("ViewRequisitions", entity.ViewRequisitions);
+                                                                   command.Bit("EditRequisitions", entity.EditRequisitions);
+                                                                   command.Bit("ManageSubmittedCandidates", entity.ManageSubmittedCandidates);
+                                                                   command.Bit("DownloadOriginal", entity.DownloadOriginal);
+                                                                   command.Bit("DownloadFormatted", entity.DownloadFormatted);
+                                                                   command.Bit("AdminScreens", entity.AdminScreens);
+                                                                   command.Varchar("User", 10, "ADMIN");
+                                                               }, cacheName, role, "Role");
+        /*await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
         await using SqlCommand _command = new("Admin_SaveRole", _con);
         _command.CommandType = CommandType.StoredProcedure;
@@ -409,13 +365,21 @@ public class AdminController(RedisService redisService) : ControllerBase
             await _con.CloseAsync();
         }
 
-        return Ok(_returnCode);
+        return Ok(_returnCode);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveState([FromBody] State state, string cacheName = nameof(CacheObjects.States))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
+        return await SaveEntityAsync("Admin_SaveState", (command, entity) =>
+                                                               {
+                                                                   command.Int("ID", entity.ID.DBNull());
+                                                                   command.Varchar("Code", 2, entity.Code);
+                                                                   command.Varchar("State", 50, entity.StateName);
+                                                                   command.Varchar("Country", 50, "USA");
+                                                                   command.Varchar("User", 10, "ADMIN");
+                                                               }, cacheName, state, "State");
+        /*await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
         await using SqlCommand _command = new("Admin_SaveState", _con);
         _command.CommandType = CommandType.StoredProcedure;
@@ -459,13 +423,26 @@ public class AdminController(RedisService redisService) : ControllerBase
             await _con.CloseAsync();
         }
 
-        return Ok(_returnCode);
+        return Ok(_returnCode);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveTemplate([FromBody] AppTemplate template, string cacheName = nameof(CacheObjects.Templates))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
+        return await SaveEntityAsync("Admin_SaveTemplate", (command, entity) =>
+                                                               {
+                                                                   command.Int("ID", entity.ID.DBNull());
+                                                                   command.Varchar("TemplateName", 50, entity.TemplateName);
+                                                                   command.Varchar("CC", 2000, entity.CC);
+                                                                   command.Varchar("Subject", 255, entity.Subject);
+                                                                   command.Varchar("Template", -1, entity.TemplateContent);
+                                                                   command.Varchar("Notes", 500, entity.Notes);
+                                                                   command.Varchar("SendTo", 200, entity.SendTo);
+                                                                   command.TinyInt("Action", entity.Action);
+                                                                   command.Varchar("User", 10, "ADMIN");
+                                                                   command.Bit("Enabled", entity.IsEnabled);
+                                                               }, cacheName, template, "Template");
+        /*await using SqlConnection _con = new(Start.ConnectionString);
 
         string _returnCode = "";
         await using SqlCommand _command = new("Admin_SaveTemplate", _con);
@@ -479,6 +456,7 @@ public class AdminController(RedisService redisService) : ControllerBase
         _command.Varchar("SendTo", 200, template.SendTo);
         _command.TinyInt("Action", template.Action);
         _command.Varchar("User", 10, "ADMIN");
+        _command.Bit("Enabled", template.IsEnabled);
         try
         {
             await _con.OpenAsync();
@@ -508,13 +486,26 @@ public class AdminController(RedisService redisService) : ControllerBase
             return StatusCode(500, "Error saving user.");
         }
 
-        return Ok(_returnCode);
+        return Ok(_returnCode);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveUser([FromBody] User user, string cacheName = nameof(CacheObjects.Users))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
+        return await SaveEntityAsync("Admin_SaveUser", (command, entity) =>
+                                                               {
+                                                                   command.Varchar("UserName", 10, entity.UserName);
+                                                                   command.Varchar("FirstName", 50, entity.FirstName);
+                                                                   command.Varchar("LastName", 200, entity.LastName);
+                                                                   command.Varchar("Email", 200, entity.EmailAddress);
+                                                                   command.TinyInt("Role", entity.RoleID);
+                                                                   command.Bit("Status", entity.StatusEnabled);
+                                                                   command.Varchar("User", 10, "ADMIN");
+                                                                   command.Binary("Salt", 64, entity.Password.NullOrWhiteSpace() ? DBNull.Value : General.GenerateRandomString(64));
+                                                                   command.Binary("Password", 64, entity.Password.NullOrWhiteSpace() ? DBNull.Value 
+                                                                                                      : General.ComputeHashWithSalt(entity.Password, General.GenerateRandomString(64)));
+                                                               }, cacheName, user, "User");
+        /*await using SqlConnection _con = new(Start.ConnectionString);
 
         string _returnCode = "";
         byte[] _salt = user.Password.NullOrWhiteSpace() ? new byte[64] : General.GenerateRandomString(64);
@@ -567,13 +558,23 @@ public class AdminController(RedisService redisService) : ControllerBase
             await _con.CloseAsync();
         }
 
-        return Ok(_returnCode);
+        return Ok(_returnCode);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveWorkflow([FromBody] Workflow workflow, string cacheName = nameof(CacheObjects.Workflow))
     {
-        await using SqlConnection _con = new(Start.ConnectionString);
+        return await SaveEntityAsync("Admin_SaveWorkflow", (command, entity) =>
+                                                               {
+                                                                   command.Int("ID", entity.ID.DBNull());
+                                                                   command.Varchar("Next", 100, entity.Next);
+                                                                   command.Bit("IsLast", entity.IsLast);
+                                                                   command.Varchar("Role", 50, entity.RoleIDs);
+                                                                   command.Bit("Schedule", entity.Schedule);
+                                                                   command.Bit("AnyStage", entity.AnyStage);
+                                                                   command.Varchar("User", 10, "ADMIN");
+                                                               }, cacheName, workflow, "Workflow");
+        /*await using SqlConnection _con = new(Start.ConnectionString);
 
         string _returnCode = "", _cacheValue = "";
         await using SqlCommand _command = new("Admin_SaveWorkflow", _con);
@@ -617,7 +618,7 @@ public class AdminController(RedisService redisService) : ControllerBase
             await _con.CloseAsync();
         }
 
-        return Ok(_returnCode);
+        return Ok(_returnCode);*/
     }
 
     /// <summary>
@@ -671,7 +672,9 @@ public class AdminController(RedisService redisService) : ControllerBase
         }
         catch (SqlException ex)
         {
+#pragma warning disable CA2254
             Log.Error(ex, "Error toggling " + methodName + ". {ExceptionMessage}", ex.Message);
+#pragma warning restore CA2254
             return StatusCode(500, $"Error toggling {methodName}.");
         }
         finally
