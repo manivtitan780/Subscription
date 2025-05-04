@@ -1188,3 +1188,14 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     background-color: var(--c-red-light);
 }
 /* #endregion Multiselect*/
+
+/* #region RichTextEditor */
+
+.e-dropdownbase .e-list-item {
+    font-size: 13px !important;
+}
+
+/*.e-input-group, .e-input-group.e-control-wrapper*/#dropTokens {
+    font-size: 13px;
+}
+/* #endregion RichTextEditor */

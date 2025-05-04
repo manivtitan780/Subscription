@@ -8,7 +8,7 @@
 // File Name:           TemplateDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          05-03-2025 20:05
-// Last Updated On:     05-04-2025 15:13
+// Last Updated On:     05-04-2025 16:00
 // *****************************************/
 
 #endregion
@@ -17,6 +17,8 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 
 public partial class TemplateDialog : ComponentBase, IDisposable
 {
+    private bool _hasInsertedBefore;
+
     private readonly List<ToolbarItemModel> _tools =
     [
         new() {Command = ToolbarCommand.Bold}, new() {Command = ToolbarCommand.Italic}, new() {Command = ToolbarCommand.Underline}, new() {Command = ToolbarCommand.StrikeThrough},
@@ -66,6 +68,8 @@ public partial class TemplateDialog : ComponentBase, IDisposable
     [Parameter]
     public AppTemplate Model { get; set; } = new();
 
+    private SfRichTextEditor RichTextEditor { get; set; }
+
     [Parameter]
     public EventCallback<EditContext> Save { get; set; }
 
@@ -90,6 +94,23 @@ public partial class TemplateDialog : ComponentBase, IDisposable
     }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    private async Task InsertToken(ChangeEventArgs<string, KeyValues> args)
+    {
+        /*
+        if (!_hasInsertedBefore)
+        {
+            _hasInsertedBefore = true;
+            await RichTextEditor.ExecuteCommandAsync(CommandName.InsertText, " ", new() {Undo = false});
+        }
+
+        */
+        await RichTextEditor.FocusAsync();
+        if (args.Value.NotNullOrWhiteSpace())
+        {
+            await RichTextEditor.ExecuteCommandAsync(CommandName.InsertHTML, args.Value, new() {Undo = true});
+        }
+    }
 
     protected override void OnParametersSet()
     {

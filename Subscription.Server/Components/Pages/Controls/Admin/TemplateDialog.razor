@@ -1,4 +1,4 @@
-<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="520px">
+<SfDialog CssClass="dialogPopup" Header="@HeaderString" Height="98vh" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="700px">
 	<ChildContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"></DialogPositionData>
@@ -44,12 +44,13 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.TemplateContent)">
 						<Template>
 							<label class="e-form-label" for="richTextTemplate">Template Content:</label>
-							<SfRichTextEditor @bind-Value="Model.TemplateContent" Height="400px" ID="richTextTemplate">
+							<SfRichTextEditor @bind-Value="Model.TemplateContent" Height="400px" ID="richTextTemplate" @ref="RichTextEditor" UndoRedoSteps="20">
 								<RichTextEditorToolbarSettings Items="_tools">
 									<RichTextEditorCustomToolbarItems>
 										<RichTextEditorCustomToolbarItem Name="Tokens">
 											<Template>
-												<DropDown ID="dropTokens" Key="KeyValue" Model="@FieldTokens" Placeholder="Tokens" ShowLabel="false" Text="Text" TItem="KeyValues" TValue="string"  />
+												<DropDown DropDownValueChange="InsertToken" ID="dropTokens" Key="KeyValue" Model="@FieldTokens" Placeholder="Tokens" ShowLabel="false" Text="Text" 
+														  TItem="KeyValues" TValue="string"  />
 											</Template>
 										</RichTextEditorCustomToolbarItem>
 									</RichTextEditorCustomToolbarItems>
