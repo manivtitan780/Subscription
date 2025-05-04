@@ -8,7 +8,7 @@
 // File Name:           DropDown.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     04-16-2025 20:04
+// Last Updated On:     05-04-2025 15:09
 // *****************************************/
 
 #endregion
@@ -27,18 +27,10 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     private TValue? _value;
 
     [Parameter]
-    public bool AllowFilter
-    {
-        get;
-        set;
-    }
+    public bool AllowFilter { get; set; }
 
     [Parameter]
-    public EventCallback<DataBoundEventArgs> DataBound
-    {
-        get;
-        set;
-    }
+    public EventCallback<DataBoundEventArgs> DataBound { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the value of the DropDown changes.
@@ -51,25 +43,13 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     The callback receives a ChangeEventArgs object that contains the old and new values.
     /// </remarks>
     [Parameter]
-    public EventCallback<ChangeEventArgs<TValue, TItem>> DropDownValueChange
-    {
-        get;
-        set;
-    }
+    public EventCallback<ChangeEventArgs<TValue, TItem>> DropDownValueChange { get; set; }
 
     [Parameter]
-    public bool Enabled
-    {
-        get;
-        set;
-    } = true;
+    public bool Enabled { get; set; } = true;
 
     [Parameter]
-    public string? ID
-    {
-        get;
-        set;
-    }
+    public string? ID { get; set; }
 
     /// <summary>
     ///     Gets or sets the field in the data source that provides the values for the DropDown.
@@ -83,39 +63,22 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     When an item is selected in the DropDown, the value of this field is used as the selected value.
     /// </remarks>
     [Parameter]
-    public string Key
-    {
-        get;
-        set;
-    } = "KeyValue";
+    public string Key { get; set; } = "KeyValue";
 
     [Parameter]
-    public IEnumerable<TItem>? Model
-    {
-        get;
-        set;
-    }
+    public IEnumerable<TItem>? Model { get; set; }
 
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public string? Placeholder { get; set; }
 
     [Parameter]
-    public Query Query
-    {
-        get;
-        set;
-    } = new();
+    public Query Query { get; set; } = new();
 
     [Parameter]
-    public bool ShowClearButton
-    {
-        get;
-        set;
-    }
+    public bool ShowClearButton { get; set; }
+
+    [Parameter]
+    public bool ShowLabel { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the name of the property to be used as the display text in the DropDown.
@@ -129,11 +92,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     The display text is shown in the DropDown's input field and in the dropdown list.
     /// </remarks>
     [Parameter]
-    public string Text
-    {
-        get;
-        set;
-    } = "Text";
+    public string Text { get; set; } = "Text";
 
     /// <summary>
     ///     Gets or sets the selected value in the DropDown.
@@ -174,11 +133,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     The callback receives the new selected value as an argument.
     /// </remarks>
     [Parameter]
-    public EventCallback<TValue> ValueChanged
-    {
-        get;
-        set;
-    }
+    public EventCallback<TValue> ValueChanged { get; set; }
 
     /// <summary>
     ///     Gets or sets the expression that identifies the value to be bound to the DropDown.
@@ -192,11 +147,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>>? ValueExpression
-    {
-        get;
-        set;
-    }
+    public Expression<Func<TValue>>? ValueExpression { get; set; }
 
     /// <summary>
     ///     Gets or sets the width of the DropDown control.
@@ -211,11 +162,7 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     ///     If this property is not set, the DropDown control will take up 98% of the available width by default.
     /// </remarks>
     [Parameter]
-    public string Width
-    {
-        get;
-        set;
-    } = "100%";
+    public string Width { get; set; } = "100%";
 
     /// <summary>
     ///     Asynchronously refreshes the data in the DropDown control.

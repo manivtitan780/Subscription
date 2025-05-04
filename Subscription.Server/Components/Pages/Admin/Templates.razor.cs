@@ -53,6 +53,8 @@ public partial class Templates : ComponentBase
 
     private bool VisibleSpinner { get; set; }
 
+    private TemplateDialog TemplateDialog { get; set; }
+
     private async Task DataBound(object arg)
     {
         if (Grid.TotalItemCount > 0)
@@ -94,7 +96,7 @@ public partial class Templates : ComponentBase
 
                                                                     VisibleSpinner = false;
                                                                     //TemplateRecordClone.Entity = "Template";
-                                                                    //await TemplateDialog.ShowDialog();
+                                                                    await TemplateDialog.ShowDialog();
                                                                 });
 
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphore, task);
