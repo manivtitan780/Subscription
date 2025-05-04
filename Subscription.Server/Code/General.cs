@@ -601,7 +601,6 @@ public class General //(Container container)
             return [];
         }
 
-        await clearFilterCallback.Invoke();
         return DeserializeObject<List<T>>(response);
     }
 }

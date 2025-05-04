@@ -17,8 +17,6 @@ namespace Subscription.Server.Components.Pages.Controls.Admin;
 
 public partial class TemplateDialog : ComponentBase, IDisposable
 {
-    private bool _hasInsertedBefore;
-
     private readonly List<ToolbarItemModel> _tools =
     [
         new() {Command = ToolbarCommand.Bold}, new() {Command = ToolbarCommand.Italic}, new() {Command = ToolbarCommand.Underline}, new() {Command = ToolbarCommand.StrikeThrough},
@@ -97,14 +95,6 @@ public partial class TemplateDialog : ComponentBase, IDisposable
 
     private async Task InsertToken(ChangeEventArgs<string, KeyValues> args)
     {
-        /*
-        if (!_hasInsertedBefore)
-        {
-            _hasInsertedBefore = true;
-            await RichTextEditor.ExecuteCommandAsync(CommandName.InsertText, " ", new() {Undo = false});
-        }
-
-        */
         await RichTextEditor.FocusAsync();
         if (args.Value.NotNullOrWhiteSpace())
         {
