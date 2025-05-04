@@ -49,8 +49,14 @@ public partial class EditCandidateDialog
         new() {Command = ToolbarCommand.ClearFormat},
         new() {Command = ToolbarCommand.Separator},
         new() {Command = ToolbarCommand.Undo},
-        new() {Command = ToolbarCommand.Redo}
+        new() {Command = ToolbarCommand.Redo}, /*new ToolbarItemModel() {Name = "Tokens",  TooltipText = "Insert Token"}*/
     ];
+
+	private List<string> FieldTokens
+    {
+        get;
+        set;
+    } = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 
 	/// <summary>
 	///     Gets or sets the event to be triggered when the cancel action is performed in the dialog.

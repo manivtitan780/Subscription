@@ -40,6 +40,24 @@
 						</Template>
 					</FormItem>
 				</FormGroup>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupTemplateContent" LabelText="Template Content">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.TemplateContent)">
+						<Template>
+							<label class="e-form-label" for="richTextTemplate">Template Content:</label>
+							<SfRichTextEditor @bind-Value="Model.TemplateContent" Height="400px" ID="richTextTemplate">
+								<RichTextEditorToolbarSettings Items="_tools">
+									<RichTextEditorCustomToolbarItems>
+										<RichTextEditorCustomToolbarItem Name="Tokens">
+											<Template>
+												<DropDown Model="@FieldTokens" ID="dropTokens" TItem="KeyValues" TValue="string" Placeholder="Tokens" Text="Text" Key="KeyValue"/>
+											</Template>
+										</RichTextEditorCustomToolbarItem>
+									</RichTextEditorCustomToolbarItems>
+								</RichTextEditorToolbarSettings>
+							</SfRichTextEditor>
+						</Template>
+					</FormItem>
+				</FormGroup>
 			</FormItems>
 		</SfDataForm>
 	</ChildContent>
