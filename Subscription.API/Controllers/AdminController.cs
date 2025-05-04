@@ -169,17 +169,16 @@ public class AdminController(RedisService redisService) : ControllerBase
                 _cacheValue = _reader.NString(0, "[]");
             }
 
-            /*_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";*/
-
             if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _cacheValue);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
         {
+#pragma warning disable CA2254
             Log.Error(ex, "Error saving " + parameterName + ". {ExceptionMessage}", ex.Message);
+#pragma warning restore CA2254
             return StatusCode(500, $"Error saving {parameterName}.");
         }
         finally
@@ -191,7 +190,7 @@ public class AdminController(RedisService redisService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveDocumentType([FromBody] DocumentTypes documentType, string cacheName = "")
+    public async Task<ActionResult<string>> SaveDocumentType([FromBody] DocumentTypes documentType, string cacheName = nameof(CacheObjects.DocumentTypes))
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
@@ -205,17 +204,31 @@ public class AdminController(RedisService redisService) : ControllerBase
         {
             await _con.OpenAsync();
 
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (_reader.Read())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            string _cacheValue = "[]";
+            await _reader.NextResultAsync();
+            while (_reader.Read())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            // _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving Document Type. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving Document Type.");
         }
         finally
         {
@@ -226,7 +239,7 @@ public class AdminController(RedisService redisService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = "")
+    public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = nameof(CacheObjects.JobOptions))
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
@@ -252,24 +265,43 @@ public class AdminController(RedisService redisService) : ControllerBase
         try
         {
             await _con.OpenAsync();
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error saving job options. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving Job Options.");
             // ignored
+        }
+        finally
+        {
+            await _con.CloseAsync();
         }
 
         return Ok(_returnCode);
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = "NAICS")
+    public async Task<ActionResult<string>> SaveNAICS([FromBody] NAICS naics, string cacheName = nameof(CacheObjects.NAICS))
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
@@ -283,17 +315,31 @@ public class AdminController(RedisService redisService) : ControllerBase
         {
             await _con.OpenAsync();
 
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
+            {
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
 
             if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving NAICS. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving NAICS.");
         }
         finally
         {
@@ -304,7 +350,7 @@ public class AdminController(RedisService redisService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveRole([FromBody] Role role, string cacheName = "Roles")
+    public async Task<ActionResult<string>> SaveRole([FromBody] Role role, string cacheName = nameof(CacheObjects.Roles))
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
@@ -332,12 +378,25 @@ public class AdminController(RedisService redisService) : ControllerBase
         try
         {
             await _con.OpenAsync();
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
@@ -345,12 +404,16 @@ public class AdminController(RedisService redisService) : ControllerBase
             Log.Error(ex, "Error saving roles. {ExceptionMessage}", ex.Message);
             return StatusCode(500, "Error saving roles.");
         }
+        finally
+        {
+            await _con.CloseAsync();
+        }
 
         return Ok(_returnCode);
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveState([FromBody] State state, string cacheName = "States")
+    public async Task<ActionResult<string>> SaveState([FromBody] State state, string cacheName = nameof(CacheObjects.States))
     {
         await using SqlConnection _con = new(Start.ConnectionString);
         string _returnCode = "";
@@ -365,12 +428,25 @@ public class AdminController(RedisService redisService) : ControllerBase
         try
         {
             await _con.OpenAsync();
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
@@ -378,12 +454,65 @@ public class AdminController(RedisService redisService) : ControllerBase
             Log.Error(ex, "Error saving state. {ExceptionMessage}", ex.Message);
             return StatusCode(500, "Error saving state.");
         }
+        finally
+        {
+            await _con.CloseAsync();
+        }
 
         return Ok(_returnCode);
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveUser([FromBody] User user, string cacheName = "Users")
+    public async Task<ActionResult<string>> SaveTemplate([FromBody] AppTemplate template, string cacheName = nameof(CacheObjects.Templates))
+    {
+        await using SqlConnection _con = new(Start.ConnectionString);
+
+        string _returnCode = "";
+        await using SqlCommand _command = new("Admin_SaveTemplate", _con);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("ID", template.ID.DBNull());
+        _command.Varchar("TemplateName", 50, template.TemplateName);
+        _command.Varchar("CC", 2000, template.CC);
+        _command.Varchar("Subject", 255, template.Subject);
+        _command.Varchar("Template", -1, template.TemplateContent);
+        _command.Varchar("Notes", 500, template.Notes);
+        _command.Varchar("SendTo", 200, template.SendTo);
+        _command.TinyInt("Action", template.Action);
+        _command.Varchar("User", 10, "ADMIN");
+        try
+        {
+            await _con.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
+            {
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                await redisService.CreateAsync(cacheName, _returnCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving user. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, "Error saving user.");
+        }
+
+        return Ok(_returnCode);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveUser([FromBody] User user, string cacheName = nameof(CacheObjects.Users))
     {
         await using SqlConnection _con = new(Start.ConnectionString);
 
@@ -406,12 +535,25 @@ public class AdminController(RedisService redisService) : ControllerBase
         try
         {
             await _con.OpenAsync();
-            _returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
-
-            if (_returnCode.NotNullOrWhiteSpace() && _returnCode != "[]" && cacheName.NotNullOrWhiteSpace())
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
             {
-                RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-                await _service.CreateAsync(cacheName, _returnCode);
+                _returnCode = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            string _cacheValue = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _cacheValue = _reader.NString(0, "[]");
+            }
+
+            //_returnCode = (await _command.ExecuteScalarAsync())?.ToString() ?? "";
+
+            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            {
+                //RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+                await redisService.CreateAsync(cacheName, _cacheValue);
             }
         }
         catch (Exception ex)
@@ -419,6 +561,10 @@ public class AdminController(RedisService redisService) : ControllerBase
             Log.Error(ex, "Error saving user. {ExceptionMessage}", ex.Message);
             return StatusCode(500, "Error saving user.");
             // ignored
+        }
+        finally
+        {
+            await _con.CloseAsync();
         }
 
         return Ok(_returnCode);
@@ -466,10 +612,14 @@ public class AdminController(RedisService redisService) : ControllerBase
             return StatusCode(500, "Error saving user.");
             // ignored
         }
+        finally
+        {
+            await _con.CloseAsync();
+        }
 
         return Ok(_returnCode);
     }
-    
+
     /// <summary>
     ///     Toggles the administrative list based on the provided method name, ID, and username.
     /// </summary>

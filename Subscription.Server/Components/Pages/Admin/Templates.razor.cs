@@ -183,6 +183,7 @@ public partial class Templates : ComponentBase
                                                      DataSource = await General.SaveEntityAndRefreshAsync<AppTemplate, AppTemplate>("Admin/SaveTemplate", "Admin_SaveTemplate", "Template",
                                                                                                                                     nameof(CacheObjects.Templates), TemplateRecordClone,
                                                                                                                                     record => TemplateRecord = record.Copy(), RefreshGrid); //()
+                                                     await RefreshGrid();
                                                  });
 
     private async Task SetDataSource()
