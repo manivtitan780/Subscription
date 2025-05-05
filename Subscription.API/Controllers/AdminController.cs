@@ -40,7 +40,7 @@ public class AdminController(RedisService redisService) : ControllerBase
         }
         catch (SqlException ex)
         {
-            Log.Error(ex, "Error saving education. {ExceptionMessage}", ex.Message);
+            Log.Error(ex, "Error saving {methodName} search. {ExceptionMessage}", methodName, ex.Message);
             return StatusCode(500, "Error saving education.");
         }
         finally
@@ -63,7 +63,7 @@ public class AdminController(RedisService redisService) : ControllerBase
         try
         {
             await _connection.OpenAsync();
-            _listOptions = (await _command.ExecuteScalarAsync())?.ToString();
+            _listOptions = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
         }
         catch (SqlException ex)
         {
