@@ -100,4 +100,10 @@ public partial class MaskedTextBox : ComponentBase
         get;
         set;
     } = "100%";
+
+    [Parameter]
+    public EventCallback<MaskBlurEventArgs> OnBlur { get; set; }
+
+    [Parameter]
+    public EventCallback<MaskFocusEventArgs> OnFocus { get; set; }
 }

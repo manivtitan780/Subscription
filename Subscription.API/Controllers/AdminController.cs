@@ -62,6 +62,12 @@ public class AdminController(RedisService redisService) : ControllerBase
     {
         return await ExecuteQueryAsync(methodName, command => { command.Varchar(paramName, 100, filter); }, paramName, $"Error fetching {paramName} search.");
     }
+    
+    [HttpGet]
+    public async Task<ActionResult<string>> CheckZip(string zip = "00000")
+    {
+        return await ExecuteQueryAsync("GetZipCityState", command => { command.Varchar("Zip", 10, zip); }, "CityState", "Error fetching City/State.");
+    }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveAdminList([FromBody] AdminList adminList, string methodName, string parameterName, bool containDescription, bool isString, string cacheName = "")
