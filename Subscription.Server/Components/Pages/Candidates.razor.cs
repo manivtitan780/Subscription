@@ -126,11 +126,11 @@ public partial class Candidates
 
     private SfGrid<Candidate> Grid { get; set; }
 
-    private bool HasEditRights { get; set; } = true;
+    private bool HasEditRights { get; set; } = false;
 
     private bool HasRendered { get; set; }
 
-    private bool HasViewRights { get; set; } = true;
+    private bool HasViewRights { get; set; } = false;
 
     private bool IsFromCompany { get; set; }
 
