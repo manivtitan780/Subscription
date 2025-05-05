@@ -46,7 +46,7 @@ public class AdminController(RedisService redisService) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<string>> GetAdminList(string methodName, string filter = "", bool isString = true)
+    public async Task<ActionResult<string>> GetAdminList(string methodName, string filter = "")
     {
         return await ExecuteQueryAsync(methodName, command =>
                                                    {
