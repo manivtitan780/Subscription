@@ -1,81 +1,52 @@
-#region Header
-
-// /*****************************************
-// Copyright:           Titan-Techs.
-// Location:            Newtown, PA, USA
-// Solution:            Subscription
-// Project:             Subscription.API
-// File Name:           AdminController.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-10-2025 15:03
-// Last Updated On:     05-04-2025 20:27
-// *****************************************/
-
-#endregion
-
-namespace Subscription.API.Controllers;
-
 [ApiController, Route("api/[controller]/[action]")]
 public class AdminController(RedisService redisService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<string>> GetAdminList(string methodName, string filter = "", bool isString = true)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        string _generalItems = "[]";
-
-        await using SqlCommand _command = new(methodName, _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-
-        if (filter.NotNullOrWhiteSpace())
+        return await ExecuteScalarQueryAsync(methodName, command => 
         {
-            _command.Varchar("Filter", 100, filter);
-        }
-
-        try
-        {
-            // Open the connection
-            await _connection.OpenAsync();
-            _generalItems = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
-        }
-        catch (SqlException ex)
-        {
-            Log.Error(ex, "Error saving {methodName} search. {ExceptionMessage}", methodName, ex.Message);
-            return StatusCode(500, $"Error saving {methodName}.");
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_generalItems);
+            if (filter.NotNullOrWhiteSpace())
+            {
+                command.Varchar("Filter", 100, filter);
+            }
+        }, methodName, "Error saving education.");
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> GetSearch(string methodName = "", string paramName = "", string filter = "")
     {
+        return await ExecuteScalarQueryAsync(methodName, command => 
+        {
+            command.Varchar(paramName, 100, filter);
+        }, paramName, $"Error fetching {paramName} search.");
+    }
+    
+    private async Task<ActionResult<string>> ExecuteScalarQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new(methodName, _connection);
+        await using SqlCommand _command = new(procedureName, _connection);
         _command.CommandType = CommandType.StoredProcedure;
-        _command.Varchar(paramName, 100, filter);
-
-        string _listOptions = "[]";
+        
+        parameterBinder(_command);
+        
+        string _result = "[]";
         try
         {
             await _connection.OpenAsync();
-            _listOptions = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
+            _result = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
         }
         catch (SqlException ex)
         {
-            Log.Error(ex, "Error saving {paramName} search. {ExceptionMessage}", paramName, ex.Message);
-            return StatusCode(500, $"Error fetching {paramName} search.");
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
         }
         finally
         {
             await _connection.CloseAsync();
         }
 
-        return Ok(_listOptions ?? "[]");
+        return Ok(_result);
     }
 
     [HttpPost]
@@ -140,14 +111,14 @@ public class AdminController(RedisService redisService) : ControllerBase
                 _cacheValue = _reader.NString(0, "[]");
             }
 
-            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            if (cacheName.NotNullOrWhiteSpace())
             {
-                await redisService.CreateAsync(cacheName, _cacheValue);
+                await redisService.SetAsync(cacheName, _cacheValue);
             }
         }
-        catch (Exception ex)
+        catch (SqlException ex)
         {
-            Log.Error(ex, "Error saving {LogContext}. {ExceptionMessage}", logContext, ex.Message);
+            Log.Error(ex, "Error saving {logContext}. {ExceptionMessage}", logContext, ex.Message);
             return StatusCode(500, $"Error saving {logContext}.");
         }
         finally
@@ -159,22 +130,12 @@ public class AdminController(RedisService redisService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> SaveJobOptions([FromBody] JobOptions jobOption, string cacheName = nameof(CacheObjects.JobOptions))
+    public async Task<ActionResult<string>> SaveJobOption([FromBody] JobOption jobOption, string cacheName = nameof(CacheObjects.JobOptions))
     {
-        return await SaveEntityAsync("Admin_SaveJobOptions", (command, entity) =>
+        return await SaveEntityAsync("Admin_SaveJobOption", (command, entity) =>
                                                                {
-                                                                   command.Char("Code", 1, entity.KeyValue);
-                                                                   command.Varchar("JobOptions", 50, entity.Text);
-                                                                   command.Varchar("Desc", 500, entity.Description);
-                                                                   command.Bit("Duration", entity.Duration);
-                                                                   command.Bit("Rate", entity.Rate);
-                                                                   command.Bit("Sal", entity.Sal);
-                                                                   command.Varchar("TaxTerms", 20, entity.Tax);
-                                                                   command.Bit("Expenses", entity.Exp);
-                                                                   command.Bit("PlaceFee", entity.PlaceFee);
-                                                                   command.Bit("Benefits", entity.Benefits);
-                                                                   command.Bit("ShowHours", entity.ShowHours);
-                                                                   command.Varchar("RateText", 255, entity.RateText);
+                                                                   command.Int("ID", entity.ID.DBNull());
+                                                                   command.Varchar("OptionText", 255, entity.OptionText);
                                                                    command.Varchar("PercentText", 255, entity.PercentText);
                                                                    command.Decimal("CostPercent", 5, 2, entity.CostPercent);
                                                                    command.Bit("ShowPercent", entity.ShowPercent);
@@ -311,9 +272,7 @@ public class AdminController(RedisService redisService) : ControllerBase
         }
         catch (SqlException ex)
         {
-#pragma warning disable CA2254
-            Log.Error(ex, "Error toggling " + methodName + ". {ExceptionMessage}", ex.Message);
-#pragma warning restore CA2254
+            Log.Error(ex, "Error toggling {methodName}. {ExceptionMessage}", methodName, ex.Message);
             return StatusCode(500, $"Error toggling {methodName}.");
         }
         finally
