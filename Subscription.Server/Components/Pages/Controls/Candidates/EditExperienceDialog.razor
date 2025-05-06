@@ -8,7 +8,7 @@
 	The form uses validation and displays a spinner during long-running operations.
 </remarks>
 *@
-<SfDialog CssClass="dialogPopup" Header="Edit Experience" Height="747px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+<SfDialog CssClass="dialogPopup" Header="Edit Experience" Height="715px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -16,8 +16,8 @@
 		<DialogEvents OnOpen="OpenDialog"/>
 		<SfDataForm EditContext="Context" ID="experienceEditForm" OnValidSubmit="SaveExperienceDialog" @ref="EditExperienceForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Experience</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelExperienceDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelExperienceDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Experience</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateExperienceValidator"/>
@@ -31,7 +31,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Description)">
 						<Template>
-							<TextArea @bind-Value="Model.Description" MaxLength="1000" ID="textDescription" Placeholder="Description"></TextArea>
+							<TextArea @bind-Value="Model.Description" MaxLength="1000" ID="textDescription" Placeholder="Description" Rows="3"></TextArea>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Location)">

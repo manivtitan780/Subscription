@@ -683,26 +683,26 @@ body, form, html {
 
 /* #endregion Pager */
 /* #region Pre-defined Dialogs */
-.e-confirm-dialog {
+.e-confirm-dialog, .e-alert-dialog {
     border-radius: 6px;
 }
 
-.e-confirm-dialog .e-dlg-header-content + .e-dlg-content {
+.e-confirm-dialog .e-dlg-header-content + .e-dlg-content, .e-alert-dialog .e-dlg-header-content + .e-dlg-content{
     padding: 20px 24px;
 }
 
-.e-confirm-dialog .e-dlg-header-content {
+.e-confirm-dialog .e-dlg-header-content, .e-alert-dialog .e-dlg-header-content{
     background: var(--c-bbb);
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     padding: 8px 24px;
 }
 
-.e-confirm-dialog .e-dlg-overlay {
+.e-confirm-dialog .e-dlg-overlay, .e-alert-dialog .e-dlg-overlay{
     background: rgba(200, 200, 200, 0.4);
 }
 
-.e-confirm-dialog .e-footer-content {
+.e-confirm-dialog .e-footer-content, .e-alert-dialog .e-footer-content{
     background: var(--c-eee);
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
