@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-30-2025 20:26
+// Last Updated On:     05-06-2025 16:00
 // *****************************************/
 
 #endregion
@@ -38,7 +38,7 @@ public partial class Candidates
     private List<CandidateMPC> _candMPCObject = [];
     private List<CandidateRating> _candRatingObject = [];
     private List<CandidateSkills> _candSkillsObject = [];
-    private List<IntValues> _eligibility = [], _experience = [], _states, _documentTypes = [];
+    private List<IntValues> _eligibility = [], _experience = [], _documentTypes = [];
     private bool _formattedExists, _originalExists;
 
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [];
@@ -50,6 +50,7 @@ public partial class Candidates
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+    private List<StateCache> _states = [];
     private List<StatusCode> _statusCodes = [];
 
     private readonly Stopwatch _stopwatch = new();
@@ -126,11 +127,11 @@ public partial class Candidates
 
     private SfGrid<Candidate> Grid { get; set; }
 
-    private bool HasEditRights { get; set; } = false;
+    private bool HasEditRights { get; set; }
 
     private bool HasRendered { get; set; }
 
-    private bool HasViewRights { get; set; } = false;
+    private bool HasViewRights { get; set; }
 
     private bool IsFromCompany { get; set; }
 
@@ -740,7 +741,7 @@ public partial class Candidates
 
                                 // Deserialize configuration data into master objects
                                 _roles = General.DeserializeObject<List<Role>>(_cacheValues[nameof(CacheObjects.Roles)]);
-                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.States)]);
+                                _states = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)]);
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
                                 _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.TaxTerms)]);
@@ -1077,118 +1078,81 @@ public partial class Candidates
 
     private void SetJobOption()
     {
-        string _returnValue = "";
-        if (_jobOptions is {Count: > 0})
+        if (_jobOptions is {Count: > 0} && !string.IsNullOrWhiteSpace(_candDetailsObject.JobOptions))
         {
-            string[] _splitJobOptions = _candDetailsObject.JobOptions.Split(',');
-            foreach (string _str in _splitJobOptions)
-            {
-                if (_str.NullOrWhiteSpace())
-                {
-                    continue;
-                }
+            IEnumerable<string> _matchedTexts = _candDetailsObject.JobOptions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                                                  .Select(key => _jobOptions.FirstOrDefault(option => option.KeyValue == key)?.Text)
+                                                                  .Where(text => text.NotNullOrWhiteSpace());
 
-                if (_returnValue != "")
-                {
-                    _returnValue += ", " + _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
-                }
-                else
-                {
-                    _returnValue = _jobOptions.FirstOrDefault(jobOption => jobOption.KeyValue == _str)?.Text;
-                }
-            }
+            CandidateJobOptions = string.Join(", ", _matchedTexts).ToMarkupString();
         }
-
-        CandidateJobOptions = _returnValue.ToMarkupString();
+        else
+        {
+            CandidateJobOptions = string.Empty.ToMarkupString();
+        }
     }
 
     private void SetTaxTerm()
     {
-        string _returnValue = "";
-
-        if (_taxTerms is {Count: > 0})
+        if (_taxTerms is {Count: > 0} && !string.IsNullOrWhiteSpace(_candDetailsObject.TaxTerm))
         {
-            string[] _splitTaxTerm = _candDetailsObject.TaxTerm.Split(',');
-            foreach (string _str in _splitTaxTerm)
-            {
-                if (_str.NullOrWhiteSpace())
-                {
-                    continue;
-                }
+            IEnumerable<string> _selected = _candDetailsObject.TaxTerm.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                                              .Select(code => _taxTerms.FirstOrDefault(t => t.KeyValue == code)?.Text)
+                                                              .Where(text => !string.IsNullOrWhiteSpace(text));
 
-                if (_returnValue != "")
-                {
-                    _returnValue += ", " + _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
-                }
-                else
-                {
-                    _returnValue = _taxTerms.FirstOrDefault(taxTerm => taxTerm.KeyValue == _str)?.Text;
-                }
-            }
+            CandidateTaxTerms = string.Join(", ", _selected).ToMarkupString();
         }
-
-        CandidateTaxTerms = _returnValue.ToMarkupString();
+        else
+        {
+            CandidateTaxTerms = string.Empty.ToMarkupString();
+        }
     }
 
     private void SetupAddress()
     {
-        string _generateAddress = _candDetailsObject.Address1;
+        List<string> addressParts = [];
+        List<string> locationParts = [];
 
-        if (_generateAddress.NullOrWhiteSpace())
+        if (_candDetailsObject.Address1.NotNullOrWhiteSpace())
         {
-            _generateAddress = _candDetailsObject.Address2;
-        }
-        else
-        {
-            _generateAddress += _candDetailsObject.Address2.NullOrWhiteSpace() ? "" : $"<br/>{_candDetailsObject.Address2}";
+            addressParts.Add(_candDetailsObject.Address1);
         }
 
-        if (_generateAddress.NullOrWhiteSpace())
+        if (_candDetailsObject.Address2.NotNullOrWhiteSpace())
         {
-            _generateAddress = _candDetailsObject.City;
+            addressParts.Add(_candDetailsObject.Address2);
         }
-        else
+
+        if (_candDetailsObject.City.NotNullOrWhiteSpace())
         {
-            _generateAddress += _candDetailsObject.City.NullOrWhiteSpace() ? "" : $"<br/>{_candDetailsObject.City}";
+            locationParts.Add(_candDetailsObject.City);
         }
 
         if (_candDetailsObject.StateID > 0)
         {
-            if (_generateAddress.NullOrWhiteSpace())
+            try
             {
-                _generateAddress = SplitState(_candDetailsObject.StateID).Name;
-            }
-            else
-            {
-                try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                string stateName = SplitState(_candDetailsObject.StateID).Name;
+                if (stateName.NotNullOrWhiteSpace())
                 {
-                    _generateAddress += ", " + SplitState(_candDetailsObject.StateID).Name;
-                }
-                catch
-                {
-                    //Ignore this error from IIS if it comes up ever.
+                    locationParts.Add(stateName);
                 }
             }
-        }
-
-        if (_candDetailsObject.ZipCode != "")
-        {
-            if (_generateAddress.NullOrWhiteSpace())
+            catch
             {
-                _generateAddress = _candDetailsObject.ZipCode;
-            }
-            else
-            {
-                _generateAddress += ", " + _candDetailsObject.ZipCode;
+                // Log or ignore random SplitState failures
             }
         }
 
-        if (_generateAddress is {Length: > 1} && _generateAddress.StartsWith(','))
+        if (_candDetailsObject.ZipCode.NotNullOrWhiteSpace())
         {
-            _generateAddress = _generateAddress[1..].Trim();
+            locationParts.Add(_candDetailsObject.ZipCode);
         }
 
-        Address = _generateAddress.ToMarkupString();
+        string line1 = string.Join(", ", addressParts);
+        string line2 = string.Join(", ", locationParts);
+
+        Address = string.Join("<br/>", new[] {line1, line2}.Where(line => line.NotNullOrWhiteSpace())).ToMarkupString();
     }
 
     private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
@@ -1236,19 +1200,8 @@ public partial class Candidates
 
     private (string Code, string Name) SplitState(int stateID)
     {
-        string _stateName = _states.FirstOrDefault(state => state.KeyValue == stateID)?.Text!;
-        if (_stateName == null)
-        {
-            return ("", "");
-        }
-
-        if (!_stateName.Contains(" - "))
-        {
-            return ("", _stateName);
-        }
-
-        string[] _parts = _stateName.Split([" - "], StringSplitOptions.TrimEntries);
-        return _parts.Length != 2 ? ("", "") : (_parts[0].Trim('[', ']'), _parts[1]);
+        StateCache _stateSplit = _states.FirstOrDefault(state => state.KeyValue == stateID);
+        return (_stateSplit.Code, _stateSplit.Text);
     }
 
     private async Task SubmitSelectedCandidate(MouseEventArgs arg)
@@ -1276,87 +1229,3 @@ public partial class Candidates
                                                                    }
                                                                });
 }
-/*
-     public class CandidateAdaptor : DataAdaptor
-     {
-         private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-         /// <summary>
-         ///     Asynchronously reads company data for the grid view on the Companies page.
-         ///     This method checks if the CompaniesList is not null and contains data, in which case it does not retrieve new data.
-         ///     If the CompaniesList is null or empty, it calls the GetCompanyReadAdaptor method to retrieve company data.
-         ///     If there are any companies in the retrieved data, it selects the first row in the grid view.
-         /// </summary>
-         /// <param name="dm">The DataManagerRequest object that contains the parameters for the data request.</param>
-         /// <param name="key">An optional key to identify a specific data item. Default is null.</param>
-         /// <returns>
-         ///     A Task that represents the asynchronous read operation. The value of the TResult parameter contains the
-         ///     retrieved data.
-         /// </returns>
-         public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-         {
-             if (!await _semaphoreSlim.WaitAsync(TimeSpan.Zero))
-             {
-                 return null;
-             }
-
-             if (_initializationTaskSource == null)
-             {
-                 return null;
-             }
-
-             await _initializationTaskSource.Task;
-             try
-             {
-                 List<Candidate> _dataSource = [];
-
-                 object _candidateReturn = null;
-                 try
-                 {
-                     CandidateSearch _searchModel = General.DeserializeObject<CandidateSearch>(dm.Params["SearchModel"].ToString());
-
-                     (string _data, int _count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, _searchModel, false);
-
-                     _dataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
-
-                     _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                            {
-                                                                Result = _dataSource,
-                                                                Count = _count /*_count#1#
-                                                            } : _dataSource;
-                 }
-                 catch
-                 {
-                     if (_dataSource == null)
-                     {
-                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                                {
-                                                                    Result = null,
-                                                                    Count = 1
-                                                                } : null;
-                     }
-                     else
-                     {
-                         _dataSource.Add(new());
-
-                         _candidateReturn = dm.RequiresCounts ? new DataResult
-                                                                {
-                                                                    Result = _dataSource,
-                                                                    Count = 1
-                                                                } : _dataSource;
-                     }
-                 }
-
-                 return _candidateReturn;
-             }
-             catch
-             {
-                 return null;
-             }
-             finally
-             {
-                 _semaphoreSlim.Release();
-             }
-         }
-     }
- */

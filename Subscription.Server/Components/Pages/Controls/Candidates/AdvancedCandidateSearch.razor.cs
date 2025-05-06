@@ -53,7 +53,7 @@ public partial class AdvancedCandidateSearch : ComponentBase
     private List<KeyValues> SecurityClearance { get; set; } = [];
 
     [Parameter]
-    public List<IntValues> StateDropDown { get; set; } = [];
+    public List<StateCache> StateDropDown { get; set; } = [];
 
     public SfSwitch<bool> SwitchIncludeAdmin { get; set; }
 

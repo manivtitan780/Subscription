@@ -46,7 +46,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
 						<Template>
-							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="KeyValue"/>
+							<DropDown @bind-Value="Model.StateID" Model="States" ID="dropState" TItem="StateCache" TValue="int" Placeholder="State" Text="Text" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)">
@@ -86,6 +86,7 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)">
 						<Template>
 							<TextArea @bind-Value="Model.Summary" ID="textSummary" Placeholder="Summary"></TextArea>
+							<SfButton CssClass="e-primary" IconCss="e-icons e-table-of-content" type="button" OnClick="GenerateSummary" @ref="GenerateButton">@Content</SfButton>
 						</Template>
 					</FormItem>
 				</FormGroup>
