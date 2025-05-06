@@ -8,8 +8,14 @@
 // File Name:           EditCandidateDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-05-2025 20:24
+// Last Updated On:     05-06-2025 19:36
 // *****************************************/
+
+#endregion
+
+#region Using
+
+using System.Text.Json;
 
 #endregion
 
@@ -77,6 +83,8 @@ public partial class EditCandidateDialog
     [Parameter]
     public IEnumerable<KeyValues> Communication { get; set; }
 
+    private string Content { get; set; } = "Generate Keywords / Summary";
+
     private EditContext Context { get; set; }
 
     /// <summary>
@@ -122,6 +130,8 @@ public partial class EditCandidateDialog
     public IEnumerable<IntValues> Experience { get; set; }
 
     private List<string> FieldTokens { get; set; } = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+
+    private SfButton GenerateButton { get; set; }
 
     /// <summary>
     ///     Gets or sets the job options for the candidate.
@@ -179,7 +189,7 @@ public partial class EditCandidateDialog
     ///     state.
     /// </remarks>
     [Parameter]
-    public List<IntValues> States { get; set; }
+    public List<StateCache> States { get; set; }
 
     /// <summary>
     ///     Gets or sets the collection of tax terms associated with the candidate.
@@ -243,6 +253,67 @@ public partial class EditCandidateDialog
     ///     This method is called when the dialog is opened. It validates the form context of the dialog.
     /// </remarks>
     private void DialogOpen() => EditCandidateForm.EditContext?.Validate();
+
+    [Inject]
+    private SfDialogService DialogService { get; set; }
+
+    private async Task GenerateSummary()
+    {
+        if (Model.TextResume.NullOrWhiteSpace())
+        {
+            await DialogService.AlertAsync("Please enter the resume text before generating the summary.", "Text Resume required.");
+            return;
+        }
+        
+        Content = "Generating…";
+        RestClient client = new(Start.AzureOpenAIEndpoint);
+        RestRequest request = new("", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+        request.AddHeader("api-key", Start.AzureOpenAIKey);
+        var requestBody = new
+                          {
+                              messages = new[]
+                                         {
+                                             new {role = "system", content = "You are a concise resume summarizer."},
+                                             new
+                                             {
+                                                 role = "user",
+                                                 content = $"{Start.Prompt}{Model.TextResume}"
+                                             }
+                                         },
+                              temperature = 0.3,
+                              max_tokens = 1000
+                          };
+
+        request.AddJsonBody(requestBody);
+
+        RestResponse response = await client.ExecuteAsync(request);
+
+        if (!response.IsSuccessful)
+        {
+            throw new ApplicationException($"Error from Azure OpenAI: {response.StatusCode} - {response.Content}");
+        }
+
+        using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
+        string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+        if (_content != null)
+        {
+            JsonDocument _json = JsonDocument.Parse(_content);
+            JsonElement _root = _json.RootElement;
+            Model.Keywords = _root.GetProperty("Keywords").GetString();
+            Model.Summary = _root.GetProperty("Summary").GetString();
+            Model.Title = _root.GetProperty("Title").GetString();
+            Model.FirstName = _root.GetProperty("FirstName").GetString();
+            Model.LastName = _root.GetProperty("LastName").GetString();
+            Model.Address1 = _root.GetProperty("Address").GetString();
+            Model.City = _root.GetProperty("City").GetString();
+            Model.ZipCode = _root.GetProperty("Zip").GetString();
+            Model.Email = _root.GetProperty("Email").GetString();
+            Model.Phone1 = _root.GetProperty("Phone").GetString();
+        }
+
+        Content = "Generate Keywords / Summary";
+    }
 
     protected override void OnParametersSet()
     {

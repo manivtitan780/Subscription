@@ -138,6 +138,7 @@ _app.Use(async (context, next) =>
                  Start.AzureOpenAIKey = _config["AzureOpenAI:APIKey"];
                  Start.AzureOpenAIEndpoint = _config["AzureOpenAI:Endpoint"];
                  Start.Model = _config["AzureOpenAI:Model"];
+                 Start.Prompt = _config["AzureOpenAI:Prompt"];
                  Start.DeploymentName = _config["AzureOpenAI:DeploymentName"];
              }
 

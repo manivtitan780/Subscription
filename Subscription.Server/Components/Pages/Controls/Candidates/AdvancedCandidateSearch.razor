@@ -78,7 +78,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.StateID)" CssClass="@(Model.CityZip ? "e-hidden" : "")">
 						<Template>
-							<MultiSelect @bind-Value="Model.StateID" Enabled="@(!Model.CityZip)" ID="multiState" Key="KeyValue" Model="StateDropDown" Placeholder="Select State(s)" Text="Text" TItem="IntValues"
+							<MultiSelect @bind-Value="Model.StateID" Enabled="@(!Model.CityZip)" ID="multiState" Key="KeyValue" Model="StateDropDown" Placeholder="Select State(s)" Text="Text" TItem="StateCache"
 							             TValue="string"/>
 						</Template>
 					</FormItem>
