@@ -874,7 +874,7 @@ public partial class Candidates
                                                                                string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters,
                                                                                                                                     _candidateEducation);
 
-                                                                               if (_response.NullOrWhiteSpace() || _response != "[]")
+                                                                               if (_response.NullOrWhiteSpace() || _response == "[]")
                                                                                {
                                                                                    return;
                                                                                }

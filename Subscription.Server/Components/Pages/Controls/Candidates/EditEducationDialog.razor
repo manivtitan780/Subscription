@@ -8,7 +8,7 @@
     The form uses validation and displays a spinner during long-running operations.
 </remarks>
 *@
-<SfDialog CssClass="dialogPopup" Header="Edit Education" Height="585px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+<SfDialog CssClass="dialogPopup" Header="Edit Education" Height="595px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -16,8 +16,8 @@
 		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
 		<SfDataForm EditContext="Context" ID="educationEditForm" OnValidSubmit="SaveEducationDialog" @ref="EditEducationForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Education</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelEducationDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelEducationDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Education</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateEducationValidator"/>
