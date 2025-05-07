@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           CandidateDocument.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          05-10-2024 21:05
-// Last Updated On:     12-18-2024 21:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-07-2025 18:56
 // *****************************************/
 
 #endregion
@@ -76,11 +76,7 @@ public class CandidateDocument
     ///     This property is used to specify the type of the document. The actual meaning of specific types is determined by
     ///     the document type definitions in the system.
     /// </remarks>
-    public string DocumentType
-    {
-        get;
-        set;
-    }
+    public string DocumentType { get; set; }
 
     /// <summary>
     ///     Gets or sets the identifier for the type of the candidate document.
@@ -92,11 +88,7 @@ public class CandidateDocument
     ///     This property is used to categorize the document. The actual meaning of specific identifiers is determined by the
     ///     document type definitions in the system.
     /// </remarks>
-    public int DocumentTypeID
-    {
-        get;
-        set;
-    }
+    public int DocumentTypeID { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of file names associated with the candidate document.
@@ -109,11 +101,7 @@ public class CandidateDocument
     ///     It is used in the document upload process where a file name is added to the list when a file is selected,
     ///     and the list is cleared when a file's removed from the upload queue.
     /// </remarks>
-    public List<string> Files
-    {
-        get;
-        set;
-    }
+    public List<string> Files { get; set; }
 
     /// <summary>
     ///     Gets or sets the unique identifier for the candidate document.
@@ -121,11 +109,7 @@ public class CandidateDocument
     /// <value>
     ///     The unique identifier for the candidate document.
     /// </value>
-    public int ID
-    {
-        get;
-        set;
-    }
+    public int ID { get; set; }
 
     /// <summary>
     ///     Gets or sets the internal file name of the candidate document.
@@ -134,11 +118,7 @@ public class CandidateDocument
     ///     The internal file name of the candidate document.
     /// </value>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public string InternalFileName
-    {
-        get;
-        set;
-    }
+    public string InternalFileName { get; set; }
 
     /// <summary>
     ///     Gets or sets the location of the candidate document.
@@ -147,11 +127,7 @@ public class CandidateDocument
     ///     The location of the candidate document.
     /// </value>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public string Location
-    {
-        get;
-        set;
-    }
+    public string Location { get; set; }
 
     /// <summary>
     ///     Gets or sets the name of the candidate document.
@@ -159,11 +135,7 @@ public class CandidateDocument
     /// <value>
     ///     The name of the candidate document.
     /// </value>
-    public string Name
-    {
-        get;
-        set;
-    }
+    public string Name { get; set; }
 
     /// <summary>
     ///     Gets or sets the notes for the candidate document.
@@ -171,11 +143,7 @@ public class CandidateDocument
     /// <value>
     ///     The notes for the candidate document.
     /// </value>
-    public string Notes
-    {
-        get;
-        set;
-    }
+    public string Notes { get; set; }
 
     /// <summary>
     ///     Gets or sets the identifier of the user who last updated the document.
@@ -183,12 +151,8 @@ public class CandidateDocument
     /// <value>
     ///     The identifier of the user who last updated the document.
     /// </value>
-    public string UpdatedBy
-    {
-        get;
-        set;
-    }
-    
+    public string UpdatedBy { get; set; }
+
     /// <summary>
     ///     Resets the properties of the CandidateDocument instance to their default values.
     /// </summary>

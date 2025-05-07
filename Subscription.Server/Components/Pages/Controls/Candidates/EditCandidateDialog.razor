@@ -86,7 +86,10 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Summary)">
 						<Template>
 							<TextArea @bind-Value="Model.Summary" ID="textSummary" Placeholder="Summary"></TextArea>
-							<SfButton CssClass="e-primary" IconCss="e-icons e-table-of-content" type="button" OnClick="GenerateSummary" @ref="GenerateButton">@Content</SfButton>
+							@if (ShowGenerateButton)
+							{
+								<SfButton CssClass="e-primary" IconCss="e-icons e-table-of-content" type="button" OnClick="GenerateSummary" @ref="GenerateButton">@Content</SfButton>
+							}
 						</Template>
 					</FormItem>
 				</FormGroup>
