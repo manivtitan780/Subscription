@@ -136,6 +136,9 @@ public partial class Candidates
     private bool IsFromCompany { get; set; }
 
     [Inject]
+    private SfDialogService DialogService { get; set; }
+    
+    [Inject]
     private IJSRuntime JsRuntime { get; set; }
 
     [Inject]
@@ -215,6 +218,10 @@ public partial class Candidates
 
     private async Task AddCandidate(MouseEventArgs arg)
     {
+        if (await DialogService.ConfirmAsync(null, "Auto-Fill Candidate?", General.DialogOptions("Do you want to auto-fill the candidate details?")))
+        {
+            await JsRuntime.InvokeVoidAsync("AutoFill");
+        }
         await Grid.SelectRowAsync(-1);
         await EditCandidate();
     }
@@ -808,9 +815,7 @@ public partial class Candidates
                                                   {
                                                       Dictionary<string, string> _parameters = new()
                                                                                                {
-                                                                                                   {"jsonPath", ""},
                                                                                                    {"userName", User},
-                                                                                                   {"emailAddress", "maniv@titan-techs.com"}
                                                                                                };
 
                                                       await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candDetailsObjectClone);

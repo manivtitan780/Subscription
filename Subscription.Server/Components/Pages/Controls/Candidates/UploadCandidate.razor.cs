@@ -1,0 +1,151 @@
+#region Header
+
+// /*****************************************
+// Copyright:           Titan-Techs.
+// Location:            Newtown, PA, USA
+// Solution:            Subscription
+// Project:             Subscription.Server
+// File Name:           UploadCandidate.razor.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          05-07-2025 16:05
+// Last Updated On:     05-07-2025 19:44
+// *****************************************/
+
+#endregion
+
+#region Using
+
+using System.Text;
+using System.Text.Json;
+
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.Pdf.Parsing;
+
+#endregion
+
+namespace Subscription.Server.Components.Pages.Controls.Candidates;
+
+public partial class UploadCandidate : ComponentBase
+{
+    private EditContext Context { get; set; }
+
+    private SfDialog Dialog { get; set; }
+
+    private SfDataForm EditCandidateForm { get; set; }
+
+    // Add the missing properties
+    //private object Model { get; set; } = new();
+
+    //private FluentValidationValidator _candidateDetailsValidator { get; set; }
+
+    private ParsedCandidate Model { get; } = new();
+
+    private bool VisibleSpinner { get; set; }
+
+    private void CancelDialog()
+    {
+        // Cancel dialog logic
+    }
+
+    // Event handlers for uploader
+    private void OnFileRemoved(RemovingEventArgs args)
+    {
+        Model.Files = null;
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+    }
+
+    private void OnFileSelected(SelectedEventArgs file)
+    {
+        if (Model.Files is null)
+        {
+            Model.Files = [file.FilesData[0].Name];
+        }
+        else
+        {
+            Model.Files.Clear();
+            Model.Files.Add(file.FilesData[0].Name);
+        }
+
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+    }
+
+    private async Task UploadCandidateResume()
+    {
+        // Save candidate logic
+        await Task.CompletedTask;
+    }
+
+    private async Task UploadDocument(UploadChangeEventArgs file)
+    {
+        string _resumeText = string.Empty;
+        MemoryStream _addedDocument = new(60 * 1024 * 1024);
+        foreach (UploadFiles _file in file.Files)
+        {
+            _addedDocument.SetLength(0);
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            await _str.CopyToAsync(_addedDocument);
+            Model.FileName = _file.FileInfo.Name;
+            Model.Mime = _file.FileInfo.MimeContentType;
+            Model.DocumentBytes = _addedDocument.ToArray();
+            _addedDocument.Position = 0;
+            _str.Close();
+            string _extension = Path.GetExtension(_file.FileInfo.Name)?.ToLowerInvariant();
+            _resumeText = _extension switch
+                          {
+                              ".doc" or ".docx" or ".rtf" => _addedDocument.ReadFromWord(),
+                              ".pdf" => _addedDocument.ReadFromPdf(),
+                              ".txt" => await _addedDocument.ReadFromText(),
+                              _ => string.Empty
+                          };
+        }
+
+        _addedDocument.Close();
+
+        CandidateDetails _candidateDetails = new();
+        if (_resumeText.NotNullOrWhiteSpace())
+        {
+            RestClient client = new(Start.AzureOpenAIEndpoint);
+            RestRequest request = new("", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("api-key", Start.AzureOpenAIKey);
+            var requestBody = new
+                              {
+                                  messages = new[]
+                                             {
+                                                 new {role = "system", content = "You are a concise resume summarizer."},
+                                                 new {role = "user", content = $"{Start.Prompt}{_resumeText}"}
+                                             },
+                                  temperature = 0.3,
+                                  max_tokens = 1000
+                              };
+
+            request.AddJsonBody(requestBody);
+
+            RestResponse response = await client.ExecuteAsync(request);
+
+            if (response.IsSuccessful)
+            {
+                using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
+                string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                if (_content != null)
+                {
+                    JsonDocument _json = JsonDocument.Parse(_content);
+                    JsonElement _root = _json.RootElement;
+
+                    _candidateDetails.Keywords = _root.TryGetProperty("Keywords", out JsonElement kw) ? kw.GetString() : "";
+                    _candidateDetails.Summary = _root.TryGetProperty("Summary", out JsonElement sum) ? sum.GetString() : "";
+                    _candidateDetails.Title = _root.TryGetProperty("Title", out JsonElement title) ? title.GetString() : "";
+                    _candidateDetails.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
+                    _candidateDetails.LastName = _root.TryGetProperty("LastName", out JsonElement lName) ? lName.GetString() : "";
+                    _candidateDetails.Address1 = _root.TryGetProperty("Address", out JsonElement addr) && addr.GetString().NotNullOrWhiteSpace() ? addr.GetString() : "";
+                    _candidateDetails.City = _root.TryGetProperty("City", out JsonElement city) && city.GetString().NotNullOrWhiteSpace() ? city.GetString() : "";
+                    _candidateDetails.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : "";
+                    _candidateDetails.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : "";
+                    _candidateDetails.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : "";
+                }
+            }
+        }
+
+    }
+}

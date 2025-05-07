@@ -816,7 +816,7 @@ public class CandidateController : ControllerBase
     }*/
 
     [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-    public async Task<ActionResult<int>> SaveCandidate(CandidateDetails candidateDetails, string jsonPath = "", string userName = "", string emailAddress = "maniv@titan-techs.com")
+    public async Task<ActionResult<int>> SaveCandidate(CandidateDetails candidateDetails, string userName = "")
     {
         if (candidateDetails == null)
         {
@@ -964,6 +964,156 @@ public class CandidateController : ControllerBase
         return Ok(0);
     }
 
+    [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+    public async Task<ActionResult<string>> SaveCandidateWithResume(CandidateDetailsResume candidateDetailsResume, string userName = "")
+    {
+        if (candidateDetailsResume?.CandidateDetails == null || candidateDetailsResume.ParsedCandidate == null)
+        {
+            return NotFound(-1);
+        }
+
+        CandidateDetails _candidateDetails = candidateDetailsResume.CandidateDetails;
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("SaveCandidate", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("@ID", _candidateDetails.CandidateID, true);
+        _command.Varchar("@FirstName", 50, _candidateDetails.FirstName);
+        _command.Varchar("@MiddleName", 50, _candidateDetails.MiddleName);
+        _command.Varchar("@LastName", 50, _candidateDetails.LastName);
+        _command.Varchar("@Title", 50, _candidateDetails.Title);
+        _command.Int("@Eligibility", _candidateDetails.EligibilityID);
+        _command.Decimal("@HourlyRate", 6, 2, _candidateDetails.HourlyRate);
+        _command.Decimal("@HourlyRateHigh", 6, 2, _candidateDetails.HourlyRateHigh);
+        _command.Decimal("@SalaryLow", 9, 2, _candidateDetails.SalaryLow);
+        _command.Decimal("@SalaryHigh", 9, 2, _candidateDetails.SalaryHigh);
+        _command.Int("@Experience", _candidateDetails.ExperienceID);
+        _command.Bit("@Relocate", _candidateDetails.Relocate);
+        _command.Varchar("@JobOptions", 50, _candidateDetails.JobOptions);
+        _command.Char("@Communication", 1, _candidateDetails.Communication);
+        _command.Varchar("@Keywords", 500, _candidateDetails.Keywords);
+        _command.Varchar("@Status", 3, "AVL");
+        _command.Varchar("@TextResume", -1, _candidateDetails.TextResume);
+        _command.Varchar("@OriginalResume", 255, _candidateDetails.OriginalResume);
+        _command.Varchar("@FormattedResume", 255, _candidateDetails.FormattedResume);
+        _command.UniqueIdentifier("@OriginalFileID", DBNull.Value);
+        _command.UniqueIdentifier("@FormattedFileID", DBNull.Value);
+        _command.Varchar("@Address1", 255, _candidateDetails.Address1);
+        _command.Varchar("@Address2", 255, _candidateDetails.Address2);
+        _command.Varchar("@City", 50, _candidateDetails.City);
+        _command.Int("@StateID", _candidateDetails.StateID);
+        _command.Varchar("@ZipCode", 20, _candidateDetails.ZipCode);
+        _command.Varchar("@Email", 255, _candidateDetails.Email);
+        _command.Varchar("@Phone1", 15, _candidateDetails.Phone1);
+        _command.Varchar("@Phone2", 15, _candidateDetails.Phone2);
+        _command.Varchar("@Phone3", 15, _candidateDetails.Phone3);
+        _command.SmallInt("@Phone3Ext", _candidateDetails.PhoneExt.ToInt16());
+        _command.Varchar("@LinkedIn", 255, _candidateDetails.LinkedIn);
+        _command.Varchar("@Facebook", 255, _candidateDetails.Facebook);
+        _command.Varchar("@Twitter", 255, _candidateDetails.Twitter);
+        _command.Varchar("@Google", 255, _candidateDetails.GooglePlus);
+        _command.Bit("@Refer", _candidateDetails.Refer);
+        _command.Varchar("@ReferAccountMgr", 10, _candidateDetails.ReferAccountManager);
+        _command.Varchar("@TaxTerm", 10, _candidateDetails.TaxTerm);
+        _command.Bit("@Background", _candidateDetails.Background);
+        _command.Varchar("@Summary", -1, _candidateDetails.Summary);
+        _command.Varchar("@Objective", -1, "");
+        _command.Bit("@EEO", _candidateDetails.EEO);
+        _command.Varchar("@RelocNotes", 200, _candidateDetails.RelocationNotes);
+        _command.Varchar("@SecurityClearanceNotes", 200, _candidateDetails.SecurityNotes);
+        _command.Varchar("@User", 10, userName);
+
+        try
+        {
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+            List<EmailTemplates> _templates = [];
+            Dictionary<string, string> _emailAddresses = new();
+            Dictionary<string, string> _emailCC = new();
+
+            while (await _reader.ReadAsync())
+            {
+                _templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
+            }
+
+            string _stateName = "";
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _stateName = _reader.GetString(0);
+            }
+
+            await _reader.CloseAsync();
+
+            if (_templates.Count > 0)
+            {
+                EmailTemplates _templateSingle = _templates[0];
+                if (_templateSingle.CC.NotNullOrWhiteSpace())
+                {
+                    string[] _ccArray = _templateSingle.CC!.Split(",");
+                    foreach (string _cc in _ccArray)
+                    {
+                        _emailCC.Add(_cc, _cc);
+                    }
+                }
+
+                _templateSingle.Subject = _templateSingle.Subject!.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                         .Replace("$FULL_NAME$", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
+                                                         .Replace("$FIRST_NAME$", _candidateDetails.FirstName)
+                                                         .Replace("$LAST_NAME$", _candidateDetails.LastName)
+                                                         .Replace("$CAND_LOCATION$", GetCandidateLocation(_candidateDetails, _stateName))
+                                                         .Replace("$CAND_PHONE_PRIMARY$", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                         .Replace("$CAND_SUMMARY$", _candidateDetails.Summary)
+                                                         .Replace("$LOGGED_USER$", userName);
+                _templateSingle.Template = _templateSingle.Template!.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                          .Replace("$FULL_NAME$", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
+                                                          .Replace("$FIRST_NAME$", _candidateDetails.FirstName)
+                                                          .Replace("$LAST_NAME$", _candidateDetails.LastName)
+                                                          .Replace("$CAND_LOCATION$", GetCandidateLocation(_candidateDetails, _stateName))
+                                                          .Replace("$CAND_PHONE_PRIMARY$", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                          .Replace("$CAND_SUMMARY$", _candidateDetails.Summary)
+                                                          .Replace("$LOGGED_USER$", userName);
+
+                /*SendResponse? _email = await Email.From("maniv@hire-titan.com")
+                                                  .To("manivenkit@gmail.com", "Mani Bhai")
+                                                  .Subject("Chup chaap accept kar")
+                                                  .Body("Bhai ka message aayela hain. Accept karne ka, samjha kya?")
+                                                  .SendAsync();*/
+                using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
+                _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
+                _smtpClient.EnableSsl = true;
+
+                MailMessage _mailMessage = new()
+                                           {
+                                               From = new("maniv@hire-titan.com", "Mani Bhai"),
+                                               Subject = _templateSingle.Subject,
+                                               Body = _templateSingle.Template,
+                                               IsBodyHtml = true
+                                           };
+                _mailMessage.To.Add("manivenkit@gmail.com");
+                _mailMessage.To.Add("jolly@hire-titan.com");
+                _smtpClient.Send(_mailMessage);
+                /*GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving candidate. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(0);
+    }
     [HttpPost]
     public async Task<ActionResult<string>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
                                                                   string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")

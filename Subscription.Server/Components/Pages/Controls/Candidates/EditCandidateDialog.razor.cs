@@ -249,16 +249,28 @@ public partial class EditCandidateDialog
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
+    private bool ShowGenerateButton { get; set; } = true;
     /// <summary>
     ///     Opens the dialog for editing candidate details.
     /// </summary>
     /// <remarks>
     ///     This method is called when the dialog is opened. It validates the form context of the dialog.
     /// </remarks>
-    private void DialogOpen() => EditCandidateForm.EditContext?.Validate();
+    private void DialogOpen()
+    {
+        if (Model.CandidateID == 0)
+        {
+            ShowGenerateButton = false;
+        }
+        EditCandidateForm.EditContext?.Validate();
+    }
 
     private async Task GenerateSummary()
     {
+        if (Model.CandidateID == 0)
+        {
+            return;
+        }
         if (Model.TextResume.NullOrWhiteSpace())
         {
             await DialogService.AlertAsync("Please enter the resume text before generating the summary.", "Text Resume required.");
@@ -300,13 +312,13 @@ public partial class EditCandidateDialog
             Model.Keywords = _root.TryGetProperty("Keywords", out JsonElement kw) ? kw.GetString() : "";
             Model.Summary = _root.TryGetProperty("Summary", out JsonElement sum) ? sum.GetString() : "";
             Model.Title = _root.TryGetProperty("Title", out JsonElement title) ? title.GetString() : "";
-            Model.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
+            /*Model.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
             Model.LastName = _root.TryGetProperty("LastName", out JsonElement lName) ? lName.GetString() : "";
             Model.Address1 = _root.TryGetProperty("Address", out JsonElement addr) && addr.GetString().NotNullOrWhiteSpace() ? addr.GetString() : Model.Address1;
             Model.City = _root.TryGetProperty("City", out JsonElement city) && city.GetString().NotNullOrWhiteSpace() ? city.GetString() : Model.City;
             Model.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : Model.ZipCode;
             Model.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : Model.Email;
-            Model.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : Model.Phone1;
+            Model.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : Model.Phone1;*/
         }
 
         Content = "Generate Keywords / Summary";

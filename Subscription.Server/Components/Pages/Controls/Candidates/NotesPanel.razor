@@ -8,7 +8,9 @@
 					@{
 						if (aCon is CandidateNotes _con)
 						{
-							<span title="@_con.Notes.Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine)">@(_con.Notes)</span>
+							<span title="@_con.Notes.Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine)" style="line-height: 1.5">
+								@(_con.Notes.ToMarkupString())
+							</span>
 						}
 					}
 				</Template>

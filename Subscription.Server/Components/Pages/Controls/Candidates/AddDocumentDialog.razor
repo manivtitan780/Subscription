@@ -48,7 +48,7 @@
 						<Template>
 							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760" 
 							            SequentialUpload="true" ShowFileList="true">
-								<UploaderEvents FileSelected="OnFileSelected" ValueChange="UploadDocument"></UploaderEvents> @*MaxFileSize = 10MB*@
+								<UploaderEvents OnRemove="OnFileRemoved" FileSelected="OnFileSelected" ValueChange="UploadDocument"></UploaderEvents> @*MaxFileSize = 10MB*@
 							</SfUploader>
 						</Template>
 					</FormItem>
