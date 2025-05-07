@@ -78,7 +78,7 @@ public partial class UploadCandidate : ComponentBase
 
     private async Task UploadDocument(UploadChangeEventArgs file)
     {
-        string _resumeText = string.Empty;
+        string _resumeText = "";
         MemoryStream _addedDocument = new(60 * 1024 * 1024);
         foreach (UploadFiles _file in file.Files)
         {
@@ -96,13 +96,17 @@ public partial class UploadCandidate : ComponentBase
                               ".doc" or ".docx" or ".rtf" => _addedDocument.ReadFromWord(),
                               ".pdf" => _addedDocument.ReadFromPdf(),
                               ".txt" => await _addedDocument.ReadFromText(),
-                              _ => string.Empty
+                              _ => ""
                           };
         }
 
         _addedDocument.Close();
 
-        CandidateDetails _candidateDetails = new();
+        CandidateDetails _candidateDetails = new()
+                                             {
+                                                 TextResume = _resumeText
+                                             };
+
         if (_resumeText.NotNullOrWhiteSpace())
         {
             RestClient client = new(Start.AzureOpenAIEndpoint);
