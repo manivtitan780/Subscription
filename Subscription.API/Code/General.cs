@@ -413,4 +413,12 @@ public static class General
         await using Stream stream = file.OpenReadStream();
         await _storage.WriteAsync(blobPath, stream);
     }
+    
+    internal static async Task UploadToBlob(byte[] file, string blobPath)
+    {
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        await using MemoryStream stream = new(file);
+        await _storage.WriteAsync(blobPath, stream);
+    }
 }

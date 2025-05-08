@@ -972,6 +972,7 @@ public class CandidateController : ControllerBase
             return NotFound(-1);
         }
 
+        string _internalFileName = Guid.NewGuid().ToString("N");
         CandidateDetails _candidateDetails = candidateDetailsResume.CandidateDetails;
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveCandidate", _connection);
@@ -993,9 +994,9 @@ public class CandidateController : ControllerBase
         _command.Varchar("@Keywords", 500, _candidateDetails.Keywords);
         _command.Varchar("@Status", 3, "AVL");
         _command.Varchar("@TextResume", -1, _candidateDetails.TextResume);
-        _command.Varchar("@OriginalResume", 255, _candidateDetails.OriginalResume);
+        _command.Varchar("@OriginalResume", 255, candidateDetailsResume.ParsedCandidate.FileName);
         _command.Varchar("@FormattedResume", 255, _candidateDetails.FormattedResume);
-        _command.UniqueIdentifier("@OriginalFileID", DBNull.Value);
+        _command.UniqueIdentifier("@OriginalFileID", _internalFileName);
         _command.UniqueIdentifier("@FormattedFileID", DBNull.Value);
         _command.Varchar("@Address1", 255, _candidateDetails.Address1);
         _command.Varchar("@Address2", 255, _candidateDetails.Address2);
@@ -1049,7 +1050,14 @@ public class CandidateController : ControllerBase
                 _stateName = _reader.GetString(0);
             }
 
+            await _reader.NextResultAsync();
+            int _candidateID = 0;
+            while (await _reader.ReadAsync())
+            {
+                _candidateID = _reader.NInt32(0);
+            }
             await _reader.CloseAsync();
+            await General.UploadToBlob(candidateDetailsResume.ParsedCandidate.DocumentBytes, $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}");
 
             if (_templates.Count > 0)
             {
