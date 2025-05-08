@@ -76,6 +76,11 @@ public partial class UploadCandidate : ComponentBase
         await Task.CompletedTask;
     }
 
+    [Parameter]
+    public string User { get; set; } = "";
+
+    public EventCallback<CloseEventArgs> Close { get; set; }
+
     private async Task UploadDocument(UploadChangeEventArgs file)
     {
         string _resumeText = "";
@@ -126,7 +131,7 @@ public partial class UploadCandidate : ComponentBase
 
             request.AddJsonBody(requestBody);
 
-            RestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
 
             if (response.IsSuccessful)
             {
@@ -149,7 +154,20 @@ public partial class UploadCandidate : ComponentBase
                     _candidateDetails.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : "";
                 }
             }
-        }
 
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"userName", User},
+                                                     };
+
+            CandidateDetailsResume _candDetailsResume = new()
+            {
+                CandidateDetails = _candidateDetails,
+                ParsedCandidate = Model
+            };
+            
+            await General.ExecuteRest<int>("Candidate/SaveCandidateWithResume", _parameters, _candDetailsResume).ConfigureAwait(false);
+            await Dialog.HideAsync().ConfigureAwait(false);
+        }
     }
 }
