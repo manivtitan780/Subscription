@@ -3,7 +3,7 @@
 		<SfSpinner @bind-Value="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="1000" Effect="DialogEffect.SlideRight"/>
-		@* <DialogEvents OnOpen="DialogOpen"/> *@
+		<DialogEvents Closed="Close" />
 		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="UploadCandidateResume" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDialog" type="button">Cancel</SfButton>
