@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           MPCCandidateDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          01-01-2025 19:01
-// Last Updated On:     01-01-2025 21:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     05-09-2025 15:02
 // *****************************************/
 
 #endregion
@@ -24,9 +24,19 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 ///     such as the visibility of a spinner and the height of rows in the MPC grid. The dialog can be shown by calling the
 ///     `ShowDialog` method.
 /// </remarks>
-public partial class MPCCandidateDialog
+public partial class MPCCandidateDialog : IDisposable
 {
     private readonly CandidateMPCValidator _candidateMPCValidator = new();
+
+	public void Dispose()
+	{
+		if (Context is not null)
+		{
+			Context.OnFieldChanged -= Context_OnFieldChanged;
+		}
+
+		GC.SuppressFinalize(this);
+	}
 
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the cancel action is triggered in the dialog.
@@ -36,17 +46,9 @@ public partial class MPCCandidateDialog
 	///     It is invoked when the user clicks on the cancel button in the dialog.
 	/// </remarks>
 	[Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion Blazor Dialog component used in the MPCCandidateDialog.
@@ -55,11 +57,7 @@ public partial class MPCCandidateDialog
 	///     This dialog is used to display and edit the experience details of a candidate.
 	///     It is shown or hidden using the ShowDialog and CallCancelMethod methods respectively.
 	/// </remarks>
-	private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+	private SfDialog Dialog { get; set; }
 
 	/// <summary>
 	///     Gets or sets the form used for editing a candidate's MPC record..
@@ -68,11 +66,7 @@ public partial class MPCCandidateDialog
 	///     This form is used within the MPCCandidateDialog to capture the details of a candidate's MPC record..
 	///     It includes fields for the employer, description, location, title, and start and end dates of the experience.
 	/// </remarks>
-	private SfDataForm EditMPCForm
-    {
-        get;
-        set;
-    }
+	private SfDataForm EditMPCForm { get; set; }
 
 	/// <summary>
 	///     Gets or sets the MPC that is being edited in the dialog.
@@ -85,11 +79,7 @@ public partial class MPCCandidateDialog
 	///     are reflected in the form and vice versa.
 	/// </remarks>
 	[Parameter]
-    public CandidateRatingMPC Model
-    {
-        get;
-        set;
-    }
+    public CandidateRatingMPC Model { get; set; } = new();
 
 	/// <summary>
 	///     Gets or sets the list of Most Placeable Candidate (MPC) records displayed in the grid.
@@ -102,11 +92,7 @@ public partial class MPCCandidateDialog
 	///     are reflected in the grid and vice versa. Each record in the list represents a row in the grid.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateMPC> MPCGrid
-    {
-        get;
-        set;
-    }
+    public List<CandidateMPC> MPCGrid { get; set; }
 
 	/// <summary>
 	///     Gets or sets the height of the rows in the Most Placeable Candidate (MPC) grid.
@@ -119,11 +105,7 @@ public partial class MPCCandidateDialog
 	///     The default value is 38.
 	/// </remarks>
 	[Parameter]
-    public int RowHeight
-    {
-        get;
-        set;
-    } = 38;
+    public int RowHeight { get; set; } = 38;
 
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the save action is triggered in the dialog.
@@ -133,11 +115,7 @@ public partial class MPCCandidateDialog
 	///     It is invoked when the user clicks on the save button in the dialog.
 	/// </remarks>
 	[Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion spinner control used in the dialog.
@@ -146,11 +124,7 @@ public partial class MPCCandidateDialog
 	///     This spinner control is displayed when the dialog is performing an operation such as saving or canceling.
 	///     The visibility of the spinner is controlled programmatically based on the state of the operation.
 	/// </remarks>
-	private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+	private SfSpinner Spinner { get; set; }
 
 	/// <summary>
 	///     Asynchronously cancels the operation of editing a candidate's MPC record..
@@ -174,7 +148,7 @@ public partial class MPCCandidateDialog
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
+        Context = new(Model ?? new());
         Context.OnFieldChanged += Context_OnFieldChanged;
         base.OnParametersSet();
     }

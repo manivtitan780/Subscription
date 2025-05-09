@@ -492,8 +492,8 @@ public class CandidateController : ControllerBase
                 _candidate = _reader.NString(0);
                 JObject _candidateJson = JObject.Parse(_candidate);
 
-                _candRating = _candidateJson["RateNotes"]?.ToString(); // _reader.NString(28);
-                _candMPC = _candidateJson["MPCNotes"]?.ToString();     //_reader.NString(30);
+                _candRating = _candidateJson["RateNotes"]?.ToString();
+                _candMPC = _candidateJson["MPCNotes"]?.ToString();
             }
 
             await _reader.NextResultAsync(); //Notes
@@ -1004,9 +1004,9 @@ public class CandidateController : ControllerBase
         _command.Int("@StateID", _candidateDetails.StateID);
         _command.Varchar("@ZipCode", 20, _candidateDetails.ZipCode);
         _command.Varchar("@Email", 255, _candidateDetails.Email);
-        _command.Varchar("@Phone1", 15, _candidateDetails.Phone1);
-        _command.Varchar("@Phone2", 15, _candidateDetails.Phone2);
-        _command.Varchar("@Phone3", 15, _candidateDetails.Phone3);
+        _command.Varchar("@Phone1", 15, _candidateDetails.Phone1.StripPhoneNumber());
+        _command.Varchar("@Phone2", 15, _candidateDetails.Phone2.StripPhoneNumber());
+        _command.Varchar("@Phone3", 15, _candidateDetails.Phone3.StripPhoneNumber());
         _command.SmallInt("@Phone3Ext", _candidateDetails.PhoneExt.ToInt16());
         _command.Varchar("@LinkedIn", 255, _candidateDetails.LinkedIn);
         _command.Varchar("@Facebook", 255, _candidateDetails.Facebook);
