@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-06-2025 16:00
+// Last Updated On:     05-09-2025 19:48
 // *****************************************/
 
 #endregion
@@ -19,8 +19,6 @@ using System.Diagnostics;
 
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
-
-using Role = Subscription.Model.Role;
 
 #endregion
 
@@ -38,6 +36,7 @@ public partial class Candidates
     private List<CandidateMPC> _candMPCObject = [];
     private List<CandidateRating> _candRatingObject = [];
     private List<CandidateSkills> _candSkillsObject = [];
+
     private List<IntValues> _eligibility = [], _experience = [], _documentTypes = [];
     //private bool _formattedExists, _originalExists;
 
@@ -103,6 +102,9 @@ public partial class Candidates
 
     private AdvancedCandidateSearch DialogSearch { get; set; }
 
+    [Inject]
+    private SfDialogService DialogService { get; set; }
+
     private bool DownloadFormatted { get; set; }
 
     private bool DownloadOriginal { get; set; }
@@ -135,9 +137,6 @@ public partial class Candidates
 
     private bool IsFromCompany { get; set; }
 
-    [Inject]
-    private SfDialogService DialogService { get; set; }
-    
     [Inject]
     private IJSRuntime JsRuntime { get; set; }
 
@@ -209,14 +208,14 @@ public partial class Candidates
 
     private SubmitCandidate SubmitDialog { get; set; }
 
+    public UploadCandidate UploadCandidateDialog { get; set; }
+
     private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
 
     [Inject]
     private ZipCodeService ZipCodeService { get; set; }
-
-    public UploadCandidate UploadCandidateDialog { get; set; }
 
     private async Task AddCandidate(MouseEventArgs arg)
     {
@@ -273,6 +272,11 @@ public partial class Candidates
                                                     SearchModel.User = User;
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                 });
+
+    private async Task CloseUploadCandidate()
+    {
+        await Refresh().ConfigureAwait(false);
+    }
 
     private Dictionary<string, string> CreateParameters(int id) => new()
                                                                    {
@@ -636,19 +640,18 @@ public partial class Candidates
 
     private Task GetResumeOnClick(string resumeType) => ExecuteMethod(async () =>
                                                                       {
-                                                                          /*Dictionary<string, string> _parameters = new()
+                                                                          Dictionary<string, string> _parameters = new()
                                                                                                                    {
                                                                                                                        {"candidateID", _target.ID.ToString()},
                                                                                                                        {"resumeType", resumeType}
                                                                                                                    };
-                                                                          DocumentDetails _restResponse = await General.GetRest<DocumentDetails>("Candidates/DownloadResume", _parameters);
+                                                                          string _restResponse = await General.ExecuteRest<string>("Candidate/DownloadResume", _parameters, null, false);
 
-                                                                          if (_restResponse != null)
+                                                                          if (_restResponse != null && _restResponse != "[]")
                                                                           {
-                                                                              await DownloadsPanel.ShowResume(_restResponse.DocumentLocation, _target.ID, "Original Resume",
-                                                                                                              _restResponse.InternalFileName);
-                                                                          }*/
-                                                                          await Task.CompletedTask;
+                                                                              DocumentDetails _response = General.DeserializeObject<DocumentDetails>(_restResponse);
+                                                                              await DownloadsPanel.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume", _response.InternalFileName);
+                                                                          }
                                                                       });
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
@@ -820,7 +823,7 @@ public partial class Candidates
                                                   {
                                                       Dictionary<string, string> _parameters = new()
                                                                                                {
-                                                                                                   {"userName", User},
+                                                                                                   {"userName", User}
                                                                                                };
 
                                                       await General.ExecuteRest<int>("Candidate/SaveCandidate", _parameters, _candDetailsObjectClone);
@@ -1238,9 +1241,4 @@ public partial class Candidates
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
-
-    private async Task CloseUploadCandidate()
-    {
-        await Refresh().ConfigureAwait(false);
-    }
 }
