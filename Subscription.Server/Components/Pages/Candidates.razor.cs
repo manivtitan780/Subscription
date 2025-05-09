@@ -392,7 +392,7 @@ public partial class Candidates
                                  FormattedExists = _target.FormattedResume;
                                  OriginalExists = _target.OriginalResume;
 
-                                 await Task.Delay(100);
+                                 // await Task.Delay(100);
                                  VisibleSpinner = false;
                              });
     }

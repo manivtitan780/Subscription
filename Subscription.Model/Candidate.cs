@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
-// File Name:           Candidates.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:09
+// Solution:            Subscription
+// Project:             Subscription.Model
+// File Name:           Candidate.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-09-2025 19:41
 // *****************************************/
 
 #endregion
@@ -22,17 +22,13 @@ namespace Subscription.Model;
 ///     This class is used to manage and manipulate candidate data, including their personal information, status, and
 ///     resumes.
 /// </remarks>
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Candidate
 {
 	/// <summary>
 	///     Initializes a new instance of the <see cref="Candidate" /> class.
 	/// </summary>
-	public Candidate()
-	{
-		Clear();
-	}
+	public Candidate() => Clear();
 
 	/// <summary>
 	///     Gets or sets the email address of the candidate.
@@ -43,11 +39,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used in the "Candidate.Razor" page to display and sort the candidates by their email addresses.
 	/// </remarks>
-	public string Email
-	{
-		get;
-		set;
-	}
+	public string Email { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the formatted resume of the candidate exists.
@@ -59,11 +51,7 @@ public class Candidate
 	///     This property is used to store and retrieve the information about the existence of the formatted resume of the
 	///     candidate.
 	/// </remarks>
-	public bool FormattedResume
-	{
-		get;
-		set;
-	}
+	public bool FormattedResume { get; set; }
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the candidate.
@@ -74,11 +62,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used as the primary key in the database and is hidden in the user interface.
 	/// </remarks>
-	public int ID
-	{
-		set;
-		get;
-	}
+	public int ID { set; get; }
 
 	/// <summary>
 	///     Gets or sets the location of the candidate.
@@ -86,11 +70,7 @@ public class Candidate
 	/// <value>
 	///     The location of the candidate.
 	/// </value>
-	public string Location
-	{
-		get;
-		set;
-	}
+	public string Location { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the candidate is an MPC (Most Placeable Candidate).
@@ -101,11 +81,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used to store and retrieve the information about whether the candidate is considered as an MPC.
 	/// </remarks>
-	public bool MPC
-	{
-		get;
-		set;
-	}
+	public bool MPC { get; set; }
 
 	/// <summary>
 	///     Gets or sets the name of the candidate.
@@ -113,11 +89,7 @@ public class Candidate
 	/// <value>
 	///     The name of the candidate.
 	/// </value>
-	public string Name
-	{
-		get;
-		set;
-	}
+	public string Name { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the original resume of the candidate exists.
@@ -129,20 +101,12 @@ public class Candidate
 	///     This property is used to store and retrieve the information about the existence of the original resume of the
 	///     candidate.
 	/// </remarks>
-	public bool OriginalResume
-	{
-		get;
-		set;
-	}
+	public bool OriginalResume { get; set; }
 
 	/// <summary>
 	///     Gets or sets the phone number of the candidate.
 	/// </summary>
-	public string Phone
-	{
-		get;
-		set;
-	}
+	public string Phone { get; set; }
 
 	/// <summary>
 	///     Gets or sets the rating of the candidate.
@@ -153,11 +117,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used to store and retrieve the rating of the candidate. It is a byte value.
 	/// </remarks>
-	public byte Rating
-	{
-		get;
-		set;
-	}
+	public byte Rating { get; set; }
 
 	/// <summary>
 	///     Gets or sets the state of the candidate.
@@ -168,11 +128,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used to store and retrieve the state of the candidate. It is a string value.
 	/// </remarks>
-	public string State
-	{
-		get;
-		set;
-	}
+	public string State { get; set; }
 
 	/// <summary>
 	///     Gets or sets the status of the candidate.
@@ -180,20 +136,12 @@ public class Candidate
 	/// <value>
 	///     A string representing the status of the candidate.
 	/// </value>
-	public string Status
-	{
-		get;
-		set;
-	}
+	public string Status { get; set; }
 
 	/// <summary>
 	///     Gets or sets the date and time when the candidate's information was last updated.
 	/// </summary>
-	public string Updated
-	{
-		get;
-		set;
-	}
+	public string Updated { get; set; }
 
 	/// <summary>
 	///     Gets or sets the zip code of the candidate.
@@ -204,11 +152,7 @@ public class Candidate
 	/// <remarks>
 	///     This property is used to store and retrieve the zip code of the candidate. It is a string value.
 	/// </remarks>
-	public string ZipCode
-	{
-		get;
-		set;
-	}
+	public string ZipCode { get; set; }
 
 	/// <summary>
 	///     Resets all properties of the Candidates object to their default values.
@@ -221,20 +165,20 @@ public class Candidate
 	///     For boolean properties, the default value is false. The Rating property is set to 3 by default.
 	/// </remarks>
 	// ReSharper disable once MemberCanBePrivate.Global
-	public void Clear()
-	{
-		ID = 0;
-		Name = "";
-		Phone = "";
-		Email = "";
-		Location = "";
-		Updated = "";
-		Status = "";
-		MPC = false;
-		Rating = 3;
-		OriginalResume = false;
-		FormattedResume = false;
-	}
+    public void Clear()
+    {
+        ID = 0;
+        Name = "";
+        Phone = "";
+        Email = "";
+        Location = "";
+        Updated = "";
+        Status = "";
+        MPC = false;
+        Rating = 3;
+        OriginalResume = false;
+        FormattedResume = false;
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current Candidates object.
