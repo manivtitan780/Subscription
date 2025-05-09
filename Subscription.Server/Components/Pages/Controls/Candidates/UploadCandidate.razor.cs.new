@@ -1,0 +1,185 @@
+#region Header
+
+// /*****************************************
+// Copyright:           Titan-Techs.
+// Location:            Newtown, PA, USA
+// Solution:            Subscription
+// Project:             Subscription.Server
+// File Name:           UploadCandidate.razor.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          05-07-2025 16:05
+// Last Updated On:     05-07-2025 19:44
+// *****************************************/
+
+#endregion
+
+#region Using
+
+using System.Text;
+using System.Text.Json;
+
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.Pdf.Parsing;
+
+#endregion
+
+namespace Subscription.Server.Components.Pages.Controls.Candidates;
+
+public partial class UploadCandidate : ComponentBase
+{
+    private EditContext Context { get; set; }
+
+    private SfDialog Dialog { get; set; }
+
+    private SfDataForm EditCandidateForm { get; set; }
+
+    // Add the missing properties
+    //private object Model { get; set; } = new();
+
+    //private FluentValidationValidator _candidateDetailsValidator { get; set; }
+
+    private ParsedCandidate Model { get; } = new();
+
+    private bool VisibleSpinner { get; set; }
+
+    private void CancelDialog()
+    {
+        // Cancel dialog logic
+    }
+
+    // Event handlers for uploader
+    private void OnFileRemoved(RemovingEventArgs args)
+    {
+        Model.Files = null;
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+    }
+
+    private void OnFileSelected(SelectedEventArgs file)
+    {
+        if (Model.Files is null)
+        {
+            Model.Files = [file.FilesData[0].Name];
+        }
+        else
+        {
+            Model.Files.Clear();
+            Model.Files.Add(file.FilesData[0].Name);
+        }
+
+        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+    }
+
+    private async Task UploadCandidateResume()
+    {
+        // Save candidate logic
+        await Task.CompletedTask;
+    }
+
+    [Parameter]
+    public string User { get; set; } = "";
+
+    public EventCallback<CloseEventArgs> Close { get; set; }
+
+    private async Task UploadDocument(UploadChangeEventArgs file)
+    {
+        string _resumeText = "";
+        MemoryStream _addedDocument = new(60 * 1024 * 1024);
+        foreach (UploadFiles _file in file.Files)
+        {
+            _addedDocument.SetLength(0);
+            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
+            await _str.CopyToAsync(_addedDocument);
+            Model.FileName = _file.FileInfo.Name;
+            Model.Mime = _file.FileInfo.MimeContentType;
+            Model.DocumentBytes = _addedDocument.ToArray();
+            _addedDocument.Position = 0;
+            _str.Close();
+            string _extension = Path.GetExtension(_file.FileInfo.Name)?.ToLowerInvariant();
+            _resumeText = _extension switch
+                          {
+                              ".doc" or ".docx" or ".rtf" => _addedDocument.ReadFromWord(),
+                              ".pdf" => _addedDocument.ReadFromPdf(),
+                              ".txt" => await _addedDocument.ReadFromText(),
+                              _ => ""
+                          };
+        }
+
+        _addedDocument.Close();
+
+        CandidateDetails _candidateDetails = new()
+                                             {
+                                                 TextResume = _resumeText
+                                             };
+
+        if (_resumeText.NotNullOrWhiteSpace())
+        {
+            RestClient client = new(Start.AzureOpenAIEndpoint);
+            RestRequest request = new("", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("api-key", Start.AzureOpenAIKey);
+            var requestBody = new
+                              {
+                                  messages = new[]
+                                             {
+                                                 new {role = "system", content = "You are a concise resume summarizer."},
+                                                 new {role = "user", content = $"{Start.Prompt}{_resumeText}"}
+                                             },
+                                  temperature = 0.3,
+                                  max_tokens = 1000
+                              };
+
+            request.AddJsonBody(requestBody);
+
+            RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
+
+            if (response.IsSuccessful)
+            {
+                using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
+                string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                if (_content != null)
+                {
+                    JsonDocument _json = JsonDocument.Parse(_content);
+                    JsonElement _root = _json.RootElement;
+                    
+                    // Helper function to extract property with consistent null/whitespace handling
+                    string GetPropertyValue(string propertyName, bool checkWhitespace = true)
+                    {
+                        if (_root.TryGetProperty(propertyName, out JsonElement element))
+                        {
+                            string value = element.GetString() ?? "";
+                            return checkWhitespace ? (value.NotNullOrWhiteSpace() ? value : "") : value;
+                        }
+                        return "";
+                    }
+                    
+                    // Extract properties with consistent handling
+                    _candidateDetails.Keywords = GetPropertyValue("Keywords", false);
+                    _candidateDetails.Summary = GetPropertyValue("Summary", false);
+                    _candidateDetails.Title = GetPropertyValue("Title", false);
+                    _candidateDetails.FirstName = GetPropertyValue("FirstName", false);
+                    _candidateDetails.LastName = GetPropertyValue("LastName", false);
+                    _candidateDetails.Address1 = GetPropertyValue("Address");
+                    _candidateDetails.City = GetPropertyValue("City");
+                    _candidateDetails.ZipCode = GetPropertyValue("Zip");
+                    _candidateDetails.Email = GetPropertyValue("Email");
+                    _candidateDetails.Phone1 = GetPropertyValue("Phone");
+                }
+            }
+
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"userName", User},
+                                                     };
+
+            CandidateDetailsResume _candDetailsResume = new()
+                                                        {
+                                                            CandidateDetails = _candidateDetails,
+                                                            ParsedCandidate = Model
+                                                        };
+
+            await General.ExecuteRest<int>("Candidate/SaveCandidateWithResume", _parameters, _candDetailsResume).ConfigureAwait(false);
+            await Dialog.HideAsync().ConfigureAwait(false);
+        }
+    }
+}

@@ -216,14 +216,19 @@ public partial class Candidates
     [Inject]
     private ZipCodeService ZipCodeService { get; set; }
 
+    public UploadCandidate UploadCandidateDialog { get; set; }
+
     private async Task AddCandidate(MouseEventArgs arg)
     {
         if (await DialogService.ConfirmAsync(null, "Auto-Fill Candidate?", General.DialogOptions("Do you want to auto-fill the candidate details?")))
         {
-            await JsRuntime.InvokeVoidAsync("AutoFill");
+            await UploadCandidateDialog.ShowDialog();
         }
-        await Grid.SelectRowAsync(-1);
-        await EditCandidate();
+        else
+        {
+            await Grid.SelectRowAsync(-1);
+            await EditCandidate();
+        }
     }
 
     private Task AddDocument() => ExecuteMethod(() =>
@@ -1233,4 +1238,9 @@ public partial class Candidates
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
+
+    private async Task CloseUploadCandidate()
+    {
+        await Refresh().ConfigureAwait(false);
+    }
 }

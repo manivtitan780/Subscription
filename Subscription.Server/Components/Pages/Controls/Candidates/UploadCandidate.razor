@@ -1,10 +1,10 @@
-<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="98vh" IsModal="true" MinHeight="98vh" @ref="Dialog" Target="#divTarget" Visible="false" Width="60vw">
+<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="395px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="500px">
 	<ChildContent>
-		<SfSpinner @bind-Value="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="1000" Effect="DialogEffect.SlideRight"/>
-		<DialogEvents Closed="Close" />
-		<SfDataForm EditContext="Context" ID="candidateEditForm" OnValidSubmit="UploadCandidateResume" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+		<DialogEvents Closed="CloseDialog" />
+		<SfDataForm Model="Model" ID="candidateEditForm" OnValidSubmit="UploadCandidateResume" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDialog" type="button">Cancel</SfButton>
 				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Candidate</SfButton>
@@ -13,7 +13,7 @@
 				<FluentValidationValidator/>@* Validator="_candidateDetailsValidator"*@
 			</FormValidator>
 			<FormItems>
-			<FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
+			<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
 						<Template>
 							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760"

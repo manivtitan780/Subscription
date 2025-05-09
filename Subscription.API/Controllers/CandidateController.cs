@@ -981,7 +981,7 @@ public class CandidateController : ControllerBase
         _command.Varchar("@FirstName", 50, _candidateDetails.FirstName);
         _command.Varchar("@MiddleName", 50, _candidateDetails.MiddleName);
         _command.Varchar("@LastName", 50, _candidateDetails.LastName);
-        _command.Varchar("@Title", 50, _candidateDetails.Title);
+        _command.Varchar("@Title", 200, _candidateDetails.Title);
         _command.Int("@Eligibility", _candidateDetails.EligibilityID);
         _command.Decimal("@HourlyRate", 6, 2, _candidateDetails.HourlyRate);
         _command.Decimal("@HourlyRateHigh", 6, 2, _candidateDetails.HourlyRateHigh);
@@ -991,13 +991,13 @@ public class CandidateController : ControllerBase
         _command.Bit("@Relocate", _candidateDetails.Relocate);
         _command.Varchar("@JobOptions", 50, _candidateDetails.JobOptions);
         _command.Char("@Communication", 1, _candidateDetails.Communication);
-        _command.Varchar("@Keywords", 500, _candidateDetails.Keywords);
+        _command.Varchar("@Keywords", 500, _candidateDetails.Keywords.Length > 500 ? _candidateDetails.Keywords[..500] : _candidateDetails.Keywords);
         _command.Varchar("@Status", 3, "AVL");
         _command.Varchar("@TextResume", -1, _candidateDetails.TextResume);
         _command.Varchar("@OriginalResume", 255, candidateDetailsResume.ParsedCandidate.FileName);
         _command.Varchar("@FormattedResume", 255, _candidateDetails.FormattedResume);
-        _command.UniqueIdentifier("@OriginalFileID", _internalFileName);
-        _command.UniqueIdentifier("@FormattedFileID", DBNull.Value);
+        _command.Varchar("@OriginalFileID", 50, _internalFileName);
+        _command.Varchar("@FormattedFileID", 50, DBNull.Value);
         _command.Varchar("@Address1", 255, _candidateDetails.Address1);
         _command.Varchar("@Address2", 255, _candidateDetails.Address2);
         _command.Varchar("@City", 50, _candidateDetails.City);
