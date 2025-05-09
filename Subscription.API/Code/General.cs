@@ -8,7 +8,7 @@
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-30-2025 15:57
+// Last Updated On:     05-09-2025 19:41
 // *****************************************/
 
 #endregion
@@ -413,7 +413,7 @@ public static class General
         await using Stream stream = file.OpenReadStream();
         await _storage.WriteAsync(blobPath, stream);
     }
-    
+
     internal static async Task UploadToBlob(byte[] file, string blobPath)
     {
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
