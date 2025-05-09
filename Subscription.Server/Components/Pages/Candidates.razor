@@ -232,12 +232,12 @@
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
 																<Template>
-																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || DownloadOriginal)" OnClick="OriginalClick"/>
+																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"/>
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 															<RichTextEditorCustomToolbarItem Name="Formatted">
 																<Template>
-																	<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || DownloadFormatted)" OnClick="FormattedClick"/>
+																	<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"/>
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 														</RichTextEditorCustomToolbarItems>

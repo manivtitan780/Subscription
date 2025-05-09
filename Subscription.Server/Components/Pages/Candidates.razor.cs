@@ -39,14 +39,14 @@ public partial class Candidates
     private List<CandidateRating> _candRatingObject = [];
     private List<CandidateSkills> _candSkillsObject = [];
     private List<IntValues> _eligibility = [], _experience = [], _documentTypes = [];
-    private bool _formattedExists, _originalExists;
+    //private bool _formattedExists, _originalExists;
 
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [];
 
-    private Query _query = new();
+    //private Query _query = new();
 
     //private CandidateRatingMPC _ratingMPC = new();
-    private List<Role> _roles;
+    //private List<Role> _roles;
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -389,8 +389,8 @@ public partial class Candidates
                                  SetExperience();
 
                                  _selectedTab = _candActivityObject is {Count: > 0} ? 7 : 0;
-                                 _formattedExists = _target.FormattedResume;
-                                 _originalExists = _target.OriginalResume;
+                                 FormattedExists = _target.FormattedResume;
+                                 OriginalExists = _target.OriginalResume;
 
                                  await Task.Delay(100);
                                  VisibleSpinner = false;
@@ -752,7 +752,7 @@ public partial class Candidates
                                 Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
 
                                 // Deserialize configuration data into master objects
-                                _roles = General.DeserializeObject<List<Role>>(_cacheValues[nameof(CacheObjects.Roles)]);
+                                //_roles = General.DeserializeObject<List<Role>>(_cacheValues[nameof(CacheObjects.Roles)]);
                                 _states = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)]);
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);

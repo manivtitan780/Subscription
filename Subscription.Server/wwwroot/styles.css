@@ -1195,7 +1195,19 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     font-size: 13px !important;
 }
 
-/*.e-input-group, .e-input-group.e-control-wrapper*/#dropTokens {
+#dropTokens {
     font-size: 13px;
+}
+
+.e-toolbar-item .original, .e-toolbar-item .formatted {
+    background-color: var(--c-red);
+    color: var(--c-wh);
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.e-toolbar-item .original:disabled, .e-toolbar-item .formatted:disabled {
+    background-color: var(--c-red-light);
+    color: var(--c-wh);
 }
 /* #endregion RichTextEditor */
