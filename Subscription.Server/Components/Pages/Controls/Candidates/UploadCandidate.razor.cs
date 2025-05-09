@@ -8,19 +8,14 @@
 // File Name:           UploadCandidate.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          05-07-2025 16:05
-// Last Updated On:     05-07-2025 19:44
+// Last Updated On:     05-08-2025 19:39
 // *****************************************/
 
 #endregion
 
 #region Using
 
-using System.Text;
 using System.Text.Json;
-
-using Syncfusion.DocIO;
-using Syncfusion.DocIO.DLS;
-using Syncfusion.Pdf.Parsing;
 
 #endregion
 
@@ -28,6 +23,13 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 public partial class UploadCandidate : ComponentBase
 {
+    private bool _isCancelled;
+
+    private CandidateDetails CandidateDetails { get; } = new();
+
+    [Parameter]
+    public EventCallback<CloseEventArgs> Close { get; set; }
+
     private EditContext Context { get; set; }
 
     private SfDialog Dialog { get; set; }
@@ -41,18 +43,30 @@ public partial class UploadCandidate : ComponentBase
 
     private ParsedCandidate Model { get; } = new();
 
+    [Parameter]
+    public string User { get; set; } = "";
+
     private bool VisibleSpinner { get; set; }
 
-    private void CancelDialog()
+    private async Task CancelDialog(MouseEventArgs args)
     {
-        // Cancel dialog logic
+        _isCancelled = true;
+        await Dialog.HideAsync();
+    }
+
+    private async Task CloseDialog(CloseEventArgs args)
+    {
+        if (!_isCancelled)
+        {
+            await Close.InvokeAsync(args);
+        }
     }
 
     // Event handlers for uploader
     private void OnFileRemoved(RemovingEventArgs args)
     {
         Model.Files = null;
-        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+        //Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
     }
 
     private void OnFileSelected(SelectedEventArgs file)
@@ -67,19 +81,71 @@ public partial class UploadCandidate : ComponentBase
             Model.Files.Add(file.FilesData[0].Name);
         }
 
-        Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
+        //Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
     }
+
+    public async Task ShowDialog() => await Dialog.ShowAsync();
 
     private async Task UploadCandidateResume()
     {
-        // Save candidate logic
-        await Task.CompletedTask;
+        if (CandidateDetails.TextResume.NotNullOrWhiteSpace())
+        {
+            RestClient client = new(Start.AzureOpenAIEndpoint);
+            RestRequest request = new("", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("api-key", Start.AzureOpenAIKey);
+            var requestBody = new
+                              {
+                                  messages = new[]
+                                             {
+                                                 new {role = "system", content = "You are a concise resume summarizer."},
+                                                 new {role = "user", content = $"{Start.Prompt}{CandidateDetails.TextResume}"}
+                                             },
+                                  temperature = 0.3,
+                                  max_tokens = 1000
+                              };
+
+            request.AddJsonBody(requestBody);
+
+            RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
+
+            if (response.IsSuccessful)
+            {
+                using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
+                string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                if (_content != null)
+                {
+                    JsonDocument _json = JsonDocument.Parse(_content);
+                    JsonElement _root = _json.RootElement;
+
+                    CandidateDetails.Keywords = _root.TryGetProperty("Keywords", out JsonElement kw) ? kw.GetString() : "";
+                    CandidateDetails.Summary = _root.TryGetProperty("Summary", out JsonElement sum) ? sum.GetString() : "";
+                    CandidateDetails.Title = _root.TryGetProperty("Title", out JsonElement title) ? title.GetString() : "";
+                    CandidateDetails.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
+                    CandidateDetails.LastName = _root.TryGetProperty("LastName", out JsonElement lName) ? lName.GetString() : "";
+                    CandidateDetails.Address1 = _root.TryGetProperty("Address", out JsonElement addr) && addr.GetString().NotNullOrWhiteSpace() ? addr.GetString() : "";
+                    CandidateDetails.City = _root.TryGetProperty("City", out JsonElement city) && city.GetString().NotNullOrWhiteSpace() ? city.GetString() : "";
+                    CandidateDetails.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : "";
+                    CandidateDetails.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : "";
+                    CandidateDetails.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : "";
+                }
+            }
+
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"userName", User}
+                                                     };
+
+            CandidateDetailsResume _candDetailsResume = new()
+                                                        {
+                                                            CandidateDetails = CandidateDetails,
+                                                            ParsedCandidate = Model
+                                                        };
+
+            await General.ExecuteRest<int>("Candidate/SaveCandidateWithResume", _parameters, _candDetailsResume).ConfigureAwait(false);
+            await Dialog.HideAsync().ConfigureAwait(false);
+        }
     }
-
-    [Parameter]
-    public string User { get; set; } = "";
-
-    public EventCallback<CloseEventArgs> Close { get; set; }
 
     private async Task UploadDocument(UploadChangeEventArgs file)
     {
@@ -107,67 +173,6 @@ public partial class UploadCandidate : ComponentBase
 
         _addedDocument.Close();
 
-        CandidateDetails _candidateDetails = new()
-                                             {
-                                                 TextResume = _resumeText
-                                             };
-
-        if (_resumeText.NotNullOrWhiteSpace())
-        {
-            RestClient client = new(Start.AzureOpenAIEndpoint);
-            RestRequest request = new("", Method.Post);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("api-key", Start.AzureOpenAIKey);
-            var requestBody = new
-                              {
-                                  messages = new[]
-                                             {
-                                                 new {role = "system", content = "You are a concise resume summarizer."},
-                                                 new {role = "user", content = $"{Start.Prompt}{_resumeText}"}
-                                             },
-                                  temperature = 0.3,
-                                  max_tokens = 1000
-                              };
-
-            request.AddJsonBody(requestBody);
-
-            RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
-
-            if (response.IsSuccessful)
-            {
-                using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
-                string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
-                if (_content != null)
-                {
-                    JsonDocument _json = JsonDocument.Parse(_content);
-                    JsonElement _root = _json.RootElement;
-
-                    _candidateDetails.Keywords = _root.TryGetProperty("Keywords", out JsonElement kw) ? kw.GetString() : "";
-                    _candidateDetails.Summary = _root.TryGetProperty("Summary", out JsonElement sum) ? sum.GetString() : "";
-                    _candidateDetails.Title = _root.TryGetProperty("Title", out JsonElement title) ? title.GetString() : "";
-                    _candidateDetails.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
-                    _candidateDetails.LastName = _root.TryGetProperty("LastName", out JsonElement lName) ? lName.GetString() : "";
-                    _candidateDetails.Address1 = _root.TryGetProperty("Address", out JsonElement addr) && addr.GetString().NotNullOrWhiteSpace() ? addr.GetString() : "";
-                    _candidateDetails.City = _root.TryGetProperty("City", out JsonElement city) && city.GetString().NotNullOrWhiteSpace() ? city.GetString() : "";
-                    _candidateDetails.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : "";
-                    _candidateDetails.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : "";
-                    _candidateDetails.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : "";
-                }
-            }
-
-            Dictionary<string, string> _parameters = new()
-                                                     {
-                                                         {"userName", User},
-                                                     };
-
-            CandidateDetailsResume _candDetailsResume = new()
-            {
-                CandidateDetails = _candidateDetails,
-                ParsedCandidate = Model
-            };
-            
-            await General.ExecuteRest<int>("Candidate/SaveCandidateWithResume", _parameters, _candDetailsResume).ConfigureAwait(false);
-            await Dialog.HideAsync().ConfigureAwait(false);
-        }
+        CandidateDetails.TextResume = _resumeText;
     }
 }

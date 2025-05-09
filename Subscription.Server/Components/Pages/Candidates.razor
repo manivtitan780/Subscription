@@ -284,6 +284,7 @@
 	<RatingCandidateDialog RatingGrid="_candRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
 	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
 	<AdvancedCandidateSearch Eligibility="_eligibility" JobOptions="_jobOptions" Model="SearchModelClone" @ref="DialogSearch" Search="SearchCandidate" StateDropDown="_states"/>
+	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" User="@User"/>
 }
 else
 {
