@@ -610,6 +610,15 @@ body, form, html {
     min-height: calc(1em + 8px);
     position: relative;
 }
+
+.e-rating-container .e-rating-item-list:hover .e-rating-item-container.e-rating-selected .e-rating-icon,
+.e-rating-container .e-rating-item-list:hover .e-rating-item-container.e-rating-intermediate .e-rating-icon {
+    background: linear-gradient(to right, #8e181b var(--rating-value), transparent var(--rating-value));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-stroke: 1px #8e181b;
+}
+
 /*
 .e-rating-container.ratingBasicInfoCandidate .e-rating-item-container.e-rating-selected .e-rating-icon,
 .e-rating-container.ratingBasicInfoCandidate .e-rating-item-container.e-rating-intermediate .e-rating-icon {

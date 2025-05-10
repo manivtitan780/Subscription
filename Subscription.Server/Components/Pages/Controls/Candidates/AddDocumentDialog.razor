@@ -20,8 +20,8 @@
 		<DialogEvents OnOpen="OpenDialog"/>
 		<SfDataForm EditContext="Context" ID="addDocumentForm" OnValidSubmit="SaveDocumentDialog" @ref="EditDocumentForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Document</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Document</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateDocumentValidator"/>
