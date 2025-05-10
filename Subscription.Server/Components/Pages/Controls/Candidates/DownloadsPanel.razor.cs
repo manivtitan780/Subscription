@@ -8,7 +8,7 @@
 // File Name:           DownloadsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-05-2025 20:02
-// Last Updated On:     04-30-2025 20:15
+// Last Updated On:     05-10-2025 19:19
 // *****************************************/
 
 #endregion
@@ -30,6 +30,8 @@ public partial class DownloadsPanel
     private int _candidateID, _selectedID;
     private string _internalFileName = "", _documentName = "", _documentLocation = "";
 
+    private bool _showResume;
+
     [Parameter]
     public int CandidateID { get; set; }
 
@@ -41,18 +43,6 @@ public partial class DownloadsPanel
     /// </value>
     [Parameter]
     public EventCallback<int> DeleteDocument { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the ConfirmDialog instance used for confirming document deletion operations.
-    /// </summary>
-    /// <value>
-    ///     The ConfirmDialog instance.
-    /// </value>
-    /// <remarks>
-    ///     This dialog is shown when a user attempts to delete a document. It provides the user with a final chance to confirm
-    ///     or cancel the deletion.
-    /// </remarks>
-    private ConfirmDialog DialogConfirm { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -72,35 +62,6 @@ public partial class DownloadsPanel
     private SfDialogService DialogService { get; set; }
 
     private ViewPDFDocument DocumentViewPDF { get; set; }
-
-    /*/// <summary>
-    ///     Gets or sets the instance of the ViewPDFDocument component used for displaying PDF documents.
-    /// </summary>
-    /// <value>
-    ///     The instance of the ViewPDFDocument component.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to manage the display of PDF documents within the DownloadsPanel.
-    ///     It is utilized in methods such as `ShowResume` and `ViewDocumentDialog` to show the dialog of the PDF document
-    ///     viewer.
-    /// </remarks>
-    private ViewPDFDocument DocumentViewPDF
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    ///     Gets or sets the ViewWordDocument component used for displaying Word documents.
-    /// </summary>
-    /// <value>
-    ///     The ViewWordDocument component.
-    /// </value>
-    private ViewWordDocument DocumentViewWord
-    {
-        get;
-        set;
-    }*/
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when a document is to be downloaded.
@@ -231,9 +192,9 @@ public partial class DownloadsPanel
     /// </remarks>
     public async Task ShowResume(string documentLocation, int candidateID, string documentName, string internalFileName)
     {
+        _showResume = true;
         string _fileExtension = Path.GetExtension(documentLocation);
         string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
-        /*if (documentLocation.EndsWith(".pdf") || documentLocation.EndsWith(".doc") || documentLocation.EndsWith(".docx") || documentLocation.EndsWith(".rtf"))*/
         if (_allowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             _candidateID = candidateID;
@@ -257,6 +218,7 @@ public partial class DownloadsPanel
     /// </remarks>
     private async Task ViewDocumentDialog(string fileName)
     {
+        _showResume = false;
         VisibleSpinner = true;
 
         string _fileExtension = Path.GetExtension(fileName);

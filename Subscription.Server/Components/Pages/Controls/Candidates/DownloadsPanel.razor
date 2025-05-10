@@ -47,5 +47,6 @@
 	</SfGrid>
 </div>
 <SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
-<ViewPDFDocument DocumentLocation="@SelectedRow.Location" DocumentName="@SelectedRow.Name" EntityID="@CandidateID" InternalFileName="@SelectedRow.InternalFileName" EntityType="EntityType.Candidate"
-				 @ref="@DocumentViewPDF" />
+<ViewPDFDocument DocumentLocation="@(_showResume ? _documentLocation : SelectedRow.Location)" DocumentName="@(_showResume ? _documentName : SelectedRow.Name)"
+                 EntityID="@(_showResume ? _candidateID : CandidateID)" InternalFileName="@(_showResume ? _internalFileName : SelectedRow.InternalFileName)"
+                 EntityType="EntityType.Candidate" @ref="@DocumentViewPDF"/>

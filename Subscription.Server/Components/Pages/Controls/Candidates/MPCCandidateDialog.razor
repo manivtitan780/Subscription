@@ -11,7 +11,7 @@
         The dialog includes a grid to display existing M.P.C. entries and a form to edit the selected M.P.C. details.
         It uses Syncfusion components such as SfDialog, SfGrid, and SfDataForm for the UI.
 *@
-<SfDialog Header="Edit M.P.C." Height="540px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
+<SfDialog CssClass="dialogPopup" Header="Edit M.P.C." Height="550px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -30,8 +30,8 @@
 		</div>
 		<SfDataForm EditContext="Context" ID="mpcEditForm" OnValidSubmit="SaveMPCDialog" @ref="EditMPCForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save MPC</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelMPCDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelMPCDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save MPC</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateMPCValidator"/>

@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           ViewPDFDocument.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-06-2024 15:12
-// Last Updated On:     12-31-2024 15:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     05-09-2025 20:03
 // *****************************************/
 
 #endregion
@@ -34,7 +34,7 @@ public partial class ViewPDFDocument
     ///     Defines the set of toolbar items available in the PDF viewer. The toolbar includes page navigation,
     ///     magnification, selection, pan, print, and download options.
     /// </summary>
-    private List<ToolbarItem> _toolbarItems =
+    private readonly List<ToolbarItem> _toolbarItems =
     [
         ToolbarItem.PageNavigationTool,
         ToolbarItem.MagnificationTool,
@@ -51,11 +51,7 @@ public partial class ViewPDFDocument
     ///     header and content.
     ///     The dialog's visibility is controlled programmatically using the ShowAsync and HideAsync methods.
     /// </summary>
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
     /// <summary>
     ///     Gets or sets the location of the document. This property is used to determine the type of the document
@@ -63,28 +59,16 @@ public partial class ViewPDFDocument
     ///     or URL of the document.
     /// </summary>
     [Parameter]
-    public string DocumentLocation
-    {
-        get;
-        set;
-    }
+    public string DocumentLocation { get; set; }
 
     /// <summary>
     ///     Gets or sets the name of the document. This property is used to display the document's name
     ///     in the dialog header when the PDF document is viewed.
     /// </summary>
     [Parameter]
-    public string DocumentName
-    {
-        get;
-        set;
-    }
+    public string DocumentName { get; set; }
 
-    private string DownloadFileName
-    {
-        get;
-        set;
-    }
+    private string DownloadFileName { get; set; }
 
     /// <summary>
     ///     Gets or sets the ID of the entity. This property is used to identify the specific entity
@@ -92,11 +76,7 @@ public partial class ViewPDFDocument
     ///     the unique identifier of the entity.
     /// </summary>
     [Parameter]
-    public int EntityID
-    {
-        get;
-        set;
-    }
+    public int EntityID { get; set; }
 
     /// <summary>
     ///     Gets or sets the type of the entity. This property is used to determine the specific type of the entity
@@ -105,11 +85,7 @@ public partial class ViewPDFDocument
     ///     which includes Candidate, Requisition, Companies, Leads, and Benefits.
     /// </summary>
     [Parameter]
-    public EntityType EntityType
-    {
-        get;
-        set;
-    }
+    public EntityType EntityType { get; set; }
 
     /// <summary>
     ///     Gets or sets the internal file name of the document. This property is used to construct the file path
@@ -117,32 +93,20 @@ public partial class ViewPDFDocument
     ///     representing the internal name of the file.
     /// </summary>
     [Parameter]
-    public string InternalFileName
-    {
-        get;
-        set;
-    }
+    public string InternalFileName { get; set; }
 
     /// <summary>
     ///     Gets or sets the PdfViewer component. This component is used to display the PDF document in the dialog.
     ///     It is a private member of the ViewPDFDocument class and is used internally in the OpenDialog method to load and
     ///     display the PDF document.
     /// </summary>
-    private SfPdfViewer2 PdfViewer
-    {
-        get;
-        set;
-    }
+    private SfPdfViewer2 PdfViewer { get; set; }
 
     /// <summary>
     ///     Gets or sets the SfSpinner component. This component is used to display a loading spinner
     ///     while the PDF document is being loaded and processed.
     /// </summary>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     /// <summary>
     ///     Closes the dialog containing the PDF viewer.

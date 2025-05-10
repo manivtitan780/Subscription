@@ -868,7 +868,7 @@ public partial class Candidates
                                                                                                                                   DialogDocument.AddedDocument.ToStreamByteArray(),
                                                                                                                                   DialogDocument.FileName);
 
-                                                                             if (_response.NotNullOrWhiteSpace() && _response == "[]")
+                                                                             if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
                                                                              }
@@ -887,12 +887,10 @@ public partial class Candidates
                                                                                string _response = await General.ExecuteRest<string>("Candidate/SaveEducation", _parameters,
                                                                                                                                     _candidateEducation);
 
-                                                                               if (_response.NullOrWhiteSpace() || _response == "[]")
+                                                                               if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                                {
-                                                                                   return;
+                                                                                   _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                                                }
-
-                                                                               _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
                                                                            }
                                                                        });
 
