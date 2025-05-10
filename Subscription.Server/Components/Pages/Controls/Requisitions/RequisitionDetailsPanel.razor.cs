@@ -378,7 +378,7 @@ public partial class RequisitionDetailsPanel
     ///     The list of states, represented as instances of the IntValues class.
     /// </value>
     [Parameter]
-    public List<IntValues> States
+    public List<StateCache> States
     {
         get;
         set;

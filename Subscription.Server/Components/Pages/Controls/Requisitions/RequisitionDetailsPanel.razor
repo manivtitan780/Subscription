@@ -55,7 +55,7 @@
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.StateID)">
                         <Template>
-                            <DropDown @bind-Value="Model.StateID" Model="States" ID="dropLocState" TItem="IntValues" TValue="int" Placeholder="State" Text="Text" Key="KeyValue"/>
+                            <DropDown @bind-Value="Model.StateID" Model="States" ID="dropLocState" TItem="StateCache" TValue="int" Placeholder="State" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                 </FormGroup>

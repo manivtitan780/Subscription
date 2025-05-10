@@ -20,7 +20,8 @@ public partial class Requisitions
     private const string StorageName = "RequisitionGrid";
 
     private List<CandidateActivity> _candActivityObject = [];
-    private List<IntValues> _education = [], _eligibility = [], _experience = [], _states = [];
+    private List<IntValues> _education = [], _eligibility = [], _experience = [];
+    private List<StateCache> _states = [];
     private List<KeyValues> /*_companies = [], */ _jobOptions = [];
 
     private Preferences _preference;
@@ -85,6 +86,7 @@ public partial class Requisitions
 
     private List<KeyValues> NextSteps { get; } = [];
 
+    [Inject]
     private RedisService RedisService { get; set; }
 
     private int RequisitionID { get; set; }
@@ -221,18 +223,14 @@ public partial class Requisitions
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition) => ExecuteMethod(async () =>
                                                                                                     {
-                                                                                                        if (_target != null && _target != requisition.Data)
-                                                                                                        {
-                                                                                                            // return when target is equal to args.data
-                                                                                                            await Grid.ExpandCollapseDetailRowAsync(_target);
-                                                                                                        }
-
                                                                                                         int _index = await Grid.GetRowIndexByPrimaryKeyAsync(requisition.Data.ID);
                                                                                                         if (_index != Grid.SelectedRowIndex)
                                                                                                         {
                                                                                                             await Grid.SelectRowAsync(_index);
                                                                                                         }
 
+                                                                                                        await Grid.CollapseAllDetailRowAsync();
+                                                                                                        await Grid.ExpandCollapseDetailRowAsync(requisition.Data);
                                                                                                         _target = requisition.Data;
 
                                                                                                         VisibleSpinner = true;
@@ -358,9 +356,8 @@ public partial class Requisitions
 
         if (_reqDetailsObject.StateID.ToInt32() != 0)
         {
-            IntValues state = _states.FirstOrDefault(s => s.KeyValue == _reqDetailsObject.StateID.ToInt32());
-            if (state != null)
-                _parts.Add(state.Text);
+            StateCache _state = _states.FirstOrDefault(s => s.KeyValue == _reqDetailsObject.StateID.ToInt32());
+            _parts.Add(_state.Text);
             /*foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
             {
                 _location = $"{_location}, {_intValues.Text}";
@@ -461,7 +458,7 @@ public partial class Requisitions
 
                                 //_roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
 
-                                _states = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.States)]);
+                                _states = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)]);
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
                                 _education = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Education)]);
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);

@@ -345,18 +345,15 @@ public partial class Candidates
     {
         return ExecuteMethod(async () =>
                              {
-                                 if (_target != null && _target != candidate.Data)
-                                 {
-                                     // return when target is equal to args.data
-                                     await Grid.ExpandCollapseDetailRowAsync(_target);
-                                 }
-
                                  int _index = await Grid.GetRowIndexByPrimaryKeyAsync(candidate.Data.ID);
                                  if (_index != Grid.SelectedRowIndex)
                                  {
                                      await Grid.SelectRowAsync(_index);
                                  }
 
+                                 await Grid.CollapseAllDetailRowAsync();
+                                 await Grid.ExpandCollapseDetailRowAsync(candidate.Data);
+                                 
                                  _target = candidate.Data;
 
                                  VisibleSpinner = true;
