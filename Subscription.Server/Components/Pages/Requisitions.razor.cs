@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-22-2025 20:07
+// Last Updated On:     05-10-2025 20:14
 // *****************************************/
 
 #endregion
@@ -85,7 +85,7 @@ public partial class Requisitions
 
     private List<KeyValues> NextSteps { get; } = [];
 
-    // private int Page { get; set; } = 1;
+    private RedisService RedisService { get; set; }
 
     private int RequisitionID { get; set; }
 
@@ -143,7 +143,6 @@ public partial class Requisitions
                                                                         SearchModel.Title = "";
                                                                         SearchModel.Page = 1;
                                                                         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                        //await Grid.Refresh();
                                                                     });
 
     private Task AutocompleteValueChange(ChangeEventArgs<string, KeyValues> filter) => ExecuteMethod(async () =>
@@ -151,7 +150,6 @@ public partial class Requisitions
                                                                                                          SearchModel.Title = filter.Value;
                                                                                                          SearchModel.Page = 1;
                                                                                                          await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                                                         //await Grid.Refresh();
                                                                                                      });
 
     private Task ClearFilter() => ExecuteMethod(async () =>
@@ -159,7 +157,6 @@ public partial class Requisitions
                                                     SearchModel.Clear();
                                                     SearchModel.User = User;
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                    //await Grid.Refresh();
                                                 });
 
     private Task DataHandler(object obj) => ExecuteMethod(async () =>
@@ -331,9 +328,7 @@ public partial class Requisitions
                                                                           {
                                                                               SearchModel.Title = alphabet.ToString();
                                                                               SearchModel.Page = 1;
-                                                                              /*_query.Queries.Params["GetInformation"] = _companies.Count == 0;*/
                                                                               await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                              //await Grid.Refresh();
                                                                           });
 
     private string GetDurationCode(string durationCode)
@@ -349,43 +344,37 @@ public partial class Requisitions
 
     private string GetLocation()
     {
-        /*if (_states == null || location.ToInt32() == 0)
-        {
-            return location;
-        }
-
-        foreach (IntValues _intValues in _states.Where(intValues => location.ToInt32() == intValues.KeyValue))
-        {
-            return _intValues.Text;
-        }
-
-        return location;*/
-        string _location = "";
+        // string _location = "";
         if (_reqDetailsObject == null)
         {
-            return _location;
+            return "";
         }
 
+        List<string> _parts = [];
         if (_reqDetailsObject.City.NotNullOrWhiteSpace())
         {
-            _location = _reqDetailsObject.City;
+            _parts.Add( _reqDetailsObject.City);
         }
 
         if (_reqDetailsObject.StateID.ToInt32() != 0)
         {
-            foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
+            IntValues state = _states.FirstOrDefault(s => s.KeyValue == _reqDetailsObject.StateID.ToInt32());
+            if (state != null)
+                _parts.Add(state.Text);
+            /*foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
             {
                 _location = $"{_location}, {_intValues.Text}";
                 break;
-            }
+            }*/
         }
 
         if (_reqDetailsObject.ZipCode.NotNullOrWhiteSpace())
         {
-            _location = $"{_location}, {_reqDetailsObject.ZipCode}";
+            _parts.Add(_reqDetailsObject.ZipCode);
+            /*_location = $"{_location}, {_reqDetailsObject.ZipCode}";*/
         }
 
-        return _location;
+        return string.Join(", ", _parts);
     }
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
@@ -419,10 +408,9 @@ public partial class Requisitions
             SearchModel.User = User;
             await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
         }
+
         await base.OnAfterRenderAsync(firstRender);
     }
-
-    private RedisService RedisService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

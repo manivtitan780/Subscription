@@ -1219,4 +1219,8 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     background-color: var(--c-red-light);
     color: var(--c-wh);
 }
+
+.e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons.e-justify, .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons.e-align-right {
+    color: var(--c-wh);
+}
 /* #endregion RichTextEditor */

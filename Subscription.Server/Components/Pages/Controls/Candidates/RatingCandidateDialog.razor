@@ -11,7 +11,7 @@
         The dialog includes a grid to display existing Candidate Rating entries and a form to edit the selected Candidate Rating details.
         It uses Syncfusion components such as SfDialog, SfGrid, SfDataForm and SfRating for the UI.
 *@
-<SfDialog Header="Edit Rating" Height="575px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
+<SfDialog CssClass="dialogPopup" Header="Edit Rating" Height="585px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="600px">
 	<ChildContent>
 		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -30,8 +30,8 @@
 		</div>
 		<SfDataForm EditContext="Context" ID="ratingEditForm" OnValidSubmit="SaveRatingDialog" @ref="EditRatingForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Rating</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelRatingDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelRatingDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Rating</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateRatingValidator"/>
