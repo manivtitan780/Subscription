@@ -357,31 +357,25 @@ public partial class Requisitions
         if (_reqDetailsObject.StateID.ToInt32() != 0)
         {
             StateCache _state = _states.FirstOrDefault(s => s.KeyValue == _reqDetailsObject.StateID.ToInt32());
-            _parts.Add(_state.Text);
-            /*foreach (IntValues _intValues in _states.Where(intValues => _reqDetailsObject.StateID.ToInt32() == intValues.KeyValue))
-            {
-                _location = $"{_location}, {_intValues.Text}";
-                break;
-            }*/
+            _parts.Add(_state.Code);
         }
 
         if (_reqDetailsObject.ZipCode.NotNullOrWhiteSpace())
         {
             _parts.Add(_reqDetailsObject.ZipCode);
-            /*_location = $"{_location}, {_reqDetailsObject.ZipCode}";*/
         }
 
         return string.Join(", ", _parts);
     }
 
-    private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
+    /*private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
                                                                                    {
                                                                                        //Page = page.CurrentPage;
                                                                                        SearchModel.Page = page.CurrentPage;
 
                                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                        //await Grid.Refresh();
-                                                                                   });
+                                                                                   });*/
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
