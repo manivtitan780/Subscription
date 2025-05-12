@@ -351,7 +351,7 @@ public partial class Requisitions
         List<string> _parts = [];
         if (_reqDetailsObject.City.NotNullOrWhiteSpace())
         {
-            _parts.Add( _reqDetailsObject.City);
+            _parts.Add(_reqDetailsObject.City);
         }
 
         if (_reqDetailsObject.StateID.ToInt32() != 0)
@@ -458,7 +458,7 @@ public partial class Requisitions
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
 
-                                while (_recruiters == null)
+                                /*while (_recruiters == null)
                                 {
                                     List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
                                     if (_users == null)
@@ -471,7 +471,20 @@ public partial class Requisitions
                                     {
                                         _recruiters.Add(new() {KeyValue = _user.UserName, Text = _user.UserName});
                                     }
+                                }*/
+                                if (_recruiters == null)
+                                {
+                                    List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
+
+                                    if (_users != null)
+                                    {
+                                        _recruiters = _users
+                                                     .Where(user => user.Role is 2 or 4 or 5 or 6)
+                                                     .Select(user => new KeyValues {KeyValue = user.UserName, Text = user.UserName})
+                                                     .ToList();
+                                    }
                                 }
+
 
                                 Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Skills)]);
 
@@ -480,54 +493,53 @@ public partial class Requisitions
 
                                 if (_statusCodes is {Count: > 0})
                                 {
-                                    _search = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ").Select(statusCode => statusCode.Status).ToList();
+                                    _search = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ")
+                                                          .Select(statusCode => statusCode.Status)
+                                                          .ToList();
                                     _statusSearch = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ")
-                                                                .Select(statusCode => new KeyValues {Text = statusCode.Status, KeyValue = statusCode.Code}).ToList();
-                                    /*foreach (StatusCode _statusCode in _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ"))
-                                    {
-                                        //fill _search array
-
-                                        /*_statusSearch.Add(new()
-                                                          {
-                                                              Status = _statusCode.Status,
-                                                              Code = _statusCode.Code
-                                                          });#1#
-                                    }*/
+                                                                .Select(statusCode => new KeyValues {Text = statusCode.Status, KeyValue = statusCode.Code})
+                                                                .ToList();
                                 }
 
                                 List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);
 
-                                //_companies = [];
                                 Companies = [];
-                                /*_companies.Add(new()
-                                               {
-                                                   KeyValue = "All Companies",
-                                                   Text = "%"
-                                               });*/
-                                if (_companyList != null)
+                                /*if (_companyList != null)
                                 {
                                     foreach (CompaniesList _company in _companyList.Where(company => company.UpdatedBy == User || company.UpdatedBy == "ADMIN"))
                                     {
-                                        /*_companies.Add(new()
-                                                       {
-                                                           KeyValue = _company.CompanyName,
-                                                           Text = _company.CompanyName
-                                                       });*/
-
                                         Companies.Add(new()
                                                       {
                                                           ID = _company.ID,
                                                           CompanyName = _company.CompanyName
                                                       });
                                     }
+                                }*/
+                                if (_companyList?.Count > 0)
+                                {
+                                    IEnumerable<Company> _filtered = _companyList.Where(c => c.UpdatedBy == User || c.UpdatedBy == "ADMIN")
+                                                                                 .Select(c => new Company
+                                                                                              {
+                                                                                                  ID = c.ID, CompanyName = c.CompanyName
+                                                                                              });
+
+                                    Companies.AddRange(_filtered);
                                 }
 
                                 List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)]);
-                                foreach (CompanyContacts _companyContact in _companyContacts) //.Where(companyContact => _company.ID == companyContact.CompanyID))
+                                if (_companyContacts?.Count > 0)
+                                {
+                                    CompanyContacts.AddRange(_companyContacts.Select(c => new CompanyContacts
+                                                                                          {
+                                                                                              CompanyID = c.CompanyID, ID = c.ID, ContactName = c.ContactName
+                                                                                          }));
+                                }
+
+                                /*foreach (CompanyContacts _companyContact in _companyContacts) //.Where(companyContact => _company.ID == companyContact.CompanyID))
                                 {
                                     CompanyContacts.Add(new() {CompanyID = _companyContact.CompanyID, ID = _companyContact.ID, ContactName = _companyContact.ContactName});
                                     // break;
-                                }
+                                }*/
 
                                 _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
                             });
