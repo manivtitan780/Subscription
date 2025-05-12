@@ -368,15 +368,6 @@ public partial class Requisitions
         return string.Join(", ", _parts);
     }
 
-    /*private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
-                                                                                   {
-                                                                                       //Page = page.CurrentPage;
-                                                                                       SearchModel.Page = page.CurrentPage;
-
-                                                                                       await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
-                                                                                       //await Grid.Refresh();
-                                                                                   });*/
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -405,7 +396,6 @@ public partial class Requisitions
 
     protected override async Task OnInitializedAsync()
     {
-        // _initializationTaskSource = new();
         await ExecuteMethod(async () =>
                             {
                                 // Get user claims
@@ -458,20 +448,6 @@ public partial class Requisitions
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
                                 _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
 
-                                /*while (_recruiters == null)
-                                {
-                                    List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
-                                    if (_users == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    _recruiters = [];
-                                    foreach (UserList _user in _users.Where(user => user.Role is 2 or 4 or 5 or 6))
-                                    {
-                                        _recruiters.Add(new() {KeyValue = _user.UserName, Text = _user.UserName});
-                                    }
-                                }*/
                                 if (_recruiters == null)
                                 {
                                     List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
@@ -504,17 +480,7 @@ public partial class Requisitions
                                 List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);
 
                                 Companies = [];
-                                /*if (_companyList != null)
-                                {
-                                    foreach (CompaniesList _company in _companyList.Where(company => company.UpdatedBy == User || company.UpdatedBy == "ADMIN"))
-                                    {
-                                        Companies.Add(new()
-                                                      {
-                                                          ID = _company.ID,
-                                                          CompanyName = _company.CompanyName
-                                                      });
-                                    }
-                                }*/
+
                                 if (_companyList?.Count > 0)
                                 {
                                     IEnumerable<Company> _filtered = _companyList.Where(c => c.UpdatedBy == User || c.UpdatedBy == "ADMIN")
@@ -535,12 +501,6 @@ public partial class Requisitions
                                                                                           }));
                                 }
 
-                                /*foreach (CompanyContacts _companyContact in _companyContacts) //.Where(companyContact => _company.ID == companyContact.CompanyID))
-                                {
-                                    CompanyContacts.Add(new() {CompanyID = _companyContact.CompanyID, ID = _companyContact.ID, ContactName = _companyContact.ContactName});
-                                    // break;
-                                }*/
-
                                 _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
                             });
 
@@ -549,7 +509,6 @@ public partial class Requisitions
 
     private async Task PageChanging(PageChangedEventArgs page)
     {
-        //Page = page.CurrentPage;
         SearchModel.Page = page.CurrentPage;
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
@@ -558,7 +517,6 @@ public partial class Requisitions
     {
         SearchModel.ItemCount = page.CurrentPageSize;
         SearchModel.Page = 1;
-        //await Grid.GoToPageAsync(1);
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
 
