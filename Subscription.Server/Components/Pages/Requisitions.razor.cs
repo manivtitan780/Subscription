@@ -21,7 +21,7 @@ public partial class Requisitions
 
     private List<CandidateActivity> _candActivityObject = [];
     private List<IntValues> _education = [], _eligibility = [], _experience = [];
-    private List<KeyValues> /*_companies = [], */ _jobOptions = [];
+    private List<JobOptions> /*_companies = [], */ _jobOptions = [];
 
     private Preferences _preference;
     private List<KeyValues> _recruiters;
@@ -442,7 +442,7 @@ public partial class Requisitions
                                 _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
                                 _education = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Education)]);
                                 _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
-                                _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
+                                _jobOptions = General.DeserializeObject<List<JobOptions>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
 
                                 if (_recruiters == null)
                                 {
