@@ -6,8 +6,8 @@
         <DialogEvents OnOpen="DialogOpen"/>
         <SfDataForm EditContext="Context" ID="requisitionEditForm" OnValidSubmit="SaveRequisitionDialog" @ref="EditRequisitionForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
-                <SfButton CssClass="e-primary" type="submit">Save Requisition</SfButton>
-                <SfButton CssClass="e-secondary" OnClick="CancelDialog" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDialog" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Requisition</SfButton>
             </FormButtons>
             <FormValidator>
                 <FluentValidationValidator Validator="_requisitionDetailsValidator"/>

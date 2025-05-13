@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
-// File Name:           JobOption.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          09-17-2022 20:01
-// Last Updated On:     10-26-2023 21:17
+// Solution:            Subscription
+// Project:             Subscription.Model
+// File Name:           JobOptions.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-13-2025 15:15
 // *****************************************/
 
 #endregion
@@ -22,39 +22,39 @@ namespace Subscription.Model;
 ///     A job option is a configurable aspect of a job, such as its benefits, duration, expenses, and more.
 ///     This class provides a way to encapsulate these aspects in a single object.
 /// </remarks>
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class JobOptions
 {
 	/// <summary>
 	///     Initializes a new instance of the <see cref="JobOptions" /> class.
 	/// </summary>
 	public JobOptions()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
-	public JobOptions(string keyValue, string text, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
-					 bool exp = false, bool placeFee = false, bool benefits = false, bool showHours = false, string rateText = "Rate", string percentText = "Percent", decimal costPercent = 0,
-					 bool showPercent = false)
-	{
-		KeyValue = keyValue;
-		Text = text;
-		Description = description;
-		UpdatedDate = updatedDate;
-		Duration = duration;
-		Rate = rate;
-		Sal = sal;
-		Tax = tax;
-		Exp = exp;
-		PlaceFee = placeFee;
-		Benefits = benefits;
-		ShowHours = showHours;
-		RateText = rateText;
-		PercentText = percentText;
-		CostPercent = costPercent;
-		ShowPercent = showPercent;
-	}
+    public JobOptions(string keyValue, string text, string description = "", string updatedDate = "", bool duration = false, bool rate = false, bool sal = false, string tax = "",
+                      bool exp = false, bool placeFee = false, bool benefits = false, bool showHours = false, string rateText = "Rate", string percentText = "Percent", decimal costPercent = 0,
+                      bool showPercent = false, string flags = "")
+    {
+        KeyValue = keyValue;
+        Text = text;
+        Description = description;
+        UpdatedDate = updatedDate;
+        Duration = duration;
+        Rate = rate;
+        Sal = sal;
+        Tax = tax;
+        Exp = exp;
+        PlaceFee = placeFee;
+        Benefits = benefits;
+        ShowHours = showHours;
+        RateText = rateText;
+        PercentText = percentText;
+        CostPercent = costPercent;
+        ShowPercent = showPercent;
+        Flags = flags;
+    }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the job option includes benefits.
@@ -67,23 +67,7 @@ public class JobOptions
 	///     When benefits are associated with the job option, this property is set to <c>true</c>.
 	///     When there are no benefits associated with the job option, this property is set to <c>false</c>.
 	/// </remarks>
-	public bool Benefits
-	{
-		get;
-		set;
-	}
-
-	/// <summary>
-	///     Gets or sets the KeyValue for the job option.
-	/// </summary>
-	/// <value>
-	///     The KeyValue for the job option.
-	/// </value>
-	public string KeyValue
-	{
-		get;
-		set;
-	}
+	public bool Benefits { get; set; }
 
 	/// <summary>
 	///     Gets or sets the cost percentage for the job option.
@@ -94,11 +78,7 @@ public class JobOptions
 	/// <remarks>
 	///     This property is used in calculations related to job options. It can be set to any decimal value.
 	/// </remarks>
-	public decimal CostPercent
-	{
-		get;
-		set;
-	}
+	public decimal CostPercent { get; set; }
 
 	/// <summary>
 	///     Gets or sets the description of the job option.
@@ -106,11 +86,7 @@ public class JobOptions
 	/// <value>
 	///     The description of the job option.
 	/// </value>
-	public string Description
-	{
-		get;
-		set;
-	}
+	public string Description { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the job option has a duration.
@@ -123,11 +99,7 @@ public class JobOptions
 	///     When a duration is associated with the job option, this property is set to <c>true</c>.
 	///     When there is no duration associated with the job option, this property is set to <c>false</c>.
 	/// </remarks>
-	public bool Duration
-	{
-		get;
-		set;
-	}
+	public bool Duration { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the job option includes expenses.
@@ -140,11 +112,9 @@ public class JobOptions
 	///     When expenses are included in the job option, this property will be set to <c>true</c>.
 	///     When expenses are not included in the job option, this property will be set to <c>false</c>.
 	/// </remarks>
-	public bool Exp
-	{
-		get;
-		set;
-	}
+	public bool Exp { get; set; }
+
+    public string Flags { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current JobOption instance is being added.
@@ -157,23 +127,15 @@ public class JobOptions
 	///     When a new JobOption is being added, this property is set to <c>true</c>.
 	///     When an existing JobOption is being edited, this property is set to <c>false</c>.
 	/// </remarks>
-	public bool IsAdd
-	{
-		get;
-		set;
-	}
+	public bool IsAdd { get; set; }
 
 	/// <summary>
-	///     Gets or sets the option for the job.
+	///     Gets or sets the KeyValue for the job option.
 	/// </summary>
 	/// <value>
-	///     The option for the job.
+	///     The KeyValue for the job option.
 	/// </value>
-	public string Text
-	{
-		get;
-		set;
-	}
+	public string KeyValue { get; set; }
 
 	/// <summary>
 	///     Gets or sets the percentage text for the job option.
@@ -184,11 +146,7 @@ public class JobOptions
 	/// <remarks>
 	///     This property is used in the JobOptionDialog to bind the value of the TextBoxControl.
 	/// </remarks>
-	public string PercentText
-	{
-		get;
-		set;
-	}
+	public string PercentText { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the placement fee is included in the job option.
@@ -200,11 +158,7 @@ public class JobOptions
 	///     This property is used to control the inclusion of the placement fee in the job option. It is used in the
 	///     calculation of the total cost of the job option.
 	/// </remarks>
-	public bool PlaceFee
-	{
-		get;
-		set;
-	}
+	public bool PlaceFee { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the rate is included in the job option.
@@ -216,11 +170,7 @@ public class JobOptions
 	///     This property is used to control the inclusion of the rate in the job option. It is used in the calculation of the
 	///     total cost of the job option.
 	/// </remarks>
-	public bool Rate
-	{
-		get;
-		set;
-	}
+	public bool Rate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the rate text for the job option.
@@ -228,11 +178,7 @@ public class JobOptions
 	/// <value>
 	///     The rate text.
 	/// </value>
-	public string RateText
-	{
-		get;
-		set;
-	}
+	public string RateText { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the salary is included in the job option.
@@ -244,11 +190,7 @@ public class JobOptions
 	///     This property is used to control the inclusion of the salary in the job option. It is used in the calculation of
 	///     the total cost of the job option.
 	/// </remarks>
-	public bool Sal
-	{
-		get;
-		set;
-	}
+	public bool Sal { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether to display the hours in the job option.
@@ -259,11 +201,7 @@ public class JobOptions
 	/// <remarks>
 	///     This property is used to control the visibility of the hours related to the job option in the user interface.
 	/// </remarks>
-	public bool ShowHours
-	{
-		get;
-		set;
-	}
+	public bool ShowHours { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether to display the percentage in the job option.
@@ -274,11 +212,7 @@ public class JobOptions
 	/// <remarks>
 	///     This property is used to control the visibility of the percentage related to the job option in the user interface.
 	/// </remarks>
-	public bool ShowPercent
-	{
-		get;
-		set;
-	}
+	public bool ShowPercent { get; set; }
 
 	/// <summary>
 	///     Gets or sets the tax information for the job option.
@@ -290,17 +224,17 @@ public class JobOptions
 	///     This property is used to store the tax information related to the job option. It is used in the calculation of the
 	///     total cost of the job option.
 	/// </remarks>
-	public string Tax
-	{
-		get;
-		set;
-	} = "";
-	
-	public List<string> TaxList
-	{
-		get => Tax.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-		set => Tax = string.Join(",", value);
-	}
+	public string Tax { get; set; } = "";
+
+    public List<string> TaxList { get => Tax.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList(); set => Tax = string.Join(",", value); }
+
+	/// <summary>
+	///     Gets or sets the option for the job.
+	/// </summary>
+	/// <value>
+	///     The option for the job.
+	/// </value>
+	public string Text { get; set; }
 
 	/// <summary>
 	///     Gets or sets the date when the JobOption was last updated.
@@ -312,11 +246,7 @@ public class JobOptions
 	///     This property is used to track the last modification of the JobOption instance. It is displayed in the "Last
 	///     Updated" column of the Job Options grid in the Admin interface.
 	/// </remarks>
-	public string UpdatedDate
-	{
-		get;
-		set;
-	}
+	public string UpdatedDate { get; set; }
 
 	/// <summary>
 	///     Resets all properties of the JobOption instance to their default values.
@@ -327,25 +257,26 @@ public class JobOptions
 	///     reusing a JobOption instance for a new operation.
 	/// </remarks>
 	public void Clear()
-	{
-		KeyValue = "";
-		Text = "";
-		Description = "";
-		UpdatedDate = "";
-		Duration = false;
-		Rate = false;
-		Sal = false;
-		Tax = "";
-		Exp = false;
-		PlaceFee = false;
-		Benefits = false;
-		ShowHours = false;
-		RateText = "Rate";
-		PercentText = "Percent";
-		CostPercent = 0M;
-		ShowPercent = false;
-		IsAdd = false;
-	}
+    {
+        KeyValue = "";
+        Text = "";
+        Description = "";
+        UpdatedDate = "";
+        Duration = false;
+        Rate = false;
+        Sal = false;
+        Tax = "";
+        Exp = false;
+        PlaceFee = false;
+        Benefits = false;
+        ShowHours = false;
+        RateText = "Rate";
+        PercentText = "Percent";
+        CostPercent = 0M;
+        ShowPercent = false;
+        IsAdd = false;
+		Flags = "";
+    }
 
 	/// <summary>
 	///     Creates a copy of the current JobOption instance.

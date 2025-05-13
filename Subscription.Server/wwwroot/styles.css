@@ -1224,3 +1224,12 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     color: var(--c-wh);
 }
 /* #endregion RichTextEditor */
+
+.truncate-text {
+    display: inline-block;
+    max-width: 100%; /* or set a fixed width like 150px */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}

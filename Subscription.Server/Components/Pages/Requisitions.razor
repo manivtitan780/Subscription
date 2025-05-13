@@ -96,7 +96,7 @@
 						</SpeedDialItems>
 					</SfSpeedDial>
 					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%" SelectedItem="_selectedTab">
-						<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+						<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 						<TabAnimationSettings>
 							<TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"></TabAnimationPrevious>
 							<TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"></TabAnimationNext>
@@ -176,7 +176,7 @@
 		</SfGrid>
 	</GridContent>
 </GridHeader>
-<SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+@*<SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>*@
 <AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
 <RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
                          Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
