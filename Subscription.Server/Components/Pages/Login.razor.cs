@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           Login.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          04-22-2024 15:04
-// Last Updated On:     11-28-2024 19:11
+// Last Updated On:     05-12-2025 20:29
 // *****************************************/
 
 #endregion
@@ -22,43 +22,18 @@ namespace Subscription.Server.Components.Pages;
 public partial class Login
 {
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
     [Inject]
-    private ILocalStorageService LocalStorage
-    {
-        get;
-        set;
-    }
+    private ILocalStorageService LocalStorage { get; set; }
 
-    private EditForm LoginForm
-    {
-        get;
-        set;
-    }
-
-    private LoginModel LoginModel
-    {
-        get;
-    } = new();
+    private LoginModel LoginModel { get; } = new();
 
     [Inject]
-    private NavigationManager NavigationManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavigationManager { get; set; }
 
     [Inject]
-    private ISessionStorageService SessionStorage
-    {
-        get;
-        set;
-    }
+    private ISessionStorageService SessionStorage { get; set; }
 
     private async Task LoginToApplication(EditContext arg)
     {

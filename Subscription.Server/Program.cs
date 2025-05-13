@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           Program.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-22-2024 15:04
-// Last Updated On:     12-12-2024 19:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-12-2025 20:27
 // *****************************************/
 
 #endregion
@@ -16,8 +16,6 @@
 #region Using
 
 using Microsoft.AspNetCore.ResponseCompression;
-
-using OpenAI;
 
 using Subscription.Server.Components;
 
@@ -63,14 +61,14 @@ _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options
                                                                                 };
                                                  return new(new(_apiKey ?? ""), _options);
                                              });*/
-_builder.Services.AddSingleton<RedisService>(sp =>
-                                            {
-                                                string host = _config["Garnet:HostName"];
-                                                int port = (_config["Garnet:SslPort"] ?? "").ToInt32();
-                                                string access = _config["GarnetServer:Access"];
+_builder.Services.AddSingleton<RedisService>(_ =>
+                                             {
+                                                 string host = _config["Garnet:HostName"];
+                                                 int port = (_config["Garnet:SslPort"] ?? "").ToInt32();
+                                                 string access = _config["GarnetServer:Access"];
 
-                                                return new(host, port, access, false);
-                                            });
+                                                 return new(host, port, access, false);
+                                             });
 
 _builder.Services.AddSingleton<ZipCodeService>();
 
@@ -87,7 +85,8 @@ _builder.Host.UseSerilog();*/
 WebApplication _app = _builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!_app.Environment.IsDevelopment()){
+if (!_app.Environment.IsDevelopment())
+{
     _app.UseExceptionHandler("/Error", true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     _app.UseHsts();
