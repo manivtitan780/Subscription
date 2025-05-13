@@ -55,7 +55,9 @@
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupCheck" LabelText="Display Options">
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Duration)" LabelText="Duration required?" ID="checkedDuration" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Rate)" LabelText="Rate required?" ID="checkedRate" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.Sal)" LabelText="Salary required?" ID="checkedSal" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Exp)" LabelText="Expenses required?" ID="checkedExp" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.PlaceFee)" LabelText="Placement Fee required?" ID="checkedPlaceFee" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Benefits)" LabelText="Benefits required?" ID="checkedBenefits" EditorType="FormEditorType.Switch"/>

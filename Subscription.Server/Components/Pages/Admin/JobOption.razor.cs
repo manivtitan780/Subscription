@@ -297,6 +297,7 @@ public partial class JobOption : ComponentBase
                                                                          {
                                                                              await FilterSet("");
                                                                              DataSource = General.DeserializeObject<List<JobOptions>>(_response);
+                                                                             await Grid.Refresh();
                                                                          }
                                                                      });
 
