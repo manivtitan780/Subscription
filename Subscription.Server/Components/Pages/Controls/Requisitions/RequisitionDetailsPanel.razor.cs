@@ -8,7 +8,7 @@
 // File Name:           RequisitionDetailsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-26-2025 16:02
-// Last Updated On:     03-03-2025 15:03
+// Last Updated On:     05-13-2025 20:38
 // *****************************************/
 
 #endregion
@@ -16,8 +16,6 @@
 #region Using
 
 using Syncfusion.Blazor.Calendars;
-
-using FocusEventArgs = Syncfusion.Blazor.Calendars.FocusEventArgs;
 
 #endregion
 
@@ -108,11 +106,7 @@ public partial class RequisitionDetailsPanel
     ///     The MouseEventArgs provides detailed information and functionality for the Cancel action.
     /// </remarks>
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of companies associated with the requisition.
@@ -121,11 +115,7 @@ public partial class RequisitionDetailsPanel
     ///     The list of companies.
     /// </value>
     [Parameter]
-    public List<Company> Companies
-    {
-        get;
-        set;
-    }
+    public List<Company> Companies { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of company contacts associated with the requisition.
@@ -134,23 +124,11 @@ public partial class RequisitionDetailsPanel
     ///     The list of company contacts.
     /// </value>
     [Parameter]
-    public List<CompanyContacts> CompanyContacts
-    {
-        get;
-        set;
-    }
+    public List<CompanyContacts> CompanyContacts { get; set; }
 
-    private IEnumerable<CompanyContacts> CompanyContactsFiltered
-    {
-        get;
-        set;
-    } = [];
+    private IEnumerable<CompanyContacts> CompanyContactsFiltered { get; set; } = [];
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
     /// <summary>
     ///     Gets or sets the CSS class name for the description field in the requisition details panel.
@@ -162,46 +140,32 @@ public partial class RequisitionDetailsPanel
     /// <remarks>
     ///     This property is used to change the visual representation of the description field based on the validation state.
     /// </remarks>
-    private string CssClassName
-    {
-        get;
-        set;
-    } = "success";
+    private string CssClassName { get; set; } = "success";
 
     /// <summary>
     ///     Gets or sets the Dialog property, which represents a dialog in the RequisitionDetailsPanel.
     /// </summary>
-    /// <value> 
+    /// <value>
     ///     The Dialog property gets/sets the value of a SfDialog object.
     /// </value>
     /// <remarks>
     ///     This property is used for managing the dialog display in the RequisitionDetailsPanel.
     ///     The SfDialog object provides detailed control over the dialog's behavior and appearance.
     /// </remarks>
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
     /// <summary>
     ///     Gets a list of duration codes. Each code is represented as a <see cref="KeyValues" /> object,
     ///     where the key is the code and the value is the description of the duration (e.g., "M" for months, "Y" for years).
     /// </summary>
-    private List<KeyValues> DurationCode
-    {
-        get;
-    } = [new() {KeyValue = "D", Text = "Days"}, new() {KeyValue = "W", Text = "Weeks"}, new() {KeyValue = "M", Text = "Months"}, new() {KeyValue = "Y", Text = "Years"}];
+    private List<KeyValues> DurationCode { get; } =
+        [new() {KeyValue = "D", Text = "Days"}, new() {KeyValue = "W", Text = "Weeks"}, new() {KeyValue = "M", Text = "Months"}, new() {KeyValue = "Y", Text = "Years"}];
 
     /// <summary>
     ///     Gets or sets the EditForm for the RequisitionDetailsPanel.
     ///     This form is used to edit the details of a requisition.
     /// </summary>
-    private SfDataForm EditRequisitionForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm EditRequisitionForm { get; set; }
 
     /// <summary>
     ///     Gets or sets the education details for the requisition.
@@ -210,11 +174,7 @@ public partial class RequisitionDetailsPanel
     ///     The education details represented as a list of <see cref="IntValues" />.
     /// </value>
     [Parameter]
-    public List<IntValues> Education
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Education { get; set; }
 
     /// <summary>
     ///     Gets or sets the eligibility criteria as a list of integer values.
@@ -223,11 +183,7 @@ public partial class RequisitionDetailsPanel
     ///     The eligibility criteria.
     /// </value>
     [Parameter]
-    public List<IntValues> Eligibility
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Eligibility { get; set; }
 
     /// <summary>
     ///     Gets or sets the experience requirements for the requisition.
@@ -236,11 +192,7 @@ public partial class RequisitionDetailsPanel
     ///     The experience requirements are represented as a list of <see cref="IntValues" />.
     /// </value>
     [Parameter]
-    public List<IntValues> Experience
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Experience { get; set; }
 
     /// <summary>
     ///     Gets or sets the job options for the requisition details panel.
@@ -249,11 +201,7 @@ public partial class RequisitionDetailsPanel
     ///     The job options are represented as a list of <see cref="KeyValues" /> instances.
     /// </value>
     [Parameter]
-    public List<KeyValues> JobOptions
-    {
-        get;
-        set;
-    }
+    public List<JobOptions> JobOptions { get; set; }
 
     /// <summary>
     ///     Gets or sets the JavaScript runtime instance.
@@ -265,11 +213,7 @@ public partial class RequisitionDetailsPanel
     ///     This property is injected and used to perform operations that require JavaScript interop.
     /// </remarks>
     [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
     /// <summary>
     ///     Gets or sets the model for the Requisition Details Panel.
@@ -278,11 +222,7 @@ public partial class RequisitionDetailsPanel
     ///     The model representing the details of a requisition.
     /// </value>
     [Parameter]
-    public RequisitionDetails Model
-    {
-        get;
-        set;
-    } = new();
+    public RequisitionDetails Model { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when a file is uploaded.
@@ -295,11 +235,7 @@ public partial class RequisitionDetailsPanel
     ///     The UploadChangeEventArgs provides detailed information and functionality for the file upload action.
     /// </remarks>
     [Parameter]
-    public EventCallback<UploadChangeEventArgs> OnFileUpload
-    {
-        get;
-        set;
-    }
+    public EventCallback<UploadChangeEventArgs> OnFileUpload { get; set; }
 
     /// <summary>
     ///     Gets the list of priority levels for the requisition.
@@ -308,10 +244,7 @@ public partial class RequisitionDetailsPanel
     ///     The list of priority levels, represented as <see cref="IntValues" />, where the integer key represents the priority
     ///     level and the string value represents the priority description.
     /// </value>
-    private List<IntValues> Priority
-    {
-        get;
-    } = [new() {KeyValue = 0, Text = "Low"}, new() {KeyValue = 1, Text = "Medium"}, new() {KeyValue = 2, Text = "High"}];
+    private List<IntValues> Priority { get; } = [new() {KeyValue = 0, Text = "Low"}, new() {KeyValue = 1, Text = "Medium"}, new() {KeyValue = 2, Text = "High"}];
 
     /// <summary>
     ///     Gets or sets the list of recruiters associated with the requisition.
@@ -320,11 +253,7 @@ public partial class RequisitionDetailsPanel
     ///     The list of recruiters, represented as instances of the KeyValues class.
     /// </value>
     [Parameter]
-    public List<KeyValues> Recruiters
-    {
-        get;
-        set;
-    }
+    public List<KeyValues> Recruiters { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when the Save action is performed.
@@ -337,11 +266,7 @@ public partial class RequisitionDetailsPanel
     ///     The EditContext provides detailed information and functionality for the Save action.
     /// </remarks>
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of skills associated with the requisition.
@@ -350,11 +275,7 @@ public partial class RequisitionDetailsPanel
     ///     The list of skills, each represented as an instance of the <see cref="IntValues" /> class.
     /// </value>
     [Parameter]
-    public List<IntValues> Skills
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Skills { get; set; }
 
     /// <summary>
     ///     Gets or sets the SfSpinner control of the RequisitionDetailsPanel.
@@ -365,11 +286,7 @@ public partial class RequisitionDetailsPanel
     /// <remarks>
     ///     This property is used to display a spinner animation during asynchronous operations.
     /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of states for the RequisitionDetailsPanel.
@@ -378,11 +295,7 @@ public partial class RequisitionDetailsPanel
     ///     The list of states, represented as instances of the IntValues class.
     /// </value>
     [Parameter]
-    public List<StateCache> States
-    {
-        get;
-        set;
-    }
+    public List<StateCache> States { get; set; }
 
     /// <summary>
     ///     Gets or sets the title of the RequisitionDetailsPanel.
@@ -394,17 +307,9 @@ public partial class RequisitionDetailsPanel
     ///     This property is used to set the header of the RequisitionDetailsPanel dialog.
     /// </remarks>
     [Parameter]
-    public string Title
-    {
-        get;
-        set;
-    }
+    public string Title { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Handles the cancellation of the dialog.
