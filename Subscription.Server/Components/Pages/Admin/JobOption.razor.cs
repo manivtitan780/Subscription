@@ -237,7 +237,7 @@ public partial class JobOption : ComponentBase
                                 }
                                 else
                                 {
-                                    IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
+                                    Claim[] _enumerable = _claims as Claim[] ?? _claims.ToArray();
                                     User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
                                     RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     if (User.NullOrWhiteSpace())
