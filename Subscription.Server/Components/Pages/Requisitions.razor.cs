@@ -432,8 +432,6 @@ public partial class Requisitions
                                     nameof(CacheObjects.CompanyContacts)
                                 ];
 
-                                //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-
                                 Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
 
                                 //_roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");

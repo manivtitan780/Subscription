@@ -8,12 +8,8 @@
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     03-03-2025 16:03
+// Last Updated On:     05-14-2025 19:51
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
@@ -391,7 +387,8 @@ public class RequisitionController : ControllerBase
     ///     otherwise.
     /// </returns>
     [HttpPost]
-    public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, [FromQuery] string user, [FromQuery] string jsonPath = "", [FromQuery] string emailAddress = "maniv@titan-techs.com")
+    public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, [FromQuery] string user, [FromQuery] string jsonPath = "",
+                                                         [FromQuery] string emailAddress = "maniv@titan-techs.com")
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
         string _reqCode = "";
@@ -417,7 +414,7 @@ public class RequisitionController : ControllerBase
             _command.Char("JobOption", 1, requisition.JobOptionID);
             _command.Int("ExperienceID", requisition.ExperienceID);
             _command.Int("Eligibility", requisition.EligibilityID);
-            _command.Varchar("Duration", 50, requisition.Duration); 
+            _command.Varchar("Duration", 50, requisition.Duration);
             _command.Char("DurationCode", 1, requisition.DurationCode);
             _command.Decimal("ExpRateLow", 9, 2, requisition.ExpRateLow);
             _command.Decimal("ExpRateHigh", 9, 2, requisition.ExpRateHigh);
