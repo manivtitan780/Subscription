@@ -22,8 +22,8 @@
                     </FormItem>
                     <FormItem ColumnSpan="3" Field="@nameof(Model.ContactID)">
                         <Template>
-                            <DropDown @bind-Value="Model.ContactID" DataBound="ContactDataBound" Model="CompanyContactsFiltered" ID="dropCompanyContact" TItem="CompanyContacts"  TValue="int" 
-                                      Placeholder="Contact Name" Text="ContactName" Key="ID"/>
+                            <DropDown @bind-Value="Model.ContactID" DataBound="ContactDataBound" Model="CompanyContactsFiltered" ID="dropCompanyContact" TItem="CompanyContacts" TValue="int" 
+                                      Placeholder="Contact Name" Text="ContactName" Key="ID" DropDownValueChange="ContactChanged"/>@**@
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.CompanyCity)">
