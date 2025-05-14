@@ -23,7 +23,7 @@
 				</GridColumn>
 				<GridColumn Field="@nameof(JobOptions.KeyValue)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 				<GridColumn Field="@nameof(JobOptions.Description)" HeaderText="Description" Width="20%"/>
-				<GridColumn Field="@nameof(JobOptions.Flags)" Width="40%">
+				<GridColumn Field="@nameof(JobOptions.Flags)" Width="40%" HeaderText="Permissions">
 					<Template Context="aCon">
 						@{
 							if (aCon is JobOptions _con)

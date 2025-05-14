@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           TextArea.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-13-2024 20:12
-// Last Updated On:     12-13-2024 20:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-13-2025 20:57
 // *****************************************/
 
 #endregion
@@ -20,46 +20,25 @@ public partial class TextArea : ComponentBase
     private string _value = "";
 
     [Parameter]
-    public string ID
-    {
-        get;
-        set;
-    } = "";
+    public bool Enabled { get; set; } = true;
 
     [Parameter]
-    public int MaxLength
-    {
-        get;
-        set;
-    } = 1000;
+    public string ID { get; set; } = "";
 
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public int MaxLength { get; set; } = 1000;
 
     [Parameter]
-    public bool Readonly
-    {
-        get;
-        set;
-    }
+    public string? Placeholder { get; set; }
 
     [Parameter]
-    public Resize ResizeMode
-    {
-        get;
-        set;
-    } = Resize.None;
+    public bool Readonly { get; set; }
 
     [Parameter]
-    public int Rows
-    {
-        get;
-        set;
-    } = 5;
+    public Resize ResizeMode { get; set; } = Resize.None;
+
+    [Parameter]
+    public int Rows { get; set; } = 5;
 
     /// <summary>
     ///     Gets or sets the selected date in the TextBoxControl component.
@@ -90,27 +69,15 @@ public partial class TextArea : ComponentBase
     ///     The event provides the new TextBox value selected by the user.
     /// </summary>
     [Parameter]
-    public EventCallback<string> ValueChanged
-    {
-        get;
-        set;
-    }
+    public EventCallback<string> ValueChanged { get; set; }
 
     /// <summary>
     ///     Gets or sets the expression that identifies the value to be used by the TextBox control.
     ///     This expression is used to bind the date control's value to a specified property.
     /// </summary>
     [Parameter]
-    public Expression<Func<string>>? ValueExpression
-    {
-        get;
-        set;
-    }
+    public Expression<Func<string>>? ValueExpression { get; set; }
 
     [Parameter]
-    public string Width
-    {
-        get;
-        set;
-    } = "100%";
+    public string Width { get; set; } = "100%";
 }

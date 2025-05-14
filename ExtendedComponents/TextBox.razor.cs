@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           TextBox.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-12-2024 19:12
-// Last Updated On:     12-12-2024 20:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-13-2025 20:49
 // *****************************************/
 
 #endregion
@@ -19,11 +19,7 @@ public partial class TextBox : ComponentBase
 {
     private string _value = "";
 
-    private SfTextBox? Box
-    {
-        get;
-        set;
-    }
+    private SfTextBox? Box { get; set; }
 
     /// <summary>
     ///     Gets or sets the EditContext for the TextBoxControl component.
@@ -31,53 +27,28 @@ public partial class TextBox : ComponentBase
     ///     This context is used to interact with the form and its fields programmatically.
     /// </summary>
     [CascadingParameter, SuppressMessage("ReSharper", "PreferConcreteValueOverDefault")]
-    public EditContext EditContext
-    {
-        get;
-        set;
-    } = default!;
+    public EditContext EditContext { get; set; } = default!;
 
     [Parameter]
-    public string? ID
-    {
-        get;
-        set;
-    }
+    public bool Enabled { get; set; } = true;
 
     [Parameter]
-    public int MaxLength
-    {
-        get;
-        set;
-    } = 50;
+    public string? ID { get; set; }
 
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public int MaxLength { get; set; } = 50;
 
     [Parameter]
-    public bool Readonly
-    {
-        get;
-        set;
-    }
+    public string? Placeholder { get; set; }
 
     [Parameter]
-    public InputType TextBoxType
-    {
-        get;
-        set;
-    } = InputType.Text;
+    public bool Readonly { get; set; }
 
     [Parameter]
-    public bool ValidateOnInput
-    {
-        get;
-        set;
-    }
+    public InputType TextBoxType { get; set; } = InputType.Text;
+
+    [Parameter]
+    public bool ValidateOnInput { get; set; }
 
     /// <summary>
     ///     Gets or sets the selected date in the TextBoxControl component.
@@ -108,27 +79,15 @@ public partial class TextBox : ComponentBase
     ///     The event provides the new TextBox value selected by the user.
     /// </summary>
     [Parameter]
-    public EventCallback<string> ValueChanged
-    {
-        get;
-        set;
-    }
+    public EventCallback<string> ValueChanged { get; set; }
 
     /// <summary>
     ///     Gets or sets the expression that identifies the value to be used by the TextBox control.
     ///     This expression is used to bind the date control's value to a specified property.
     /// </summary>
     [Parameter]
-    public Expression<Func<string>>? ValueExpression
-    {
-        get;
-        set;
-    }
+    public Expression<Func<string>>? ValueExpression { get; set; }
 
     [Parameter]
-    public string Width
-    {
-        get;
-        set;
-    } = "100%";
+    public string Width { get; set; } = "100%";
 }

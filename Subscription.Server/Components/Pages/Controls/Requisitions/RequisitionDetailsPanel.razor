@@ -132,7 +132,7 @@
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.JobOptionID)">
                         <Template>
-                            <DropDown @bind-Value="Model.JobOptionID" Model="JobOptions" ID="dropJobOptions" TItem="JobOptions" TValue="string" Placeholder="Job Options" Text="Text" Key="KeyValue"/>
+                            <DropDown @bind-Value="Model.JobOptionID" Model="JobOptions" ID="dropJobOptions" TItem="JobOptions" TValue="string" Placeholder="Job Options" Text="Text" Key="KeyValue" DropDownValueChange="JobOptionChanged"/>
                         </Template>
                     </FormItem>
                 </FormGroup>
@@ -144,63 +144,63 @@
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="3" ColumnSpacing="10px" CssClass="formGroup" ID="groupAdditionalInfo" LabelText="Additional Information">
-                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)" LabelText="Expenses Paid?" ID="checkedExpenses" EditorType="FormEditorType.Switch"/>
+                    <FormItem ColumnSpan="1" Field="@nameof(Model.ExpensesPaid)" IsEnabled="@_expenses" LabelText="Expenses Paid?" ID="checkedExpenses" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)" LabelText="Security Clearance?" ID="checkedSecurity" EditorType="FormEditorType.Switch"/>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.OFCCP)" LabelText="OFFCP Compliance Required?" ID="checkedOFFCP" EditorType="FormEditorType.Switch"/>
                 </FormGroup>
                 <FormGroup ColumnCount="5" ColumnSpacing="10px" CssClass="formGroup" ID="groupFinancialInfo" LabelText="Hourly Rate Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.Duration)">
                         <Template>
-                            <TextBox @bind-Value="Model.Duration" ID="textDuration" MaxLength="4" Placeholder="Duration"/>
+                            <TextBox @bind-Value="Model.Duration" Enabled="@_duration" ID="textDuration" MaxLength="4" Placeholder="Duration"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.DurationCode)">
                         <Template>
-                            <DropDown @bind-Value="Model.DurationCode" Model="DurationCode" ID="dropDurationCode" TItem="KeyValues" TValue="string" Placeholder="Duration Code" Text="Text" Key="KeyValue"/>
+                            <DropDown @bind-Value="Model.DurationCode" Enabled="@_duration" Model="DurationCode" ID="dropDurationCode" TItem="KeyValues" TValue="string" Placeholder="Duration Code" Text="Text" Key="KeyValue"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpRateLow)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.ExpRateLow" ID="numericPayRateFrom" Max="10000" Placeholder="Pay Rate/Hr From" TValue="decimal"/>
+                            <NumericTextBox @bind-Value="Model.ExpRateLow" Enabled="@_rate" ID="numericPayRateFrom" Max="10000" Placeholder="Pay Rate/Hr From" TValue="decimal"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpRateHigh)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.ExpRateHigh" ID="numericPayRateTo" Max="10000" Placeholder="Pay Rate/Hr To" TValue="decimal"/>
+                            <NumericTextBox @bind-Value="Model.ExpRateHigh" Enabled="@_rate" ID="numericPayRateTo" Max="10000" Placeholder="Pay Rate/Hr To" TValue="decimal"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.PlacementFee)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.PlacementFee" Format="00.00 '%'" ID="numericPlacementFee" Max="100" Placeholder="Placement Fee" TValue="decimal" />
+                            <NumericTextBox @bind-Value="Model.PlacementFee" Enabled="@_placementFee" Format="00.00 '%'" ID="numericPlacementFee" Max="100" Placeholder="Placement Fee" TValue="decimal" />
                         </Template>
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="4" ColumnSpacing="10px" CssClass="formGroup" ID="groupSalaryInfo" LabelText="Salary/Load Information">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.SalaryLow)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.SalaryLow" ID="numericSalaryLow" Max="10_000_000" Placeholder="Min. Salary" TValue="decimal"/>
+                            <NumericTextBox @bind-Value="Model.SalaryLow" ID="numericSalaryLow" Enabled="@_salary" Max="10_000_000" Placeholder="Min. Salary" TValue="decimal"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.SalaryHigh)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.SalaryHigh" ID="numericSalaryHigh" Max="10_000_000" Placeholder="Max. Salary" TValue="decimal"/>
+                            <NumericTextBox @bind-Value="Model.SalaryHigh" ID="numericSalaryHigh" Enabled="@_salary" Max="10_000_000" Placeholder="Max. Salary" TValue="decimal"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpLoadLow)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.ExpLoadLow" ID="numericLoadLow" Max="10_300" Placeholder="Min. Load Rate" TValue="decimal"/>
+                            <NumericTextBox @bind-Value="Model.ExpLoadLow" ID="numericLoadLow" Max="10_300" Enabled="@_salary" Placeholder="Min. Load Rate" TValue="decimal"/>
                         </Template>
                     </FormItem>
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpLoadHigh)">
                         <Template>
-                            <NumericTextBox @bind-Value="Model.ExpLoadHigh" ID="numericLoadHigh" Max="10_300" Placeholder="Max. Load Rate" TValue="decimal"/>
+                            <NumericTextBox @bind-Value="Model.ExpLoadHigh" ID="numericLoadHigh" Max="10_300" Enabled="@_salary" Placeholder="Max. Load Rate" TValue="decimal"/>
                         </Template>
                     </FormItem>
                 </FormGroup>
                 <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupBenefitsInfo" LabelText="Benefits">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.BenefitNotes)">
                         <Template>
-                            <TextArea @bind-Value="Model.BenefitNotes" ID="textBenefits" MaxLength="8000" Placeholder="Benefits" Rows="5"></TextArea>
+                            <TextArea @bind-Value="Model.BenefitNotes" Enabled="@_benefits" ID="textBenefits" MaxLength="8000" Placeholder="Benefits" Rows="5"></TextArea>
                         </Template>
                     </FormItem>
                 </FormGroup>
