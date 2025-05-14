@@ -23,17 +23,17 @@
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="20%">
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="27%">
 					<Template Context="aCon">
 						@{
 							if (aCon is Requisition _con)
 							{
-								<span style="color: @(_con.PriorityColor)">@_con.Title</span>
+								<span class="truncate-text" style="color: @(_con.PriorityColor)" title="@_con.Title">@_con.Title</span>
 							}
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Company)" HeaderText="Company" Width="18%">
+				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Company)" HeaderText="Company" Width="16%">
 					<Template Context="aCon">
 						@{
 							if (aCon is Requisition _con)
@@ -43,7 +43,7 @@
 						}
 					</Template>
 				</GridColumn>
-				<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="20%">
+				<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="15%">
 					<Template Context="aCon">
 						@{
 							if (aCon is Requisition _con)
@@ -98,8 +98,8 @@
 					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%" SelectedItem="_selectedTab">
 						<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 						<TabAnimationSettings>
-							<TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"></TabAnimationPrevious>
-							<TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"></TabAnimationNext>
+							<TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"/>
+							<TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"/>
 							<TabEvents Selected="TabSelected"/>
 						</TabAnimationSettings>
 						<TabItems>

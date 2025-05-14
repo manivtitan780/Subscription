@@ -1,4 +1,4 @@
-<SfDialog CssClass="dialogPopup" Header="Advanced Search" Height="796px" IsModal="true" MinHeight="500px" @ref="Dialog" Target="#divTarget" Visible="false" Width="700px">
+<SfDialog CssClass="dialogPopup" Header="Advanced Search" Height="807px" IsModal="true" MinHeight="500px" @ref="Dialog" Target="#divTarget" Visible="false" Width="700px">
 	<ChildContent>
 		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="center" Y="center"/>
@@ -6,8 +6,8 @@
 		<DialogEvents OnOpen="OpenDialog"/>
 		<SfDataForm EditContext="Context" ID="searchForm" OnValidSubmit="SearchCandidateDialog" @ref="SearchForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Search</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelSearchDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelSearchDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-search" type="submit">Search</SfButton>
 			</FormButtons>
 			<FormItems>
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupBasicInfo" LabelText="Basic Information">

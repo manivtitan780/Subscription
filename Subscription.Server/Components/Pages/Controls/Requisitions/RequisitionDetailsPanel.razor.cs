@@ -8,7 +8,7 @@
 // File Name:           RequisitionDetailsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-26-2025 16:02
-// Last Updated On:     05-13-2025 20:38
+// Last Updated On:     05-14-2025 21:11
 // *****************************************/
 
 #endregion
@@ -34,6 +34,10 @@ namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 public partial class RequisitionDetailsPanel
 {
     private bool _actionProgress;
+
+    private bool _companyFirst = true;
+
+    private bool _duration, _rate, _salary, _percent, _benefits, _hours, _expenses, _placementFee;
 
     //private EditContext _editContext;
 
@@ -360,6 +364,7 @@ public partial class RequisitionDetailsPanel
     {
         if (!company.Value.NullOrWhiteSpace())
         {
+            _companyFirst = false;
             CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == company.Value).ToList();
             if (company.ItemData != null)
             {
@@ -386,7 +391,17 @@ public partial class RequisitionDetailsPanel
         }
     }
 
-    private void ContactDataBound(DataBoundEventArgs args) => Model.ContactID = CompanyContactsFiltered.Any() ? CompanyContactsFiltered.First().ID : 0;
+    private void ContactChanged(ChangeEventArgs<int, CompanyContacts> arg) => Model.ContactName = arg.ItemData?.ContactName;
+
+    private void ContactDataBound(DataBoundEventArgs args)
+    {
+        if (_companyFirst)
+        {
+            return;
+        }
+
+        Model.ContactID = CompanyContactsFiltered.Any() ? CompanyContactsFiltered.First().ID : 0;
+    }
 
     private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
@@ -413,6 +428,27 @@ public partial class RequisitionDetailsPanel
         {
             _actionProgress = true;
             CompanyContactsFiltered = CompanyContacts.Where(x => x.CompanyID == Model.CompanyID).ToList();
+            if (CompanyContactsFiltered.Any())
+            {
+                foreach (CompanyContacts _contact in CompanyContactsFiltered)
+                {
+                    if (_contact.ContactName == Model.ContactName)
+                    {
+                        Model.ContactID = _contact.ID;
+                        break;
+                    }
+                }
+
+                /*if (CompanyContactsFiltered.Any(x => x.ContactName != Model.ContactName))
+                {
+                    Model.ContactID = CompanyContactsFiltered.First().ID;
+                }*/
+            }
+            else
+            {
+                Model.ContactID = 0;
+            }
+
             Context = EditRequisitionForm.EditContext;
             Context?.Validate();
             if (Context != null)
@@ -573,6 +609,18 @@ public partial class RequisitionDetailsPanel
         {
             Model.JobOptions = jobOption.ItemData.KeyValue;
         }
+    }
+
+    private void JobOptionChanged(ChangeEventArgs<string, JobOptions> option)
+    {
+        _duration = option.ItemData.Duration;
+        _rate = option.ItemData.Rate;
+        _salary = option.ItemData.Sal;
+        _percent = option.ItemData.ShowPercent;
+        _benefits = option.ItemData.Benefits;
+        _hours = option.ItemData.ShowHours;
+        _expenses = option.ItemData.Exp;
+        _placementFee = option.ItemData.PlaceFee;
     }
 
     /// <summary>
@@ -746,18 +794,5 @@ public partial class RequisitionDetailsPanel
             _reading = false;
             return _returnValue;
         }
-    }
-
-    private bool _duration, _rate, _salary, _percent, _benefits, _hours, _expenses, _placementFee;
-    private void JobOptionChanged(ChangeEventArgs<string, JobOptions> option)
-    {
-        _duration = option.ItemData.Duration;
-        _rate = option.ItemData.Rate;
-        _salary = option.ItemData.Sal;
-        _percent = option.ItemData.ShowPercent;
-        _benefits = option.ItemData.Benefits;
-        _hours = option.ItemData.ShowHours;
-        _expenses = option.ItemData.Exp;
-        _placementFee = option.ItemData.PlaceFee;
     }
 }

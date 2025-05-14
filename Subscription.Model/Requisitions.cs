@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           Requisitions.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:19
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-14-2025 21:15
 // *****************************************/
 
 #endregion
@@ -24,8 +24,7 @@ namespace Subscription.Model;
 ///     the details of a requisition, such as its ID, code, title, associated company, job options,
 ///     status, and other related information.
 /// </remarks>
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Requisition
 {
 	/// <summary>
@@ -33,9 +32,9 @@ public class Requisition
 	///     values.
 	/// </summary>
 	public Requisition()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="Requisition" /> class.
@@ -57,25 +56,25 @@ public class Requisition
 	/// <param name="assignedRecruiter">The recruiter assigned to the requisition.</param>
 	/// <param name="updatedBy">The person who last updated the requisition.</param>
 	public Requisition(int id, string code, string title, string company, string jobOptions, string status, string updated, string due,
-						string icon, string priority, bool submitCandidate, bool canUpdate, bool changeStatus, string priorityColor, string assignedRecruiter, string updatedBy)
-	{
-		ID = id;
-		Code = code;
-		Title = title;
-		Company = company;
-		JobOptions = jobOptions;
-		Status = status;
-		Updated = updated;
-		Due = due;
-		Icon = icon;
-		Priority = priority;
-		SubmitCandidate = submitCandidate;
-		CanUpdate = canUpdate;
-		ChangeStatus = changeStatus;
-		PriorityColor = priorityColor;
-		AssignedRecruiter = assignedRecruiter;
-		UpdatedBy = updatedBy;
-	}
+					   string icon, string priority, bool submitCandidate, bool canUpdate, bool changeStatus, string priorityColor, string assignedRecruiter, string updatedBy)
+    {
+        ID = id;
+        Code = code;
+        Title = title;
+        Company = company;
+        JobOptions = jobOptions;
+        Status = status;
+        Updated = updated;
+        Due = due;
+        Icon = icon;
+        Priority = priority;
+        SubmitCandidate = submitCandidate;
+        CanUpdate = canUpdate;
+        ChangeStatus = changeStatus;
+        PriorityColor = priorityColor;
+        AssignedRecruiter = assignedRecruiter;
+        UpdatedBy = updatedBy;
+    }
 
 	/// <summary>
 	///     Gets or sets the recruiter assigned to the requisition.
@@ -83,11 +82,7 @@ public class Requisition
 	/// <value>
 	///     The name of the assigned recruiter.
 	/// </value>
-	public string AssignedRecruiter
-	{
-		get;
-		set;
-	}
+	public string AssignedRecruiter { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the requisition can be updated.
@@ -95,11 +90,7 @@ public class Requisition
 	/// <value>
 	///     <c>true</c> if the requisition can be updated; otherwise, <c>false</c>.
 	/// </value>
-	public bool CanUpdate
-	{
-		get;
-		set;
-	}
+	public bool CanUpdate { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the status of the requisition can be changed.
@@ -107,11 +98,7 @@ public class Requisition
 	/// <value>
 	///     <c>true</c> if the status of the requisition can be changed; otherwise, <c>false</c>.
 	/// </value>
-	public bool ChangeStatus
-	{
-		get;
-		set;
-	}
+	public bool ChangeStatus { get; set; }
 
 	/// <summary>
 	///     Gets or sets the code of the requisition.
@@ -122,11 +109,7 @@ public class Requisition
 	/// <remarks>
 	///     The code is used as a unique identifier for the requisition and is displayed in various parts of the application.
 	/// </remarks>
-	public string Code
-	{
-		get;
-		set;
-	}
+	public string Code { get; set; }
 
 	/// <summary>
 	///     Gets or sets the company associated with the requisition.
@@ -134,11 +117,7 @@ public class Requisition
 	/// <value>
 	///     The name of the company.
 	/// </value>
-	public string Company
-	{
-		get;
-		set;
-	}
+	public string Company { get; set; }
 
 	/// <summary>
 	///     Gets or sets the due date for the requisition.
@@ -146,11 +125,7 @@ public class Requisition
 	/// <value>
 	///     The due date of the requisition.
 	/// </value>
-	public string Due
-	{
-		get;
-		set;
-	}
+	public string Due { get; set; }
 
 	/// <summary>
 	///     Gets or sets the icon for the requisition.
@@ -158,11 +133,7 @@ public class Requisition
 	/// <value>
 	///     The icon associated with the requisition.
 	/// </value>
-	public string Icon
-	{
-		get;
-		set;
-	}
+	public string Icon { get; set; }
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the requisition.
@@ -170,11 +141,7 @@ public class Requisition
 	/// <value>
 	///     The unique identifier for the requisition.
 	/// </value>
-	public int ID
-	{
-		get;
-		set;
-	}
+	public int ID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the job options for the Requisition.
@@ -183,11 +150,7 @@ public class Requisition
 	///     The job options are a string representation of the various options available for a job in the requisition.
 	///     This can include details such as job type, job location, job duration, etc.
 	/// </value>
-	public string JobOptions
-	{
-		get;
-		set;
-	}
+	public string JobOptions { get; set; }
 
 	/// <summary>
 	///     Gets or sets the priority of the requisition.
@@ -195,11 +158,7 @@ public class Requisition
 	/// <value>
 	///     The priority of the requisition.
 	/// </value>
-	public string Priority
-	{
-		get;
-		set;
-	}
+	public string Priority { get; set; }
 
 	/// <summary>
 	///     Gets or sets the color associated with the priority of the requisition.
@@ -207,11 +166,7 @@ public class Requisition
 	/// <value>
 	///     The color associated with the priority of the requisition.
 	/// </value>
-	public string PriorityColor
-	{
-		get;
-		set;
-	}
+	public string PriorityColor { get; set; }
 
 	/// <summary>
 	///     Gets or sets the status of the requisition.
@@ -219,11 +174,7 @@ public class Requisition
 	/// <value>
 	///     The status of the requisition.
 	/// </value>
-	public string Status
-	{
-		get;
-		set;
-	}
+	public string Status { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether a candidate can be submitted for the requisition.
@@ -231,11 +182,7 @@ public class Requisition
 	/// <value>
 	///     <c>true</c> if a candidate can be submitted; otherwise, <c>false</c>.
 	/// </value>
-	public bool SubmitCandidate
-	{
-		get;
-		set;
-	}
+	public bool SubmitCandidate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the title of the requisition.
@@ -243,11 +190,7 @@ public class Requisition
 	/// <value>
 	///     The title of the requisition.
 	/// </value>
-	public string Title
-	{
-		get;
-		set;
-	}
+	public string Title { get; set; }
 
 	/// <summary>
 	///     Gets or sets the updated timestamp for the requisition.
@@ -255,11 +198,7 @@ public class Requisition
 	/// <value>
 	///     The updated timestamp.
 	/// </value>
-	public string Updated
-	{
-		get;
-		set;
-	}
+	public string Updated { get; set; }
 
 	/// <summary>
 	///     Gets or sets the name of the user who last updated the requisition.
@@ -267,34 +206,30 @@ public class Requisition
 	/// <value>
 	///     The name of the user who last updated the requisition.
 	/// </value>
-	public string UpdatedBy
-	{
-		get;
-		set;
-	}
+	public string UpdatedBy { get; set; }
 
 	/// <summary>
 	///     Resets all properties of the Requisitions object to their default values.
 	/// </summary>
 	public void Clear()
-	{
-		ID = 0;
-		Code = "";
-		Title = "";
-		Company = "";
-		JobOptions = "";
-		Status = "";
-		Updated = "";
-		Due = "";
-		Icon = "";
-		Priority = "Medium";
-		SubmitCandidate = false;
-		CanUpdate = false;
-		ChangeStatus = false;
-		PriorityColor = "black";
-		AssignedRecruiter = "";
-		UpdatedBy = "";
-	}
+    {
+        ID = 0;
+        Code = "";
+        Title = "";
+        Company = "";
+        JobOptions = "";
+        Status = "";
+        Updated = "";
+        Due = "";
+        Icon = "";
+        Priority = "Medium";
+        SubmitCandidate = false;
+        CanUpdate = false;
+        ChangeStatus = false;
+        PriorityColor = "black";
+        AssignedRecruiter = "";
+        UpdatedBy = "";
+    }
 
 	/// <summary>
 	///     Creates a shallow copy of the current Requisitions object.
