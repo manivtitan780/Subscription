@@ -28,7 +28,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Option)">
 						<Template>
-							<DropDown @bind-Value="Model.Option" Model="JobOption" ID="dropJobOption" TItem="KeyValues" TValue="string" Placeholder="Job Option" Text="Text" Key="KeyValue" ShowClearButton="true"/>
+							<DropDown @bind-Value="Model.Option" Model="JobOption" ID="dropJobOption" TItem="JobOptions" TValue="string" Placeholder="Job Option" Text="Text" Key="KeyValue" ShowClearButton="true"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Status)">

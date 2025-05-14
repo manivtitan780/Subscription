@@ -747,4 +747,17 @@ public partial class RequisitionDetailsPanel
             return _returnValue;
         }
     }
+
+    private bool _duration, _rate, _salary, _percent, _benefits, _hours, _expenses, _placementFee;
+    private void JobOptionChanged(ChangeEventArgs<string, JobOptions> option)
+    {
+        _duration = option.ItemData.Duration;
+        _rate = option.ItemData.Rate;
+        _salary = option.ItemData.Sal;
+        _percent = option.ItemData.ShowPercent;
+        _benefits = option.ItemData.Benefits;
+        _hours = option.ItemData.ShowHours;
+        _expenses = option.ItemData.Exp;
+        _placementFee = option.ItemData.PlaceFee;
+    }
 }

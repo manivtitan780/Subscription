@@ -46,7 +46,7 @@ public partial class AdvancedRequisitionSearch : ComponentBase
     private SfDatePicker<DateTime> DueMax { get; set; }
 
     [Parameter]
-    public List<KeyValues> JobOption { get; set; }
+    public List<JobOptions> JobOption { get; set; }
 
     [Parameter]
     public RequisitionSearch Model { get; set; } = new();

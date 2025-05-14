@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           NumericTextBox.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-13-2024 21:12
-// Last Updated On:     01-13-2025 16:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-13-2025 20:54
 // *****************************************/
 
 #endregion
@@ -20,60 +20,31 @@ public partial class NumericTextBox<TValue> : ComponentBase
     private TValue? _value;
 
     [Parameter]
-    public string Currency
-    {
-        get;
-        set;
-    } = "USD";
+    public string Currency { get; set; } = "USD";
 
     [Parameter]
-    public int? Decimals
-    {
-        get;
-        set;
-    } = 2;
+    public int? Decimals { get; set; } = 2;
 
     [Parameter]
-    public string Format
-    {
-        get;
-        set;
-    } = "c2";
+    public bool Enabled { get; set; } = true;
 
     [Parameter]
-    public string? ID
-    {
-        get;
-        set;
-    }
+    public string Format { get; set; } = "c2";
 
     [Parameter]
-    public TValue? Max
-    {
-        get;
-        set;
-    }
+    public string? ID { get; set; }
 
     [Parameter]
-    public TValue? Min
-    {
-        get;
-        set;
-    }
+    public TValue? Max { get; set; }
 
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public TValue? Min { get; set; }
 
     [Parameter]
-    public bool ShowSpinButton
-    {
-        get;
-        set;
-    }
+    public string? Placeholder { get; set; }
+
+    [Parameter]
+    public bool ShowSpinButton { get; set; }
 
     /// <summary>
     ///     Gets or sets the selected value in the NumericTextBox.
@@ -115,11 +86,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     The callback receives the new selected value as an argument.
     /// </remarks>
     [Parameter]
-    public EventCallback<TValue> ValueChanged
-    {
-        get;
-        set;
-    }
+    public EventCallback<TValue> ValueChanged { get; set; }
 
     /// <summary>
     ///     Gets or sets the expression that identifies the value to be bound to the NumericTextBox.
@@ -133,11 +100,7 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>>? ValueExpression
-    {
-        get;
-        set;
-    }
+    public Expression<Func<TValue>>? ValueExpression { get; set; }
 
     protected override Task OnInitializedAsync()
     {
