@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           DocumentsPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-02-2023 19:24
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-12-2025 15:02
+// Last Updated On:     05-15-2025 19:08
 // *****************************************/
 
 #endregion
@@ -41,11 +41,7 @@ public partial class DocumentsPanel
     ///     The integer parameter represents the ID of the document to be deleted.
     /// </remarks>
     [Parameter]
-    public EventCallback<int> DeleteDocument
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DeleteDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets the ConfirmDialog component used for user action confirmation.
@@ -56,11 +52,7 @@ public partial class DocumentsPanel
     /// <remarks>
     ///     This property is used to display a dialog for confirming various user actions such as deletion of documents.
     /// </remarks>
-    private ConfirmDialog DialogConfirm
-    {
-        get;
-        set;
-    }
+    private ConfirmDialog DialogConfirm { get; set; }
 
     /// <summary>
     ///     Gets or sets the ViewPDFDocument component used for displaying PDF documents.
@@ -72,11 +64,7 @@ public partial class DocumentsPanel
     ///     This property is used to manage the display of PDF documents in the DocumentsPanel.
     ///     It is used in the ViewDocumentDialog method to show the dialog with the PDF document.
     /// </remarks>
-    private ViewPDFDocument DocumentViewPDF
-    {
-        get;
-        set;
-    }
+    private ViewPDFDocument DocumentViewPDF { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback for downloading a document.
@@ -89,11 +77,7 @@ public partial class DocumentsPanel
     ///     The integer parameter represents the ID of the document to be downloaded.
     /// </remarks>
     [Parameter]
-    public EventCallback<int> DownloadDocument
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DownloadDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the user has the rights to edit the documents.
@@ -106,11 +90,7 @@ public partial class DocumentsPanel
     ///     If the user has edit rights and is the owner of the requisition, the edit and delete buttons are displayed.
     /// </remarks>
     [Parameter]
-    public bool EditRights
-    {
-        get;
-        set;
-    } = true;
+    public bool EditRights { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the type of the entity associated with the DocumentsPanel.
@@ -123,11 +103,7 @@ public partial class DocumentsPanel
     ///     The type of the entity can be one of the values from the EntityType enumeration.
     /// </remarks>
     [Parameter]
-    public EntityType EntityTypeName
-    {
-        get;
-        set;
-    } = EntityType.Requisition;
+    public EntityType EntityTypeName { get; set; } = EntityType.Requisition;
 
     /// <summary>
     ///     Gets or sets the grid for downloading requisition documents.
@@ -141,11 +117,7 @@ public partial class DocumentsPanel
     ///     DownloadDocumentDialog methods,
     ///     to initiate the deletion or download of a selected requisition document.
     /// </remarks>
-    public SfGrid<RequisitionDocuments> GridDownload
-    {
-        get;
-        set;
-    }
+    private SfGrid<RequisitionDocuments> GridDownload { get; set; }
 
     /// <summary>
     ///     Gets or sets the height of the DocumentsPanel.
@@ -158,11 +130,7 @@ public partial class DocumentsPanel
     ///     DocumentsPanel occupies.
     /// </remarks>
     [Parameter]
-    public string Height
-    {
-        get;
-        set;
-    } = "450px";
+    public string Height { get; set; } = "450px";
 
     /// <summary>
     ///     Gets or sets the JavaScript runtime for the DocumentsPanel.
@@ -174,11 +142,7 @@ public partial class DocumentsPanel
     ///     This property is injected by the framework and provides the ability to invoke JavaScript functions from .NET code.
     /// </remarks>
     [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of RequisitionDocuments for the DocumentsPanel.
@@ -191,11 +155,7 @@ public partial class DocumentsPanel
     ///     by the parent component and updated whenever the list of requisition documents changes.
     /// </remarks>
     [Parameter]
-    public List<RequisitionDocuments> Model
-    {
-        get;
-        set;
-    }
+    public List<RequisitionDocuments> Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the height of each row in the DocumentsPanel grid.
@@ -208,11 +168,7 @@ public partial class DocumentsPanel
     ///     each row in the grid occupies.
     /// </remarks>
     [Parameter]
-    public double RowHeight
-    {
-        get;
-        set;
-    } = 38;
+    public double RowHeight { get; set; } = 38;
 
     /// <summary>
     ///     Gets or sets the selected row in the DocumentsPanel.
@@ -225,11 +181,7 @@ public partial class DocumentsPanel
     ///     throughout the application, such as in the DownloadDocument methods in the Leads, Requisition, and
     ///     CompanyRequisitions classes, to initiate the download of a selected requisition document.
     /// </remarks>
-    public RequisitionDocuments SelectedRow
-    {
-        get;
-        set;
-    }
+    internal RequisitionDocuments SelectedRow { get; private set; } = new();
 
     /// <summary>
     ///     Gets or sets the SfSpinner control used in the DocumentsPanel.
@@ -238,11 +190,7 @@ public partial class DocumentsPanel
     ///     The SfSpinner is a Syncfusion control that provides a visual indication when an operation is being performed.
     ///     It is used in this context to indicate that a document is being loaded or an operation is being processed.
     /// </value>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     /// <summary>
     ///     Gets or sets the User associated with the RequisitionDocuments in the DocumentsPanel.
@@ -252,17 +200,12 @@ public partial class DocumentsPanel
     ///     This property is used to determine if the current user has the rights to edit the RequisitionDocuments.
     /// </value>
     [Parameter]
-    public string User
-    {
-        get;
-        set;
-    } = "";
+    public string User { get; set; } = "";
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
+
+    [Inject]
+    private SfDialogService DialogService { get; set; }
 
     /// <summary>
     ///     Asynchronously deletes a document with the specified ID.
@@ -279,7 +222,15 @@ public partial class DocumentsPanel
         _selectedID = id;
         int _index = await GridDownload.GetRowIndexByPrimaryKeyAsync(id);
         await GridDownload.SelectRowAsync(_index);
-        await DialogConfirm.ShowDialog();
+        if (await DialogService.ConfirmAsync(null, "Delete Document", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Requisition Document</i>?")))
+        {
+            await DeleteDocument.InvokeAsync(_selectedID);
+        }
+
+        /*_selectedID = id;
+        int _index = await GridDownload.GetRowIndexByPrimaryKeyAsync(id);
+        await GridDownload.SelectRowAsync(_index);
+        await DialogConfirm.ShowDialog();*/
     }
 
     /// <summary>
@@ -306,21 +257,22 @@ public partial class DocumentsPanel
         }
     }
 
+    private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase) {".pdf", ".doc", ".docx", ".rtf"};
     /// <summary>
     ///     Asynchronously displays a dialog to view a document.
     /// </summary>
-    /// <param name="documentID">The ID of the document to be viewed.</param>
+    /// <param name="fileName">The FileName of the document to be viewed.</param>
     /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     /// <remarks>
     ///     This method fetches the document details from the server using the provided document ID.
     ///     It then determines the type of the document (PDF or Word) and displays the appropriate dialog for viewing the
     ///     document.
     /// </remarks>
-    private async Task ViewDocumentDialog(int documentID)
+    private async Task ViewDocumentDialog(string fileName)
     {
         VisibleSpinner = true;
 
-        Dictionary<string, string> _parameters = new()
+        /*Dictionary<string, string> _parameters = new()
                                                  {
                                                      {"documentID", documentID.ToString()}
                                                  };
@@ -340,7 +292,14 @@ public partial class DocumentsPanel
                 _internalFileName = _restResponse.InternalFileName;
                 await DocumentViewPDF.ShowDialog();
             }
+        }*/
+        string _fileExtension = Path.GetExtension(fileName);
+        // string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
+        if (AllowedExtensions.Contains(_fileExtension))
+        {
+            await DocumentViewPDF.ShowDialog();
         }
+
 
         VisibleSpinner = false;
     }
