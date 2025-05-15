@@ -431,7 +431,6 @@ public class RequisitionController : ControllerBase
             _command.Varchar("User", 10, user);
             _command.Varchar("Assign", 550, requisition.AssignedTo);
             _command.Varchar("MandatoryRequirement", 8000, requisition.Mandatory);
-            //_returnValue = await GetGridRequisitions(_requisitionSearch, false);
 
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();

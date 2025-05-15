@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           RequisitionDetails.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:19
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-15-2025 18:52
 // *****************************************/
 
 #endregion
@@ -26,8 +26,7 @@ namespace Subscription.Model;
 ///     benefits, OFCCP compliance, due date, submission details, location details, mandatory and optional requirements,
 ///     assigned recruiter, and various IDs related to the requisition.
 /// </remarks>
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class RequisitionDetails
 {
 	/// <summary>
@@ -35,9 +34,9 @@ public class RequisitionDetails
 	///     default values.
 	/// </summary>
 	public RequisitionDetails()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="RequisitionDetails" /> class.
@@ -103,71 +102,67 @@ public class RequisitionDetails
 							  bool benefits, string benefitNotes, bool ofccp, DateTime dueDate, bool submitCandidate, string city, int stateID, string zipCode,
 							  string mandatory, string optional, string assignedRecruiter, short priorityID, int eligibilityID, int experienceID, int educationID, string jobOption,
 							  int companyID, int contactID, string statusCode, string companyCity, string companyState, string companyZip)
-	{
-		RequisitionID = requisitionID;
-		CompanyName = companyName;
-		ContactName = contactName;
-		PositionTitle = positionTitle;
-		Description = description;
-		Positions = positions;
-		Duration = duration;
-		DurationCode = durationCode;
-		Location = location;
-		Experience = experience;
-		ExpRateLow = expRateLow;
-		ExpRateHigh = expRateHigh;
-		ExpLoadLow = expLoadLow;
-		ExpLoadHigh = expLoadHigh;
-		PlacementFee = placementFee;
-		PlacementType = placementType;
-		JobOptions = jobOptions;
-		ReportTo = reportTo;
-		SalaryLow = salaryLow;
-		SalaryHigh = salaryHigh;
-		ExpensesPaid = expensesPaid;
-		ExpectedStart = expectedStart;
-		Status = status;
-		Priority = priority;
-		CreatedBy = createdBy;
-		CreatedDate = createdDate;
-		UpdatedBy = updatedBy;
-		UpdatedDate = updatedDate;
-		SkillsRequired = skillsRequired;
-		Education = education;
-		Eligibility = eligibility;
-		SecurityClearance = securityClearance;
-		Benefits = benefits;
-		BenefitNotes = benefitNotes;
-		OFCCP = ofccp;
-		DueDate = dueDate;
-		SubmitCandidate = submitCandidate;
-		City = city;
-		StateID = stateID;
-		ZipCode = zipCode;
-		Mandatory = mandatory;
-		Optional = optional;
-		AssignedTo = assignedRecruiter;
-		PriorityID = priorityID;
-		EligibilityID = eligibilityID;
-		ExperienceID = experienceID;
-		EducationID = educationID;
-		JobOptionID = jobOption;
-		CompanyID = companyID;
-		ContactID = contactID;
-		StatusCode = statusCode;
-		CompanyCity = companyCity;
-		CompanyState = companyState;
-		CompanyZip = companyZip;
-	}
+    {
+        RequisitionID = requisitionID;
+        CompanyName = companyName;
+        ContactName = contactName;
+        PositionTitle = positionTitle;
+        Description = description;
+        Positions = positions;
+        Duration = duration;
+        DurationCode = durationCode;
+        Location = location;
+        Experience = experience;
+        ExpRateLow = expRateLow;
+        ExpRateHigh = expRateHigh;
+        ExpLoadLow = expLoadLow;
+        ExpLoadHigh = expLoadHigh;
+        PlacementFee = placementFee;
+        PlacementType = placementType;
+        JobOptions = jobOptions;
+        ReportTo = reportTo;
+        SalaryLow = salaryLow;
+        SalaryHigh = salaryHigh;
+        ExpensesPaid = expensesPaid;
+        ExpectedStart = expectedStart;
+        Status = status;
+        Priority = priority;
+        CreatedBy = createdBy;
+        CreatedDate = createdDate;
+        UpdatedBy = updatedBy;
+        UpdatedDate = updatedDate;
+        SkillsRequired = skillsRequired;
+        Education = education;
+        Eligibility = eligibility;
+        SecurityClearance = securityClearance;
+        Benefits = benefits;
+        BenefitNotes = benefitNotes;
+        OFCCP = ofccp;
+        DueDate = dueDate;
+        SubmitCandidate = submitCandidate;
+        City = city;
+        StateID = stateID;
+        ZipCode = zipCode;
+        Mandatory = mandatory;
+        Optional = optional;
+        AssignedTo = assignedRecruiter;
+        PriorityID = priorityID;
+        EligibilityID = eligibilityID;
+        ExperienceID = experienceID;
+        EducationID = educationID;
+        JobOptionID = jobOption;
+        CompanyID = companyID;
+        ContactID = contactID;
+        StatusCode = statusCode;
+        CompanyCity = companyCity;
+        CompanyState = companyState;
+        CompanyZip = companyZip;
+    }
 
 	/// <summary>
 	///     Gets or sets the name of the person or entity to whom the requisition is assigned.
 	/// </summary>
-	public string AssignedTo
-	{
-		get;
-		set;
-	}
+	public string AssignedTo { get; set; }
 
 	/// <summary>
 	///     Gets or sets the identifier of the entity to which the requisition is assigned.
@@ -175,11 +170,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The identifier of the assigned entity.
 	/// </value>
-	public int AssignedToID
-	{
-		get;
-		set;
-	}
+	public int AssignedToID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the benefit notes for the requisition.
@@ -187,11 +178,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The benefit notes.
 	/// </value>
-	public string BenefitNotes
-	{
-		get;
-		set;
-	}
+	public string BenefitNotes { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether benefits are included in the requisition details.
@@ -199,11 +186,7 @@ public class RequisitionDetails
 	/// <value>
 	///     <c>true</c> if benefits are included; otherwise, <c>false</c>.
 	/// </value>
-	public bool Benefits
-	{
-		get;
-		set;
-	}
+	public bool Benefits { get; set; }
 
 	/// <summary>
 	///     Gets or sets the city for the requisition details.
@@ -211,11 +194,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The city name.
 	/// </value>
-	public string City
-	{
-		get;
-		set;
-	}
+	public string City { get; set; }
 
 	/// <summary>
 	///     Gets or sets the city of the company associated with the requisition.
@@ -223,11 +202,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The city of the company.
 	/// </value>
-	public string CompanyCity
-	{
-		get;
-		set;
-	}
+	public string CompanyCity { get; set; }
 
 	/// <summary>
 	///     Gets or sets the identifier for the company associated with the requisition.
@@ -235,20 +210,12 @@ public class RequisitionDetails
 	/// <value>
 	///     The identifier for the company.
 	/// </value>
-	public int CompanyID
-	{
-		get;
-		set;
-	}
+	public int CompanyID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the name of the company associated with the requisition.
 	/// </summary>
-	public string CompanyName
-	{
-		get;
-		set;
-	}
+	public string CompanyName { get; set; }
 
 	/// <summary>
 	///     Gets or sets the state of the company associated with the requisition.
@@ -261,11 +228,7 @@ public class RequisitionDetails
 	///     It is used in the `RequisitionDetailsPanel` class to display and manage the company's state in the application's
 	///     user interface.
 	/// </remarks>
-	public string CompanyState
-	{
-		get;
-		set;
-	}
+	public string CompanyState { get; set; }
 
 	/// <summary>
 	///     Gets or sets the zip code of the company associated with the requisition.
@@ -273,38 +236,22 @@ public class RequisitionDetails
 	/// <value>
 	///     The zip code of the company.
 	/// </value>
-	public string CompanyZip
-	{
-		get;
-		set;
-	}
+	public string CompanyZip { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Contact ID associated with the requisition.
 	/// </summary>
-	public int ContactID
-	{
-		get;
-		set;
-	}
+	public int ContactID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the contact name associated with the requisition.
 	/// </summary>
-	public string ContactName
-	{
-		get;
-		set;
-	}
+	public string ContactName { get; set; }
 
 	/// <summary>
 	///     Gets or sets the username of the user who created the requisition.
 	/// </summary>
-	public string CreatedBy
-	{
-		get;
-		set;
-	}
+	public string CreatedBy { get; set; }
 
 	/// <summary>
 	///     Gets or sets the date when the requisition was created.
@@ -312,11 +259,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The date of creation.
 	/// </value>
-	public DateTime CreatedDate
-	{
-		get;
-		set;
-	}
+	public DateTime CreatedDate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the description of the requisition.
@@ -324,11 +267,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The description of the requisition.
 	/// </value>
-	public string Description
-	{
-		get;
-		set;
-	}
+	public string Description { get; set; }
 
 	/// <summary>
 	///     Gets or sets the due date for the requisition.
@@ -336,11 +275,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The due date for the requisition.
 	/// </value>
-	public DateTime DueDate
-	{
-		get;
-		set;
-	}
+	public DateTime DueDate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the duration of the requisition.
@@ -348,11 +283,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The duration of the requisition.
 	/// </value>
-	public string Duration
-	{
-		get;
-		set;
-	}
+	public string Duration { get; set; }
 
 	/// <summary>
 	///     Gets or sets the duration code for the requisition.
@@ -360,11 +291,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The duration code.
 	/// </value>
-	public string DurationCode
-	{
-		get;
-		set;
-	}
+	public string DurationCode { get; set; }
 
 	/// <summary>
 	///     Gets or sets the education requirements for the requisition.
@@ -372,11 +299,7 @@ public class RequisitionDetails
 	/// <value>
 	///     A string representing the education requirements.
 	/// </value>
-	public string Education
-	{
-		get;
-		set;
-	}
+	public string Education { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Education ID associated with the Requisition Details.
@@ -384,11 +307,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The identifier for the Education level required for the Requisition.
 	/// </value>
-	public int EducationID
-	{
-		get;
-		set;
-	}
+	public int EducationID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the eligibility requirements for the requisition.
@@ -396,11 +315,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The eligibility requirements for the requisition.
 	/// </value>
-	public string Eligibility
-	{
-		get;
-		set;
-	}
+	public string Eligibility { get; set; }
 
 	/// <summary>
 	///     Gets or sets the eligibility ID associated with the requisition.
@@ -408,11 +323,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The eligibility ID.
 	/// </value>
-	public int EligibilityID
-	{
-		get;
-		set;
-	}
+	public int EligibilityID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the expected start date for the requisition.
@@ -420,11 +331,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The expected start date for the requisition.
 	/// </value>
-	public DateTime ExpectedStart
-	{
-		get;
-		set;
-	}
+	public DateTime ExpectedStart { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the expenses are paid.
@@ -432,11 +339,7 @@ public class RequisitionDetails
 	/// <value>
 	///     <c>true</c> if expenses are paid; otherwise, <c>false</c>.
 	/// </value>
-	public bool ExpensesPaid
-	{
-		get;
-		set;
-	}
+	public bool ExpensesPaid { get; set; }
 
 	/// <summary>
 	///     Gets or sets the experience requirements for the requisition.
@@ -444,11 +347,7 @@ public class RequisitionDetails
 	/// <value>
 	///     A string representing the experience requirements.
 	/// </value>
-	public string Experience
-	{
-		get;
-		set;
-	}
+	public string Experience { get; set; }
 
 	/// <summary>
 	///     Gets or sets the experience identifier.
@@ -456,11 +355,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The identifier of the experience.
 	/// </value>
-	public int ExperienceID
-	{
-		get;
-		set;
-	}
+	public int ExperienceID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the expected high load for the requisition.
@@ -468,11 +363,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The expected high load for the requisition.
 	/// </value>
-	public decimal ExpLoadHigh
-	{
-		get;
-		set;
-	}
+	public decimal ExpLoadHigh { get; set; }
 
 	/// <summary>
 	///     Gets or sets the expected lower limit of the load for the requisition.
@@ -480,11 +371,7 @@ public class RequisitionDetails
 	/// <value>
 	///     A decimal representing the expected lower limit of the load.
 	/// </value>
-	public decimal ExpLoadLow
-	{
-		get;
-		set;
-	}
+	public decimal ExpLoadLow { get; set; }
 
 	/// <summary>
 	///     Gets or sets the maximum expected rate for the requisition.
@@ -492,11 +379,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The maximum expected rate.
 	/// </value>
-	public decimal ExpRateHigh
-	{
-		get;
-		set;
-	}
+	public decimal ExpRateHigh { get; set; }
 
 	/// <summary>
 	///     Gets or sets the lower boundary of the expected rate for the requisition.
@@ -504,11 +387,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The lower boundary of the expected rate.
 	/// </value>
-	public decimal ExpRateLow
-	{
-		get;
-		set;
-	}
+	public decimal ExpRateLow { get; set; }
 
 	/// <summary>
 	///     Gets or sets the Job Option ID associated with the Requisition Details.
@@ -516,11 +395,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The Job Option ID is a string value representing the unique identifier for a job option in the requisition process.
 	/// </value>
-	public string JobOptionID
-	{
-		get;
-		set;
-	}
+	public string JobOptionID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the job options for the requisition.
@@ -528,31 +403,19 @@ public class RequisitionDetails
 	/// <value>
 	///     A string representing the job options.
 	/// </value>
-	public string JobOptions
-	{
-		get;
-		set;
-	}
+	public string JobOptions { get; set; }
 
 	/// <summary>
 	///     Gets or sets the JobOptionsID associated with the RequisitionDetails.
 	/// </summary>
 	/// <value>The JobOptionsID string.</value>
-	public string JobOptionsID
-	{
-		get;
-		set;
-	}
+	public string JobOptionsID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the location associated with the requisition details.
 	/// </summary>
 	/// <value>The location string.</value>
-	public string Location
-	{
-		get;
-		set;
-	}
+	public string Location { get; set; }
 
 	/// <summary>
 	///     Gets or sets the mandatory requirements for the requisition.
@@ -560,11 +423,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The mandatory requirements for the requisition.
 	/// </value>
-	public string Mandatory
-	{
-		get;
-		set;
-	}
+	public string Mandatory { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the OFCCP compliance is required.
@@ -572,11 +431,7 @@ public class RequisitionDetails
 	/// <value>
 	///     <c>true</c> if OFCCP compliance is required; otherwise, <c>false</c>.
 	/// </value>
-	public bool OFCCP
-	{
-		get;
-		set;
-	}
+	public bool OFCCP { get; set; }
 
 	/// <summary>
 	///     Gets or sets the optional skills for the requisition.
@@ -588,11 +443,7 @@ public class RequisitionDetails
 	///     This property is used in the `SetSkills` method of the `CompanyRequisitions` class to split the optional skills and
 	///     match them with the `Skills` list.
 	/// </remarks>
-	public string Optional
-	{
-		get;
-		set;
-	}
+	public string Optional { get; set; }
 
 	/// <summary>
 	///     Gets or sets the placement fee for the requisition.
@@ -600,11 +451,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The placement fee represented as a decimal.
 	/// </value>
-	public decimal PlacementFee
-	{
-		get;
-		set;
-	}
+	public decimal PlacementFee { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the placement type is valid or not.
@@ -612,29 +459,17 @@ public class RequisitionDetails
 	/// <value>
 	///     <c>true</c> if the placement type is valid; otherwise, <c>false</c>.
 	/// </value>
-	public bool PlacementType
-	{
-		get;
-		set;
-	}
+	public bool PlacementType { get; set; }
 
 	/// <summary>
 	///     Gets or sets the number of positions for the requisition.
 	/// </summary>
-	public int Positions
-	{
-		get;
-		set;
-	}
+	public int Positions { get; set; }
 
 	/// <summary>
 	///     Gets or sets the title of the position for the requisition.
 	/// </summary>
-	public string PositionTitle
-	{
-		get;
-		set;
-	}
+	public string PositionTitle { get; set; }
 
 	/// <summary>
 	///     Gets or sets the priority of the requisition.
@@ -642,11 +477,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The priority of the requisition.
 	/// </value>
-	public string Priority
-	{
-		get;
-		set;
-	}
+	public string Priority { get; set; }
 
 	/// <summary>
 	///     Gets or sets the priority ID of the requisition.
@@ -655,11 +486,7 @@ public class RequisitionDetails
 	///     The priority ID is used to determine the urgency or importance of the requisition.
 	///     It is represented as an integer value.
 	/// </value>
-	public int PriorityID
-	{
-		get;
-		set;
-	}
+	public int PriorityID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the report to property in the requisition details.
@@ -667,11 +494,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The name of the person or department to whom the requisition should be reported.
 	/// </value>
-	public string ReportTo
-	{
-		get;
-		set;
-	}
+	public string ReportTo { get; set; }
 
 	/// <summary>
 	///     Gets or sets the unique identifier for the requisition.
@@ -679,11 +502,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The unique identifier for the requisition.
 	/// </value>
-	public int RequisitionID
-	{
-		get;
-		set;
-	}
+	public int RequisitionID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the maximum salary for the requisition.
@@ -691,11 +510,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The highest possible salary for the position.
 	/// </value>
-	public decimal SalaryHigh
-	{
-		get;
-		set;
-	}
+	public decimal SalaryHigh { get; set; }
 
 	/// <summary>
 	///     Gets or sets the lower bound of the salary range for the requisition.
@@ -703,11 +518,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The lower bound of the salary range.
 	/// </value>
-	public decimal SalaryLow
-	{
-		get;
-		set;
-	}
+	public decimal SalaryLow { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the requisition requires a security clearance.
@@ -715,11 +526,7 @@ public class RequisitionDetails
 	/// <value>
 	///     <c>true</c> if a security clearance is required; otherwise, <c>false</c>.
 	/// </value>
-	public bool SecurityClearance
-	{
-		get;
-		set;
-	}
+	public bool SecurityClearance { get; set; }
 
 	/// <summary>
 	///     Gets or sets the skills required for the requisition.
@@ -733,11 +540,7 @@ public class RequisitionDetails
 	///     This property is used in the `SetSkills` method of the `CompanyRequisitions` class to set the skills required for
 	///     company requisitions.
 	/// </remarks>
-	public string SkillsRequired
-	{
-		get;
-		set;
-	}
+	public string SkillsRequired { get; set; }
 
 	/// <summary>
 	///     Gets or sets the identifier for the state associated with the requisition.
@@ -749,11 +552,7 @@ public class RequisitionDetails
 	///     This property is used to link the requisition to a specific state. It is used in the UI to populate and manage the
 	///     state selection in the requisition details panel.
 	/// </remarks>
-	public int StateID
-	{
-		get;
-		set;
-	}
+	public int StateID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the status of the requisition.
@@ -761,11 +560,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The status of the requisition.
 	/// </value>
-	public string Status
-	{
-		get;
-		set;
-	}
+	public string Status { get; set; }
 
 	/// <summary>
 	///     Gets or sets the status code for the requisition details.
@@ -773,11 +568,7 @@ public class RequisitionDetails
 	/// <value>
 	///     The status code is a string that represents the current status of the requisition.
 	/// </value>
-	public string StatusCode
-	{
-		get;
-		set;
-	}
+	public string StatusCode { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether a candidate can be submitted for the requisition.
@@ -785,38 +576,22 @@ public class RequisitionDetails
 	/// <value>
 	///     <c>true</c> if a candidate can be submitted; otherwise, <c>false</c>.
 	/// </value>
-	public bool SubmitCandidate
-	{
-		get;
-		set;
-	}
+	public bool SubmitCandidate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the title of the requisition.
 	/// </summary>
-	public string Title
-	{
-		get;
-		set;
-	}
+	public string Title { get; set; }
 
 	/// <summary>
 	///     Gets or sets the username of the user who last updated the requisition details.
 	/// </summary>
-	public string UpdatedBy
-	{
-		get;
-		set;
-	}
+	public string UpdatedBy { get; set; }
 
 	/// <summary>
 	///     Gets or sets the date and time when the requisition details were last updated.
 	/// </summary>
-	public DateTime UpdatedDate
-	{
-		get;
-		set;
-	}
+	public DateTime UpdatedDate { get; set; }
 
 	/// <summary>
 	///     Gets or sets the ZipCode for the RequisitionDetails.
@@ -824,71 +599,67 @@ public class RequisitionDetails
 	/// <value>
 	///     The ZipCode is a string representing the postal code for the requisition.
 	/// </value>
-	public string ZipCode
-	{
-		get;
-		set;
-	}
+	public string ZipCode { get; set; }
 
 	/// <summary>
 	///     Clears all the properties of the RequisitionDetails object by setting them to their default values.
 	/// </summary>
 	public void Clear()
-	{
-		CompanyName = "";
-		ContactName = "";
-		PositionTitle = "";
-		Description = "";
-		Positions = 0;
-		Duration = "";
-		DurationCode = "M";
-		Location = "";
-		Experience = "";
-		ExpRateLow = 0;
-		ExpRateHigh = 0;
-		ExpLoadLow = 0;
-		ExpLoadHigh = 0;
-		PlacementFee = 0;
-		PlacementType = false;
-		JobOptions = "";
-		ReportTo = "";
-		SalaryLow = 0;
-		SalaryHigh = 0;
-		ExpensesPaid = false;
-		ExpectedStart = DateTime.Today.AddYears(-10);
-		Status = "Open";
-		Priority = "Medium";
-		CreatedBy = "ADMIN";
-		CreatedDate = DateTime.Today;
-		UpdatedBy = "ADMIN";
-		UpdatedDate = DateTime.Today;
-		SkillsRequired = "";
-		Education = "";
-		Eligibility = "";
-		SecurityClearance = false;
-		Benefits = false;
-		BenefitNotes = "";
-		OFCCP = false;
-		DueDate = DateTime.Today.AddDays(7);
-		SubmitCandidate = false;
-		City = "";
-		StateID = 1;
-		ZipCode = "";
-		Mandatory = "";
-		Optional = "";
-		AssignedTo = "";
-		PriorityID = 1;
-		EligibilityID = 0;
-		ExperienceID = 0;
-		EducationID = 0;
-		JobOptionID = "1";
-		CompanyID = 0;
-		ContactID = 0;
-		StatusCode = "NEW";
-		CompanyCity = "";
-		CompanyState = "";
-		CompanyZip = "";
-	}
+    {
+        CompanyName = "";
+        ContactName = "";
+        PositionTitle = "";
+        Description = "";
+        Positions = 0;
+        Duration = "";
+        DurationCode = "M";
+        Location = "";
+        Experience = "";
+        ExpRateLow = 0;
+        ExpRateHigh = 0;
+        ExpLoadLow = 0;
+        ExpLoadHigh = 0;
+        PlacementFee = 0;
+        PlacementType = false;
+        JobOptions = "";
+        ReportTo = "";
+        SalaryLow = 0;
+        SalaryHigh = 0;
+        ExpensesPaid = false;
+        ExpectedStart = DateTime.Today.AddYears(-10);
+        Status = "Open";
+        Priority = "Medium";
+        CreatedBy = "ADMIN";
+        CreatedDate = DateTime.Today;
+        UpdatedBy = "ADMIN";
+        UpdatedDate = DateTime.Today;
+        SkillsRequired = "";
+        Education = "";
+        Eligibility = "";
+        SecurityClearance = false;
+        Benefits = false;
+        BenefitNotes = "";
+        OFCCP = false;
+        DueDate = DateTime.Today.AddDays(7);
+        SubmitCandidate = false;
+        City = "";
+        StateID = 1;
+        ZipCode = "";
+        Mandatory = "";
+        Optional = "";
+        AssignedTo = "";
+        PriorityID = 1;
+        EligibilityID = 0;
+        ExperienceID = 0;
+        EducationID = 0;
+        JobOptionID = "1";
+        CompanyID = 0;
+        ContactID = 0;
+        StatusCode = "NEW";
+        CompanyCity = "";
+        CompanyState = "";
+        CompanyZip = "";
+    }
 
 	/// <summary>
 	///     Creates a shallow copy of the current RequisitionDetails object.
