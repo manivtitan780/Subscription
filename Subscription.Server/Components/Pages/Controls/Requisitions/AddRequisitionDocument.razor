@@ -12,7 +12,7 @@
     Remarks:
     This component uses Syncfusion Blazor components such as SfDialog, SfDataForm, SfButton, and SfUploader to create the dialog and form. The form is validated using FluentValidationValidator.
 *@
-<SfDialog CssClass="dialogPopup" Header="Add New Document" Height="580px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+<SfDialog CssClass="dialogPopup" Header="Add New Document" Height="633px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
 	<ChildContent>
 		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -20,8 +20,8 @@
 		<DialogEvents OnOpen="OpenDialog"/>
 		<SfDataForm EditContext="Context" ID="addDocumentForm" OnValidSubmit="SaveDocumentDialog" @ref="AddDocumentForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
-				<SfButton CssClass="e-primary" type="submit">Save Document</SfButton>
-				<SfButton CssClass="e-secondary" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDocumentDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Document</SfButton>
 			</FormButtons>
 			<FormValidator>
 				<FluentValidationValidator Validator="_candidateDocumentValidator"/>
@@ -40,8 +40,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
 						<Template>
-							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760"
-							            SequentialUpload="true" ShowFileList="true">
+							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760" SequentialUpload="true" ShowFileList="true">
 								<UploaderEvents FileSelected="OnFileSelected" ValueChange="UploadDocument"></UploaderEvents> @*MaxFileSize = 10MB*@
 							</SfUploader>
 						</Template>

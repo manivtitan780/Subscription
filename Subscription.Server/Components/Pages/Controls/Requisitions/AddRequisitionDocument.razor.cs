@@ -8,7 +8,7 @@
 // File Name:           AddRequisitionDocument.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-24-2025 19:02
-// Last Updated On:     02-25-2025 20:02
+// Last Updated On:     05-15-2025 18:56
 // *****************************************/
 
 #endregion
@@ -37,17 +37,9 @@ public partial class AddRequisitionDocument
     /// <remarks>
     ///     This property is used to manage the form state and handle form submissions in the AddRequisitionDocument component.
     /// </remarks>
-    private SfDataForm AddDocumentForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm AddDocumentForm { get; set; }
 
-    internal MemoryStream AddedDocument
-    {
-        get;
-        set;
-    } = new();
+    internal MemoryStream AddedDocument { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the EventCallback triggered when the cancel event occurs in the AddRequisitionDocument component.
@@ -61,17 +53,9 @@ public partial class AddRequisitionDocument
     ///     the dialog.
     /// </remarks>
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog component of the AddRequisitionDocument page.
@@ -83,23 +67,11 @@ public partial class AddRequisitionDocument
     ///     This property represents the dialog component that is used to add a new requisition document.
     ///     It provides the functionality to show, hide, and interact with the dialog.
     /// </remarks>
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
-    internal string FileName
-    {
-        get;
-        set;
-    }
+    internal string FileName { get; set; }
 
-    internal string Mime
-    {
-        get;
-        set;
-    }
+    internal string Mime { get; set; }
 
     /// <summary>
     ///     Gets or sets the model for the RequisitionDocuments.
@@ -108,11 +80,7 @@ public partial class AddRequisitionDocument
     ///     The model for the RequisitionDocuments.
     /// </value>
     [Parameter]
-    public RequisitionDocuments Model
-    {
-        get;
-        set;
-    }
+    public RequisitionDocuments Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the EventCallback for saving the EditContext.
@@ -122,11 +90,7 @@ public partial class AddRequisitionDocument
     ///     It is typically used to perform the actual save operation, such as persisting the changes to a database or a file.
     /// </remarks>
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the document uploads should be sequential.
@@ -140,11 +104,7 @@ public partial class AddRequisitionDocument
     ///     When this property is set to <c>false</c>, the documents will be uploaded concurrently.
     /// </remarks>
     [Parameter]
-    public bool SequentialUpload
-    {
-        get;
-        set;
-    } = true;
+    public bool SequentialUpload { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the spinner control used in the AddRequisitionDocument component.
@@ -152,17 +112,9 @@ public partial class AddRequisitionDocument
     /// <remarks>
     ///     This spinner is displayed during asynchronous operations such as document upload or save to indicate progress.
     /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Asynchronously cancels the document dialog operation.
