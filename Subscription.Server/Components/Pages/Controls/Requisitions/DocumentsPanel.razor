@@ -7,7 +7,7 @@
 				<GridEvents RowSelected="RowSelected" TValue="RequisitionDocuments"/>
 				<GridColumns>
 					<GridColumn Field="@nameof(RequisitionDocuments.Name)" HeaderText="Name" Width="35%"></GridColumn>
-					<GridColumn Field="@nameof(RequisitionDocuments.InternalFileName)" HeaderText="File Name" Width="35%"></GridColumn>
+					<GridColumn Field="@nameof(RequisitionDocuments.Location)" HeaderText="File Name" Width="35%"></GridColumn>
 					<GridColumn Field="@nameof(RequisitionDocuments.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"></GridColumn>
 					<GridColumn Field="@nameof(RequisitionDocuments.UpdateBy)" HeaderText="Updated By" Width="20%"></GridColumn>
 					<GridColumn Width="10%">
@@ -52,6 +52,6 @@
 	</div>
 </div>
 @* <ConfirmDialog Delete="() => DeleteDocument.InvokeAsync(_selectedID)" Entity="Document" Height="160px" @ref="DialogConfirm" Width="381px"></ConfirmDialog> *@
-<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
-<ViewPDFDocument DocumentLocation="@SelectedRow.Location" DocumentName="@SelectedRow.Name" EntityID="@SelectedRow.RequisitionID" EntityType="@EntityTypeName" InternalFileName="@SelectedRow.InternalFileName" @ref="@DocumentViewPDF"/>$1$*/
+<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+<ViewPDFDocument DocumentLocation="@SelectedRow.Location" DocumentName="@SelectedRow.Name" EntityID="@SelectedRow.RequisitionID" EntityType="@EntityTypeName" InternalFileName="@SelectedRow.InternalFileName" @ref="@DocumentViewPDF"/>
 @* <ViewWordDocument DocumentLocation="@_documentLocation" DocumentName="@_documentName" EntityID="@_requisitionID" EntityType="@EntityTypeName" InternalFileName="@_internalFileName" @ref="@DocumentViewWord" /> *@
