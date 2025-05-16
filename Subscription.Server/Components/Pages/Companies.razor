@@ -14,19 +14,20 @@
 *@
 
 @page "/company"
+@using AnimationEffect = Syncfusion.Blazor.AnimationEffect
 @layout SubscriptionLayout
 
 <PageHeader PageName="Company"/>
 @if (HasViewRights)
 {
 	<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies"
-				Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count"
-				ValueChange="AutocompleteValueChange">
+	            Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count"
+	            ValueChange="AutocompleteValueChange">
 		<GridContent>
 			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
-					@ref="Grid" TValue="Company" Width="100%">
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" TValue="Company"/>@**@
-				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
+			        @ref="Grid" TValue="Company" Width="100%">
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" RowSelected="RowSelected" TValue="Company"/>@**@
+				<GridSelectionSettings EnableToggle="false" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				<GridColumns>
 					<GridColumn Field="@nameof(Company.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.CompanyName)" HeaderText="Name" Width="17%">
@@ -34,9 +35,7 @@
 							@{
 								if (aCon is Company _con)
 								{
-									<span>
-										@(_con.CompanyName)
-									</span>
+									<span>@(_con.CompanyName)</span>
 								}
 							}
 						</Template>
@@ -46,9 +45,7 @@
 							@{
 								if (aCon is Company _con)
 								{
-									<span>
-										@(_con.Email)
-									</span>
+									<span>@(_con.Email)</span>
 								}
 							}
 						</Template>
@@ -58,9 +55,7 @@
 							@{
 								if (aCon is Company _con)
 								{
-									<span>
-										@(_con.Phone.StripPhoneNumber().FormatPhoneNumber())
-									</span>
+									<span>@(_con.Phone.StripPhoneNumber().FormatPhoneNumber())</span>
 								}
 							}
 						</Template>
@@ -70,9 +65,7 @@
 							@{
 								if (aCon is Company _con)
 								{
-									<span>
-										@(_con.Address.ToMarkupString())
-									</span>
+									<span>@(_con.Address.ToMarkupString())</span>
 								}
 							}
 						</Template>
@@ -83,9 +76,7 @@
 							@{
 								if (aCon is Company _con)
 								{
-									<span>
-										@(_con.Status ? "Active" : "Inactive")
-									</span>
+									<span>@(_con.Status ? "Active" : "Inactive")</span>
 								}
 							}
 						</Template>
@@ -95,9 +86,7 @@
 							@{
 								if (aCon is Company _con)
 								{
-									<span>
-										@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy}]")
-									</span>
+									<span>@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy}]")</span>
 								}
 							}
 						</Template>
@@ -107,7 +96,7 @@
 					<DetailTemplate>
 						@* Add Buttons Start *@
 						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
-									 Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
+						             Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
 							<SpeedDialItems>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditCompany" Text="Edit Company" Title="Edit Company"/>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddLocation" Text="Add Location" Title="Add Location"/>
@@ -119,11 +108,11 @@
 						@* Add Buttons End *@
 						@if (context is Company)
 						{
-							<SfTab CssClass="e-fill" Height="340" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
+							<SfTab CssClass="e-fill" Height="400" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
 								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent" ZIndex="12000"/>@**@
 								<TabAnimationSettings>
-									<TabAnimationPrevious Effect="Syncfusion.Blazor.AnimationEffect.None"></TabAnimationPrevious>
-									<TabAnimationNext Effect="Syncfusion.Blazor.AnimationEffect.None"></TabAnimationNext>
+									<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+									<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
 									<TabEvents Selected="TabSelected"></TabEvents>
 								</TabAnimationSettings>
 								<TabItems>

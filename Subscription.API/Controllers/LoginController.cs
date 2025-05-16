@@ -17,6 +17,7 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
@@ -32,24 +33,27 @@ using Role = Subscription.Model.Role;
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class LoginController(IConfiguration configuration) : ControllerBase
+public class LoginController(IConfiguration configuration, RedisService redisService) : ControllerBase
 {
-    public string GenerateToken(string username, List<string> permissions, string roleName = "RC")
+    private string GenerateToken(string username, List<string> permissions, string roleName = "RC")
     {
-        List<Claim> _claims =
-        [
-            new(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, roleName)
-        ];
+        string _keyString = configuration["JWTSecretKey"] ?? "";
+        if (_keyString.NullOrWhiteSpace())
+        {
+            return "";
+        }
+        
+        List<Claim> _claims = [new(ClaimTypes.Name, username), new(ClaimTypes.Role, roleName)];
         _claims.AddRange(permissions.Select(permission => new Claim("Permission", permission)));
 
-        SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(configuration["JWTSecretKey"] ?? "SomeKey"));
+        SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(_keyString));
+        
         SigningCredentials _credentials = new(_key, SecurityAlgorithms.HmacSha256);
 
         JwtSecurityToken token = new(configuration["JWTIssuer"],
                                      configuration["JWTAudience"],
                                      _claims,
-                                     expires: DateTime.Now.AddDays(14),
+                                     expires: DateTime.UtcNow.AddDays(14),
                                      signingCredentials: _credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
@@ -81,13 +85,12 @@ public class LoginController(IConfiguration configuration) : ControllerBase
             byte[] _sqlPassword = (byte[])_reader["Password"];
             byte[] _password = General.ComputeHashWithSalt(password, _salt);
             int _roleID = (byte)_reader["Role"];
-            if (!_sqlPassword.SequenceEqual(_password))
+            if (!CryptographicOperations.FixedTimeEquals(_sqlPassword, _password))
             {
                 continue;
             }
 
-            RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
-            RedisValue _roles = await _service.GetAsync("Roles");
+            RedisValue _roles = await redisService.GetAsync("Roles");
             string _roleString = _roles.ToString();
             List<Role> _rolesList = JsonConvert.DeserializeObject<List<Role>>(_roleString);
             Role _userRole = _rolesList!.FirstOrDefault(role => role.ID == _roleID)!;

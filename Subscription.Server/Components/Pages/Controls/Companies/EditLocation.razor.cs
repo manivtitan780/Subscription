@@ -33,7 +33,7 @@ public partial class EditLocation : IDisposable
     public EventCallback<EditContext> Save { get; set; }
 
     [Parameter]
-    public List<IntValues> State { get; set; } = [];
+    public List<StateCache> State { get; set; } = [];
 
     private bool VisibleSpinner { get; set; }
 

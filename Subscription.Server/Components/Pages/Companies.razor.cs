@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     04-30-2025 20:43
+// Last Updated On:     05-16-2025 16:30
 // *****************************************/
 
 #endregion
@@ -46,6 +46,8 @@ public partial class Companies
                                                                                                */
 
     private Query _query = new();
+
+    private int _selectedRowIndex = -1;
     private int _selectedTab;
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
 
@@ -124,7 +126,7 @@ public partial class Companies
 
     private SfSpinner Spinner { get; set; } = new();
 
-    private List<IntValues> State { get; set; } = [];
+    private List<StateCache> State { get; set; } = [];
 
     private string Title { get; set; } = "Edit";
 
@@ -167,20 +169,27 @@ public partial class Companies
                                                     if (Grid.TotalItemCount > 0)
                                                     {
                                                         await Grid.SelectRowAsync(0);
+                                                        //await Grid.ExpandCollapseDetailRowAsync(Grid.CurrentViewData.OfType<Company>().First());
                                                     }
                                                 });
 
     private Task DeleteCompanyDocument(int arg) => ExecuteMethod(async () =>
                                                                  {
-                                                                     Dictionary<string, string> _parameters = new()
+                                                                     /*Dictionary<string, string> _parameters = new()
                                                                                                               {
                                                                                                                   {"documentID", arg.ToString()},
                                                                                                                   {"user", User}
-                                                                                                              };
+                                                                                                              };*/
 
-                                                                     string _response = await General.ExecuteRest<string>("Company/DeleteCompanyDocument", _parameters);
+                                                                     _companyDocuments = await General.ExecuteAndDeserializeRest<CompanyDocuments>("Company/DeleteCompanyDocument",
+                                                                                                                                                   new()
+                                                                                                                                                   {
+                                                                                                                                                       {"documentID", arg.ToString()},
+                                                                                                                                                       {"user", User}
+                                                                                                                                                   }).ConfigureAwait(false);
+                                                                     /*string _response = await General.ExecuteRest<string>("Company/DeleteCompanyDocument", _parameters);
 
-                                                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_response);
+                                                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_response);*/
                                                                  });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
@@ -394,14 +403,14 @@ public partial class Companies
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
                                 }
 
-                                if (NAICS.Count != 0 || State.Count != 0 || Roles.Count != 0)
+                                if (NAICS.Count == 0 && State.Count == 0 && Roles.Count == 0)
                                 {
                                     //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
                                     List<string> _keys = [nameof(CacheObjects.NAICS), nameof(CacheObjects.States), nameof(CacheObjects.Roles)];
 
                                     Dictionary<string, string> _values = await RedisService.BatchGet(_keys);
                                     NAICS = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.NAICS)]);
-                                    State = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.States)]);
+                                    State = General.DeserializeObject<List<StateCache>>(_values[nameof(CacheObjects.States)]);
                                     Roles = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.Roles)]);
                                 }
                             });
@@ -424,25 +433,23 @@ public partial class Companies
 
     private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
 
-    /*private async Task RowSelected(RowSelectEventArgs<Company> company)
+    private async Task RowSelected(RowSelectEventArgs<Company> company)
     {
-        await Grid.CollapseAllDetailRowAsync();
-        if (!_isLoading)
+        if (_selectedRowIndex != -1 && _selectedRowIndex != company.RowIndex)
         {
+            await Grid.CollapseAllDetailRowAsync();
             await Grid.ExpandCollapseDetailRowAsync(company.Data);
-            await DetailBind(company.Data);
         }
-    }*/
+
+        _selectedRowIndex = company.RowIndex;
+    }
 
     private async Task SaveCompany() => await ExecuteMethod(async () =>
                                                             {
-                                                                Dictionary<string, string> _parameters = new()
-                                                                                                         {
-                                                                                                             {"user", User}
-                                                                                                         };
+                                                                // Dictionary<string, string> _parameters = new() {{"user", User}};
 
-                                                                (string _company, _, string _locations, _) =
-                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", _parameters, _companyDetailsClone);
+                                                                (string _company, _, string _locations, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", UserParameters(),
+                                                                                                                                                             _companyDetailsClone);
                                                                 _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
                                                                 _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations);
 
@@ -472,11 +479,8 @@ public partial class Companies
 
     private async Task SaveContact() => await ExecuteMethod(async () =>
                                                             {
-                                                                Dictionary<string, string> _parameters = new()
-                                                                                                         {
-                                                                                                             {"user", User}
-                                                                                                         };
-                                                                string _response = await General.ExecuteRest<string>("Company/SaveCompanyContact", _parameters, SelectedContact);
+                                                                // Dictionary<string, string> _parameters = new() {{"user", User}};
+                                                                string _response = await General.ExecuteRest<string>("Company/SaveCompanyContact", UserParameters(), SelectedContact);
 
                                                                 _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_response);
 
@@ -510,11 +514,8 @@ public partial class Companies
 
     private async Task SaveLocation() => await ExecuteMethod(async () =>
                                                              {
-                                                                 Dictionary<string, string> _parameters = new()
-                                                                                                          {
-                                                                                                              {"user", User}
-                                                                                                          };
-                                                                 string _response = await General.ExecuteRest<string>("Company/SaveCompanyLocation", _parameters, SelectedLocation);
+                                                                 // Dictionary<string, string> _parameters = new() {{"user", User}};
+                                                                 string _response = await General.ExecuteRest<string>("Company/SaveCompanyLocation", UserParameters(), SelectedLocation);
 
                                                                  _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_response);
 
@@ -555,55 +556,32 @@ public partial class Companies
 
     private void SetupAddress(bool useLocation = false)
     {
-        string _generateAddress = "";
-
+        List<string> _parts = [];
         if (!useLocation)
         {
-            _generateAddress = _companyDetails.StreetName;
-
-            if (_generateAddress == "")
+            if (_companyDetails.StreetName.NotNullOrWhiteSpace())
             {
-                _generateAddress = _companyDetails.City;
+                _parts.Add(_companyDetails.StreetName);
             }
-            else
+
+            if (_companyDetails.City.NotNullOrWhiteSpace())
             {
-                _generateAddress += _companyDetails.City == "" ? "" : $"{_companyDetails.City}";
+                _parts.Add(_companyDetails.City);
             }
 
             if (_companyDetails.StateID > 0)
             {
-                IntValues _state = State.FirstOrDefault(state => state.KeyValue == _companyDetails.StateID);
+                StateCache _state = State.FirstOrDefault(state => state.KeyValue == _companyDetails.StateID);
 
                 if (_state is {Text: not null})
                 {
-                    if (_generateAddress == "")
-                    {
-                        _generateAddress = $"<strong>{_state.Text}</strong>";
-                    }
-                    else
-                    {
-                        try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
-                        {
-                            _generateAddress += $", <strong>{_state.Text}</strong>";
-                        }
-                        catch
-                        {
-                            //
-                        }
-                    }
+                    _parts.Add($"<strong>{_state.Text}</strong>");
                 }
             }
 
-            if (_companyDetails.ZipCode != "")
+            if (_companyDetails.ZipCode.NotNullOrWhiteSpace())
             {
-                if (_generateAddress == "")
-                {
-                    _generateAddress = _companyDetails.ZipCode;
-                }
-                else
-                {
-                    _generateAddress += ", " + _companyDetails.ZipCode;
-                }
+                _parts.Add(_companyDetails.ZipCode);
             }
         }
         else
@@ -611,161 +589,92 @@ public partial class Companies
             CompanyLocations _loc = _companyLocations.FirstOrDefault(location => location.PrimaryLocation);
             if (_loc != null)
             {
-                _generateAddress = _loc.StreetName;
-
-                if (_generateAddress == "")
+                if (_loc.StreetName.NotNullOrWhiteSpace())
                 {
-                    _generateAddress = _loc.City;
-                }
-                else
-                {
-                    _generateAddress += _loc.City == "" ? "" : $"{_loc.City}";
+                    _parts.Add(_loc.StreetName);
                 }
 
-                if (_companyDetails.StateID > 0)
+                if (_loc.City.NotNullOrWhiteSpace())
                 {
-                    IntValues _state = State.FirstOrDefault(state => state.KeyValue == _loc.StateID);
+                    _parts.Add(_loc.City);
+                }
+
+                if (_loc.StateID > 0)
+                {
+                    StateCache _state = State.FirstOrDefault(state => state.KeyValue == _loc.StateID);
 
                     if (_state is {Text: not null})
                     {
-                        if (_generateAddress == "")
-                        {
-                            _generateAddress = $"<strong>{_state.Text}</strong>";
-                        }
-                        else
-                        {
-                            try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
-                            {
-                                _generateAddress += $", <strong>{_state.Text}</strong>";
-                            }
-                            catch
-                            {
-                                //
-                            }
-                        }
+                        _parts.Add($"<strong>{_state.Text}</strong>");
                     }
                 }
 
-                if (_loc.ZipCode != "")
+                if (_loc.ZipCode.NotNullOrWhiteSpace())
                 {
-                    if (_generateAddress == "")
-                    {
-                        _generateAddress = _loc.ZipCode;
-                    }
-                    else
-                    {
-                        _generateAddress += ", " + _loc.ZipCode;
-                    }
+                    _parts.Add(_loc.ZipCode);
                 }
+            }
+            else
+            {
+                Address = "".ToMarkupString();
             }
         }
 
-        if (_generateAddress != null && _generateAddress.StartsWith(","))
+        if (_parts.Count > 0)
         {
-            _generateAddress = _generateAddress[1..].Trim();
+            Address = string.Join(", ", _parts).ToMarkupString();
         }
-
-        Address = _generateAddress.ToMarkupString();
     }
 
     private string SetupTargetAddress(bool useLocation = false)
     {
-        string _address = "";
+        List<string> _parts = [];
         if (!useLocation)
         {
-            _address = _companyDetails.City;
+            _parts.Add(_companyDetails.City);
 
             if (_companyDetails.StateID > 0)
             {
-                IntValues _state = State.FirstOrDefault(state => state.KeyValue == _companyDetails.StateID);
+                StateCache _state = State.FirstOrDefault(state => state.KeyValue == _companyDetails.StateID);
 
-                if (_state is {Text: not null})
+                if (_state is {Code: not null})
                 {
-                    if (_address == "")
-                    {
-                        _address = $"{_state.Text.Trim().Substring(1, 2)}";
-                    }
-                    else
-                    {
-                        try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
-                        {
-                            _address += $", {_state.Text.Trim().Substring(1, 2)}";
-                        }
-                        catch
-                        {
-                            //
-                        }
-                    }
+                    _parts.Add(_state.Code);
                 }
             }
 
             if (_companyDetails.ZipCode != "")
             {
-                if (_address == "")
-                {
-                    _address = _companyDetails.ZipCode;
-                }
-                else
-                {
-                    _address += ", " + _companyDetails.ZipCode;
-                }
+                _parts.Add(_companyDetails.ZipCode);
             }
         }
         else
         {
             CompanyLocations _loc = _companyLocations.FirstOrDefault(location => location.PrimaryLocation);
-            if (_loc != null)
+            if (_loc == null)
             {
-                _address = _loc.City;
+                return "";
+            }
 
-                if (_loc.StateID > 0)
+            _parts.Add(_loc.City);
+
+            if (_loc.StateID > 0)
+            {
+                StateCache _state = State.FirstOrDefault(state => state.KeyValue == _loc.StateID);
+
+                if (_state is {Code: not null})
                 {
-                    IntValues _state = State.FirstOrDefault(state => state.KeyValue == _loc.StateID);
-
-                    if (_state is {Text: not null})
-                    {
-                        if (_address == "")
-                        {
-                            _address = $"{_state.Text.Trim().Substring(1, 2)}";
-                        }
-                        else
-                        {
-                            try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
-                            {
-                                _address += $", {_state.Text.Trim().Substring(1, 2)}";
-                            }
-                            catch
-                            {
-                                //
-                            }
-                        }
-                    }
-                }
-
-                if (_loc.ZipCode != "")
-                {
-                    if (_address == "")
-                    {
-                        _address = _loc.ZipCode;
-                    }
-                    else
-                    {
-                        _address += ", " + _loc.ZipCode;
-                    }
+                    _parts.Add(_state.Code);
                 }
             }
-            else
+
+            if (_loc.ZipCode != "")
             {
-                _address = "";
+                _parts.Add(_loc.ZipCode);
             }
         }
 
-        if (_address != null && _address.StartsWith(","))
-        {
-            _address = _address[1..].Trim();
-        }
-
-        return _address;
+        return _parts.Count > 0 ? string.Join(", ", _parts) : "";
     }
 
     private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
@@ -773,24 +682,36 @@ public partial class Companies
         switch (args.Item.ID)
         {
             case "itemEditCompany":
+            {
                 _selectedTab = 0;
                 return EditCompany();
+            }
             case "itemAddLocation":
+            {
                 _selectedTab = 1;
                 return EditLocation(0);
+            }
             case "itemAddContact":
+            {
                 _selectedTab = 2;
                 return EditCompanyContact(0);
+            }
             case "itemAddDocument":
+            {
                 _selectedTab = 3;
                 return AddDocument();
+            }
             case "itemEditAccount":
+            {
                 _selectedTab = 4;
                 break;
+            }
         }
 
         return Task.CompletedTask;
     }
 
     private void TabSelected(SelectEventArgs args) => _selectedTab = args.SelectedIndex;
+
+    private Dictionary<string, string> UserParameters() => new() {{"user", User}};
 }
