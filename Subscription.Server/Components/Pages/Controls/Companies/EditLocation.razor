@@ -26,7 +26,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.StateID)">
 						<Template>
-							<DropDown AllowFilter="true" @bind-Value="Model.StateID" ID="dropState" Key="KeyValue" Model="State" Placeholder="State" Text="Text" TItem="IntValues" TValue="int"/>
+							<DropDown AllowFilter="true" @bind-Value="Model.StateID" ID="dropState" Key="KeyValue" Model="State" Placeholder="State" Text="Text" TItem="StateCache" TValue="int"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="3" Field="@nameof(Model.ZipCode)">

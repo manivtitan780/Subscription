@@ -164,7 +164,7 @@ body, form, html {
     height: calc(100% - 20px);
     padding-bottom: 10px;
     padding-top: 10px;
-    width: 98%;
+    width: 99%;
 }
 
 .leftLayout, .rightLayout {
@@ -173,7 +173,7 @@ body, form, html {
     margin-left: 0.75%;
     overflow-y: auto;
     vertical-align: top;
-    width: 48.0%;
+    /*width: 48.0%;*/
 }
 
 .divPanelContainer {
@@ -490,7 +490,7 @@ body, form, html {
 }
 
 #gridCompanyTab > .e-gridcontent .e-content {
-    height: 230px;
+    height: 291px;
 }
 
 .e-grid.sf-grid .e-gridcontent .e-content.e-yscroll {
@@ -936,7 +936,8 @@ div#tabCompany div[id^="e-content-tabCompany"], div#tabCandidates div[id^="e-con
 }
 
 div#tabCompany div#e-content-tabCompany_0 div.divPanelContainerVertical {
-    height: 240px;
+    height: 100%;
+    margin-bottom: 0;
 }
 
 div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
