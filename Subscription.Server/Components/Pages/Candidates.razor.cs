@@ -322,7 +322,10 @@ public partial class Candidates
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", _parameters);
 
-                                                               _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
+                                                               if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                               {
+                                                                   _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
+                                                               }
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -338,7 +341,10 @@ public partial class Candidates
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", _parameters);
 
-                                                          _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
+                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                          {
+                                                              _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
+                                                          }
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)

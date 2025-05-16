@@ -2,183 +2,190 @@
 @using AnimationEffect = AnimationEffect
 @layout SubscriptionLayout
 
-<PageHeader PageName="Requisition" />
-<GridHeader AddMethod="() => EditRequisition(true)" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" 
-			Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" ShowSearch="true"
-			TotalCount="@Count" ValueChange="AutocompleteValueChange">
-	<GridContent>
-		<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
-		        @ref="Grid" TValue="Requisition" Width="100%">
-			<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
-			<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" RowSelecting="RowSelected" TValue="Requisition"/>
-			<GridColumns>
-				<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="10%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span style="color: @(_con.PriorityColor)">@_con.Code</span>
+<PageHeader PageName="Requisition"/>
+@if (HasViewRights)
+{
+	<GridHeader AddMethod="() => EditRequisition(true)" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page"
+	            Endpoint="Requisition/SearchRequisitions" Name="@(SearchModel.Title)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" ShowSearch="true"
+	            TotalCount="@Count" ValueChange="AutocompleteValueChange">
+		<GridContent>
+			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridRequisitions"
+			        @ref="Grid" TValue="Requisition" Width="100%">
+				<GridSelectionSettings EnableToggle="true" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" RowSelecting="RowSelected" TValue="Requisition"/>
+				<GridColumns>
+					<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
+					<GridColumn AllowSorting="true" Field="@nameof(Requisition.Code)" HeaderText="Code" Width="10%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span style="color: @(_con.PriorityColor)">@_con.Code</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="27%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span class="truncate-text" style="color: @(_con.PriorityColor)" title="@_con.Title">@_con.Title</span>
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="27%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span class="truncate-text" style="color: @(_con.PriorityColor)" title="@_con.Title">@_con.Title</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Company)" HeaderText="Company" Width="16%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span style="color: @(_con.PriorityColor)">@_con.Company</span>
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Requisition.Company)" HeaderText="Company" Width="16%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span style="color: @(_con.PriorityColor)">@_con.Company</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="15%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span style="color: @(_con.PriorityColor)">@_con.JobOptions</span>
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="15%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span style="color: @(_con.PriorityColor)">@_con.JobOptions</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="12%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span style="color: @(_con.PriorityColor)">@($"{_con.Updated} [{_con.UpdatedBy}]")</span>
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="12%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span style="color: @(_con.PriorityColor)">@($"{_con.Updated} [{_con.UpdatedBy}]")</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Due)" HeaderText="Due By" Width="10%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span style="color: @(_con.PriorityColor)">@_con.Due</span>
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Requisition.Due)" HeaderText="Due By" Width="10%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span style="color: @(_con.PriorityColor)">@_con.Due</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-				<GridColumn AllowSorting="true" Field="@nameof(Requisition.Status)" HeaderText="Status" Width="10%">
-					<Template Context="aCon">
-						@{
-							if (aCon is Requisition _con)
-							{
-								<span style="color: @(_con.PriorityColor)">@_con.Status</span>
+						</Template>
+					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Requisition.Status)" HeaderText="Status" Width="10%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Requisition _con)
+								{
+									<span style="color: @(_con.PriorityColor)">@_con.Status</span>
+								}
 							}
-						}
-					</Template>
-				</GridColumn>
-			</GridColumns>
-			<GridTemplates Context="context">
-				<DetailTemplate>
-					<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-					             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabRequisition" title="Action">
-						<SpeedDialItems>
-							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditRequisition" Text="Edit Requisition" Title="Edit Requisition"/>
-							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddDocument" Text="Add Document" Title="Add Document"/>
-							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitExisting" Text="Submit Existing Candidate" Title="Submit Existing Candidate"/>
-							<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitNew" Text="Submit New Candidate" Title="Submit New Candidate"/>
-						</SpeedDialItems>
-					</SfSpeedDial>
-					<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%" SelectedItem="_selectedTab">
-						<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
-						<TabAnimationSettings>
-							<TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"/>
-							<TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"/>
-							<TabEvents Selected="TabSelected"/>
-						</TabAnimationSettings>
-						<TabItems>
-							<TabItem>
-								<ChildContent>
-									<TabHeader Text="Requisition Info"/>
-								</ChildContent>
-								<ContentTemplate>
-									<div class="layout-2">
-										<div class="leftLayout">
-											<PanelDisplayText Label="Company Name" Text="@(_reqDetailsObject.CompanyName)"/>
-											<PanelDisplayText Label="Contact Name" Text="@(_reqDetailsObject.ContactName)"/>
-											<PanelDisplayText Label="Job Title" Text="@(_reqDetailsObject.PositionTitle)"/>
-											<PanelDisplayText Label="No. of Positions" Text="@(_reqDetailsObject.Positions.ToString())"/>
-											<PanelDisplayText Label="Project Location" Text="@GetLocation()"/>
-											<PanelDisplayText Label="Duration" Text="@(_reqDetailsObject.Duration + " " + GetDurationCode(_reqDetailsObject.DurationCode))"/>
-											<PanelDisplayText Label="Expected Start Date" Text="@(_reqDetailsObject.ExpectedStart.CultureDate())"/>
-											<PanelDisplayText Label="Due Date" Text="@(_reqDetailsObject.DueDate.CultureDate())"/>
-											<PanelDisplayText Label="Expected Rate" Text="@($"{_reqDetailsObject.ExpRateLow.CultureCurrency()} - {_reqDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
-											<PanelDisplayText Label="Salary Expected" Text="@($"{_reqDetailsObject.SalaryLow.CultureCurrency()} - {_reqDetailsObject.SalaryHigh.CultureCurrency()}")"/>
-											<PanelDisplayText Label="Load Expected" Text="@($"{_reqDetailsObject.ExpLoadLow.CultureCurrency()} - {_reqDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
-											<PanelDisplayText Label="Placement Fee" Text="@(_reqDetailsObject.PlacementFee.CulturePercentage())"/>
-											<PanelDisplayText Label="Status" Text="@(_reqDetailsObject.Status)"/>
-										</div>
-										<div class="leftLayout">
-											<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_reqDetailsObject.AssignedTo)"/>
-											<PanelDisplayText Label="Priority" Text="@(_reqDetailsObject.Priority)"/>
-											<PanelDisplayText Label="Job Options" Text="@(_reqDetailsObject.JobOptions)"/>
-											<PanelDisplayText Label="Experience" Text="@(_reqDetailsObject.Experience)"/>
-											<PanelDisplayText Label="Report To" Text="@(_reqDetailsObject.ReportTo)"/>
-											<PanelDisplayText Label="Education" Text="@(_reqDetailsObject.Education)"/>
-											<PanelDisplayText Label="Eligibility" Text="@(_reqDetailsObject.Eligibility)"/>
-											<PanelDisplayText Label="Expenses Paid?" Text="@_reqDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="Security Clearance?" Text="@_reqDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="OFCCP?" Text="@_reqDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="Benefits?" Text="@_reqDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
-											<PanelDisplayText Label="Benefits Notes" MarkupText="@_reqDetailsObject.BenefitNotes.ToMarkupString()"/>
-										</div>
-										<div class="rightLayout" style="display:flex; flex-direction:column;">
-											<div style="font-weight: bold; height: 23px;">Description:</div>
-											<div style="    overflow-y: auto; flex: 1;">
-												@_reqDetailsObject.Description.ToMarkupString()
+						</Template>
+					</GridColumn>
+				</GridColumns>
+				<GridTemplates Context="context">
+					<DetailTemplate>
+						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
+						             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabRequisition" title="Action">
+							<SpeedDialItems>
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditRequisition" Text="Edit Requisition" Title="Edit Requisition"/>
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddDocument" Text="Add Document" Title="Add Document"/>
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitExisting" Text="Submit Existing Candidate" Title="Submit Existing Candidate"/>
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitNew" Text="Submit New Candidate" Title="Submit New Candidate"/>
+							</SpeedDialItems>
+						</SfSpeedDial>
+						<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" LoadOn="ContentLoad.Init" ShowCloseButton="false" Width="95%" SelectedItem="_selectedTab">
+							<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+							<TabAnimationSettings>
+								<TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"/>
+								<TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"/>
+								<TabEvents Selected="TabSelected"/>
+							</TabAnimationSettings>
+							<TabItems>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Requisition Info"/>
+									</ChildContent>
+									<ContentTemplate>
+										<div class="layout-2">
+											<div class="leftLayout">
+												<PanelDisplayText Label="Company Name" Text="@(_reqDetailsObject.CompanyName)"/>
+												<PanelDisplayText Label="Contact Name" Text="@(_reqDetailsObject.ContactName)"/>
+												<PanelDisplayText Label="Job Title" Text="@(_reqDetailsObject.PositionTitle)"/>
+												<PanelDisplayText Label="No. of Positions" Text="@(_reqDetailsObject.Positions.ToString())"/>
+												<PanelDisplayText Label="Project Location" Text="@GetLocation()"/>
+												<PanelDisplayText Label="Duration" Text="@(_reqDetailsObject.Duration + " " + GetDurationCode(_reqDetailsObject.DurationCode))"/>
+												<PanelDisplayText Label="Expected Start Date" Text="@(_reqDetailsObject.ExpectedStart.CultureDate())"/>
+												<PanelDisplayText Label="Due Date" Text="@(_reqDetailsObject.DueDate.CultureDate())"/>
+												<PanelDisplayText Label="Expected Rate" Text="@($"{_reqDetailsObject.ExpRateLow.CultureCurrency()} - {_reqDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
+												<PanelDisplayText Label="Salary Expected" Text="@($"{_reqDetailsObject.SalaryLow.CultureCurrency()} - {_reqDetailsObject.SalaryHigh.CultureCurrency()}")"/>
+												<PanelDisplayText Label="Load Expected" Text="@($"{_reqDetailsObject.ExpLoadLow.CultureCurrency()} - {_reqDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
+												<PanelDisplayText Label="Placement Fee" Text="@(_reqDetailsObject.PlacementFee.CulturePercentage())"/>
+												<PanelDisplayText Label="Status" Text="@(_reqDetailsObject.Status)"/>
 											</div>
-											<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
-											<div style="flex: 1; overflow-y: auto;">
-												@_reqDetailSkills
+											<div class="leftLayout">
+												<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_reqDetailsObject.AssignedTo)"/>
+												<PanelDisplayText Label="Priority" Text="@(_reqDetailsObject.Priority)"/>
+												<PanelDisplayText Label="Job Options" Text="@(_reqDetailsObject.JobOptions)"/>
+												<PanelDisplayText Label="Experience" Text="@(_reqDetailsObject.Experience)"/>
+												<PanelDisplayText Label="Report To" Text="@(_reqDetailsObject.ReportTo)"/>
+												<PanelDisplayText Label="Education" Text="@(_reqDetailsObject.Education)"/>
+												<PanelDisplayText Label="Eligibility" Text="@(_reqDetailsObject.Eligibility)"/>
+												<PanelDisplayText Label="Expenses Paid?" Text="@_reqDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
+												<PanelDisplayText Label="Security Clearance?" Text="@_reqDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
+												<PanelDisplayText Label="OFCCP?" Text="@_reqDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
+												<PanelDisplayText Label="Benefits?" Text="@_reqDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
+												<PanelDisplayText Label="Benefits Notes" MarkupText="@_reqDetailsObject.BenefitNotes.ToMarkupString()"/>
+											</div>
+											<div class="rightLayout" style="display:flex; flex-direction:column;">
+												<div style="font-weight: bold; height: 23px;">Description:</div>
+												<div style="    overflow-y: auto; flex: 1;">
+													@_reqDetailsObject.Description.ToMarkupString()
+												</div>
+												<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
+												<div style="flex: 1; overflow-y: auto;">
+													@_reqDetailSkills
+												</div>
 											</div>
 										</div>
-									</div>
-								</ContentTemplate>
-							</TabItem>
-							<TabItem>
-								<ChildContent>
-									<TabHeader Text="Documents"/>
-								</ChildContent>
-								<ContentTemplate>
-									<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User"
-									                Model="@_reqDocumentsObject" @ref="DocumentsPanel"/>
-								</ContentTemplate>
-							</TabItem>
-							<TabItem>
-								<ChildContent>
-									<TabHeader Text="Activity"/>
-								</ChildContent>
-								<ContentTemplate>
-									<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID" 
-															  User="@User"/>
-								</ContentTemplate>
-							</TabItem>
-						</TabItems>
-					</SfTab>
-				</DetailTemplate>
-			</GridTemplates>
-		</SfGrid>
-	</GridContent>
-</GridHeader>
-@*<SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>*@
-<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
-<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
-                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
-<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
-<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_search" Model="SearchModelClone" Search="SearchRequisition"/>
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Documents"/>
+									</ChildContent>
+									<ContentTemplate>
+										<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EntityTypeName="EntityType.Requisition" EditRights="@HasEditRights" User="@User"
+										                Model="@_reqDocumentsObject" @ref="DocumentsPanel"/>
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
+										<TabHeader Text="Activity"/>
+									</ChildContent>
+									<ContentTemplate>
+										<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" UndoCandidateActivity="UndoActivity" RoleID="@RoleID"
+										                          User="@User"/>
+									</ContentTemplate>
+								</TabItem>
+							</TabItems>
+						</SfTab>
+					</DetailTemplate>
+				</GridTemplates>
+			</SfGrid>
+		</GridContent>
+	</GridHeader>
+	@*<SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>*@
+	<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
+	<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
+	                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
+	<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
+	<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_search" Model="SearchModelClone" Search="SearchRequisition"/>
+}
+else
+{
+	<div class="noAccess">You don't have rights to view this page.</div>
+}

@@ -222,6 +222,18 @@ public class General //(Container container)
         return response!.IsSuccessful ? response.Data : default;
     }
 
+    public static async Task<List<T>> ExecuteAndDeserializeRest<T>(string endpoint, Dictionary<string, string> parameters)
+    {
+        string _response = await ExecuteRest<string>(endpoint, parameters);
+
+        if (_response.NotNullOrWhiteSpace() && _response != "[]")
+        {
+            return DeserializeObject<List<T>>(_response);
+        }
+
+        return [];
+    }
+
     internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm, string methodName = "", string paramName = "")
     {
         List<KeyValues> _dataSource = [];

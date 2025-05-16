@@ -8,7 +8,7 @@
 // File Name:           DocumentsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-12-2025 15:02
-// Last Updated On:     05-15-2025 19:08
+// Last Updated On:     05-15-2025 21:33
 // *****************************************/
 
 #endregion
@@ -25,8 +25,9 @@ namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 /// </remarks>
 public partial class DocumentsPanel
 {
-    private string _internalFileName = "", _documentName = "", _documentLocation = "";
-    private int _requisitionID;
+    private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase) {".pdf", ".doc", ".docx", ".rtf"};
+    /*private string _internalFileName = "", _documentName = "", _documentLocation = "";
+    private int _requisitionID;*/
 
     private int _selectedID;
 
@@ -43,16 +44,8 @@ public partial class DocumentsPanel
     [Parameter]
     public EventCallback<int> DeleteDocument { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the ConfirmDialog component used for user action confirmation.
-    /// </summary>
-    /// <value>
-    ///     The ConfirmDialog component.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to display a dialog for confirming various user actions such as deletion of documents.
-    /// </remarks>
-    private ConfirmDialog DialogConfirm { get; set; }
+    [Inject]
+    private SfDialogService DialogService { get; set; }
 
     /// <summary>
     ///     Gets or sets the ViewPDFDocument component used for displaying PDF documents.
@@ -133,18 +126,6 @@ public partial class DocumentsPanel
     public string Height { get; set; } = "450px";
 
     /// <summary>
-    ///     Gets or sets the JavaScript runtime for the DocumentsPanel.
-    /// </summary>
-    /// <value>
-    ///     The JavaScript runtime used for interop calls between .NET and JavaScript in the DocumentsPanel.
-    /// </value>
-    /// <remarks>
-    ///     This property is injected by the framework and provides the ability to invoke JavaScript functions from .NET code.
-    /// </remarks>
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; }
-
-    /// <summary>
     ///     Gets or sets the list of RequisitionDocuments for the DocumentsPanel.
     /// </summary>
     /// <value>
@@ -184,15 +165,6 @@ public partial class DocumentsPanel
     internal RequisitionDocuments SelectedRow { get; private set; } = new();
 
     /// <summary>
-    ///     Gets or sets the SfSpinner control used in the DocumentsPanel.
-    /// </summary>
-    /// <value>
-    ///     The SfSpinner is a Syncfusion control that provides a visual indication when an operation is being performed.
-    ///     It is used in this context to indicate that a document is being loaded or an operation is being processed.
-    /// </value>
-    private SfSpinner Spinner { get; set; }
-
-    /// <summary>
     ///     Gets or sets the User associated with the RequisitionDocuments in the DocumentsPanel.
     /// </summary>
     /// <value>
@@ -203,9 +175,6 @@ public partial class DocumentsPanel
     public string User { get; set; } = "";
 
     private bool VisibleSpinner { get; set; }
-
-    [Inject]
-    private SfDialogService DialogService { get; set; }
 
     /// <summary>
     ///     Asynchronously deletes a document with the specified ID.
@@ -219,6 +188,7 @@ public partial class DocumentsPanel
     /// </remarks>
     private async Task DeleteDocumentMethod(int id)
     {
+        VisibleSpinner = true;
         _selectedID = id;
         int _index = await GridDownload.GetRowIndexByPrimaryKeyAsync(id);
         await GridDownload.SelectRowAsync(_index);
@@ -226,11 +196,7 @@ public partial class DocumentsPanel
         {
             await DeleteDocument.InvokeAsync(_selectedID);
         }
-
-        /*_selectedID = id;
-        int _index = await GridDownload.GetRowIndexByPrimaryKeyAsync(id);
-        await GridDownload.SelectRowAsync(_index);
-        await DialogConfirm.ShowDialog();*/
+        VisibleSpinner = false;
     }
 
     /// <summary>
@@ -249,15 +215,8 @@ public partial class DocumentsPanel
     ///     Handles the event when a row is selected in the grid.
     /// </summary>
     /// <param name="row">The selected row data of type RequisitionDocuments."/></param>
-    private void RowSelected(RowSelectEventArgs<RequisitionDocuments> row)
-    {
-        if (row != null)
-        {
-            SelectedRow = row.Data;
-        }
-    }
+    private void RowSelected(RowSelectEventArgs<RequisitionDocuments> row) => SelectedRow = row?.Data;
 
-    private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase) {".pdf", ".doc", ".docx", ".rtf"};
     /// <summary>
     ///     Asynchronously displays a dialog to view a document.
     /// </summary>
@@ -272,34 +231,11 @@ public partial class DocumentsPanel
     {
         VisibleSpinner = true;
 
-        /*Dictionary<string, string> _parameters = new()
-                                                 {
-                                                     {"documentID", documentID.ToString()}
-                                                 };
-
-        string _controller = EntityTypeName == EntityType.Requisition ? "Requisition" : "Lead";
-        string _response = await General.ExecuteRest<string>($"{_controller}/DownloadFile", _parameters, null, false);
-        DocumentDetails _restResponse = JsonConvert.DeserializeObject<DocumentDetails>(_response);
-
-        if (_restResponse != null)
-        {
-            string _location = _restResponse.DocumentLocation;
-            if (_location.EndsWith(".pdf") || _location.EndsWith(".doc") || _location.EndsWith(".docx") || _location.EndsWith(".rtf"))
-            {
-                _requisitionID = _restResponse.EntityID;
-                _documentName = _restResponse.DocumentName;
-                _documentLocation = _location;
-                _internalFileName = _restResponse.InternalFileName;
-                await DocumentViewPDF.ShowDialog();
-            }
-        }*/
         string _fileExtension = Path.GetExtension(fileName);
-        // string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
         if (AllowedExtensions.Contains(_fileExtension))
         {
             await DocumentViewPDF.ShowDialog();
         }
-
 
         VisibleSpinner = false;
     }

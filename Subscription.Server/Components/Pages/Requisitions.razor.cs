@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-12-2025 20:17
+// Last Updated On:     05-15-2025 21:26
 // *****************************************/
 
 #endregion
@@ -71,7 +71,7 @@ public partial class Requisitions
 
     private bool HasEditRights { get; set; }
 
-    public bool HasViewRights { get; set; }
+    private bool HasViewRights { get; set; }
 
     [Inject]
     private IJSRuntime JsRuntime { get; set; }
@@ -208,13 +208,8 @@ public partial class Requisitions
                                                                                                             {"user", User}
                                                                                                         };
 
-                                                               Dictionary<string, object> _response = await General.PostRest("Requisition/DeleteRequisitionDocument", _parameters);
-                                                               if (_response == null)
-                                                               {
-                                                                   return;
-                                                               }
-
-                                                               _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response["Document"]);
+                                                               _reqDocumentsObject = await General.ExecuteAndDeserializeRest<RequisitionDocuments>("Requisition/DeleteRequisitionDocument", _parameters)
+                                                                                                  .ConfigureAwait(false);
                                                            });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition) => ExecuteMethod(async () =>
