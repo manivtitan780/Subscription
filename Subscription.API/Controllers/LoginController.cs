@@ -69,106 +69,116 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
     ///     details if login is successful, null otherwise.
     /// </returns>
     [HttpPost]
-    public async Task<string> LoginPage(string userName, string password)
+    public async Task<ActionResult<string>> LoginPage(string userName, string password)
     {
-        //await Task.Yield();
-        //byte[] _password = Convert.FromBase64String(password);
         await using SqlConnection _connection = new(configuration.GetConnectionString("DBConnect"));
         await using SqlCommand _command = new("ValidateLogin", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("@User", 10, userName);
-        await _connection.OpenAsync();
-        await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-        while (await _reader.ReadAsync())
+        try
         {
-            byte[] _salt = (byte[])_reader["Salt"];
-            byte[] _sqlPassword = (byte[])_reader["Password"];
-            byte[] _password = General.ComputeHashWithSalt(password, _salt);
-            int _roleID = (byte)_reader["Role"];
-            if (!CryptographicOperations.FixedTimeEquals(_sqlPassword, _password))
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
             {
-                continue;
+                byte[] _salt = (byte[])_reader["Salt"];
+                byte[] _sqlPassword = (byte[])_reader["Password"];
+                byte[] _password = General.ComputeHashWithSalt(password, _salt);
+                int _roleID = (byte)_reader["Role"];
+                if (!CryptographicOperations.FixedTimeEquals(_sqlPassword, _password))
+                {
+                    continue;
+                }
+
+                RedisValue _roles = await redisService.GetAsync("Roles");
+                string _roleString = _roles.ToString();
+                List<Role> _rolesList = JsonConvert.DeserializeObject<List<Role>>(_roleString);
+                Role _userRole = _rolesList!.FirstOrDefault(role => role.ID == _roleID)!;
+                List<string> _permissions = [];
+
+                if (_userRole is {CreateOrEditCompany: true})
+                {
+                    _permissions.Add(nameof(_userRole.CreateOrEditCompany));
+                }
+
+                if (_userRole is {CreateOrEditCandidate: true})
+                {
+                    _permissions.Add(nameof(_userRole.CreateOrEditCandidate));
+                }
+
+                if (_userRole is {ViewAllCompanies: true})
+                {
+                    _permissions.Add(nameof(_userRole.ViewAllCompanies));
+                }
+
+                if (_userRole is {ViewMyCompanyProfile: true})
+                {
+                    _permissions.Add(nameof(_userRole.ViewMyCompanyProfile));
+                }
+
+                if (_userRole is {EditMyCompanyProfile: true})
+                {
+                    _permissions.Add(nameof(_userRole.EditMyCompanyProfile));
+                }
+
+                if (_userRole is {CreateOrEditRequisitions: true})
+                {
+                    _permissions.Add(nameof(_userRole.CreateOrEditRequisitions));
+                }
+
+                if (_userRole is {ViewOnlyMyCandidates: true})
+                {
+                    _permissions.Add(nameof(_userRole.ViewOnlyMyCandidates));
+                }
+
+                if (_userRole is {ViewAllCandidates: true})
+                {
+                    _permissions.Add(nameof(_userRole.ViewAllCandidates));
+                }
+
+                if (_userRole is {ViewRequisitions: true})
+                {
+                    _permissions.Add(nameof(_userRole.ViewRequisitions));
+                }
+
+                if (_userRole is {EditRequisitions: true})
+                {
+                    _permissions.Add(nameof(_userRole.EditRequisitions));
+                }
+
+                if (_userRole is {ManageSubmittedCandidates: true})
+                {
+                    _permissions.Add(nameof(_userRole.ManageSubmittedCandidates));
+                }
+
+                if (_userRole is {DownloadOriginal: true})
+                {
+                    _permissions.Add(nameof(_userRole.DownloadOriginal));
+                }
+
+                if (_userRole is {DownloadFormatted: true})
+                {
+                    _permissions.Add(nameof(_userRole.DownloadFormatted));
+                }
+
+                if (_userRole is {AdminScreens: true})
+                {
+                    _permissions.Add(nameof(_userRole.AdminScreens));
+                }
+
+                return Ok(GenerateToken(userName, _permissions, _userRole.RoleName));
             }
-
-            RedisValue _roles = await redisService.GetAsync("Roles");
-            string _roleString = _roles.ToString();
-            List<Role> _rolesList = JsonConvert.DeserializeObject<List<Role>>(_roleString);
-            Role _userRole = _rolesList!.FirstOrDefault(role => role.ID == _roleID)!;
-            List<string> _permissions = [];
-
-            if (_userRole is {CreateOrEditCompany: true})
-            {
-                _permissions.Add(nameof(_userRole.CreateOrEditCompany));
-            }
-
-            if (_userRole is {CreateOrEditCandidate: true})
-            {
-                _permissions.Add(nameof(_userRole.CreateOrEditCandidate));
-            }
-
-            if (_userRole is {ViewAllCompanies: true})
-            {
-                _permissions.Add(nameof(_userRole.ViewAllCompanies));
-            }
-
-            if (_userRole is {ViewMyCompanyProfile: true})
-            {
-                _permissions.Add(nameof(_userRole.ViewMyCompanyProfile));
-            }
-
-            if (_userRole is {EditMyCompanyProfile: true})
-            {
-                _permissions.Add(nameof(_userRole.EditMyCompanyProfile));
-            }
-
-            if (_userRole is {CreateOrEditRequisitions: true}) 
-            {
-                _permissions.Add(nameof(_userRole.CreateOrEditRequisitions));
-            }
-
-            if (_userRole is {ViewOnlyMyCandidates: true})
-            {
-                _permissions.Add(nameof(_userRole.ViewOnlyMyCandidates));
-            }
-
-            if (_userRole is {ViewAllCandidates: true})
-            {
-                _permissions.Add(nameof(_userRole.ViewAllCandidates));
-            }
-
-            if (_userRole is {ViewRequisitions: true})
-            {
-                _permissions.Add(nameof(_userRole.ViewRequisitions));
-            }
-
-            if (_userRole is {EditRequisitions: true})
-            {
-                _permissions.Add(nameof(_userRole.EditRequisitions));
-            }
-
-            if (_userRole is {ManageSubmittedCandidates: true})
-            {
-                _permissions.Add(nameof(_userRole.ManageSubmittedCandidates));
-            }
-
-            if (_userRole is {DownloadOriginal: true})
-            {
-                _permissions.Add(nameof(_userRole.DownloadOriginal));
-            }
-
-            if (_userRole is {DownloadFormatted: true})
-            {
-                _permissions.Add(nameof(_userRole.DownloadFormatted));
-            }
-
-            if (_userRole is {AdminScreens: true})
-            {
-                _permissions.Add(nameof(_userRole.AdminScreens));
-            }
-
-            return GenerateToken(userName, _permissions, _userRole.RoleName);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error logging in. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
         }
 
-        return "";
+        return BadRequest("Invalid Credentials");
     }
 }
