@@ -8,14 +8,10 @@
 // File Name:           EditActivityDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-04-2025 20:03
-// Last Updated On:     03-06-2025 15:03
+// Last Updated On:     05-18-2025 19:37
 // *****************************************/
 
 #endregion
-
-using System.Runtime.CompilerServices;
-
-using FluentValidation;
 
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
@@ -30,12 +26,6 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditActivityDialog
 {
-    private EditActivityValidator CandidateActivityValidator
-    {
-        get;
-        set;
-    } = new();
-
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the cancel action is triggered.
     /// </summary>
@@ -48,17 +38,11 @@ public partial class EditActivityDialog
     ///     callback asynchronously, hides the spinner and the dialog, and enables the dialog buttons.
     /// </remarks>
     [Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditActivityValidator CandidateActivityValidator { get; } = new();
+
+    private EditContext Context { get; set; }
 
     /// <summary>
     ///     Gets or sets the Syncfusion Blazor Dialog control used in the EditActivityDialog component.
@@ -71,11 +55,7 @@ public partial class EditActivityDialog
     ///     It is used in the `ShowDialog` method to display the dialog and in the `CancelDialog` method to hide the dialog.
     ///     The dialog's reference is set in the `BuildRenderTree` method of the EditActivityDialog component.
     /// </remarks>
-    private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+    private SfDialog Dialog { get; set; }
 
     /// <summary>
     ///     Represents the form used for editing a candidate's activity within the dialog.
@@ -85,11 +65,7 @@ public partial class EditActivityDialog
     ///     candidate's activity.
     ///     The form is bound to the `Model` property of the `EditActivityDialog` and uses data annotations for validation.
     /// </remarks>
-    private SfDataForm EditActivityForm
-    {
-        get;
-        set;
-    }
+    private SfDataForm EditActivityForm { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of interview types available for selection in the activity dialog.
@@ -99,10 +75,8 @@ public partial class EditActivityDialog
     ///     represents a type of interview with a key as the interview type name and a value as its short form.
     ///     The list includes types such as "In-Person Interview", "Telephonic Interview", "Others", and "None".
     /// </value>
-    private IEnumerable<KeyValues> InterviewTypes
-    {
-        get;
-    } = [new() {Text = "In-Person Interview", KeyValue = "I"}, new() {Text = "Telephonic Interview", KeyValue = "P"}, new() {Text = "Others", KeyValue = "O"}, new() {Text = "None", KeyValue = ""}];
+    private IEnumerable<KeyValues> InterviewTypes { get; } =
+        [new() {Text = "In-Person Interview", KeyValue = "I"}, new() {Text = "Telephonic Interview", KeyValue = "P"}, new() {Text = "Others", KeyValue = "O"}, new() {Text = "None", KeyValue = ""}];
 
     /// <summary>
     ///     Gets or sets a value indicating whether the dialog is for a candidate.
@@ -116,11 +90,7 @@ public partial class EditActivityDialog
     ///     being used in a different context.
     /// </remarks>
     [Parameter]
-    public bool IsCandidate
-    {
-        get;
-        set;
-    } = true;
+    public bool IsCandidate { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets a value indicating whether the dialog should be displayed in full screen mode.
@@ -132,11 +102,7 @@ public partial class EditActivityDialog
     ///     This property is used to control the height and minimum height of the dialog. When set to <c>true</c>, the dialog's
     ///     height and minimum height are set to "98vh", otherwise they are set to "460px".
     /// </remarks>
-    private bool IsShow
-    {
-        get;
-        set;
-    }
+    private bool IsShow { get; set; }
 
     /// <summary>
     ///     Gets or sets the maximum date for the interview scheduling.
@@ -146,11 +112,7 @@ public partial class EditActivityDialog
     ///     This property is used in the `DateTimeControl` in the `EditActivityDialog` Razor component to limit the selection
     ///     of interview dates.
     /// </value>
-    private DateTime Max
-    {
-        get;
-        set;
-    }
+    private DateTime Max { get; set; }
 
     /// <summary>
     ///     Gets or sets the minimum date for the interview scheduling.
@@ -160,11 +122,7 @@ public partial class EditActivityDialog
     ///     This property is used in the `DateTimeControl` in the `EditActivityDialog` Razor component to limit the selection
     ///     of interview dates.
     /// </value>
-    private DateTime Min
-    {
-        get;
-        set;
-    }
+    private DateTime Min { get; set; }
 
     /// <summary>
     ///     Gets or sets the model representing a candidate's activity.
@@ -177,11 +135,7 @@ public partial class EditActivityDialog
     ///     the form.
     /// </remarks>
     [Parameter]
-    public CandidateActivity Model
-    {
-        get;
-        set;
-    } = new();
+    public CandidateActivity Model { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the list of key-value pairs representing the steps in the model.
@@ -195,11 +149,7 @@ public partial class EditActivityDialog
     ///     Each key-value pair in the list represents a possible status that the activity can have.
     /// </remarks>
     [Parameter]
-    public List<KeyValues> ModelSteps
-    {
-        get;
-        set;
-    }
+    public List<KeyValues> ModelSteps { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the save action is triggered.
@@ -213,11 +163,7 @@ public partial class EditActivityDialog
     ///     callback asynchronously, hides the spinner and the dialog, and enables the dialog buttons.
     /// </remarks>
     [Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of application workflow steps.
@@ -232,11 +178,7 @@ public partial class EditActivityDialog
     ///     current workflow step.
     /// </remarks>
     [Parameter]
-    public List<Workflow> Status
-    {
-        get;
-        set;
-    } = [];
+    public List<Workflow> Status { get; set; } = [];
 
     /// <summary>
     ///     Gets or sets the list of application workflow steps.
@@ -251,17 +193,9 @@ public partial class EditActivityDialog
     ///     current workflow step.
     /// </remarks>
     [Parameter]
-    public List<StatusCode> StatusCodes
-    {
-        get;
-        set;
-    }
+    public List<StatusCode> StatusCodes { get; set; }
 
-    private bool VisibleSpinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
     /// <summary>
     ///     Cancels the current dialog operation.
@@ -278,15 +212,6 @@ public partial class EditActivityDialog
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
         VisibleSpinner = false;
-    }
-
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
-
-    protected override void OnParametersSet()
-    {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
-        base.OnParametersSet();
     }
 
     /// <summary>
@@ -308,6 +233,8 @@ public partial class EditActivityDialog
         }
     }
 
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
     /// <summary>
     ///     Asynchronously initializes the dialog after all parameters have been set.
     /// </summary>
@@ -327,6 +254,13 @@ public partial class EditActivityDialog
         base.OnInitialized();
     }
 
+    protected override void OnParametersSet()
+    {
+        Context = new(Model);
+        Context.OnFieldChanged += Context_OnFieldChanged;
+        base.OnParametersSet();
+    }
+
     /// <summary>
     ///     Opens the dialog for editing a candidate's activity.
     /// </summary>
@@ -336,7 +270,11 @@ public partial class EditActivityDialog
     ///     It validates the `EditContext` of the `EditActivityForm`, ensuring that the form is in a valid state before the
     ///     dialog is opened.
     /// </remarks>
-    private void OpenDialog() => Context.Validate();
+    private void OpenDialog()
+    {
+        Model.NewStatusCode = "0";
+        Context.Validate();
+    }
 
     /// <summary>
     ///     Asynchronously saves the changes made in the EditActivityDialog.
