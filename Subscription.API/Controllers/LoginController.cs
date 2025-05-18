@@ -83,12 +83,11 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
             {
                 byte[] _salt = (byte[])_reader["Salt"];
                 byte[] _sqlPassword = (byte[])_reader["Password"];
-                byte[] _password = General.ComputeHashWithSalt(password, _salt);
-                int _roleID = (byte)_reader["Role"];
-                if (!CryptographicOperations.FixedTimeEquals(_sqlPassword, _password))
+                if (!PasswordHasher.VerifyPassword(password, _sqlPassword, _salt))
                 {
                     continue;
                 }
+                int _roleID = (byte)_reader["Role"];
 
                 RedisValue _roles = await redisService.GetAsync("Roles");
                 string _roleString = _roles.ToString();
