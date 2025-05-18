@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           MaskedTextBox.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-13-2024 20:12
-// Last Updated On:     12-13-2024 20:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-18-2025 19:36
 // *****************************************/
 
 #endregion
@@ -20,32 +20,25 @@ public partial class MaskedTextBox : ComponentBase
     private string _value = "";
 
     [Parameter]
-    public string? ID
-    {
-        get;
-        set;
-    }
+    public bool Enabled { get; set; } = true;
 
     [Parameter]
-    public string? Mask
-    {
-        get;
-        set;
-    }
+    public string? ID { get; set; }
 
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public string? Mask { get; set; }
 
     [Parameter]
-    public bool Readonly
-    {
-        get;
-        set;
-    }
+    public EventCallback<MaskBlurEventArgs> OnBlur { get; set; }
+
+    [Parameter]
+    public EventCallback<MaskFocusEventArgs> OnFocus { get; set; }
+
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    [Parameter]
+    public bool Readonly { get; set; }
 
     /// <summary>
     ///     Gets or sets the selected date in the MaskedTextBox component.
@@ -77,33 +70,15 @@ public partial class MaskedTextBox : ComponentBase
     ///     The event provides the new TextBox value selected by the user.
     /// </summary>
     [Parameter]
-    public EventCallback<string> ValueChanged
-    {
-        get;
-        set;
-    }
+    public EventCallback<string> ValueChanged { get; set; }
 
     /// <summary>
     ///     Gets or sets the expression that identifies the value to be used by the MaskedTextBox control.
     ///     This expression is used to bind the date control's value to a specified property.
     /// </summary>
     [Parameter]
-    public Expression<Func<string>>? ValueExpression
-    {
-        get;
-        set;
-    }
+    public Expression<Func<string>>? ValueExpression { get; set; }
 
     [Parameter]
-    public string Width
-    {
-        get;
-        set;
-    } = "100%";
-
-    [Parameter]
-    public EventCallback<MaskBlurEventArgs> OnBlur { get; set; }
-
-    [Parameter]
-    public EventCallback<MaskFocusEventArgs> OnFocus { get; set; }
+    public string Width { get; set; } = "100%";
 }

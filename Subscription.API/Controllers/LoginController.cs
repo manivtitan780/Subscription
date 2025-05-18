@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.API
 // File Name:           LoginController.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-20-2024 20:04
-// Last Updated On:     10-29-2024 15:10
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     05-18-2025 18:55
 // *****************************************/
 
 #endregion
@@ -17,7 +17,6 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
@@ -42,12 +41,12 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
         {
             return "";
         }
-        
+
         List<Claim> _claims = [new(ClaimTypes.Name, username), new(ClaimTypes.Role, roleName)];
         _claims.AddRange(permissions.Select(permission => new Claim("Permission", permission)));
 
         SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(_keyString));
-        
+
         SigningCredentials _credentials = new(_key, SecurityAlgorithms.HmacSha256);
 
         JwtSecurityToken token = new(configuration["JWTIssuer"],
@@ -57,7 +56,6 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
                                      signingCredentials: _credentials);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    //private readonly IConfiguration _configuration = configuration;
 
     /// <summary>
     ///     Performs user login operation.
@@ -87,6 +85,7 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
                 {
                     continue;
                 }
+
                 int _roleID = (byte)_reader["Role"];
 
                 RedisValue _roles = await redisService.GetAsync("Roles");

@@ -20,9 +20,6 @@ public partial class TextArea : ComponentBase
     private string _value = "";
 
     [Parameter]
-    public bool Enabled { get; set; } = true;
-
-    [Parameter]
     public string ID { get; set; } = "";
 
     [Parameter]
