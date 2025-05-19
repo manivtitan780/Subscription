@@ -262,8 +262,8 @@
 											<TabHeader Text="Candidate Activity"/>
 										</ChildContent>
 										<ContentTemplate>
-											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID"
-											               UndoCandidateActivity="UndoActivity" User="@User"/> @*TODO: Activity Panel Rights to be set*@
+											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"  /> 
+											@*TODO: Activity Panel Rights to be set*@
 										</ContentTemplate>
 									</TabItem>
 								</TabItems>

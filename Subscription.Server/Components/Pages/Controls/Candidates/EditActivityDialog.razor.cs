@@ -24,7 +24,7 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 ///     The class contains several parameters including `Cancel`, `IsCandidate`, `Model`, `ModelSteps`, `Save`, `Status`,
 ///     and `StatusCodes`.
 /// </remarks>
-public partial class EditActivityDialog
+public partial class EditActivityDialog : IDisposable
 {
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the cancel action is triggered.
@@ -39,6 +39,16 @@ public partial class EditActivityDialog
     /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
+
+    public void Dispose()
+    {
+        if (Context is not null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+
+        GC.SuppressFinalize(this);
+    }
 
     private EditActivityValidator CandidateActivityValidator { get; } = new();
 
