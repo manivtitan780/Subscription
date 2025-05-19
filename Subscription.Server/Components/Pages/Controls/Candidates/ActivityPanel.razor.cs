@@ -8,7 +8,7 @@
 // File Name:           ActivityPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-03-2025 20:03
-// Last Updated On:     03-27-2025 16:03
+// Last Updated On:     05-19-2025 15:50
 // *****************************************/
 
 #endregion
@@ -24,27 +24,6 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class ActivityPanel
 {
-    //private int _selectedID;
-
-    /*
-    /// <summary>
-    ///     Gets or sets the ConfirmDialog instance used within the ActivityPanel.
-    /// </summary>
-    /// <value>
-    ///     The ConfirmDialog instance.
-    /// </value>
-    /// <remarks>
-    ///     This property is used to reference the ConfirmDialog component, which is used to display a confirmation dialog to
-    ///     the user.
-    ///     The dialog can be used for various purposes, such as confirming the undoing of an activity.
-    /// </remarks>
-    private ConfirmDialog DialogConfirm
-    {
-        get;
-        set;
-    }
-    */
-
     /// <summary>
     ///     Gets or sets the dialog service used for displaying confirmation dialogs.
     /// </summary>
@@ -58,11 +37,7 @@ public partial class ActivityPanel
     ///     <see cref="SfDialogService.ConfirmAsync" /> to show a confirmation dialog and await the user's response.
     /// </remarks>
     [Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when an activity is edited.
@@ -74,11 +49,7 @@ public partial class ActivityPanel
     ///     This callback is invoked with the ID of the activity to be edited.
     /// </remarks>
     [Parameter]
-    public EventCallback<int> EditActivity
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> EditActivity { get; set; }
 
     /// <summary>
     ///     Gets or sets the Syncfusion Blazor Grid for displaying candidate activities.
@@ -90,11 +61,7 @@ public partial class ActivityPanel
     ///     This property is used to manage the display of candidate activities in a grid format.
     ///     It provides functionalities such as getting the row index by primary key and selecting a row asynchronously.
     /// </remarks>
-    private SfGrid<CandidateActivity> GridActivity
-    {
-        get;
-        set;
-    }
+    private SfGrid<CandidateActivity> GridActivity { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the current activity is a requisition.
@@ -107,11 +74,7 @@ public partial class ActivityPanel
     ///     of the panel might change.
     /// </remarks>
     [Parameter]
-    public bool IsRequisition
-    {
-        get;
-        set;
-    }
+    public bool IsRequisition { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of candidate activities.
@@ -124,11 +87,7 @@ public partial class ActivityPanel
     ///     of the <see cref="CandidateActivity" /> class.
     /// </remarks>
     [Parameter]
-    public List<CandidateActivity> Model
-    {
-        get;
-        set;
-    }
+    public List<CandidateActivity> Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID associated with the logged-in user.
@@ -140,11 +99,7 @@ public partial class ActivityPanel
     ///     This property is used to check the role of the user and to determine the rights for the activity.
     /// </remarks>
     [Parameter]
-    public int RoleID
-    {
-        get;
-        set;
-    } = 5;
+    public int RoleID { get; set; } = 5;
 
     /// <summary>
     ///     Gets or sets the height of the rows in the activity panel.
@@ -157,11 +112,7 @@ public partial class ActivityPanel
     ///     grid. The default value is 38 pixels.
     /// </remarks>
     [Parameter]
-    public int RowHeight
-    {
-        get;
-        set;
-    } = 38;
+    public int RowHeight { get; set; } = 38;
 
     /// <summary>
     ///     Gets or sets the selected row in the activity panel.
@@ -173,11 +124,7 @@ public partial class ActivityPanel
     ///     This property is used to keep track of the user's current selection in the activity panel.
     ///     It is updated whenever a row is selected, and is used in various operations such as editing or undoing an activity.
     /// </remarks>
-    public CandidateActivity SelectedRow
-    {
-        get;
-        set;
-    }
+    internal CandidateActivity SelectedRow { get; private set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when an activity is undone.
@@ -189,18 +136,10 @@ public partial class ActivityPanel
     ///     This callback is invoked with the ID of the activity to be undone.
     /// </remarks>
     [Parameter]
-    public EventCallback<int> UndoCandidateActivity
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> UndoCandidateActivity { get; set; }
 
     [Parameter]
-    public string User
-    {
-        get;
-        set;
-    }
+    public string User { get; set; }
 
     /// <summary>
     ///     Asynchronously opens the dialog for editing a candidate activity.
@@ -269,7 +208,6 @@ public partial class ActivityPanel
     /// </remarks>
     private async Task UndoActivity(int activityID)
     {
-        //_selectedID = activityID;
         int _index = await GridActivity.GetRowIndexByPrimaryKeyAsync(activityID);
         await GridActivity.SelectRowAsync(_index);
         if (await DialogService.ConfirmAsync(null, "Undo Candidate Activity?",
@@ -277,6 +215,5 @@ public partial class ActivityPanel
         {
             await UndoCandidateActivity.InvokeAsync(activityID);
         }
-        // await DialogConfirm.ShowDialog();
     }
 }

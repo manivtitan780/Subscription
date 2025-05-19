@@ -259,7 +259,8 @@ public partial class Requisitions
                                                          {
                                                              SelectedActivity = ActivityPanel.SelectedRow;
                                                              NextSteps.Clear();
-                                                             NextSteps.Add(new("No Change", ""));
+                                                             NextSteps.Add(new() {Text = "No Change", KeyValue = "0"});
+
                                                              try
                                                              {
                                                                  foreach (string[] _next in _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
@@ -279,7 +280,7 @@ public partial class Requisitions
                                                              }
                                                              catch
                                                              {
-                                                                 //
+                                                                 //Ignore this error. No need to log this error.
                                                              }
 
                                                              await DialogActivity.ShowDialog();
