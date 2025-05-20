@@ -13,6 +13,10 @@
 
 #endregion
 
+using System.Text.Json;
+
+using RestSharp;
+
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
@@ -470,6 +474,87 @@ public class CandidateController : ControllerBase
     }*/
 
     [HttpGet]
+    public async Task<ActionResult<string>> GenerateSummary(int candidateID, int requisitionID)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("GetCandidateRequisitionDescription", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("CandidateID", candidateID);
+
+        string _textResume = "", _jobDescription = "";
+        try
+        {
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+            while (await _reader.ReadAsync())
+            {
+                _textResume = _reader.NString(0);
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _jobDescription = _reader.NString(0);
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error getting candidate summary. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        RestClient client = new(Start.AzureOpenAIEndpoint);
+        RestRequest request = new("", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+        request.AddHeader("api-key", Start.AzureOpenAIKey);
+        var requestBody = new
+                          {
+                              messages = new[]
+                                         {
+                                             new {role = "system", content = "You are a concise summary generator."},
+                                             new {role = "user", content = string.Format(Start.Prompt, _textResume, _jobDescription)}
+                                         },
+                              temperature = 0.3,
+                              max_tokens = 1000
+                          };
+
+        request.AddJsonBody(requestBody);
+
+        RestResponse response = await client.ExecuteAsync(request);
+
+        if (!response.IsSuccessful)
+        {
+            ApplicationException _ex = new($"Error from Azure OpenAI: {response.StatusCode} - {response.Content}");
+            Log.Error(_ex, "Error getting candidate summary. {ExceptionMessage}", _ex.Message);
+            return StatusCode(500, _ex.Message);
+        }
+
+        using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
+        string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+        /*JsonDocument _json = JsonDocument.Parse(_content);
+  JsonElement _root = _json.RootElement;
+
+  Model.Keywords = _root.TryGetProperty("Keywords", out JsonElement kw) ? kw.GetString() : "";
+  Model.Summary = _root.TryGetProperty("Summary", out JsonElement sum) ? sum.GetString() : "";
+  Model.Title = _root.TryGetProperty("Title", out JsonElement title) ? title.GetString() : "";*/
+        /*Model.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
+  Model.LastName = _root.TryGetProperty("LastName", out JsonElement lName) ? lName.GetString() : "";
+  Model.Address1 = _root.TryGetProperty("Address", out JsonElement addr) && addr.GetString().NotNullOrWhiteSpace() ? addr.GetString() : Model.Address1;
+  Model.City = _root.TryGetProperty("City", out JsonElement city) && city.GetString().NotNullOrWhiteSpace() ? city.GetString() : Model.City;
+  Model.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : Model.ZipCode;
+  Model.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : Model.Email;
+  Model.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : Model.Phone1;*/
+        return Ok(_content.NullOrWhiteSpace() ? "" : _content);
+    }
+
+    [HttpGet]
     public async Task<ActionResult<ReturnCandidateDetails>> GetCandidateDetails(int candidateID, string roleID)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -667,7 +752,7 @@ public class CandidateController : ControllerBase
         {
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-    
+
             await _reader.ReadAsync();
             _count = _reader.NInt32(0);
 
@@ -1056,6 +1141,7 @@ public class CandidateController : ControllerBase
             {
                 _candidateID = _reader.NInt32(0);
             }
+
             await _reader.CloseAsync();
             await General.UploadToBlob(candidateDetailsResume.ParsedCandidate.DocumentBytes, $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}");
 
@@ -1122,6 +1208,7 @@ public class CandidateController : ControllerBase
 
         return Ok(0);
     }
+
     [HttpPost]
     public async Task<ActionResult<string>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
                                                                   string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")

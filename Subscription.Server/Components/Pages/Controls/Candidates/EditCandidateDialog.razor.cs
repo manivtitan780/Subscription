@@ -43,6 +43,13 @@ public partial class EditCandidateDialog
     ///     This list includes commands for text formatting such as bold, italic, underline, strikethrough, lower case, upper
     ///     case, superscript, subscript, and clear format. It also includes commands for undo and redo actions.
     /// </remarks>
+    /// <summary>
+    ///     A list of toolbar items for the rich text editor in the candidate edit dialog.
+    /// </summary>
+    /// <remarks>
+    ///     This list includes commands for text formatting such as bold, italic, underline, strikethrough, lower case, upper
+    ///     case, superscript, subscript, and clear format. It also includes commands for undo and redo actions.
+    /// </remarks>
     private readonly List<ToolbarItemModel> _tools =
     [
         new() {Command = ToolbarCommand.Bold},

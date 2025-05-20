@@ -216,4 +216,13 @@ public partial class ActivityPanel
             await UndoCandidateActivity.InvokeAsync(activityID);
         }
     }
+
+    private async Task DetailExpanded(DetailsExpandedEventArgs<CandidateActivity> activity)
+    {
+        if (activity != null)
+        {
+            await GridActivity.SelectRowAsync(activity.RowIndex - 1);
+            SelectedRow = activity.Data;
+        }
+    }
 }

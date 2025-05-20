@@ -367,7 +367,7 @@ public partial class Requisitions
             if (await SessionStorage.ContainKeyAsync("OptReqID"))
             {
                 SearchModel.Clear();
-                SearchModel.OptRequisitionID = await SessionStorage.GetItemAsync<int>("OptReqID");
+                SearchModel.OptRequisitionID = (await SessionStorage.GetItemAsync<string>("OptReqID")).ToInt32();
             }
             else if (await SessionStorage.ContainKeyAsync(StorageName))
             {

@@ -359,7 +359,7 @@ public partial class Candidates
 
                                  await Grid.CollapseAllDetailRowAsync();
                                  await Grid.ExpandCollapseDetailRowAsync(candidate.Data);
-                                 
+
                                  _target = candidate.Data;
 
                                  VisibleSpinner = true;
@@ -794,10 +794,7 @@ public partial class Candidates
 
     private void RowSelected(RowSelectingEventArgs<Candidate> candidate)
     {
-        if (_target != null && _target != candidate.Data)
-        {
-            _target = candidate.Data;
-        }
+        _target = candidate.Data;
     }
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
@@ -1221,6 +1218,8 @@ public partial class Candidates
     private async Task SubmitSelectedCandidate(MouseEventArgs arg)
     {
         _submitCandidateModel.Clear();
+        _submitCandidateModel.CandidateID = _target.ID;
+        _submitCandidateModel.RequisitionID = RequisitionID;
         await SubmitDialog.ShowDialog();
     }
 
