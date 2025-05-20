@@ -2,8 +2,7 @@
 @inject IJSRuntime Runtime;
 
 <div class="experienceContainerBox contactBox">
-	<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSorting="false" DataSource="@Model" EnableHover="true" EnableStickyHeader="true"
-	        Height="255px" ID="divInnerReq" @ref="GridInnerRequisition" TValue="Requisition" Width="99.75%">
+	<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSorting="false" DataSource="@Model" EnableHover="true" EnableStickyHeader="true" Height="255px" ID="divInnerReq" @ref="GridInnerRequisition" TValue="Requisition" Width="99.75%">
 		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 		<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="Requisition"/>@* *@
 		<GridColumns>
