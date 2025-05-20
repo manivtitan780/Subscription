@@ -138,6 +138,8 @@ public partial class SubmitCandidate
         set;
     }
 
+    public string Content { get; set; } = "Generate Summary";
+
     private async Task CancelCandidateSubmit(MouseEventArgs args)
     {
         VisibleSpinner = true;
@@ -199,4 +201,16 @@ public partial class SubmitCandidate
     ///     The dialog is initially invisible and its visibility is controlled programmatically by this method.
     /// </remarks>
     public async Task ShowDialog() => await Dialog.ShowAsync();
+
+    private async Task GenerateSummary()
+    {
+        Content = "Generating…";
+        Dictionary<string, string> _parameters = new() { {"candidateID", Model.CandidateID.ToString()}, {"requisitionID", Model.RequisitionID.ToString()} };
+        string _response = await General.ExecuteRest<string>("Candidate/GenerateSummary", _parameters);
+        if (_response.NotNullOrWhiteSpace())
+        {
+            Model.Text = _response;
+        }
+        Content = "Generate Summary";
+    }
 }

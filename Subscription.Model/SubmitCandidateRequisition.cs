@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           SubmitCandidateRequisition.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:20
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          04-05-2025 16:04
+// Last Updated On:     05-19-2025 21:03
 // *****************************************/
 
 #endregion
@@ -33,9 +33,9 @@ public class SubmitCandidateRequisition
 	///     It calls the Clear method to reset the Text property to its default state (an empty string).
 	/// </remarks>
 	public SubmitCandidateRequisition()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the SubmitCandidateRequisition class with the specified text.
@@ -46,6 +46,10 @@ public class SubmitCandidateRequisition
 	///     Text property.
 	/// </remarks>
 	public SubmitCandidateRequisition(string text) => Text = text;
+
+    public int CandidateID { get; set; } = 0;
+
+    public int RequisitionID { get; set; } = 0;
 
 	/// <summary>
 	///     Gets or sets the text for the SubmitCandidateRequisition instance.
@@ -58,11 +62,8 @@ public class SubmitCandidateRequisition
 	///     It is validated to ensure that the text is between 5 and 1000 characters long.
 	/// </remarks>
 	[StringLength(1000, MinimumLength = 5, ErrorMessage = "Notes should be between 5 and 1000 characters long.")]
-	public string Text
-	{
-		get;
-		set;
-	}
+
+    public string Text { get; set; }
 
 	/// <summary>
 	///     Clears the Text property of the SubmitCandidateRequisition instance.
@@ -72,9 +73,9 @@ public class SubmitCandidateRequisition
 	///     It is typically called when a new submission process is initiated.
 	/// </remarks>
 	public void Clear()
-	{
-		Text = "";
-	}
+    {
+        Text = "";
+    }
 
 	/// <summary>
 	///     Creates a copy of the current instance of the SubmitCandidateRequisition class.
