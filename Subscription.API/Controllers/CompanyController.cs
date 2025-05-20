@@ -129,10 +129,7 @@ public class CompanyController : ControllerBase
 
         await _connection.OpenAsync();
 
-        string _company = "[]";
-        string _locations = "[]";
-        string _contacts = "[]";
-        string _documents = "[]";
+        string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]";
         try
         {
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
@@ -158,6 +155,12 @@ public class CompanyController : ControllerBase
             {
                 _documents = _reader.NString(0);
             }
+            
+            await _reader.NextResultAsync(); //Company Requisitions
+            while (await _reader.ReadAsync())
+            {
+                _requisitions = _reader.NString(0);
+            }
 
             await _reader.CloseAsync();
 
@@ -174,7 +177,8 @@ public class CompanyController : ControllerBase
                       Company = _company,
                       Locations = _locations,
                       Contacts = _contacts,
-                      Documents = _documents
+                      Documents = _documents,
+                      Requisitions = _requisitions
                   });
     }
 

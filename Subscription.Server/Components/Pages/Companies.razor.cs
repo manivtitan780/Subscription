@@ -25,7 +25,8 @@ public partial class Companies
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
-
+    private List<Requisition> _companyRequisitions = [];
+    
     /*
     private async Task GridPageChanging(GridPageChangingEventArgs page) => await ExecuteMethod(async () =>
                                                                                                {
@@ -211,7 +212,7 @@ public partial class Companies
                                                                                                                                              {"companyID", _target.ID.ToString()},
                                                                                                                                              {"user", User}
                                                                                                                                          };
-                                                                                                (string _company, string _contacts, string _locations, string _documents) =
+                                                                                                (string _company, string _contacts, string _locations, string _documents, string _requisitions) =
                                                                                                     await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
                                                                                                                                                     false);
 
@@ -222,6 +223,7 @@ public partial class Companies
                                                                                                     _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
                                                                                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
                                                                                                     _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
+                                                                                                    _companyRequisitions = General.DeserializeObject<List<Requisition>>(_requisitions) ?? [];
                                                                                                     SetupAddress();
                                                                                                 }
                                                                                                 catch (Exception ex)
@@ -448,7 +450,7 @@ public partial class Companies
                                                             {
                                                                 // Dictionary<string, string> _parameters = new() {{"user", User}};
 
-                                                                (string _company, _, string _locations, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", UserParameters(),
+                                                                (string _company, _, string _locations, _, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", UserParameters(),
                                                                                                                                                              _companyDetailsClone);
                                                                 _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
                                                                 _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations);

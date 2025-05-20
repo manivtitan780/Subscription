@@ -103,6 +103,8 @@
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddContact" Text="Add Contact" Title="Add Contact"/>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddDocument" Text="Add Document" Title="Add Document"/>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemEditAccount" Text="Edit Account Information" Title="Edit Account Information"/>
+								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemManageRequisition" Text="Manage Requisitions" Title="Manage Requisitions" />
+
 							</SpeedDialItems>
 						</SfSpeedDial>
 						@* Add Buttons End *@
@@ -176,7 +178,8 @@
 											<TabHeader Text="Requisitions"/>
 										</ChildContent>
 										<ContentTemplate>
-											<div></div>
+											<CompanyRequisitions Model="_companyRequisitions"/>@*Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
+											                     Recruiters="_recruiters" @ref="RequisitionPanel" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"*@
 										</ContentTemplate>
 									</TabItem>
 								</TabItems>
