@@ -8,7 +8,7 @@
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-16-2025 16:30
+// Last Updated On:     05-20-2025 20:11
 // *****************************************/
 
 #endregion
@@ -26,27 +26,6 @@ public partial class Companies
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
     private List<Requisition> _companyRequisitions = [];
-    
-    /*
-    private async Task GridPageChanging(GridPageChangingEventArgs page) => await ExecuteMethod(async () =>
-                                                                                               {
-                                                                                                   if (page.CurrentPageSize != SearchModel.ItemCount)
-                                                                                                   {
-                                                                                                       SearchModel.ItemCount = page.CurrentPageSize;
-                                                                                                       SearchModel.Page = 1;
-                                                                                                       await Grid.GoToPageAsync(1);
-                                                                                                   }
-                                                                                                   else
-                                                                                                   {
-                                                                                                       SearchModel.Page = page.CurrentPage;
-                                                                                                       //await Grid.Refresh();
-                                                                                                   }
-
-                                                                                                   await SaveStorage(false);
-                                                                                               });
-                                                                                               */
-
-    private Query _query = new();
 
     private int _selectedRowIndex = -1;
     private int _selectedTab;
@@ -56,7 +35,6 @@ public partial class Companies
 
     private MarkupString Address { get; set; }
 
-    // private int _pageSize = 25;
     private EditContact CompanyContactDialog { get; set; }
 
     private EditCompany CompanyEditDialog { get; set; }
@@ -170,27 +148,14 @@ public partial class Companies
                                                     if (Grid.TotalItemCount > 0)
                                                     {
                                                         await Grid.SelectRowAsync(0);
-                                                        //await Grid.ExpandCollapseDetailRowAsync(Grid.CurrentViewData.OfType<Company>().First());
                                                     }
                                                 });
 
     private Task DeleteCompanyDocument(int arg) => ExecuteMethod(async () =>
                                                                  {
-                                                                     /*Dictionary<string, string> _parameters = new()
-                                                                                                              {
-                                                                                                                  {"documentID", arg.ToString()},
-                                                                                                                  {"user", User}
-                                                                                                              };*/
-
-                                                                     _companyDocuments = await General.ExecuteAndDeserializeRest<CompanyDocuments>("Company/DeleteCompanyDocument",
-                                                                                                                                                   new()
-                                                                                                                                                   {
-                                                                                                                                                       {"documentID", arg.ToString()},
-                                                                                                                                                       {"user", User}
-                                                                                                                                                   }).ConfigureAwait(false);
-                                                                     /*string _response = await General.ExecuteRest<string>("Company/DeleteCompanyDocument", _parameters);
-
-                                                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_response);*/
+                                                                     _companyDocuments = await General.ExecuteAndDeserialize<CompanyDocuments>("Company/DeleteCompanyDocument",
+                                                                                                                                               new() {{"documentID", arg.ToString()}, {"user", User}})
+                                                                                                      .ConfigureAwait(false);
                                                                  });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
@@ -242,9 +207,6 @@ public partial class Companies
                                                                 string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.FileName}^2".ToBase64String();
                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                             });
-
-    /*//[JSInvokable("DetailCollapse")]
-    //public void DetailRowCollapse() => _target = null;*/
 
     private Task EditCompany(bool isAdd = false) => ExecuteMethod(async () =>
                                                                   {
@@ -372,8 +334,6 @@ public partial class Companies
             await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
             await Task.Delay(100);
         }
-
-        //await base.OnAfterRenderAsync(firstRender);
     }
 
     protected override async Task OnInitializedAsync()
@@ -407,7 +367,6 @@ public partial class Companies
 
                                 if (NAICS.Count == 0 && State.Count == 0 && Roles.Count == 0)
                                 {
-                                    //RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
                                     List<string> _keys = [nameof(CacheObjects.NAICS), nameof(CacheObjects.States), nameof(CacheObjects.Roles)];
 
                                     Dictionary<string, string> _values = await RedisService.BatchGet(_keys);
@@ -451,7 +410,7 @@ public partial class Companies
                                                                 // Dictionary<string, string> _parameters = new() {{"user", User}};
 
                                                                 (string _company, _, string _locations, _, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", UserParameters(),
-                                                                                                                                                             _companyDetailsClone);
+                                                                                                                                                                _companyDetailsClone);
                                                                 _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
                                                                 _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations);
 
@@ -516,14 +475,12 @@ public partial class Companies
 
     private async Task SaveLocation() => await ExecuteMethod(async () =>
                                                              {
-                                                                 // Dictionary<string, string> _parameters = new() {{"user", User}};
                                                                  string _response = await General.ExecuteRest<string>("Company/SaveCompanyLocation", UserParameters(), SelectedLocation);
 
                                                                  _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_response);
 
                                                                  if (_target != null)
                                                                  {
-                                                                     /* This will work only if the columns are template else this will fail without warning. */
                                                                      _target.CompanyName = _companyDetails.Name;
                                                                      _target.Email = _companyDetails.EmailAddress;
                                                                      _target.Phone = _companyDetails.Phone;
@@ -679,38 +636,59 @@ public partial class Companies
         return _parts.Count > 0 ? string.Join(", ", _parts) : "";
     }
 
-    private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
+    private async Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
     {
         switch (args.Item.ID)
         {
             case "itemEditCompany":
             {
                 _selectedTab = 0;
-                return EditCompany();
+                await EditCompany();
+                break;
             }
             case "itemAddLocation":
             {
                 _selectedTab = 1;
-                return EditLocation(0);
+                await EditLocation(0);
+                break;
             }
             case "itemAddContact":
             {
                 _selectedTab = 2;
-                return EditCompanyContact(0);
+                await EditCompanyContact(0);
+                break;
             }
             case "itemAddDocument":
             {
                 _selectedTab = 3;
-                return AddDocument();
+                await AddDocument();
+                break;
             }
             case "itemEditAccount":
             {
                 _selectedTab = 4;
                 break;
             }
-        }
+            case "itemManageRequisition":
+            {
+                _selectedTab = 5;
+                RequisitionSearch _requisitionSearch = new();
+                if (await SessionStorage.ContainKeyAsync("RequisitionGrid"))
+                {
+                    _requisitionSearch = await SessionStorage.GetItemAsync<RequisitionSearch>(StorageName);
+                }
 
-        return Task.CompletedTask;
+                int _itemCount = _requisitionSearch.ItemCount;
+                _requisitionSearch.Clear();
+                _requisitionSearch.ItemCount = _itemCount;
+                _requisitionSearch.Company = _target.CompanyName;
+                _requisitionSearch.Status = "";
+                await SessionStorage.SetItemAsync("RequisitionGrid", _requisitionSearch);
+                NavManager.NavigateTo($"{NavManager.BaseUri}requisition", true);
+                
+                break;
+            }
+        }
     }
 
     private void TabSelected(SelectEventArgs args) => _selectedTab = args.SelectedIndex;

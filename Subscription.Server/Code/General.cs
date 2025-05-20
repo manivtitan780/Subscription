@@ -222,7 +222,7 @@ public class General //(Container container)
         return response!.IsSuccessful ? response.Data : default;
     }
 
-    public static async Task<List<T>> ExecuteAndDeserializeRest<T>(string endpoint, Dictionary<string, string> parameters)
+    public static async Task<List<T>> ExecuteAndDeserialize<T>(string endpoint, Dictionary<string, string> parameters)
     {
         string _response = await ExecuteRest<string>(endpoint, parameters);
 

@@ -17,8 +17,6 @@ namespace Subscription.Server.Components.Pages.Controls.Companies;
 
 public partial class CompanyRequisitions
 {
-    private int _selectedReqTab = 0;
-
     [Parameter]
     public List<Company> CompaniesList { get; set; }
 
