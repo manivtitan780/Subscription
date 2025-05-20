@@ -133,6 +133,7 @@ public partial class SubmitCandidate
         if (_response.NotNullOrWhiteSpace())
         {
             Model.Text = _response;
+            Context.NotifyFieldChanged(Context.Field(nameof(Model.Text)));
         }
 
         Disabled = false;
