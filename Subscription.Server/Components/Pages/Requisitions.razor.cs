@@ -208,7 +208,7 @@ public partial class Requisitions
                                                                                                             {"user", User}
                                                                                                         };
 
-                                                               _reqDocumentsObject = await General.ExecuteAndDeserializeRest<RequisitionDocuments>("Requisition/DeleteRequisitionDocument", _parameters)
+                                                               _reqDocumentsObject = await General.ExecuteAndDeserialize<RequisitionDocuments>("Requisition/DeleteRequisitionDocument", _parameters)
                                                                                                   .ConfigureAwait(false);
                                                            });
 
@@ -364,12 +364,12 @@ public partial class Requisitions
     {
         if (firstRender)
         {
-            if (await SessionStorage.ContainKeyAsync("OptReqID"))
+            /*if (await SessionStorage.ContainKeyAsync("OptReqID"))
             {
                 SearchModel.Clear();
                 SearchModel.OptRequisitionID = (await SessionStorage.GetItemAsync<string>("OptReqID")).ToInt32();
-            }
-            else if (await SessionStorage.ContainKeyAsync(StorageName))
+            }*/
+            if (await SessionStorage.ContainKeyAsync(StorageName))
             {
                 SearchModel = await SessionStorage.GetItemAsync<RequisitionSearch>(StorageName);
                 SearchModel.OptRequisitionID = 0;
