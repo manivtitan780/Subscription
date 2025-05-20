@@ -15,4 +15,4 @@
 
 namespace Subscription.Model.Return;
 
-public record struct ReturnCompanyDetails(string Company, string Contacts, string Locations, string Documents);
+public record struct ReturnCompanyDetails(string Company, string Contacts, string Locations, string Documents, string Requisitions);

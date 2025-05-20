@@ -1,10 +1,10 @@
-﻿@using AnimationEffect = Syncfusion.Blazor.AnimationEffect
-@inject IJSRuntime Runtime;
+﻿@inject IJSRuntime Runtime;
 
 <div class="experienceContainerBox contactBox">
-	<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSorting="false" DataSource="@Model" EnableHover="true" EnableStickyHeader="true" Height="255px" ID="divInnerReq" @ref="GridInnerRequisition" TValue="Requisition" Width="99.75%">
+	<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@Model" EnableHover="true" EnableStickyHeader="true" Height="291px" ID="divInnerReq" @ref="GridInnerRequisition" 
+			RowHeight="@RowHeight" TValue="Requisition" Width="100%">
 		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
-		<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" OnActionBegin="OnActionBegin" OnActionComplete="OnActionComplete" TValue="Requisition"/>@* *@
+		<GridEvents DataBound="DataHandler" TValue="Requisition"/>
 		<GridColumns>
 			<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 			<GridColumn AllowSorting="true" HeaderText="Code" Width="13%">
@@ -42,7 +42,17 @@
 					@{
 						if (aCon is Requisition _con)
 						{
-							<span style="color: @(_con.PriorityColor)">@_con.Updated</span>
+							<span style="color: @(_con.PriorityColor)">@($"{_con.Updated} [{_con.UpdatedBy}]")</span>
+						}
+					}
+				</Template>
+			</GridColumn>
+			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Due)" HeaderText="Due By" Width="10%">
+				<Template Context="aCon">
+					@{
+						if (aCon is Requisition _con)
+						{
+							<span style="color: @(_con.PriorityColor)">@_con.Due</span>
 						}
 					}
 				</Template>
@@ -58,70 +68,5 @@
 				</Template>
 			</GridColumn>
 		</GridColumns>
-		<GridTemplates Context="context">
-			<DetailTemplate>
-				<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
-				             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCompanyCandidates" title="Action">
-					<SpeedDialAnimationSettings Duration="150"></SpeedDialAnimationSettings>
-					<SpeedDialRadialSettings Direction="RadialDirection.AntiClockwise" EndAngle="360" OffSet="100px" StartAngle="180"/>
-					<SpeedDialItems>
-						<SpeedDialItem IconCss="speeddial-icons speeddial-icon-edit" ID="itemEditRequisition" Text="Edit Requisition" Title="Edit Requisition"/>
-						<SpeedDialItem IconCss="speeddial-icons speeddial-icon-document" ID="itemAddDocument" Text="Add Attachment" Title="Add Document"/>
-						<SpeedDialItem IconCss="speeddial-icons speeddial-icon-contact" ID="itemSubmitCandidate" Text="Submit Existing Candidate" Title="Submit Existing Candidate"/>
-					</SpeedDialItems>
-				</SfSpeedDial>
-
-				@*<SfButton Content="Edit Requisition" CssClass="topToolButton tabButtonAdd" IconCss="addButton" @onclick="() => EditRequisition(false)"
-								  style="@("display:" + (_selectedReqTab == 0 ? "unset" : "none"))" />
-						<SfButton Content="Add Document" CssClass="topToolButton tabButtonAdd" IconCss="addButton" @onclick="AddDocument"
-								  style="@("display:" + (_selectedReqTab == 1 ? "unset" : "none"))" />
-						<SfButton Content="Submit Existing Candidate" CssClass="topToolButton tabButtonAdd" IconCss="addButton" @onclick="SubmitCandidate"
-								  style="@("display:" + (_selectedReqTab == 2 ? "unset" : "none"))" />*@
-				<SfTab CssClass="e-fill" Height="320" ID="tabCompanyCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedReqTab" ShowCloseButton="false" Width="98%">
-					<TabAnimationSettings>
-						<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
-						<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
-						<TabEvents Selected="TabSelected"></TabEvents>
-					</TabAnimationSettings>
-					<TabItems>
-						<TabItem>
-							<ChildContent>
-								<TabHeader Text="Requisition Info"/>
-							</ChildContent>
-							<ContentTemplate>
-								@*<BasicInfoRequisitionPanel Height="270px" Model="_requisitionDetailsObject" SkillsText="_requisitionDetailSkills" States="_states" />*@
-							</ContentTemplate>
-						</TabItem>
-						<TabItem>
-							<ChildContent>
-								<TabHeader Text="Documents"/>
-							</ChildContent>
-							<ContentTemplate>
-								<DocumentsPanel DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" Height="270px" Model="@_requisitionDocumentsObject"
-								                @ref="DocumentsPanel" RowHeight="@RowHeight"/>
-							</ContentTemplate>
-						</TabItem>
-						<TabItem>
-							<ChildContent>
-								<TabHeader Text="Candidate Activity"/>
-							</ChildContent>
-							<ContentTemplate>
-								<ActivityPanelRequisition EditActivity="EditActivity" Model="_candidateActivityObject" @ref="ActivityPanel" RowHeight="@RowHeightActivity"
-								                          UndoCandidateActivity="UndoActivity" RoleID="@RoleID" User="@User"/>
-							</ContentTemplate>
-						</TabItem>
-					</TabItems>
-					<SfSpinner CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fabric" ZIndex="13000"/>
-				</SfTab>
-			</DetailTemplate>
-		</GridTemplates>
 	</SfGrid>
 </div>
-
-<RequisitionDetailsPanel Companies="CompaniesList" CompanyContacts="CompanyContacts" Education="Education" Eligibility="Eligibility" Experience="Experience" JobOptions="JobOptions"
-                         Model="_requisitionDetailsObjectClone" Recruiters="Recruiters" @ref="DialogEditRequisition" Save="SaveRequisition" Skills="Skills"
-                         States="States" Title="@TitleRequisition" Tools="_tools1"/>
-
-<AddRequisitionDocument Model="NewDocument" OnFileUpload="UploadDocument" @ref="DialogDocument" Save="SaveDocument"/>@* AfterUpload="AfterDocument" BeforeUpload="BeforeDocument" *@
-
-<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="Workflows"/>
