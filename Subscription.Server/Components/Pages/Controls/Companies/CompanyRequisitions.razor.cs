@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_AppTrack
+// Solution:            Subscription
+// Project:             Subscription.Server
 // File Name:           CompanyRequisitions.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     09-28-2023 21:15
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          05-20-2025 15:05
+// Last Updated On:     05-20-2025 18:46
 // *****************************************/
 
 #endregion
@@ -44,65 +44,26 @@ public partial class CompanyRequisitions
     private List<RequisitionDocuments> _requisitionDocumentsObject = new();
     private int _selectedReqTab;
 
-    private List<IntValues> _states = new();
+    private List<IntValues> _states = [];
 
     private Requisition _targetRequisitions;
 
-    private readonly List<ToolbarItemModel> _tools1 = new()
-                                                      {
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Bold
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Italic
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Underline
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.StrikeThrough
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.LowerCase
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.UpperCase
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.SuperScript
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.SubScript
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Separator
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.ClearFormat
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Separator
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Undo
-                                                          },
-                                                          new()
-                                                          {
-                                                              Command = ToolbarCommand.Redo
-                                                          }
-                                                      };
+    private readonly List<ToolbarItemModel> _tools1 =
+    [
+        new() {Command = ToolbarCommand.Bold},
+        new() {Command = ToolbarCommand.Italic},
+        new() {Command = ToolbarCommand.Underline},
+        new() {Command = ToolbarCommand.StrikeThrough},
+        new() {Command = ToolbarCommand.LowerCase},
+        new() {Command = ToolbarCommand.UpperCase},
+        new() {Command = ToolbarCommand.SuperScript},
+        new() {Command = ToolbarCommand.SubScript},
+        new() {Command = ToolbarCommand.Separator},
+        new() {Command = ToolbarCommand.ClearFormat},
+        new() {Command = ToolbarCommand.Separator},
+        new() {Command = ToolbarCommand.Undo},
+        new() {Command = ToolbarCommand.Redo}
+    ];
 
     /// <summary>
     ///     Gets or sets the ActivityPanelRequisition component used for managing requisition activities within the company.
@@ -115,11 +76,7 @@ public partial class CompanyRequisitions
     ///     managing requisition activities. It includes parameters for various data related to requisition activities and
     ///     methods for handling these activities.
     /// </remarks>
-    private ActivityPanelRequisition ActivityPanel
-    {
-        get;
-        set;
-    }
+    private ActivityPanelRequisition ActivityPanel { get; set; }
 
     /// <summary>
     ///     Gets the MemoryStream instance representing the document added to the company requisitions.
@@ -129,10 +86,7 @@ public partial class CompanyRequisitions
     ///     It is used in the 'SaveDocument' method where the document data is sent to the server
     ///     and in the 'UploadDocument' method where the uploaded file's data is copied into this MemoryStream.
     /// </remarks>
-    private MemoryStream AddedDocument
-    {
-        get;
-    } = new();
+    private MemoryStream AddedDocument { get; } = new();
 
     /// <summary>
     ///     Gets or sets the list of companies.
@@ -144,11 +98,7 @@ public partial class CompanyRequisitions
     ///     This parameter is used to store and retrieve the list of companies associated with the company requisitions.
     /// </remarks>
     [Parameter]
-    public List<Company> CompaniesList
-    {
-        get;
-        set;
-    }
+    public List<Company> CompaniesList { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of company contacts.
@@ -160,11 +110,7 @@ public partial class CompanyRequisitions
     ///     This parameter is used to store and retrieve the list of contacts associated with the company requisitions.
     /// </remarks>
     [Parameter]
-    public List<CompanyContacts> CompanyContacts
-    {
-        get;
-        set;
-    }
+    public List<CompanyContacts> CompanyContacts { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog for editing activities related to company requisitions.
@@ -177,11 +123,7 @@ public partial class CompanyRequisitions
     ///     the details of a candidate's activity.
     ///     The dialog is used in the context of both the `Candidate` and `CompanyRequisitions` pages.
     /// </remarks>
-    private EditActivityDialog DialogActivity
-    {
-        get;
-        set;
-    }
+    private EditActivityDialog DialogActivity { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog for adding a requisition document.
@@ -193,11 +135,7 @@ public partial class CompanyRequisitions
     ///     This property is used to manage the dialog that allows users to add new requisition documents to a company's
     ///     requisitions.
     /// </remarks>
-    private AddRequisitionDocument DialogDocument
-    {
-        get;
-        set;
-    }
+    private AddRequisitionDocument DialogDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog for editing requisitions.
@@ -209,11 +147,7 @@ public partial class CompanyRequisitions
     ///     This property is used to manage the dialog that allows users to edit requisitions within the company requisitions
     ///     component.
     /// </remarks>
-    public RequisitionDetailsPanel DialogEditRequisition
-    {
-        get;
-        set;
-    }
+    private RequisitionDetailsPanel DialogEditRequisition { get; set; }
 
     /// <summary>
     ///     Gets or sets the dialog for editing requisitions.
@@ -225,11 +159,7 @@ public partial class CompanyRequisitions
     ///     This property is used to manage the dialog that allows users to edit requisitions within the company requisitions
     ///     component.
     /// </remarks>
-    private DocumentsPanel DocumentsPanel
-    {
-        get;
-        set;
-    }
+    private DocumentsPanel DocumentsPanel { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of education requirements for company requisitions.
@@ -243,11 +173,7 @@ public partial class CompanyRequisitions
     ///     Each item in the list represents an education requirement as an integer value.
     /// </remarks>
     [Parameter]
-    public List<IntValues> Education
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Education { get; set; }
 
     /// <summary>
     ///     Gets or sets the eligibility criteria for company requisitions.
@@ -260,11 +186,7 @@ public partial class CompanyRequisitions
     ///     The eligibility criteria are represented as a list of <see cref="IntValues" />.
     /// </remarks>
     [Parameter]
-    public List<IntValues> Eligibility
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Eligibility { get; set; }
 
     /// <summary>
     ///     Gets or sets the experience values for the company requisitions.
@@ -277,11 +199,7 @@ public partial class CompanyRequisitions
     ///     The experience values are represented by a list of <see cref="IntValues" /> instances.
     /// </remarks>
     [Parameter]
-    public List<IntValues> Experience
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Experience { get; set; }
 
     /// <summary>
     ///     Gets or sets the name of the file to be uploaded.
@@ -295,11 +213,7 @@ public partial class CompanyRequisitions
     ///     It is then used in the `SaveDocument` method when making a POST request to the "Requisition/UploadDocument"
     ///     endpoint.
     /// </remarks>
-    private string FileName
-    {
-        get;
-        set;
-    } = "";
+    private string FileName { get; set; } = "";
 
     /// <summary>
     ///     Gets or sets a value indicating whether the component is being rendered for the first time.
@@ -313,11 +227,7 @@ public partial class CompanyRequisitions
     ///     When the component is rendered for the first time, this property is set to <c>true</c>, and then it is set to
     ///     <c>false</c> to prevent certain operations from being performed again in subsequent renderings.
     /// </remarks>
-    private bool FirstRender
-    {
-        get;
-        set;
-    }
+    private bool FirstRender { get; set; }
 
     /// <summary>
     ///     Gets or sets the inner grid of company requisitions.
@@ -329,11 +239,7 @@ public partial class CompanyRequisitions
     ///     This property is used to manage and manipulate the grid of company requisitions. It is used in various methods such
     ///     as data handling and detail row binding.
     /// </remarks>
-    private SfGrid<Requisition> GridInnerRequisition
-    {
-        get;
-        set;
-    }
+    private SfGrid<Requisition> GridInnerRequisition { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of job options.
@@ -346,11 +252,7 @@ public partial class CompanyRequisitions
     ///     Each job option is represented by a KeyValues object.
     /// </remarks>
     [Parameter]
-    public List<KeyValues> JobOptions
-    {
-        get;
-        set;
-    }
+    public List<JobOptions> JobOptions { get; set; }
 
     /// <summary>
     ///     Gets or sets the JavaScript runtime instance.
@@ -364,11 +266,7 @@ public partial class CompanyRequisitions
     ///     a new browser tab as shown in the DownloadDocument method.
     /// </remarks>
     [Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
     /// <summary>
     ///     Gets or sets the MIME type of the file being uploaded.
@@ -381,11 +279,7 @@ public partial class CompanyRequisitions
     ///     The MIME type is determined when a file is selected for upload and is used when making a POST request to upload the
     ///     file.
     /// </remarks>
-    private string MIME
-    {
-        get;
-        set;
-    } = "";
+    private string MIME { get; set; } = "";
 
     /// <summary>
     ///     Gets or sets the list of company requisitions.
@@ -398,11 +292,7 @@ public partial class CompanyRequisitions
     ///     when the component is used in a Razor page or component.
     /// </remarks>
     [Parameter]
-    public List<Requisition> Model
-    {
-        get;
-        set;
-    }
+    public List<Requisition> Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the NavigationManager instance.
@@ -416,11 +306,7 @@ public partial class CompanyRequisitions
     ///     build URIs, and trigger URI change notifications. It is injected into the component via dependency injection.
     /// </remarks>
     [Inject]
-    private NavigationManager NavManager
-    {
-        get;
-        set;
-    }
+    private NavigationManager NavManager { get; set; }
 
     /// <summary>
     ///     Gets an instance of the RequisitionDocuments class.
@@ -431,10 +317,7 @@ public partial class CompanyRequisitions
     /// <remarks>
     ///     This property is used to manage the documents related to the company requisitions.
     /// </remarks>
-    private RequisitionDocuments NewDocument
-    {
-        get;
-    } = new();
+    private RequisitionDocuments NewDocument { get; } = new();
 
     /// <summary>
     ///     Gets the list of next steps for the activity.
@@ -448,10 +331,7 @@ public partial class CompanyRequisitions
     ///     Each step is represented as a `KeyValues` object. The list is initially empty and is populated when an activity is
     ///     being edited.
     /// </remarks>
-    private List<KeyValues> NextSteps
-    {
-        get;
-    } = new();
+    private List<KeyValues> NextSteps { get; } = new();
 
     /// <summary>
     ///     Gets or sets the list of recruiters.
@@ -463,11 +343,7 @@ public partial class CompanyRequisitions
     ///     This parameter is used to store and retrieve the list of recruiters associated with the company requisitions.
     /// </remarks>
     [Parameter]
-    public List<KeyValues> Recruiters
-    {
-        get;
-        set;
-    }
+    public List<KeyValues> Recruiters { get; set; }
 
     /// <summary>
     ///     Gets or sets the role ID associated with the company requisitions.
@@ -481,11 +357,7 @@ public partial class CompanyRequisitions
     ///     component.
     /// </remarks>
     [Parameter]
-    public string RoleID
-    {
-        get;
-        set;
-    }
+    public int RoleID { get; set; }
 
     /// <summary>
     ///     Gets or sets the height of the row in the company requisitions list.
@@ -498,11 +370,7 @@ public partial class CompanyRequisitions
     ///     It affects the height of each row in the list, and therefore the overall layout and readability of the list.
     /// </remarks>
     [Parameter]
-    public double RowHeight
-    {
-        get;
-        set;
-    }
+    public double RowHeight { get; set; }
 
     /// <summary>
     ///     Gets or sets the row height for the activity in the company requisitions.
@@ -515,11 +383,7 @@ public partial class CompanyRequisitions
     ///     It is used in the rendering process of the component, specifically in the `BuildRenderTree` method.
     /// </remarks>
     [Parameter]
-    public int RowHeightActivity
-    {
-        get;
-        set;
-    }
+    public int RowHeightActivity { get; set; }
 
     /// <summary>
     ///     Gets or sets the selected activity of a candidate in the company requisitions.
@@ -532,11 +396,7 @@ public partial class CompanyRequisitions
     ///     requisitions.
     ///     It is used in the EditActivity method to update the activity status and next steps based on the workflows.
     /// </remarks>
-    private CandidateActivity SelectedActivity
-    {
-        get;
-        set;
-    } = new();
+    private CandidateActivity SelectedActivity { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the selected requisition document for download.
@@ -548,11 +408,7 @@ public partial class CompanyRequisitions
     ///     This property is used to hold the data related to the selected requisition document that the user wants to
     ///     download. It is set in the DownloadDocument method.
     /// </remarks>
-    private RequisitionDocuments SelectedDownload
-    {
-        get;
-        set;
-    } = new();
+    private RequisitionDocuments SelectedDownload { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the list of skills required for the company requisitions.
@@ -565,11 +421,7 @@ public partial class CompanyRequisitions
     ///     Each skill is represented by an instance of the <see cref="IntValues" /> class.
     /// </remarks>
     [Parameter]
-    public List<IntValues> Skills
-    {
-        get;
-        set;
-    }
+    public List<IntValues> Skills { get; set; }
 
     /// <summary>
     ///     Gets or sets the spinner control for the CompanyRequisitions component.
@@ -581,11 +433,7 @@ public partial class CompanyRequisitions
     ///     This property is used to control the visibility of a spinner during asynchronous operations.
     ///     The spinner is shown before the start of an operation and hidden after its completion.
     /// </remarks>
-    private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private SfSpinner Spinner { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of states associated with the company requisitions.
@@ -598,11 +446,7 @@ public partial class CompanyRequisitions
     ///     state is represented by an instance of the IntValues class.
     /// </remarks>
     [Parameter]
-    public List<IntValues> States
-    {
-        get;
-        set;
-    }
+    public List<StateCache> States { get; set; }
 
     /// <summary>
     ///     Gets or sets the list of status codes.
@@ -615,11 +459,7 @@ public partial class CompanyRequisitions
     ///     Each status code is represented by an instance of the <see cref="StatusCode" /> class.
     /// </remarks>
     [Parameter]
-    public List<StatusCode> StatusCodes
-    {
-        get;
-        set;
-    }
+    public List<StatusCode> StatusCodes { get; set; }
 
     /// <summary>
     ///     Gets or sets the title for the requisition.
@@ -631,11 +471,7 @@ public partial class CompanyRequisitions
     ///     This property is used to set the title of the requisition when editing a requisition.
     ///     It is also used to retrieve the current title of the requisition.
     /// </remarks>
-    private string TitleRequisition
-    {
-        get;
-        set;
-    }
+    private string TitleRequisition { get; set; }
 
     /// <summary>
     ///     Gets or sets the username of the current user.
@@ -647,11 +483,7 @@ public partial class CompanyRequisitions
     ///     The username is converted to uppercase invariant before being used in API requests.
     /// </remarks>
     [Parameter]
-    public string User
-    {
-        get;
-        set;
-    } = "JOLLY";
+    public string User { get; set; } = "JOLLY";
 
     /// <summary>
     ///     Gets or sets the list of application workflows.
@@ -664,11 +496,7 @@ public partial class CompanyRequisitions
     ///     Each workflow represents a sequence of steps or activities in the requisition process.
     /// </remarks>
     [Parameter]
-    public List<Workflow> Workflows
-    {
-        get;
-        set;
-    } = new();
+    public List<Workflow> Workflows { get; set; } = new();
 
     /// <summary>
     ///     Asynchronously adds a new document to the company requisitions.
@@ -686,20 +514,20 @@ public partial class CompanyRequisitions
         await DialogDocument.ShowDialog();
     }
 
-     /*/// <summary>
-    ///     Handles the event after a document is processed in the requisition document dialog.
-    /// </summary>
-    /// <param name="arg">
-    ///     The event arguments of type <see cref="Syncfusion.Blazor.Inputs.ActionCompleteEventArgs" />.
-    /// </param>
-    /// <remarks>
-    ///     This method is called after a document is processed in the requisition document dialog. It enables the buttons in
-    ///     the dialog.
-    /// </remarks>
-   private void AfterDocument(ActionCompleteEventArgs arg)
-    {
-        DialogDocument.EnableButtons();
-    }*/
+    /*/// <summary>
+   ///     Handles the event after a document is processed in the requisition document dialog.
+   /// </summary>
+   /// <param name="arg">
+   ///     The event arguments of type <see cref="Syncfusion.Blazor.Inputs.ActionCompleteEventArgs" />.
+   /// </param>
+   /// <remarks>
+   ///     This method is called after a document is processed in the requisition document dialog. It enables the buttons in
+   ///     the dialog.
+   /// </remarks>
+  private void AfterDocument(ActionCompleteEventArgs arg)
+   {
+       DialogDocument.EnableButtons();
+   }*/
 
     /*/// <summary>
     ///     Handles the event before a document upload.
@@ -1152,13 +980,13 @@ public partial class CompanyRequisitions
 
         _requisitionDetailSkills = "".ToMarkupString();
 
-        string[] _skillRequiredStrings = { }, _skillOptionalStrings = { };
-        if (_requisitionDetailsObject.SkillsRequired != "")
+        string[] _skillRequiredStrings = [], _skillOptionalStrings = [];
+        if (_requisitionDetailsObject.SkillsRequired.NotNullOrWhiteSpace())
         {
             _skillRequiredStrings = _requisitionDetailsObject.SkillsRequired.Split(',');
         }
 
-        if (_requisitionDetailsObject.Optional != "")
+        if (_requisitionDetailsObject.Optional.NotNullOrWhiteSpace())
         {
             _skillOptionalStrings = _requisitionDetailsObject.Optional.Split(',');
         }
@@ -1172,7 +1000,7 @@ public partial class CompanyRequisitions
                 continue;
             }
 
-            if (_skillsRequired == "")
+            if (_skillsRequired.NullOrWhiteSpace())
             {
                 _skillsRequired = _skill.Text;
             }
@@ -1190,7 +1018,7 @@ public partial class CompanyRequisitions
                 continue;
             }
 
-            if (_skillsOptional == "")
+            if (_skillsOptional.NullOrWhiteSpace())
             {
                 _skillsOptional = _skill.Text;
             }
@@ -1258,33 +1086,33 @@ public partial class CompanyRequisitions
         NavManager.NavigateTo($"{NavManager.BaseUri}candidate?requisition={_targetRequisitions.ID}&company=1", true);
     }
 
- /// <summary>
-///     Handles the event when a tab is selected in the company requisitions component.
-/// </summary>
-/// <param name="args">
-///     Contains information about the selected tab.
-/// </param>
-/// <remarks>
-///     This method is invoked when a tab is selected in the company requisitions component. It updates the 
-///     <see cref="_selectedReqTab"/> field with the index of the selected tab.
-/// </remarks>
-  private async Task TabSelected(SelectEventArgs args)
+    /// <summary>
+    ///     Handles the event when a tab is selected in the company requisitions component.
+    /// </summary>
+    /// <param name="args">
+    ///     Contains information about the selected tab.
+    /// </param>
+    /// <remarks>
+    ///     This method is invoked when a tab is selected in the company requisitions component. It updates the
+    ///     <see cref="_selectedReqTab" /> field with the index of the selected tab.
+    /// </remarks>
+    private async Task TabSelected(SelectEventArgs args)
     {
         await Task.Yield();
         _selectedReqTab = args.SelectedIndex;
     }
 
-  /// <summary>
-///     Asynchronously undoes a specific activity related to a company requisition.
-/// </summary>
-/// <param name="activityID">
-///     The ID of the activity to be undone.
-/// </param>
-/// <remarks>
-///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint with the activity ID and user information.
-///     If the request is successful, it updates the candidate activity object with the response data.
-/// </remarks>
-  private async Task UndoActivity(int activityID)
+    /// <summary>
+    ///     Asynchronously undoes a specific activity related to a company requisition.
+    /// </summary>
+    /// <param name="activityID">
+    ///     The ID of the activity to be undone.
+    /// </param>
+    /// <remarks>
+    ///     This method sends a POST request to the "Candidates/UndoCandidateActivity" endpoint with the activity ID and user information.
+    ///     If the request is successful, it updates the candidate activity object with the response data.
+    /// </remarks>
+    private async Task UndoActivity(int activityID)
     {
         await Task.Yield();
 
@@ -1315,17 +1143,17 @@ public partial class CompanyRequisitions
         await Task.Yield();
     }
 
-  /// <summary>
-///     Asynchronously uploads a document file.
-/// </summary>
-/// <param name="file">
-///     The file to be uploaded, represented as an instance of <see cref="UploadChangeEventArgs"/>.
-/// </param>
-/// <remarks>
-///     This method reads the file stream from the uploaded file, copies it to a target stream, and then closes the source stream.
-///     It also sets the file name and MIME type of the uploaded document.
-/// </remarks>
-  private async Task UploadDocument(UploadChangeEventArgs file)
+    /// <summary>
+    ///     Asynchronously uploads a document file.
+    /// </summary>
+    /// <param name="file">
+    ///     The file to be uploaded, represented as an instance of <see cref="UploadChangeEventArgs" />.
+    /// </param>
+    /// <remarks>
+    ///     This method reads the file stream from the uploaded file, copies it to a target stream, and then closes the source stream.
+    ///     It also sets the file name and MIME type of the uploaded document.
+    /// </remarks>
+    private async Task UploadDocument(UploadChangeEventArgs file)
     {
         await Task.Yield();
         foreach (UploadFiles _file in file.Files)
