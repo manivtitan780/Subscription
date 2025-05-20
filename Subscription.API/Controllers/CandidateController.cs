@@ -22,7 +22,7 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class CandidateController : ControllerBase
 {
-    private static readonly string[] JSONSerializable = ["Skill"];
+    // private static readonly string[] JSONSerializable = ["Skill"];
 
     /*private void CreateToolFunction(ChatCompletionOptions options)
     {
@@ -480,6 +480,7 @@ public class CandidateController : ControllerBase
         await using SqlCommand _command = new("GetCandidateRequisitionDescription", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("CandidateID", candidateID);
+        _command.Int("RequisitionID", requisitionID);
 
         string _textResume = "", _jobDescription = "";
         try
