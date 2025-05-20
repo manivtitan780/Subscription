@@ -1,4 +1,4 @@
-﻿<SfDialog CssClass="dialogPopup" Header="Submit Candidate" Height="390px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="540px">
+﻿<SfDialog CssClass="dialogPopup" Header="Submit Candidate" Height="390px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="540px" CloseOnEscape="false">
     <ChildContent>
         <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
         <DialogPositionData X="center" Y="center"/>
@@ -6,9 +6,9 @@
         <DialogEvents OnOpen="OpenDialog"/>
         <SfDataForm EditContext="Context" ID="submitEditForm" OnValidSubmit="SaveCandidateSubmit" @ref="EditSubmitForm" ValidationDisplayMode="FormValidationDisplay.Inline">
             <FormButtons>
-                <SfButton CssClass="e-secondary" IconCss="e-icons e-shorten" OnClick="GenerateSummary" type="button">@Content</SfButton>
-                <SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelCandidateSubmit" type="button">Cancel</SfButton>
-                <SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Submit Candidate</SfButton>
+                <SfButton CssClass="e-secondary" Disabled="@Disabled" IconCss="e-icons e-shorten" OnClick="GenerateSummary" type="button">@Content</SfButton>
+                <SfButton CssClass="e-secondary" Disabled="@Disabled" IconCss="e-icons e-close" OnClick="CancelCandidateSubmit" type="button">Cancel</SfButton>
+                <SfButton CssClass="e-primary" Disabled="@Disabled" IconCss="e-icons e-save" type="submit">Submit Candidate</SfButton>
             </FormButtons>
             <FormValidator>
                 <FluentValidationValidator Validator="_submitCandidateRequisitionValidator"/>
