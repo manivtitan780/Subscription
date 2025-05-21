@@ -3,7 +3,7 @@
 		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
 		<DialogAnimationSettings Duration="1000" Effect="DialogEffect.SlideRight"/>
-		<DialogEvents Closed="CloseDialog" />
+		<DialogEvents Closed="CloseDialog"/>
 		<SfDataForm Model="Model" ID="candidateEditForm" OnValidSubmit="UploadCandidateResume" @ref="EditCandidateForm" ValidationDisplayMode="FormValidationDisplay.Inline">
 			<FormButtons>
 				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDialog" type="button">Cancel</SfButton>
@@ -13,16 +13,28 @@
 				<FluentValidationValidator/>@* Validator="_candidateDetailsValidator"*@
 			</FormValidator>
 			<FormItems>
-			<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
 						<Template>
 							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760"
-							            SequentialUpload="true" ShowFileList="true">
+										SequentialUpload="true" ShowFileList="true">
 								<UploaderEvents OnRemove="OnFileRemoved" FileSelected="OnFileSelected" ValueChange="UploadDocument"/> @*MaxFileSize = 10MB*@
 							</SfUploader>
 						</Template>
 					</FormItem>
 				</FormGroup>
+				@{
+					if (ShowSubmissions)
+					{
+						<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
+							<FormItem ColumnSpan="1" Field="@nameof(Model.SubmissionNotes)">
+								<Template>
+									<TextArea @bind-Value="Model.SubmissionNotes" ID="textActivityName" MaxLength="1000" Placeholder="Submission Notes"></TextArea>
+								</Template>
+							</FormItem>
+						</FormGroup>
+					}
+				}
 			</FormItems>
 		</SfDataForm>
 	</ChildContent>

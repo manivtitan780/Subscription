@@ -8,7 +8,7 @@
 // File Name:           EditActivityDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          03-04-2025 20:03
-// Last Updated On:     05-18-2025 19:37
+// Last Updated On:     05-21-2025 15:00
 // *****************************************/
 
 #endregion
@@ -39,16 +39,6 @@ public partial class EditActivityDialog : IDisposable
     /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
-
-    public void Dispose()
-    {
-        if (Context is not null)
-        {
-            Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
-
-        GC.SuppressFinalize(this);
-    }
 
     private EditActivityValidator CandidateActivityValidator { get; } = new();
 
@@ -86,7 +76,9 @@ public partial class EditActivityDialog : IDisposable
     ///     The list includes types such as "In-Person Interview", "Telephonic Interview", "Others", and "None".
     /// </value>
     private IEnumerable<KeyValues> InterviewTypes { get; } =
-        [new() {Text = "In-Person Interview", KeyValue = "I"}, new() {Text = "Telephonic Interview", KeyValue = "P"}, new() {Text = "Others", KeyValue = "O"}, new() {Text = "None", KeyValue = ""}];
+    [
+        new() {Text = "In-Person Interview", KeyValue = "I"}, new() {Text = "Telephonic Interview", KeyValue = "P"}, new() {Text = "Others", KeyValue = "O"}, new() {Text = "None", KeyValue = ""}
+    ];
 
     /// <summary>
     ///     Gets or sets a value indicating whether the dialog is for a candidate.
@@ -206,6 +198,16 @@ public partial class EditActivityDialog : IDisposable
     public List<StatusCode> StatusCodes { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    public void Dispose()
+    {
+        if (Context is not null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     ///     Cancels the current dialog operation.
