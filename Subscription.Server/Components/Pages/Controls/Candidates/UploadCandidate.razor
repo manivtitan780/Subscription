@@ -1,4 +1,4 @@
-<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="395px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="500px">
+<SfDialog CssClass="dialogPopup" Header="Edit Candidate" Height="556px" IsModal="true" MinHeight="300px" @ref="Dialog" Target="#divTarget" Visible="false" Width="500px">
 	<ChildContent>
 		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
 		<DialogPositionData X="right" Y="center"/>
@@ -17,24 +17,22 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Files)">
 						<Template>
 							<SfUploader AllowedExtensions=".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls" AllowMultiple="false" AutoUpload="true" ID="uploadDoc" MaxFileSize="10485760"
-										SequentialUpload="true" ShowFileList="true">
+							            SequentialUpload="true" ShowFileList="true">
 								<UploaderEvents OnRemove="OnFileRemoved" FileSelected="OnFileSelected" ValueChange="UploadDocument"/> @*MaxFileSize = 10MB*@
 							</SfUploader>
 						</Template>
 					</FormItem>
-				</FormGroup>
-				@{
-					if (ShowSubmissions)
-					{
-						<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCandidateInfo" LabelText="Candidate Information">
+					@{
+						if (ShowSubmissions)
+						{
 							<FormItem ColumnSpan="1" Field="@nameof(Model.SubmissionNotes)">
 								<Template>
 									<TextArea @bind-Value="Model.SubmissionNotes" ID="textActivityName" MaxLength="1000" Placeholder="Submission Notes"></TextArea>
 								</Template>
 							</FormItem>
-						</FormGroup>
+						}
 					}
-				}
+				</FormGroup>
 			</FormItems>
 		</SfDataForm>
 	</ChildContent>

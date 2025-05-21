@@ -44,6 +44,9 @@ public partial class UploadCandidate : ComponentBase
     private ParsedCandidate Model { get; } = new();
 
     [Parameter]
+    public int RequisitionID { get; set; }
+
+    [Parameter]
     public bool ShowSubmissions { get; set; }
 
     [Parameter]
@@ -131,6 +134,11 @@ public partial class UploadCandidate : ComponentBase
                     CandidateDetails.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : "";
                     CandidateDetails.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : "";
                     CandidateDetails.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : "";
+                    if (Model.SubmissionNotes.NullOrWhiteSpace())
+                    {
+                        Model.SubmissionNotes = CandidateDetails.Summary;
+                    }
+                    Model.RequisitionID = RequisitionID;
                 }
             }
 
@@ -146,6 +154,7 @@ public partial class UploadCandidate : ComponentBase
                                                         };
 
             await General.ExecuteRest<int>("Candidate/SaveCandidateWithResume", _parameters, _candDetailsResume).ConfigureAwait(false);
+            Model.Clear();
             await Dialog.HideAsync().ConfigureAwait(false);
         }
     }
