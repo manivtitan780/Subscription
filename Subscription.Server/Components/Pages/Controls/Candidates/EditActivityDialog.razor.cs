@@ -243,7 +243,7 @@ public partial class EditActivityDialog : IDisposable
         }
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context?.Validate();
 
     /// <summary>
     ///     Asynchronously initializes the dialog after all parameters have been set.

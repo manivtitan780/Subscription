@@ -156,7 +156,7 @@ public partial class Candidates
 
     private CandidateDocument NewDocument { get; } = new();
 
-    private List<KeyValues> NextSteps { get; } = [];
+    private List<KeyValues> NextSteps { get; set; } = [];
 
     private NotesPanel NotesPanel { get; set; }
 
@@ -418,23 +418,14 @@ public partial class Candidates
                                                        {
                                                            SelectedActivity = ActivityPanel.SelectedRow;
                                                            NextSteps.Clear();
-                                                           NextSteps.Add(new() {Text = "No Change", KeyValue = "0"});
                                                            try
                                                            {
-                                                               foreach (string[] _next in _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
-                                                                                                   .Select(flow => flow.Next.Split(',')))
-                                                               {
-                                                                   foreach (string _nextString in _next)
-                                                                   {
-                                                                       foreach (StatusCode _status in _statusCodes.Where(status => status.Code == _nextString && status.AppliesToCode == "SCN"))
-                                                                       {
-                                                                           NextSteps.Add(new(_status.Status, _nextString));
-                                                                           break;
-                                                                       }
-                                                                   }
-
-                                                                   break;
-                                                               }
+                                                               List<string> nextCodes = _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                                                                 .SelectMany(flow => flow.Next.Split(','))
+                                                                                                 .Distinct().ToList();
+                                                               NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")
+                                                                                       .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
+                                                                                       .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
                                                            }
                                                            catch
                                                            {
