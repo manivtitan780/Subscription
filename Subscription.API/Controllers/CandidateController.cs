@@ -686,32 +686,36 @@ public class CandidateController : ControllerBase
 
     private static string GetCandidateLocation(CandidateDetails candidateDetails, string stateName)
     {
-        string _location = "";
-
-        if (!candidateDetails!.City.NullOrWhiteSpace())
+        //string _location = "";
+        List<string> _parts = [];
+        
+        if (candidateDetails!.City.NotNullOrWhiteSpace())
         {
-            _location = candidateDetails.City;
+            _parts.Add(candidateDetails.City);
+            //_location = candidateDetails.City;
         }
 
-        if (!stateName.NullOrWhiteSpace())
+        if (stateName.NotNullOrWhiteSpace())
         {
-            _location += ", " + stateName;
+            _parts.Add(stateName);
+            //_location += ", " + stateName;
         }
-        else
+        /*else
         {
             _location = stateName;
-        }
+        }*/
 
-        if (!candidateDetails.ZipCode.NullOrWhiteSpace())
+        if (candidateDetails.ZipCode.NotNullOrWhiteSpace())
         {
-            _location += ", " + candidateDetails.ZipCode;
+            _parts.Add(candidateDetails.ZipCode);
+            //_location += ", " + candidateDetails.ZipCode;
         }
-        else
+        /*else
         {
             _location = candidateDetails.ZipCode;
-        }
+        }*/
 
-        return _location;
+        return string.Join(", ", _parts); //_location;
     }
 
     [HttpGet]
@@ -1061,7 +1065,7 @@ public class CandidateController : ControllerBase
         string _internalFileName = Guid.NewGuid().ToString("N");
         CandidateDetails _candidateDetails = candidateDetailsResume.CandidateDetails;
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SaveCandidate", _connection);
+        await using SqlCommand _command = new("SaveCandidateWithSubmissions", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("@ID", _candidateDetails.CandidateID, true);
         _command.Varchar("@FirstName", 50, _candidateDetails.FirstName);
@@ -1108,6 +1112,8 @@ public class CandidateController : ControllerBase
         _command.Varchar("@RelocNotes", 200, _candidateDetails.RelocationNotes);
         _command.Varchar("@SecurityClearanceNotes", 200, _candidateDetails.SecurityNotes);
         _command.Varchar("@User", 10, userName);
+        _command.Int("@RequisitionID", candidateDetailsResume.ParsedCandidate.RequisitionID);
+        _command.Varchar("@SubmissionNotes", 1000, candidateDetailsResume.ParsedCandidate.SubmissionNotes);
 
         try
         {
@@ -1158,22 +1164,23 @@ public class CandidateController : ControllerBase
                     }
                 }
 
-                _templateSingle.Subject = _templateSingle.Subject!.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                         .Replace("$FULL_NAME$", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
-                                                         .Replace("$FIRST_NAME$", _candidateDetails.FirstName)
-                                                         .Replace("$LAST_NAME$", _candidateDetails.LastName)
-                                                         .Replace("$CAND_LOCATION$", GetCandidateLocation(_candidateDetails, _stateName))
-                                                         .Replace("$CAND_PHONE_PRIMARY$", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
-                                                         .Replace("$CAND_SUMMARY$", _candidateDetails.Summary)
-                                                         .Replace("$LOGGED_USER$", userName);
-                _templateSingle.Template = _templateSingle.Template!.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                          .Replace("$FULL_NAME$", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
-                                                          .Replace("$FIRST_NAME$", _candidateDetails.FirstName)
-                                                          .Replace("$LAST_NAME$", _candidateDetails.LastName)
-                                                          .Replace("$CAND_LOCATION$", GetCandidateLocation(_candidateDetails, _stateName))
-                                                          .Replace("$CAND_PHONE_PRIMARY$", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
-                                                          .Replace("$CAND_SUMMARY$", _candidateDetails.Summary)
-                                                          .Replace("$LOGGED_USER$", userName);
+                _templateSingle.Subject = _templateSingle.Subject!.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                         .Replace("{FullName}", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
+                                                         .Replace("{FirstName}", _candidateDetails.FirstName)
+                                                         .Replace("{LastName}", _candidateDetails.LastName)
+                                                         .Replace("{CandidateLocation}", GetCandidateLocation(_candidateDetails, _stateName))
+                                                         .Replace("{CandidatePhone}", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                         .Replace("{CandidateSummary}", _candidateDetails.Summary)
+                                                         .Replace("{LoggedInUser}", userName);
+                
+                _templateSingle.Template = _templateSingle.Template!.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                          .Replace("{FullName}", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
+                                                          .Replace("{FirstName}", _candidateDetails.FirstName)
+                                                          .Replace("{LastName}", _candidateDetails.LastName)
+                                                          .Replace("{CandidateLocation}", GetCandidateLocation(_candidateDetails, _stateName))
+                                                          .Replace("{CandidatePhone}", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                          .Replace("{CandidateSummary}", _candidateDetails.Summary)
+                                                          .Replace("{LoggedInUser}", userName);
 
                 /*SendResponse? _email = await Email.From("maniv@hire-titan.com")
                                                   .To("manivenkit@gmail.com", "Mani Bhai")

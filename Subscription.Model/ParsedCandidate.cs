@@ -24,4 +24,16 @@ public class ParsedCandidate
     public byte[] DocumentBytes { get; set; } = [];
 
     public string SubmissionNotes { get; set; } = "";
+
+    public int RequisitionID { get; set; }
+
+    public void Clear()
+    {
+        Files = [];
+        FileName = "";
+        Mime = "";
+        DocumentBytes = [];
+        SubmissionNotes = "";
+        RequisitionID = 0;
+    }
 }

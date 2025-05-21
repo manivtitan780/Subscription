@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-20-2025 20:56
+// Last Updated On:     05-21-2025 19:04
 // *****************************************/
 
 #endregion
@@ -112,6 +112,8 @@ public partial class Requisitions
 
     private string Title { get; set; } = "Edit";
 
+    public UploadCandidate UploadCandidateDialog { get; set; }
+
     private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
@@ -156,6 +158,11 @@ public partial class Requisitions
                                                     SearchModel.User = User;
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                 });
+
+    private async Task CloseUploadCandidate()
+    {
+        await Refresh(null).ConfigureAwait(false);
+    }
 
     private Task DataHandler(object obj) => ExecuteMethod(async () =>
                                                           {
@@ -661,22 +668,25 @@ public partial class Requisitions
         _reqDetailSkills = (_skillStringTemp.NullOrWhiteSpace() ? "" : _skillStringTemp).ToMarkupString();
     }
 
-    private Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
+    private async Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
     {
         switch (args.Item.ID)
         {
             case "itemEditRequisition":
                 _selectedTab = 0;
-                return EditRequisition(false);
+                await EditRequisition(false);
+                break;
             case "itemAddDocument":
                 _selectedTab = 1;
-                return AddDocument();
+                await AddDocument();
+                break;
             case "itemSubmitExisting":
                 NavManager.NavigateTo($"{NavManager.BaseUri}candidate?reqid={_target.ID}", true);
                 break;
+            case "itemSubmitNew":
+                await UploadCandidateDialog.ShowDialog();
+                break;
         }
-
-        return Task.CompletedTask;
     }
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
