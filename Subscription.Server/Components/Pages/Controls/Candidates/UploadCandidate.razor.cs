@@ -8,7 +8,7 @@
 // File Name:           UploadCandidate.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          05-07-2025 16:05
-// Last Updated On:     05-08-2025 19:39
+// Last Updated On:     05-21-2025 15:05
 // *****************************************/
 
 #endregion
@@ -42,6 +42,9 @@ public partial class UploadCandidate : ComponentBase
     //private FluentValidationValidator _candidateDetailsValidator { get; set; }
 
     private ParsedCandidate Model { get; } = new();
+
+    [Parameter]
+    public bool ShowSubmissions { get; set; }
 
     [Parameter]
     public string User { get; set; } = "";

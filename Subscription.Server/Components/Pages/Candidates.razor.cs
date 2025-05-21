@@ -177,7 +177,7 @@ public partial class Candidates
 
     private int RequisitionID { get; set; }
 
-    private int RoleID { get; set; }
+    private int RoleID { get; set; } = 5;
 
     private string RoleName { get; set; }
 

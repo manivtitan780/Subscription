@@ -22,4 +22,6 @@ public class ParsedCandidate
     public string Mime { get; set; }
     
     public byte[] DocumentBytes { get; set; } = [];
+
+    public string SubmissionNotes { get; set; } = "";
 }
