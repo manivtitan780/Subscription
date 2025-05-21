@@ -125,6 +125,10 @@ _app.Use(async (context, next) =>
                  Start.DeploymentName = _config["AzureOpenAI:DeploymentName"];
                  Start.SystemChatMessage = _config["AzureOpenAI:SystemChatMessage"];
                  Start.Prompt = _config["AzureOpenAI:Prompt"];
+                 Start.EmailHost = _config["Email:Host"];
+                 Start.Port = (_config["Email:Port"] ?? string.Empty).ToInt32(587);
+                 Start.EmailUsername = _config["Email:UserName"];
+                 Start.EmailPassword = _config["Email:Password"];
 
                  await General.SetCache();
                  _isSet = true;
