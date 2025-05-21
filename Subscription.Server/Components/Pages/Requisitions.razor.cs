@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-15-2025 21:26
+// Last Updated On:     05-20-2025 20:56
 // *****************************************/
 
 #endregion
@@ -84,7 +84,7 @@ public partial class Requisitions
 
     private RequisitionDocuments NewDocument { get; set; } = new();
 
-    private List<KeyValues> NextSteps { get; } = [];
+    private List<KeyValues> NextSteps { get; set; } = [];
 
     [Inject]
     private RedisService RedisService { get; set; }
@@ -259,24 +259,14 @@ public partial class Requisitions
                                                          {
                                                              SelectedActivity = ActivityPanel.SelectedRow;
                                                              NextSteps.Clear();
-                                                             NextSteps.Add(new() {Text = "No Change", KeyValue = "0"});
-
                                                              try
                                                              {
-                                                                 foreach (string[] _next in _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
-                                                                                                      .Select(flow => flow.Next.Split(',')))
-                                                                 {
-                                                                     foreach (string _nextString in _next)
-                                                                     {
-                                                                         foreach (StatusCode _status in _statusCodes.Where(status => status.Code == _nextString && status.AppliesToCode == "SCN"))
-                                                                         {
-                                                                             NextSteps.Add(new(_status.Status, _nextString));
-                                                                             break;
-                                                                         }
-                                                                     }
-
-                                                                     break;
-                                                                 }
+                                                                 List<string> nextCodes = _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                                                                   .SelectMany(flow => flow.Next.Split(','))
+                                                                                                   .Distinct().ToList();
+                                                                 NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")
+                                                                                         .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
+                                                                                         .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
                                                              }
                                                              catch
                                                              {
