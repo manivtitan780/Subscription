@@ -1186,7 +1186,7 @@ public class CandidateController : ControllerBase
 
                     MailMessage _mailMessage = new()
                                                {
-                                                   From = new("maniv@hire-titan.com", "Mani Bhai"),
+                                                   From = new("maniv@hire-titan.com", "Mani-Meow"),
                                                    Subject = _emailTemplates.Subject,
                                                    Body = _emailTemplates.Template,
                                                    IsBodyHtml = true
@@ -1205,7 +1205,6 @@ public class CandidateController : ControllerBase
                     if (_emailTemplates.Subject.Contains("Submitted"))
                     {
                         //Attach the Resume
-                        //using MemoryStream _resumeStream = new(candidateDetailsResume.ParsedCandidate.DocumentBytes);
                         Attachment _resumeAttachment = new(_resumeStream, candidateDetailsResume.ParsedCandidate.FileName, GetMimeType(candidateDetailsResume.ParsedCandidate.Mime));
                         _mailMessage.Attachments.Add(_resumeAttachment);
                     }
