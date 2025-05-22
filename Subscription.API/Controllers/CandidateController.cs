@@ -688,7 +688,7 @@ public class CandidateController : ControllerBase
     {
         //string _location = "";
         List<string> _parts = [];
-        
+
         if (candidateDetails!.City.NotNullOrWhiteSpace())
         {
             _parts.Add(candidateDetails.City);
@@ -1154,53 +1154,62 @@ public class CandidateController : ControllerBase
 
             if (_templates.Count > 0)
             {
-                EmailTemplates _templateSingle = _templates[0];
-                if (_templateSingle.CC.NotNullOrWhiteSpace())
+                foreach (EmailTemplates _emailTemplates in _templates)
                 {
-                    string[] _ccArray = _templateSingle.CC!.Split(",");
-                    foreach (string _cc in _ccArray)
+                    if (_emailTemplates.CC.NotNullOrWhiteSpace())
                     {
-                        _emailCC.Add(_cc, _cc);
+                        string[] _ccArray = _emailTemplates.CC!.Split(",");
+                        foreach (string _cc in _ccArray)
+                        {
+                            _emailCC.Add(_cc, _cc);
+                        }
                     }
+
+                    _emailTemplates.Subject = _emailTemplates.Subject!.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                             .Replace("{FullName}", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
+                                                             .Replace("{FirstName}", _candidateDetails.FirstName)
+                                                             .Replace("{LastName}", _candidateDetails.LastName)
+                                                             .Replace("{CandidateLocation}", GetCandidateLocation(_candidateDetails, _stateName))
+                                                             .Replace("{CandidatePhone}", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                             .Replace("{CandidateSummary}", _candidateDetails.Summary)
+                                                             .Replace("{LoggedInUser}", userName);
+
+                    _emailTemplates.Template = _emailTemplates.Template!.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                              .Replace("{FullName}", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
+                                                              .Replace("{FirstName}", _candidateDetails.FirstName)
+                                                              .Replace("{LastName}", _candidateDetails.LastName)
+                                                              .Replace("{CandidateLocation}", GetCandidateLocation(_candidateDetails, _stateName))
+                                                              .Replace("{CandidatePhone}", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                              .Replace("{CandidateSummary}", _candidateDetails.Summary)
+                                                              .Replace("{LoggedInUser}", userName);
+
+                    using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
+                    _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
+                    _smtpClient.EnableSsl = true;
+
+                    MailMessage _mailMessage = new()
+                                               {
+                                                   From = new("maniv@hire-titan.com", "Mani Bhai"),
+                                                   Subject = _emailTemplates.Subject,
+                                                   Body = _emailTemplates.Template,
+                                                   IsBodyHtml = true
+                                               };
+                    _mailMessage.To.Add("manivenkit@gmail.com"); //TODO: After testing remove this and enable the below code
+                    // _mailMessage.To.Add("jolly@hire-titan.com");
+                    /*foreach (KeyValuePair<string, string> _emailAddress in _emailAddresses)
+                    {
+                        _mailMessage.To.Add(_emailAddress.Value);
+                    }*/
+                    if (_emailTemplates.Subject.Contains("Submitted"))
+                    {
+                        //Attach the Resume
+                        using MemoryStream _resumeStream = new(candidateDetailsResume.ParsedCandidate.DocumentBytes);
+                        Attachment _resumeAttachment = new(_resumeStream, candidateDetailsResume.ParsedCandidate.FileName, GetMimeType(candidateDetailsResume.ParsedCandidate.Mime));
+                        _mailMessage.Attachments.Add(_resumeAttachment);
+                    }
+
+                    await _smtpClient.SendMailAsync(_mailMessage);
                 }
-
-                _templateSingle.Subject = _templateSingle.Subject!.Replace("{TODAY}", DateTime.Today.CultureDate())
-                                                         .Replace("{FullName}", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
-                                                         .Replace("{FirstName}", _candidateDetails.FirstName)
-                                                         .Replace("{LastName}", _candidateDetails.LastName)
-                                                         .Replace("{CandidateLocation}", GetCandidateLocation(_candidateDetails, _stateName))
-                                                         .Replace("{CandidatePhone}", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
-                                                         .Replace("{CandidateSummary}", _candidateDetails.Summary)
-                                                         .Replace("{LoggedInUser}", userName);
-                
-                _templateSingle.Template = _templateSingle.Template!.Replace("{TODAY}", DateTime.Today.CultureDate())
-                                                          .Replace("{FullName}", $"{_candidateDetails.FirstName} {_candidateDetails.LastName}")
-                                                          .Replace("{FirstName}", _candidateDetails.FirstName)
-                                                          .Replace("{LastName}", _candidateDetails.LastName)
-                                                          .Replace("{CandidateLocation}", GetCandidateLocation(_candidateDetails, _stateName))
-                                                          .Replace("{CandidatePhone}", _candidateDetails.Phone1.StripAndFormatPhoneNumber())
-                                                          .Replace("{CandidateSummary}", _candidateDetails.Summary)
-                                                          .Replace("{LoggedInUser}", userName);
-
-                using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
-                _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
-                _smtpClient.EnableSsl = true;
-
-                MailMessage _mailMessage = new()
-                                           {
-                                               From = new("maniv@hire-titan.com", "Mani Bhai"),
-                                               Subject = _templateSingle.Subject,
-                                               Body = _templateSingle.Template,
-                                               IsBodyHtml = true
-                                           };
-                _mailMessage.To.Add("manivenkit@gmail.com");
-                _mailMessage.To.Add("jolly@hire-titan.com");
-                foreach (KeyValuePair<string, string> _emailAddress in _emailAddresses)
-                {
-                    
-                }
-                
-                _smtpClient.Send(_mailMessage);
             }
         }
         catch (Exception ex)
