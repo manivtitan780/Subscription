@@ -1121,8 +1121,8 @@ public class CandidateController : ControllerBase
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
             List<EmailTemplates> _templates = [];
-            Dictionary<string, string> _emailAddresses = new();
-            Dictionary<string, string> _emailCC = new();
+            List<KeyValues> _emailAddresses = [];
+            List<KeyValues> _emailCC = [];
 
             while (await _reader.ReadAsync())
             {
@@ -1132,7 +1132,7 @@ public class CandidateController : ControllerBase
             await _reader.NextResultAsync();
             while (await _reader.ReadAsync())
             {
-                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
+                _emailAddresses.Add(new() {KeyValue = _reader.NString(0), Text = _reader.NString(1)});
             }
 
             string _stateName = "";
@@ -1159,10 +1159,7 @@ public class CandidateController : ControllerBase
                     if (_emailTemplates.CC.NotNullOrWhiteSpace())
                     {
                         string[] _ccArray = _emailTemplates.CC!.Split(",");
-                        foreach (string _cc in _ccArray)
-                        {
-                            _emailCC.Add(_cc, _cc);
-                        }
+                        _emailCC.AddRange(_ccArray.Select(cc => new KeyValues {KeyValue = cc, Text = cc}));
                     }
 
                     _emailTemplates.Subject = _emailTemplates.Subject!.Replace("{TODAY}", DateTime.Today.CultureDate())
@@ -1196,19 +1193,26 @@ public class CandidateController : ControllerBase
                                                };
                     _mailMessage.To.Add("manivenkit@gmail.com"); //TODO: After testing remove this and enable the below code
                     // _mailMessage.To.Add("jolly@hire-titan.com");
-                    /*foreach (KeyValuePair<string, string> _emailAddress in _emailAddresses)
+                    /*foreach (KeyValues _emailAddress in _emailAddresses)
                     {
-                        _mailMessage.To.Add(_emailAddress.Value);
+                        _mailMessage.To.Add(new MailAddress(_emailAddress.KeyValue, _emailAddress.Text));
+                    }
+                    foreach (KeyValues _cc in _emailCC)
+                    {
+                        _mailMessage.CC.Add(new MailAddress(_cc.KeyValue, _cc.Text));
                     }*/
+                    MemoryStream _resumeStream = new(candidateDetailsResume.ParsedCandidate.DocumentBytes);
                     if (_emailTemplates.Subject.Contains("Submitted"))
                     {
                         //Attach the Resume
-                        using MemoryStream _resumeStream = new(candidateDetailsResume.ParsedCandidate.DocumentBytes);
+                        //using MemoryStream _resumeStream = new(candidateDetailsResume.ParsedCandidate.DocumentBytes);
                         Attachment _resumeAttachment = new(_resumeStream, candidateDetailsResume.ParsedCandidate.FileName, GetMimeType(candidateDetailsResume.ParsedCandidate.Mime));
                         _mailMessage.Attachments.Add(_resumeAttachment);
                     }
 
                     await _smtpClient.SendMailAsync(_mailMessage);
+                    _resumeStream.Close();
+                    await _resumeStream.DisposeAsync();
                 }
             }
         }
