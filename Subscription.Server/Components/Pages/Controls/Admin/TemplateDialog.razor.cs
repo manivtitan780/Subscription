@@ -8,7 +8,7 @@
 // File Name:           TemplateDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          05-03-2025 20:05
-// Last Updated On:     05-04-2025 16:00
+// Last Updated On:     05-22-2025 16:24
 // *****************************************/
 
 #endregion
@@ -70,6 +70,17 @@ public partial class TemplateDialog : ComponentBase, IDisposable
 
     [Parameter]
     public EventCallback<EditContext> Save { get; set; }
+
+    private IEnumerable<KeyValues> SendToItems { get; } =
+    [
+        new() {KeyValue = "Administrator", Text = "Administrator"},
+        new() {KeyValue = "Full Desk", Text = "Full Desk"},
+        new() {KeyValue = "Recruiters", Text = "Recruiters"},
+        new() {KeyValue = "Account Manager", Text = "Account Manager"},
+        new() {KeyValue = "Candidate Owner", Text = "Candidate Owner"},
+        new() {KeyValue = "Requisition Owner", Text = "Requisition Owner"},
+        new() {KeyValue = "Requisition Assigned", Text = "Requisition Assigned"}
+    ];
 
     private bool VisibleSpinner { get; set; }
 

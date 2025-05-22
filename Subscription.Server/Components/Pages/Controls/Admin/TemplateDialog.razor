@@ -10,7 +10,7 @@
 				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Template</SfButton>
 			</FormButtons>
 			<FormValidator>
-				<FluentValidationValidator></FluentValidationValidator>@* Validator="_jobOptionsValidator"/>*@
+				<FluentValidationValidator></FluentValidationValidator>
 			</FormValidator>
 			<FormItems>
 				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="Template Information">
@@ -22,6 +22,15 @@
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Action)">
 						<Template>
 							<DropDown @bind-Value="Model.Action" Model="ActionList" ID="dropAction" TItem="IntValues" TValue="byte" Placeholder="Action" Text="Text" Key="KeyValue"/>
+						</Template>
+					</FormItem>
+					<FormItem ColumnSpan="1" Field="@nameof(Model.SendToList)">
+						<Template>
+							<label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
+							<SfMultiSelect @bind-Value="Model.SendToList" DataSource="@SendToItems" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues"
+							               TValue="List<string>" Width="100%">
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
+							</SfMultiSelect>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CC)">
