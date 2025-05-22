@@ -24,8 +24,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.5" />
         <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.5" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="29.2.5" />
-        <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="29.2.5" />
+        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="29.2.4" />
+        <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="29.2.4" />
         <PackageReference Include="System.Runtime.Caching" Version="9.0.5" />
         <PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
         <PackageReference Include="System.Text.Json" Version="9.0.5" />

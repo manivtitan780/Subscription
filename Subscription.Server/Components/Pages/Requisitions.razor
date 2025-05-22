@@ -183,7 +183,7 @@
 	                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 	<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
 	<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_search" Model="SearchModelClone" Search="SearchRequisition"/>
-	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" RequisitionID="@RequisitionID" ShowSubmissions="true" User="@User"/>
+	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" RequisitionID="@(_target == null ? 0 : _target.ID)" ShowSubmissions="true" User="@User"/>
 }
 else
 {
