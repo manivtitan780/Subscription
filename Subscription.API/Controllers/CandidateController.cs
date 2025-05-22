@@ -1182,11 +1182,6 @@ public class CandidateController : ControllerBase
                                                           .Replace("{CandidateSummary}", _candidateDetails.Summary)
                                                           .Replace("{LoggedInUser}", userName);
 
-                /*SendResponse? _email = await Email.From("maniv@hire-titan.com")
-                                                  .To("manivenkit@gmail.com", "Mani Bhai")
-                                                  .Subject("Chup chaap accept kar")
-                                                  .Body("Bhai ka message aayela hain. Accept karne ka, samjha kya?")
-                                                  .SendAsync();*/
                 using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
                 _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
                 _smtpClient.EnableSsl = true;
@@ -1200,8 +1195,12 @@ public class CandidateController : ControllerBase
                                            };
                 _mailMessage.To.Add("manivenkit@gmail.com");
                 _mailMessage.To.Add("jolly@hire-titan.com");
+                foreach (KeyValuePair<string, string> _emailAddress in _emailAddresses)
+                {
+                    
+                }
+                
                 _smtpClient.Send(_mailMessage);
-                /*GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
             }
         }
         catch (Exception ex)

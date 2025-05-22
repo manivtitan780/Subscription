@@ -113,15 +113,12 @@ _app.Use(async (context, next) =>
                      Start.Access = _config["GarnetServer:Access"];
                  }
 
+                 Start.AzureKey = _config["AzureKey"];
                  Start.AzureBlob = _config.GetConnectionString("AzureBlob");
                  Start.AzureBlobContainer = _config["AzureBlobContainer"];
-                 Start.AzureKey = _config["AzureKey"];
-                 Start.AccountName = _config["AccountName"];
-                 Start.EmailSecret = _config["Email:Secret"];
-                 Start.EmailClientID = _config["Email:ClientID"];
-                 Start.TenantID = _config["Email:TenantID"];
                  Start.AzureOpenAIKey = _config["AzureOpenAI:APIKey"];
                  Start.AzureOpenAIEndpoint = _config["AzureOpenAI:Endpoint"];
+                 Start.AccountName = _config["AccountName"];
                  Start.DeploymentName = _config["AzureOpenAI:DeploymentName"];
                  Start.SystemChatMessage = _config["AzureOpenAI:SystemChatMessage"];
                  Start.Prompt = _config["AzureOpenAI:Prompt"];
@@ -129,6 +126,9 @@ _app.Use(async (context, next) =>
                  Start.Port = (_config["Email:Port"] ?? string.Empty).ToInt32(587);
                  Start.EmailUsername = _config["Email:UserName"];
                  Start.EmailPassword = _config["Email:Password"];
+                 Start.EmailSecret = _config["Email:Secret"];
+                 Start.EmailClientID = _config["Email:ClientID"];
+                 Start.TenantID = _config["Email:TenantID"];
 
                  await General.SetCache();
                  _isSet = true;

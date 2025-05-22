@@ -190,6 +190,8 @@ public class AppTemplate
 	/// </remarks>
 	public string SendTo { get; set; }
 
+	public List<string> SendToList { get => SendTo.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList(); set => SendTo = string.Join(",", value); }
+
 	/// <summary>
 	///     Gets or sets the status of the template.
 	/// </summary>
