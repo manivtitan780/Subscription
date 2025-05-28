@@ -125,7 +125,7 @@ public partial class Candidates
 
     private string FileName { get; set; }
 
-    public bool FormattedExists { get; set; }
+    private bool FormattedExists { get; set; }
 
     private SfGrid<Candidate> Grid { get; set; }
 
@@ -208,7 +208,7 @@ public partial class Candidates
 
     private SubmitCandidate SubmitDialog { get; set; }
 
-    public UploadCandidate UploadCandidateDialog { get; set; }
+    private UploadCandidate UploadCandidateDialog { get; set; }
 
     private string User { get; set; }
 
