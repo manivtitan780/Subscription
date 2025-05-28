@@ -426,13 +426,15 @@ public partial class Candidates
                                                                NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")
                                                                                        .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
                                                                                        .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
+                                                               await DialogActivity.ShowDialog();
+
                                                            }
-                                                           catch
+                                                           catch (Exception ex)
                                                            {
+                                                               Console.WriteLine(ex.Message);
                                                                //Ignore this error. No need to log this error.
                                                            }
 
-                                                           await DialogActivity.ShowDialog();
                                                        });
 
     private Task EditCandidate() => ExecuteMethod(async () =>
