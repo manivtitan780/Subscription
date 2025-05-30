@@ -217,12 +217,14 @@ public partial class ActivityPanel
         }
     }
 
+    /*
     private async Task DetailExpanded(DetailsExpandedEventArgs<CandidateActivity> activity)
     {
-        if (activity != null)
+        /*if (activity != null)
         {
             await GridActivity.SelectRowAsync(activity.RowIndex - 1);
             SelectedRow = activity.Data;
-        }
+        }#1#
     }
+*/
 }

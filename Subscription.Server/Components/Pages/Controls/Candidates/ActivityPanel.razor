@@ -1,7 +1,7 @@
 ﻿<div class="activityContainerBox">
 	<SfGrid AllowPaging="false" DataSource="Model" EnableHover="true" EnableStickyHeader="true" Height="230px" ID="gridActivity" @ref="GridActivity" RowHeight="@RowHeight" TValue="CandidateActivity" Width="100%">
 		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
-		<GridEvents DetailsExpanded="DetailExpanded" DataBound="GridBound" RowSelected="RowSelected" TValue="CandidateActivity"/>
+		<GridEvents DataBound="GridBound" RowSelected="RowSelected" TValue="CandidateActivity"/>
 		<GridColumns>
 			<GridColumn Field="@nameof(CandidateActivity.Requisition)" HeaderText="Requisition" Width="40%"/>
 			<GridColumn Field="@nameof(CandidateActivity.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>

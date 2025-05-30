@@ -1,6 +1,13 @@
 /*USE TitanPSS
 GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CandidateTemp]') AND type in (N'U'))
+DROP TABLE [dbo].[CandidateTemp]
+GO
+
 SELECT * INTO CandidateTemp FROM dbo.CANDIDATE;
+
+UPDATE TitanPSS.dbo.CandidateTemp SET HOURLY_RATE = (HOURLY_RATE/1000) WHERE HOURLY_RATE > 9999
 */
 
 USE Subscription
@@ -15,6 +22,7 @@ DBCC CHECKIDENT (Candidate, RESEED, 14359);
 DISABLE TRIGGER ALL ON Subscription.dbo.Candidate;
 
 SET IDENTITY_INSERT Subscription.dbo.Candidate ON
+
 
 INSERT INTO 
     Subscription.[dbo].[Candidate]
