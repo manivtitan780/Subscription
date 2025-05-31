@@ -652,6 +652,7 @@ public partial class Candidates
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
                                                                                    {
+                                                                                       await Task.Delay(2000);
                                                                                        if (page.CurrentPageSize != SearchModel.ItemCount)
                                                                                        {
                                                                                            SearchModel.ItemCount = page.CurrentPageSize;
@@ -1051,9 +1052,11 @@ public partial class Candidates
         _stopwatch.Reset();
         _stopwatch.Start();
         */
+        await Grid.ShowSpinnerAsync();
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
         await Grid.Refresh().ConfigureAwait(false);
+        await Grid.HideSpinnerAsync();
         /*
         _stopwatch.Stop();
         await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
