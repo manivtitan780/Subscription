@@ -7,7 +7,6 @@ GO
 
 SELECT * INTO RequirementTemp FROM dbo.REQUIREMENT;
 
-UPDATE TitanPSS.dbo.CandidateTemp SET HOURLY_RATE = (HOURLY_RATE/1000) WHERE HOURLY_RATE > 9999
 USE Subscription
 GO
 
@@ -20,9 +19,6 @@ DBCC CHECKIDENT (Requisitions, RESEED, 3021);
 DISABLE TRIGGER ALL ON Subscription.dbo.Requisitions;
 
 SET IDENTITY_INSERT Subscription.dbo.Requisitions ON
-
-USE [Subscription]
-GO
 
 INSERT INTO 
 	Subscription.[dbo].[Requisitions]
