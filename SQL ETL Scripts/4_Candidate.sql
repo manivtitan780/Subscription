@@ -1,4 +1,4 @@
-/*USE TitanPSS
+USE TitanPSS
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CandidateTemp]') AND type in (N'U'))
@@ -8,7 +8,7 @@ GO
 SELECT * INTO CandidateTemp FROM dbo.CANDIDATE;
 
 UPDATE TitanPSS.dbo.CandidateTemp SET HOURLY_RATE = (HOURLY_RATE/1000) WHERE HOURLY_RATE > 9999
-*/
+
 
 USE Subscription
 GO
@@ -16,8 +16,6 @@ GO
 TRUNCATE TABLE Subscription.dbo.Candidate;
 
 DELETE FROM Subscription.dbo.CandidateView;
-
-DBCC CHECKIDENT (Candidate, RESEED, 14359);
 
 DISABLE TRIGGER ALL ON Subscription.dbo.Candidate;
 
@@ -70,3 +68,14 @@ GO
 SET IDENTITY_INSERT Subscription.dbo.Candidate OFF;
 
 ENABLE TRIGGER ALL ON Subscription.dbo.Candidate;
+
+DECLARE @Max int = 1;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.Candidate;
+
+DBCC CHECKIDENT('Subscription.dbo.Candidate', RESEED, @Max);
+
+UPDATE Subscription.dbo.Candidate SET FirstName = FirstName;

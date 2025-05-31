@@ -9,7 +9,6 @@ DISABLE TRIGGER ALL ON Subscription.dbo.CompanyLocations;
 
 --SET IDENTITY_INSERT Subscription.dbo.CompanyLocations OFF
 
-
 -- Insert Client (CLI) Addresses
 INSERT INTO dbo.CompanyLocations (
     CompanyID, StreetName, City, StateID, ZipCode, CompanyEmail, Phone, Fax, Notes, IsPrimaryLocation, CreatedBy, CreatedDate, UpdatedBy, UpdatedDate
@@ -43,3 +42,22 @@ FROM
 WHERE 
 	EA.ENTITY_TYPE_CODE = 'CNT'
 	AND NOT EXISTS (SELECT 1 FROM dbo.CompanyLocations CL WHERE CL.CompanyID = CO.PARENT_ENTITY_ID AND CL.StreetName COLLATE Latin1_General_CI_AI = EA.ADDRESS COLLATE Latin1_General_CI_AI);
+
+
+-- Step 1: Set all to non-primary (safe reset)
+UPDATE dbo.CompanyLocations
+SET IsPrimaryLocation = 0;
+
+-- Step 2: Set the lowest ID per CompanyID as primary
+WITH RankedLocations AS (
+    SELECT ID,CompanyID,ROW_NUMBER() OVER (PARTITION BY CompanyID ORDER BY ID ASC) AS RowNum FROM dbo.CompanyLocations
+)
+UPDATE 
+	CL 
+SET 
+	IsPrimaryLocation = 1
+FROM 
+	dbo.CompanyLocations CL JOIN RankedLocations R ON CL.ID = R.ID
+WHERE 
+	R.RowNum = 1;
+

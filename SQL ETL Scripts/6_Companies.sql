@@ -3,8 +3,6 @@ GO
 
 TRUNCATE TABLE Subscription.dbo.Companies;
 
-DBCC CHECKIDENT (Companies, RESEED, 643);
-
 DISABLE TRIGGER ALL ON Subscription.dbo.Companies;
 
 SET IDENTITY_INSERT Subscription.dbo.Companies ON
@@ -18,3 +16,11 @@ FROM
 	TitanPSS.dbo.CLIENT A LEFT JOIN TitanPSS.dbo.ENTITY_NOTES B ON A.CLIENT_ID = B.ENTITY_ID AND B.ENTITY_TYPE_CODE = 'CLI'
 GO
 
+DECLARE @Max int = 1;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.Companies;
+
+DBCC CHECKIDENT ('Subscription.dbo.Companies', RESEED, @Max);

@@ -446,6 +446,11 @@ body, form, html {
     overflow-y: auto;
 }
 
+.e-grid .e-spinner-pane {
+    z-index: 12000;
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
 .e-grid td.e-active {
     background: var(--c-red-select);
 }

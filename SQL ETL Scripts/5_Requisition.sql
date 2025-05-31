@@ -14,8 +14,6 @@ TRUNCATE TABLE Subscription.dbo.Requisitions;
 
 DELETE FROM Subscription.dbo.RequisitionView;
 
-DBCC CHECKIDENT (Requisitions, RESEED, 3021);
-
 DISABLE TRIGGER ALL ON Subscription.dbo.Requisitions;
 
 SET IDENTITY_INSERT Subscription.dbo.Requisitions ON
@@ -43,6 +41,17 @@ FROM
 	TitanPSS.dbo.RequirementTemp A LEFT JOIN TitanPSS.dbo.ENTITY_ADDRESS B ON A.CLIENT_ID=B.ENTITY_ID AND ENTITY_TYPE_CODE='CLI'
 GO
 
-SET IDENTITY_INSERT Subscription.dbo.Candidate OFF;
+SET IDENTITY_INSERT Subscription.dbo.Requisitions OFF;
 
-ENABLE TRIGGER ALL ON Subscription.dbo.Candidate;
+ENABLE TRIGGER ALL ON Subscription.dbo.Requisitions;
+
+DECLARE @Max int;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.Requisitions;
+
+DBCC CHECKIDENT ('Subscription.dbo.Requisitions', RESEED, @Max);
+
+UPDATE Requisitions SET Code = Code;

@@ -200,7 +200,7 @@
                 <FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupBenefitsInfo" LabelText="Benefits">
                     <FormItem ColumnSpan="1" Field="@nameof(Model.BenefitNotes)">
                         <Template>
-                            <TextArea @bind-Value="Model.BenefitNotes" Enabled="@_benefits" ID="textBenefits" MaxLength="8000" Placeholder="Benefits" Rows="5"></TextArea>
+                            <TextArea @bind-Value="Model.BenefitNotes" Readonly="@(!_benefits)" ID="textBenefits" MaxLength="8000" Placeholder="Benefits" Rows="5"></TextArea>
                         </Template>
                     </FormItem>
                 </FormGroup>
