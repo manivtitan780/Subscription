@@ -3,8 +3,6 @@ GO
 
 TRUNCATE TABLE Subscription.dbo.CompanyLocations;
 
-DBCC CHECKIDENT (CompanyLocations, RESEED, 1);
-
 DISABLE TRIGGER ALL ON Subscription.dbo.CompanyLocations;
 
 --SET IDENTITY_INSERT Subscription.dbo.CompanyLocations OFF
@@ -61,3 +59,11 @@ FROM
 WHERE 
 	R.RowNum = 1;
 
+DECLARE @Max int = 1;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.CompanyLocations;
+
+DBCC CHECKIDENT ('Subscription.dbo.CompanyLocations', RESEED, @Max);

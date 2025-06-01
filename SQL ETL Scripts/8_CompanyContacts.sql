@@ -2,8 +2,6 @@ USE Subscription
 GO
 
 TRUNCATE TABLE Subscription.dbo.CompanyContacts;
-DECLARE @Max int = 381;
-DBCC CHECKIDENT (CompanyContacts, RESEED, @Max);
 
 DISABLE TRIGGER ALL ON Subscription.dbo.CompanyContacts;
 
@@ -28,3 +26,52 @@ FROM
 ORDER BY A.PARENT_ENTITY_ID;
 GO
 
+-- Step 1: Find TOP 1 address per contact from TitanPSS
+WITH TopContactAddress AS (
+    SELECT
+        c.CONTACT_ID,
+        ea.ENTITY_ADDRESS_ID,
+        ea.ADDRESS,
+        ea.CITY,
+        ea.STATE_ID,
+        ea.ZIP_CODE,
+        ROW_NUMBER() OVER (PARTITION BY c.CONTACT_ID ORDER BY ea.ENTITY_ADDRESS_ID) AS rn,
+		c.FIRST_NAME, c.MIDDLE_NAME, c.LAST_NAME
+    FROM TitanPSS.dbo.CONTACT c
+    JOIN TitanPSS.dbo.ENTITY_ADDRESS ea
+        ON c.CONTACT_ID = ea.ENTITY_ID
+    WHERE ea.ENTITY_TYPE_CODE = 'CNT'
+)
+-- Step 2: Match against Subscription's CompanyLocations
+, MatchedLocation AS (
+    SELECT
+        tca.CONTACT_ID,
+        cl.ID AS CompanyLocationID
+    FROM TopContactAddress tca
+    JOIN Subscription.dbo.CompanyContacts cc
+        ON ISNULL(cc.ContactFirstName,'') COLLATE Latin1_General_CI_AI = ISNULL(tca.FIRST_NAME,'') COLLATE Latin1_General_CI_AI
+        AND ISNULL(cc.ContactMiddleInitial,'') COLLATE Latin1_General_CI_AI = ISNULL(tca.MIDDLE_NAME,'') COLLATE Latin1_General_CI_AI
+        AND ISNULL(cc.ContactLastName,'') COLLATE Latin1_General_CI_AI = ISNULL(tca.LAST_NAME,'') COLLATE Latin1_General_CI_AI
+    JOIN Subscription.dbo.CompanyLocations cl
+        ON ISNULL(cl.StreetName,'') COLLATE Latin1_General_CI_AI = ISNULL(tca.ADDRESS,'') COLLATE Latin1_General_CI_AI
+        AND ISNULL(cl.City,'') COLLATE Latin1_General_CI_AI = ISNULL(tca.CITY,'') COLLATE Latin1_General_CI_AI
+        AND ISNULL(cl.StateID,0) = ISNULL(tca.STATE_ID,0)
+        AND ISNULL(cl.ZipCode,'') COLLATE Latin1_General_CI_AI = ISNULL(tca.ZIP_CODE,'') COLLATE Latin1_General_CI_AI
+    WHERE tca.rn = 1
+)
+-- Step 3: Update CompanyContacts with matched CompanyLocationID
+UPDATE cc
+SET cc.CompanyLocationID = ml.CompanyLocationID
+FROM Subscription.dbo.CompanyContacts cc
+JOIN MatchedLocation ml
+    ON cc.ID = ml.CONTACT_ID
+
+	
+DECLARE @Max int = 381;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.CompanyContacts;
+
+DBCC CHECKIDENT ('Subscription.dbo.CompanyContacts', RESEED, @Max);
