@@ -15,5 +15,15 @@ FROM
 
 SET IDENTITY_INSERT Notes OFF;
 
+DECLARE @Max int = 1;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.Notes;
+
+DBCC CHECKIDENT('Subscription.dbo.Notes', RESEED, @Max);
+
+
 GO
 

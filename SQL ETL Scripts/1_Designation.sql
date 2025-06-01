@@ -15,4 +15,14 @@ FROM
 	TitanPSS.dbo.Designation;
 
 -- Step 4: Set Identity OFF for Subscription.dbo.Designation
+
 SET IDENTITY_INSERT Subscription.dbo.Designation ON;
+
+DECLARE @Max int = 1;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.Designation;
+
+DBCC CHECKIDENT('Subscription.dbo.Designation', RESEED, @Max);

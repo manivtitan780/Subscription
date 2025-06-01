@@ -17,3 +17,12 @@ FROM
 
 -- Step 4: Set identity insert off for Subscription.dbo.Skills
 SET IDENTITY_INSERT Subscription.dbo.Skills OFF;
+
+DECLARE @Max int = 1;
+
+SELECT
+	@Max = MAX(ID)
+FROM
+	Subscription.dbo.Skills;
+
+DBCC CHECKIDENT('Subscription.dbo.Skills', RESEED, @Max);
