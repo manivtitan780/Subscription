@@ -196,6 +196,37 @@ public class CandidateController : ControllerBase
                                                                                   })));
         ;
     }*/
+    [HttpPost]
+    public async Task<ActionResult<string>> ChangeStatus(int candidateID, string user)
+    {
+        string _status = "[]";
+        if (candidateID == 0)
+        {
+            return Ok(_status);
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("ChangeCandidateStatus", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("CandidateID", candidateID);
+        _command.Varchar("User", 10, user);
+        try
+        {
+            await _connection.OpenAsync();
+            _status = (await _command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error changing candidate status. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync(); 
+        }
+
+        return Ok(_status);
+    }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteCandidateDocument(int documentID, string user)

@@ -14,7 +14,7 @@ class Program
             .Build();
 
         string connectionString = config["ConnectionStrings:DBConnect"];
-        string blobConnectionString = config["ConnectionStrings:AzureBlob"];
+        /*string blobConnectionString = config["ConnectionStrings:AzureBlob"];
         string containerName = "sub";
 
         var blobServiceClient = new BlobServiceClient(blobConnectionString);
@@ -25,7 +25,7 @@ class Program
         {
             await containerClient.DeleteBlobIfExistsAsync(blobItem.Name);
             Console.WriteLine($"Deleted {blobItem.Name}");
-        }
+        }*/
 
         using var connection = new SqlConnection(connectionString);
         await connection.OpenAsync();
@@ -42,18 +42,24 @@ class Program
         while (await reader.ReadAsync())
         {
             var candidateId = reader.GetInt32(0);
-            var fileId = reader.GetGuid(1);
+            var fileId = reader.GetGuid(1).ToString("N");
             var fileData = reader.GetSqlBytes(2).Value;
 
-            var blobName = $"sub/Candidate/{candidateId}/{fileId}";
+            /*var blobName = $"sub/Candidate/{candidateId}/{fileId}";
             var blobClient = containerClient.GetBlobClient(blobName);
 
             using var stream = new MemoryStream(fileData);
-            await blobClient.UploadAsync(stream, overwrite: true);
-
-            Console.WriteLine($"Uploaded {blobName}");
+            await blobClient.UploadAsync(stream, overwrite: true);*/
+            if (!Directory.Exists($"H:\\UploadFiles\\Candidate\\{candidateId}"))
+            {
+                Directory.CreateDirectory($"H:\\UploadFiles\\Candidate\\{candidateId}");
+            }
+            string _path = $"H:\\UploadFiles\\Candidate\\{candidateId}\\{fileId}";
+            await File.WriteAllBytesAsync(_path, fileData);
+            Console.WriteLine($"Uploaded {fileId}");
         }
-
+        await reader.CloseAsync();
+        await connection.CloseAsync();
         Console.WriteLine("Done!");
     }
 }

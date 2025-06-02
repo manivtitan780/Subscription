@@ -30,5 +30,12 @@ FROM
 
 DBCC CHECKIDENT('Subscription.[dbo].[Submissions]', RESEED, @Max);
 
+UPDATE Submissions SET Status='PEN' WHERE Status='SBC'
+UPDATE Submissions SET Status='PHN' WHERE Status='SBS'
+UPDATE Submissions SET Status='RHM' WHERE Status='REJ'
+UPDATE Submissions SET Status='DEC' WHERE Status='IVW'
+UPDATE Submissions SET Status='HIR' WHERE Status='CFM'
+
+
 GO
 

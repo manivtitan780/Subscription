@@ -129,6 +129,17 @@
 										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume"/>
 										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume"/>
 										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment"/>
+										@if (context is Candidate _con)
+										{
+											if (_con.Status == "Available")
+											{
+												<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Disable Candidate" Title="Disable Candidate" />
+											}
+											else
+											{
+												<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Enable Candidate" Title="Enable Candidate"/>
+											}
+										}
 									</SpeedDialItems>
 								</SfSpeedDial>
 							}

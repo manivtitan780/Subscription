@@ -1200,10 +1200,30 @@ public partial class Candidates
                 _selectedTab = 5;
                 return Task.CompletedTask;
             //return AddResume(1);
+            case "itemChangeStatus":
+                return ChangeStatus();
         }
 
         return Task.CompletedTask;
     }
+
+    private Task ChangeStatus() => ExecuteMethod(async () =>
+                                                  {
+                                                      await Grid.ShowSpinnerAsync();
+                                                      Dictionary<string, string> _parameters = new()
+                                                                                               {
+                                                                                                   {"candidateID", _target.ID.ToString()},
+                                                                                                   {"user", User}
+                                                                                               };
+
+                                                      string _response = await General.ExecuteRest<string>("Candidate/ChangeStatus", _parameters);
+
+                                                      if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                      {
+                                                          _target.Status = _response;
+                                                      }
+                                                      await Grid.HideSpinnerAsync();
+                                                  });
 
     private (string Code, string Name) SplitState(int stateID)
     {
