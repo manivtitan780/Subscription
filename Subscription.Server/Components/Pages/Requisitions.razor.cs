@@ -268,7 +268,7 @@ public partial class Requisitions
                                                              NextSteps.Clear();
                                                              try
                                                              {
-                                                                 List<string> nextCodes = _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                                 List<string> nextCodes = _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
                                                                                                    .SelectMany(flow => flow.Next.Split(','))
                                                                                                    .Distinct().ToList();
                                                                  NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")

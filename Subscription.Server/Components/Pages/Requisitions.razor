@@ -95,6 +95,7 @@
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddDocument" Text="Add Document" Title="Add Document"/>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitExisting" Text="Submit Existing Candidate" Title="Submit Existing Candidate"/>
 								<SpeedDialItem IconCss="speeddial-icons speeddial-icon-rating" ID="itemSubmitNew" Text="Submit New Candidate" Title="Submit New Candidate"/>
+								<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Change Requisition Status" Title="Change Requisition Status"/>
 							</SpeedDialItems>
 						</SfSpeedDial>
 						<SfTab CssClass="e-fill" Height="520" ID="tabRequisition" ShowCloseButton="false" Width="95%" SelectedItem="_selectedTab">
@@ -181,7 +182,7 @@
 	<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
 	<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
 	                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
-	<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
+	<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflows"/>
 	<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_search" Model="SearchModelClone" Search="SearchRequisition"/>
 	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" RequisitionID="@(_target == null ? 0 : _target.ID)" ShowSubmissions="true" User="@User"/>
 }
