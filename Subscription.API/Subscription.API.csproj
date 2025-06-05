@@ -46,11 +46,11 @@
     </ItemGroup>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-      <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Stop-WebAppPool -Name 'subscriptionapi AppPool'&quot;&#xA;EXIT 0" />
+      <Exec Command="appcmd stop apppool &quot;subscription AppPool 2&quot;&#xA;appcmd stop apppool &quot;subscriptionapi AppPool&quot;&#xA;EXIT 0" />
     </Target>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command &quot;Start-WebAppPool -Name 'subscriptionapi AppPool'&quot;&#xA;EXIT 0" />
+      <Exec Command="appcmd start apppool &quot;subscription AppPool 2&quot;&#xA;appcmd start apppool &quot;subscriptionapi AppPool&quot;&#xA;EXIT 0" />
     </Target>
 
 </Project>

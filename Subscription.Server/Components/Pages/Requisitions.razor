@@ -180,6 +180,7 @@
 	</GridHeader>
 	@*<SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>*@
 	<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
+	<ChangeRequisitionStatus Model="StatusRequisition" @ref="DialogChangeStatus" ReqStatus="StatusRequisitionList" Save="SaveChangeRequisition"/>
 	<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
 	                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 	<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflows"/>

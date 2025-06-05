@@ -1,0 +1,26 @@
+<SfDialog CssClass="dialogPopup" Header="Change Requisition Status" Height="285px" IsModal="true" MinHeight="200px" @ref="Dialog" Target="#divTarget" Visible="false" Width="400px">
+	<ChildContent>
+		<SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"/>
+		<SfDataForm EditContext="Context" ID="requisitionEditForm" OnValidSubmit="SaveRequisitionDialog" @ref="EditRequisitionForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Requisition</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupCompanyInfo" LabelText="Status Information">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Status)">
+						<Template>
+							<DropDown @bind-Value="Model.Status" Model="ReqStatus" ID="dropCompanyContact" TItem="KeyValues" TValue="string" Placeholder="Requisition Status" Text="Text" Key="Text"/>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

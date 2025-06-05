@@ -256,6 +256,33 @@ public class RequisitionController : ControllerBase
                   });
     }
 
+    [HttpPost]
+    public async Task<ActionResult<string>> ChangeRequisitionStatus(int requisitionID, string statusCode, string user)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("ChangeRequisitionStatus", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("RequisitionID", requisitionID);
+        _command.Char("Status", 3, statusCode);
+        _command.Varchar("User", 10, user);
+        try
+        {
+            await _connection.OpenAsync();
+            string _status = (await _command.ExecuteScalarAsync())?.ToString();
+            await _connection.CloseAsync();
+
+            return Ok(_status);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error changing requisition status. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+    }
     /// <summary>
     ///     Converts a numerical priority value to a string representation.
     /// </summary>

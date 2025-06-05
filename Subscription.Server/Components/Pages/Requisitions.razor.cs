@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-21-2025 19:04
+// Last Updated On:     06-05-2025 15:05
 // *****************************************/
 
 #endregion
@@ -41,7 +41,6 @@ public partial class Requisitions
 
     private Requisition _target;
 
-    private readonly List<Workflow> _workflow = [];
     private List<Workflow> _workflows;
 
     private ActivityPanelRequisition ActivityPanel { get; set; }
@@ -60,6 +59,8 @@ public partial class Requisitions
     private RequisitionDetailsPanel DetailsRequisition { get; set; }
 
     private EditActivityDialog DialogActivity { get; set; }
+
+    private ChangeRequisitionStatus DialogChangeStatus { get; set; }
 
     private AddRequisitionDocument DialogDocument { get; set; }
 
@@ -110,6 +111,10 @@ public partial class Requisitions
 
     private List<KeyValues> StatusList { get; set; } = [];
 
+    private RequisitionStatus StatusRequisition { get; } = new();
+
+    public List<KeyValues> StatusRequisitionList { get; set; } = [];
+
     private string Title { get; set; } = "Edit";
 
     public UploadCandidate UploadCandidateDialog { get; set; }
@@ -151,6 +156,8 @@ public partial class Requisitions
                                                                                                          SearchModel.Page = 1;
                                                                                                          await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                                      });
+
+    private async Task ChangeStatus() => await DialogChangeStatus.ShowDialog();
 
     private Task ClearFilter() => ExecuteMethod(async () =>
                                                 {
@@ -232,6 +239,7 @@ public partial class Requisitions
                                                                                                         _target = requisition.Data;
 
                                                                                                         VisibleSpinner = true;
+                                                                                                        StatusRequisition.Status = _target.Status;
 
                                                                                                         Dictionary<string, string> _parameters = new()
                                                                                                                                                  {
@@ -269,8 +277,8 @@ public partial class Requisitions
                                                              try
                                                              {
                                                                  List<string> nextCodes = _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
-                                                                                                   .SelectMany(flow => flow.Next.Split(','))
-                                                                                                   .Distinct().ToList();
+                                                                                                    .SelectMany(flow => flow.Next.Split(','))
+                                                                                                    .Distinct().ToList();
                                                                  NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")
                                                                                          .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
                                                                                          .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
@@ -414,9 +422,6 @@ public partial class Requisitions
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
                                 }
 
-                                //General.CheckStart(NavManager, Configuration);
-                                //LoginCookyUser = await NavManager.RedirectInner(LocalStorage, Crypto);
-
                                 List<string> _keys =
                                 [
                                     nameof(CacheObjects.Roles), nameof(CacheObjects.States), nameof(CacheObjects.Eligibility), nameof(CacheObjects.Education),
@@ -441,16 +446,22 @@ public partial class Requisitions
 
                                     if (_users != null)
                                     {
-                                        _recruiters = _users
-                                                     .Where(user => user.Role is 2 or 4 or 5 or 6)
-                                                     .Select(user => new KeyValues {KeyValue = user.UserName, Text = user.UserName})
-                                                     .ToList();
+                                        _recruiters = _users.Where(user => user.Role is 2 or 4 or 5 or 6)
+                                                            .Select(user => new KeyValues {KeyValue = user.UserName, Text = user.UserName})
+                                                            .ToList();
                                     }
                                 }
 
                                 Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Skills)]);
 
                                 _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
+                                if (_statusCodes is {Count: > 0})
+                                {
+                                    StatusRequisitionList = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ")
+                                                                        .Select(statusCode => new KeyValues {KeyValue = statusCode.Code, Text = statusCode.Status})
+                                                                        .ToList();
+                                }
+
                                 _preference = General.DeserializeObject<Preferences>(_cacheValues[nameof(CacheObjects.Preferences)]);
 
                                 if (_statusCodes is {Count: > 0})
@@ -458,9 +469,6 @@ public partial class Requisitions
                                     _search = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ")
                                                           .Select(statusCode => statusCode.Status)
                                                           .ToList();
-                                    /*_statusSearch = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "REQ")
-                                                                .Select(statusCode => new KeyValues {Text = statusCode.Status, KeyValue = statusCode.Code})
-                                                                .ToList();*/
                                 }
 
                                 List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);
@@ -470,10 +478,7 @@ public partial class Requisitions
                                 if (_companyList?.Count > 0)
                                 {
                                     IEnumerable<Company> _filtered = _companyList.Where(c => c.UpdatedBy == User || c.UpdatedBy == "ADMIN")
-                                                                                 .Select(c => new Company
-                                                                                              {
-                                                                                                  ID = c.ID, CompanyName = c.CompanyName
-                                                                                              });
+                                                                                 .Select(c => new Company {ID = c.ID, CompanyName = c.CompanyName});
 
                                     Companies.AddRange(_filtered);
                                 }
@@ -481,10 +486,7 @@ public partial class Requisitions
                                 List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)]);
                                 if (_companyContacts?.Count > 0)
                                 {
-                                    CompanyContacts.AddRange(_companyContacts.Select(c => new CompanyContacts
-                                                                                          {
-                                                                                              CompanyID = c.CompanyID, ID = c.ID, ContactName = c.ContactName
-                                                                                          }));
+                                    CompanyContacts.AddRange(_companyContacts.Select(c => new CompanyContacts {CompanyID = c.CompanyID, ID = c.ID, ContactName = c.ContactName}));
                                 }
 
                                 _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
@@ -531,6 +533,26 @@ public partial class Requisitions
                                                                              _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                          }
                                                                      });
+
+    private Task SaveChangeRequisition(EditContext arg) => ExecuteMethod(async () =>
+                                                                         {
+                                                                             string _statusCode = _statusCodes.Where(status => status.Status == StatusRequisition.Status)
+                                                                                                              .Select(status => status.Code)
+                                                                                                              .FirstOrDefault();
+                                                                             Dictionary<string, string> _parameters = new()
+                                                                                                                      {
+                                                                                                                          {"requisitionID", _target.ID.ToString()},
+                                                                                                                          {"status", _statusCode},
+                                                                                                                          {"user", User}
+                                                                                                                      };
+
+                                                                             string _response = await General.ExecuteRest<string>("Requisition/ChangeRequisitionStatus", _parameters);
+
+                                                                             if (_response.NotNullOrWhiteSpace())
+                                                                             {
+                                                                                 _target.Status = _response;
+                                                                             }
+                                                                         });
 
     private Task SaveDocument(EditContext document) => ExecuteMethod(async () =>
                                                                      {
@@ -685,6 +707,10 @@ public partial class Requisitions
                 break;
             case "itemSubmitNew":
                 await UploadCandidateDialog.ShowDialog();
+                break;
+            case "itemChangeStatus":
+                _selectedTab = 0;
+                await ChangeStatus();
                 break;
         }
     }
