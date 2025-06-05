@@ -51,7 +51,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.ZipCode)">
 						<Template>
-							<MaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000" OnBlur="CheckZip" OnFocus="SaveValue" Placeholder="Zip Code" />
+							<MaskedTextBox @bind-Value="Model.ZipCode" ID="textZip" Mask="00000" OnBlur="CheckZip" OnFocus="SaveValue" Placeholder="Zip Code"/>
 						</Template>
 					</FormItem>
 				</FormGroup>
@@ -133,10 +133,10 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.TaxTerms)">
 						<Template>
-							<label class="e-form-label" for="multiTaxTerms">Tax Terms:</label>
-							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerms" DataSource="TaxTerms" FilterBarPlaceholder="Search..." ID="multiTaxTerms"
-							               Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="List<string>">
-								<MultiSelectFieldSettings Text="Text" Value="KeyValue" />
+							<label class="e-form-label" for="multiTaxTerm">Tax Terms:</label>
+							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.TaxTerms" DataSource="TaxTerms" FilterBarPlaceholder="Search..." ID="multiTaxTerm" Mode="VisualMode.Box" Placeholder="Select Tax Terms(s)"
+							               ShowDropDownIcon="false" TItem="KeyValues" TValue="List<string>">
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
 							</SfMultiSelect>
 						</Template>
 					</FormItem>
@@ -145,7 +145,7 @@
 							<label class="e-form-label" for="multiJobOptions">Job Options:</label>
 							<SfMultiSelect AllowFiltering="true" @bind-Value="Model.JobOptionsList" DataSource="JobOptions" FilterBarPlaceholder="Search..." ID="multiJobOptions"
 							               Mode="VisualMode.Box" Placeholder="Select Job Option(s)" ShowDropDownIcon="false" TItem="KeyValues" TValue="List<string>">
-								<MultiSelectFieldSettings Text="Text" Value="KeyValue" />
+								<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
 							</SfMultiSelect>
 						</Template>
 					</FormItem>

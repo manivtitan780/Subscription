@@ -54,9 +54,9 @@ public class RequisitionController : ControllerBase
         await using SqlConnection _connection = new(Start.ConnectionString);
         await _connection.OpenAsync();
         //List<RequisitionDocuments> _documents = [];
-        string _documents = "[]";
         try
         {
+            string _documents = "[]";
             await using SqlCommand _command = new("DeleteRequisitionDocuments", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("RequisitionDocId", documentID);
@@ -72,6 +72,8 @@ public class RequisitionController : ControllerBase
             }
 
             await _reader.CloseAsync();
+
+            return Ok(_documents);
         }
         catch (Exception ex)
         {
@@ -82,8 +84,6 @@ public class RequisitionController : ControllerBase
         {
             await _connection.CloseAsync();
         }
-
-        return Ok(_documents);
     }
 
     /// <summary>
@@ -173,17 +173,16 @@ public class RequisitionController : ControllerBase
         _command.Bit("ThenProceed", thenProceed);
         _command.Varchar("LoggedUser", 10, user);
 
-        string _requisitions = "[]";
-        int _count = 0, _page = 0;
-        string _companies = "[]";
-        string _companyContacts = "[]";
-        string _statusCount = "[]";
+        // string _companies = "[]";
+        // string _companyContacts = "[]";
         try
         {
+            string _requisitions = "[]", _statusCount = "[]";
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
             await _reader.ReadAsync();
+            int _page = 0;
             if (requisitionID > 0 && !thenProceed)
             {
                 _page = _reader.GetInt32(0);
@@ -194,7 +193,7 @@ public class RequisitionController : ControllerBase
                 return new ReturnGridRequisition {Page = _page};
             }
 
-            _count = _reader.NInt32(0);
+            int _count = _reader.NInt32(0);
 
             await _reader.NextResultAsync();
 
@@ -206,26 +205,12 @@ public class RequisitionController : ControllerBase
             await _reader.NextResultAsync();
             if (getCompanyInformation)
             {
-                /*while (await _reader.ReadAsync())
-                {
-                    _companies = _reader.NString(0);
-                }
-
-                await _reader.NextResultAsync();
-                while (await _reader.ReadAsync())
-                {
-                    _companyContacts = _reader.NString(0);
-                }
-
-                await _reader.NextResultAsync();*/
                 while (await _reader.ReadAsync())
                 {
                     _statusCount = _reader.NString(0);
                 }
             }
 
-            /*await _reader.NextResultAsync();
-                await _reader.NextResultAsync();*/
             await _reader.NextResultAsync();
             _page = reqSearch.Page;
             while (await _reader.ReadAsync())
@@ -234,6 +219,16 @@ public class RequisitionController : ControllerBase
             }
 
             await _reader.CloseAsync();
+
+            return Ok(new
+                      {
+                          Count = _count,
+                          Requisitions = _requisitions,
+                          Companies = "[]",
+                          CompanyContacts = "[]",
+                          Status = _statusCount,
+                          Page = _page
+                      });
         }
         catch (Exception ex)
         {
@@ -244,16 +239,6 @@ public class RequisitionController : ControllerBase
         {
             await _connection.CloseAsync();
         }
-
-        return Ok(new
-                  {
-                      Count = _count,
-                      Requisitions = _requisitions,
-                      Companies = _companies,
-                      CompanyContacts = _companyContacts,
-                      Status = _statusCount,
-                      Page = _page
-                  });
     }
 
     [HttpPost]
@@ -283,6 +268,7 @@ public class RequisitionController : ControllerBase
             await _connection.CloseAsync();
         }
     }
+
     /// <summary>
     ///     Converts a numerical priority value to a string representation.
     /// </summary>
@@ -317,39 +303,20 @@ public class RequisitionController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("RequisitionID", requisitionID);
         _command.Varchar("RoleID", 2, roleID);
-        string _requisitionDetail = "{}";
-        string _activity = "[]";
-        string _documents = "[]";
         try
         {
+            string _requisitionDetail = "{}", _activity = "[]", _documents = "[]";
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             while (await _reader.ReadAsync())
             {
                 _requisitionDetail = _reader.NString(0);
             }
-            /*_requisitionDetail = new(requisitionID, _reader.GetString(0), _reader.NString(1), _reader.GetString(2), _reader.GetString(3),
-                                     _reader.GetInt32(4), _reader.GetString(5), _reader.GetString(6), _reader.GetString(38), _reader.GetString(8),
-                                     _reader.GetDecimal(9), _reader.GetDecimal(10), _reader.GetDecimal(11), _reader.GetDecimal(12), _reader.GetDecimal(13),
-                                     _reader.GetBoolean(14), _reader.GetString(15), _reader.NString(16), _reader.GetDecimal(17), _reader.GetDecimal(18),
-                                     _reader.GetBoolean(19), _reader.GetDateTime(20), _reader.GetString(21), _reader.GetString(22), _reader.GetString(23),
-                                     _reader.GetDateTime(24), _reader.GetString(25), _reader.GetDateTime(26), _reader.NString(27), _reader.NString(28),
-                                     _reader.NString(29), _reader.GetBoolean(30), _reader.GetBoolean(31), _reader.NString(32), _reader.GetBoolean(33),
-                                     _reader.GetDateTime(34), _reader.GetBoolean(35), _reader.GetString(39), _reader.GetInt32(7), _reader.GetString(40),
-                                     _reader.NString(41), _reader.NString(42), _reader.NString(43), _reader.GetByte(44), _reader.NInt32(45),
-                                     _reader.NInt32(46), _reader.NInt32(47), _reader.NString(48), _reader.GetInt32(36), _reader.GetInt32(37),
-                                     _reader.NString(49), _reader.NString(50), _reader.NString(51), _reader.NString(52));*/
 
             await _reader.NextResultAsync(); //Activity
             while (await _reader.ReadAsync())
             {
                 _activity = _reader.NString(0);
-                /*_activity.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
-                                  _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9),
-                                  _reader.GetString(10), _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14),
-                                  _reader.GetString(15), _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18),
-                                  _reader.NDateTime(19), _reader.GetString(20), _reader.NString(21), _reader.NString(22),
-                                  _reader.GetBoolean(23)));*/
             }
 
             await _reader.NextResultAsync();
@@ -358,19 +325,17 @@ public class RequisitionController : ControllerBase
                 while (await _reader.ReadAsync())
                 {
                     _documents = _reader.NString(0);
-                    /*try
-                    {
-                        _documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
-                                           $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));
-                    }
-                    catch (Exception)
-                    {
-                        //
-                    }*/
                 }
             }
 
             await _reader.CloseAsync();
+
+            return Ok(new ReturnRequisitionDetails
+                      {
+                          Activity = _activity,
+                          Documents = _documents,
+                          Requisition = _requisitionDetail
+                      });
         }
         catch (Exception ex)
         {
@@ -381,25 +346,6 @@ public class RequisitionController : ControllerBase
         {
             await _connection.CloseAsync();
         }
-
-        return Ok(new ReturnRequisitionDetails
-                  {
-                      Activity = _activity,
-                      Documents = _documents,
-                      Requisition = _requisitionDetail
-                  });
-        //return new Dictionary<string, object>
-        //       {
-        //           {
-        //               "Requisition", _requisitionDetail
-        //           },
-        //           {
-        //               "Activity", _activity
-        //           },
-        //           {
-        //               "Documents", _documents
-        //           }
-        //       };
     }
 
     /// <summary>
@@ -415,49 +361,50 @@ public class RequisitionController : ControllerBase
     /// </returns>
     [HttpPost]
     public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, [FromQuery] string user, [FromQuery] string jsonPath = "",
-                                                         [FromQuery] string emailAddress = "maniv@titan-techs.com")
+                                                         [FromQuery]
+                                                         string emailAddress = "maniv@titan-techs.com")
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string _reqCode = "";
+        await using SqlCommand _command = new("SaveRequisition", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("RequisitionId", requisition.RequisitionID, true);
+        _command.Int("Company", requisition.CompanyID);
+        _command.Int("HiringMgr", requisition.ContactID);
+        _command.Varchar("City", 50, requisition.City);
+        _command.Int("StateId", requisition.StateID);
+        _command.Varchar("Zip", 10, requisition.ZipCode);
+        _command.TinyInt("IsHot", requisition.PriorityID);
+        _command.Varchar("Title", 200, requisition.PositionTitle);
+        _command.Varchar("Description", -1, requisition.Description);
+        _command.Int("Positions", requisition.Positions);
+        _command.DateTime("ExpStart", requisition.ExpectedStart);
+        _command.DateTime("Due", requisition.DueDate);
+        _command.Int("Education", requisition.EducationID);
+        _command.Varchar("Skills", 2000, requisition.SkillsRequired);
+        _command.Varchar("OptionalRequirement", 8000, requisition.Optional);
+        _command.Char("JobOption", 1, requisition.JobOptionID);
+        _command.Int("ExperienceID", requisition.ExperienceID);
+        _command.Int("Eligibility", requisition.EligibilityID);
+        _command.Varchar("Duration", 50, requisition.Duration);
+        _command.Char("DurationCode", 1, requisition.DurationCode);
+        _command.Decimal("ExpRateLow", 9, 2, requisition.ExpRateLow);
+        _command.Decimal("ExpRateHigh", 9, 2, requisition.ExpRateHigh);
+        _command.Decimal("ExpLoadLow", 9, 2, requisition.ExpLoadLow);
+        _command.Decimal("ExpLoadHigh", 9, 2, requisition.ExpLoadHigh);
+        _command.Decimal("SalLow", 9, 2, requisition.SalaryLow);
+        _command.Decimal("SalHigh", 9, 2, requisition.SalaryHigh);
+        _command.Bit("ExpPaid", requisition.ExpensesPaid);
+        _command.Char("Status", 3, requisition.StatusCode);
+        _command.Bit("Security", requisition.SecurityClearance);
+        _command.Decimal("PlacementFee", 8, 2, requisition.PlacementFee);
+        _command.Varchar("BenefitsNotes", -1, requisition.BenefitNotes);
+        _command.Bit("OFCCP", requisition.OFCCP);
+        _command.Varchar("User", 10, user);
+        _command.Varchar("Assign", 550, requisition.AssignedTo);
+        _command.Varchar("MandatoryRequirement", 8000, requisition.Mandatory);
         try
         {
-            await using SqlCommand _command = new("SaveRequisition", _connection);
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("RequisitionId", requisition.RequisitionID, true);
-            _command.Int("Company", requisition.CompanyID);
-            _command.Int("HiringMgr", requisition.ContactID);
-            _command.Varchar("City", 50, requisition.City);
-            _command.Int("StateId", requisition.StateID);
-            _command.Varchar("Zip", 10, requisition.ZipCode);
-            _command.TinyInt("IsHot", requisition.PriorityID);
-            _command.Varchar("Title", 200, requisition.PositionTitle);
-            _command.Varchar("Description", -1, requisition.Description);
-            _command.Int("Positions", requisition.Positions);
-            _command.DateTime("ExpStart", requisition.ExpectedStart);
-            _command.DateTime("Due", requisition.DueDate);
-            _command.Int("Education", requisition.EducationID);
-            _command.Varchar("Skills", 2000, requisition.SkillsRequired);
-            _command.Varchar("OptionalRequirement", 8000, requisition.Optional);
-            _command.Char("JobOption", 1, requisition.JobOptionID);
-            _command.Int("ExperienceID", requisition.ExperienceID);
-            _command.Int("Eligibility", requisition.EligibilityID);
-            _command.Varchar("Duration", 50, requisition.Duration);
-            _command.Char("DurationCode", 1, requisition.DurationCode);
-            _command.Decimal("ExpRateLow", 9, 2, requisition.ExpRateLow);
-            _command.Decimal("ExpRateHigh", 9, 2, requisition.ExpRateHigh);
-            _command.Decimal("ExpLoadLow", 9, 2, requisition.ExpLoadLow);
-            _command.Decimal("ExpLoadHigh", 9, 2, requisition.ExpLoadHigh);
-            _command.Decimal("SalLow", 9, 2, requisition.SalaryLow);
-            _command.Decimal("SalHigh", 9, 2, requisition.SalaryHigh);
-            _command.Bit("ExpPaid", requisition.ExpensesPaid);
-            _command.Char("Status", 3, requisition.StatusCode);
-            _command.Bit("Security", requisition.SecurityClearance);
-            _command.Decimal("PlacementFee", 8, 2, requisition.PlacementFee);
-            _command.Varchar("BenefitsNotes", -1, requisition.BenefitNotes);
-            _command.Bit("OFCCP", requisition.OFCCP);
-            _command.Varchar("User", 10, user);
-            _command.Varchar("Assign", 550, requisition.AssignedTo);
-            _command.Varchar("MandatoryRequirement", 8000, requisition.Mandatory);
+            string _reqCode = "";
 
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
@@ -469,8 +416,7 @@ public class RequisitionController : ControllerBase
 
             await _reader.NextResultAsync();
             List<EmailTemplates> _templates = [];
-            Dictionary<string, string> _emailAddresses = new();
-            Dictionary<string, string> _emailCC = new();
+            Dictionary<string, string> _emailAddresses = new(), _emailCC = new();
 
             while (await _reader.ReadAsync())
             {
@@ -492,36 +438,39 @@ public class RequisitionController : ControllerBase
 
             await _reader.CloseAsync();
 
-            if (_templates.Count > 0)
+            if (_templates.Count <= 0)
             {
-                EmailTemplates _templateSingle = _templates[0];
-                if (!_templateSingle.CC.NullOrWhiteSpace())
-                {
-                    string[] _ccArray = _templateSingle.CC.Split(",");
-                    foreach (string _cc in _ccArray)
-                    {
-                        _emailCC.Add(_cc, _cc);
-                    }
-                }
-
-                _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                         .Replace("$REQ_ID$", _reqCode)
-                                                         .Replace("$REQ_TITLE$", requisition.PositionTitle)
-                                                         .Replace("$COMPANY$", requisition.CompanyName)
-                                                         .Replace("$DESCRIPTION$", requisition.Description)
-                                                         .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
-                                                         .Replace("$LOGGED_USER$", user);
-                _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                          .Replace("$REQ_ID$", _reqCode)
-                                                          .Replace("$REQ_TITLE$", requisition.PositionTitle)
-                                                          .Replace("$COMPANY$", requisition.CompanyName)
-                                                          .Replace("$DESCRIPTION$", requisition.Description)
-                                                          .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
-                                                          .Replace("$LOGGED_USER$", user);
-
-                /*GMailSend _send = new();
-                GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
+                return Ok(0);
             }
+
+            EmailTemplates _templateSingle = _templates[0];
+            if (!_templateSingle.CC.NullOrWhiteSpace())
+            {
+                string[] _ccArray = _templateSingle.CC.Split(",");
+                foreach (string _cc in _ccArray)
+                {
+                    _emailCC.Add(_cc, _cc);
+                }
+            }
+
+            _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                     .Replace("$REQ_ID$", _reqCode)
+                                                     .Replace("$REQ_TITLE$", requisition.PositionTitle)
+                                                     .Replace("$COMPANY$", requisition.CompanyName)
+                                                     .Replace("$DESCRIPTION$", requisition.Description)
+                                                     .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
+                                                     .Replace("$LOGGED_USER$", user);
+            _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                      .Replace("$REQ_ID$", _reqCode)
+                                                      .Replace("$REQ_TITLE$", requisition.PositionTitle)
+                                                      .Replace("$COMPANY$", requisition.CompanyName)
+                                                      .Replace("$DESCRIPTION$", requisition.Description)
+                                                      .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
+                                                      .Replace("$LOGGED_USER$", user);
+
+            /*GMailSend _send = new();
+                GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
+            return Ok(0);
         }
         catch (Exception ex)
         {
@@ -532,8 +481,6 @@ public class RequisitionController : ControllerBase
         {
             await _connection.CloseAsync();
         }
-
-        return Ok(0);
     }
 
     [HttpGet]
@@ -544,12 +491,13 @@ public class RequisitionController : ControllerBase
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Requisition", 30, filter);
 
-        string _requisitions = "[]";
         try
         {
             await _connection.OpenAsync();
 
-            _requisitions = (await _command.ExecuteScalarAsync())?.ToString();
+            string _requisitions = (await _command.ExecuteScalarAsync())?.ToString();
+
+            return Ok(_requisitions);
         }
         catch (Exception ex)
         {
@@ -560,8 +508,6 @@ public class RequisitionController : ControllerBase
         {
             await _connection.CloseAsync();
         }
-
-        return Ok(_requisitions);
     }
 
     /// <summary>
@@ -580,31 +526,6 @@ public class RequisitionController : ControllerBase
         string _fileName = file.FileName; //Request.Form["filename"];
         string _requisitionID = Request.Form["requisitionID"].ToString();
         string _internalFileName = Guid.NewGuid().ToString("N");
-        /*
-        try
-        {
-            Directory.CreateDirectory(Path.Combine(Request.Form["path"].ToString(), "Uploads", "Requisition", _requisitionID));
-        }
-        catch
-        {
-            return null;
-        }
-
-        string _destinationFileName = Path.Combine(Request.Form["path"].ToString(), "Uploads", "Requisition", _requisitionID, _internalFileName);
-
-        //await using MemoryStream _stream = new();
-        await using FileStream _fs = System.IO.File.Open(_destinationFileName, FileMode.OpenOrCreate, FileAccess.Write);
-        try
-        {
-            await file.CopyToAsync(_fs);
-            _fs.Flush();
-            _fs.Close();
-        }
-        catch
-        {
-            _fs.Close();
-        }
-        */
 
         // Create a BlobStorage instance
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
@@ -619,10 +540,10 @@ public class RequisitionController : ControllerBase
 
         await using SqlConnection _connection = new(Start.ConnectionString);
         List<RequisitionDocuments> _documents = new();
-        string _returnVal = "[]";
-
         try
         {
+            string _returnVal = "[]";
+
             await using SqlCommand _command = new("SaveRequisitionDocuments", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("RequisitionId", _requisitionID);
@@ -633,24 +554,19 @@ public class RequisitionController : ControllerBase
             _command.Varchar("DocsUser", 10, Request.Form["user"].ToString());
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            if (_reader.HasRows)
+            while (_reader.Read())
             {
-                while (_reader.Read())
-                {
-                    _returnVal = _reader.NString(0);
-                    /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3), _reader.NString(6),
-                                       $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7), _reader.GetString(8)));*/
-                }
+                _returnVal = _reader.NString(0);
             }
 
             await _reader.CloseAsync();
+
+            return Ok(_returnVal);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving requisition document. {ExceptionMessage}", ex.Message);
             return StatusCode(500, ex.Message);
         }
-
-        return Ok(_returnVal);
     }
 }

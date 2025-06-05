@@ -542,7 +542,7 @@ public partial class Requisitions
                                                                              Dictionary<string, string> _parameters = new()
                                                                                                                       {
                                                                                                                           {"requisitionID", _target.ID.ToString()},
-                                                                                                                          {"status", _statusCode},
+                                                                                                                          {"statusCode", _statusCode},
                                                                                                                           {"user", User}
                                                                                                                       };
 
@@ -551,6 +551,8 @@ public partial class Requisitions
                                                                              if (_response.NotNullOrWhiteSpace())
                                                                              {
                                                                                  _target.Status = _response;
+                                                                                 _target.Updated = DateTime.Today.CultureDate();
+                                                                                 _target.UpdatedBy = User;
                                                                              }
                                                                          });
 

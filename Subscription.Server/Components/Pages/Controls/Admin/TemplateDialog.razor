@@ -26,8 +26,8 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.SendToList)">
 						<Template>
-							<label class="e-form-label" for="multiTaxTerms">Select Tax Term(s):</label>
-							<SfMultiSelect @bind-Value="Model.SendToList" DataSource="@SendToItems" ID="multiTaxTerms" Mode="VisualMode.Box" Placeholder="Select Tax Term(s)" TItem="KeyValues"
+							<label class="e-form-label" for="multiSendTo">Select Send To(s):</label>
+							<SfMultiSelect @bind-Value="Model.SendToList" DataSource="@SendToItems" ID="multiSendTo" Mode="VisualMode.Box" Placeholder="Select Send To" TItem="KeyValues"
 							               TValue="List<string>" Width="100%">
 								<MultiSelectFieldSettings Text="Text" Value="KeyValue"/>
 							</SfMultiSelect>
