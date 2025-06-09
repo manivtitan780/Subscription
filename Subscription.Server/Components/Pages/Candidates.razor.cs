@@ -109,7 +109,7 @@ public partial class Candidates
 
     private bool DownloadOriginal { get; set; }
 
-    private DownloadsPanel DownloadsPanel { get; set; }
+    private DownloadsPanel PanelDownload { get; set; }
 
     public EditContext EditConEducation { get; set; }
 
@@ -428,7 +428,7 @@ public partial class Candidates
 
     private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
                                                             {
-                                                                SelectedDownload = DownloadsPanel.SelectedRow;
+                                                                SelectedDownload = PanelDownload.SelectedRow;
                                                                 string _queryString = $"{SelectedDownload.InternalFileName}^{_target.ID}^{SelectedDownload.Location}^0".ToBase64String();
                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                             });
@@ -682,7 +682,15 @@ public partial class Candidates
                                                                           if (_restResponse != null && _restResponse != "[]")
                                                                           {
                                                                               DocumentDetails _response = General.DeserializeObject<DocumentDetails>(_restResponse);
-                                                                              await DownloadsPanel.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume", _response.InternalFileName);
+                                                                              try
+                                                                              {
+                                                                                  await PanelDownload.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume",
+                                                                                                                  _response.InternalFileName);
+                                                                              }
+                                                                              catch (Exception ex)
+                                                                              {
+                                                                                  Console.WriteLine(ex.Message);
+                                                                              }
                                                                           }
                                                                       });
 

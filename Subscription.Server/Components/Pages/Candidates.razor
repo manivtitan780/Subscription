@@ -256,23 +256,25 @@
 										</ChildContent>
 										<ContentTemplate>
 											<div class="resumeContainerBox">
+												<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"
+												          IconCss="e-icons e-align-right"/>
+												<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"
+												          IconCss="e-icons e-justify"/>
 												<SfRichTextEditor Height="278px" Readonly="true" Value="@_candDetailsObject.TextResume">
-													<RichTextEditorToolbarSettings Items="@_tools1">
+													@*<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
 																<Template>
-																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"
-																	          IconCss="e-icons e-align-right"/>
+																	
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 															<RichTextEditorCustomToolbarItem Name="Formatted">
 																<Template>
-																	<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"
-																	          IconCss="e-icons e-justify"/>
+																	
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 														</RichTextEditorCustomToolbarItems>
-													</RichTextEditorToolbarSettings>
+													</RichTextEditorToolbarSettings>*@
 												</SfRichTextEditor>
 											</div>
 										</ContentTemplate>
@@ -283,7 +285,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<DownloadsPanel CandidateID="_target.ID" DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candDocumentsObject"
-											                @ref="DownloadsPanel"/>
+											                @ref="PanelDownload"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
