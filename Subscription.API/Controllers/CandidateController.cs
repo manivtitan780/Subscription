@@ -452,29 +452,19 @@ public class CandidateController : ControllerBase
         await using SqlCommand _command = new("DuplicateCandidate", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("CandidateID", candidateID);
-        _command.Parameters.Add("NewCandidateID", SqlDbType.Int).Direction = ParameterDirection.Output;
         _command.Varchar("User", 10, user);
 
-        string _duplicateCandidate = "[]";
+        int _duplicateCandidateID = 0;
         try
         {
-            await _connection.OpenAsync();
-            _duplicateCandidate = (await _command.ExecuteScalarAsync())?.ToString();
-            await using SqlDataReader reader = await _command.ExecuteReaderAsync();
-
-            string oldOriginal = null, newOriginal = null, oldFormatted = null, newFormatted = null;
-            int sourceCandidateId = 0, newCandidateId = 0;
-
-            // First result: candidate-level file mapping
-            if (await reader.ReadAsync())
+            await _connection.OpenAsync().ConfigureAwait(false);
+            object _duplicateCandidate = await _command.ExecuteScalarAsync().ConfigureAwait(false);
+            if (_duplicateCandidate != null)
             {
-                sourceCandidateId = reader.GetInt32(0);
-                newCandidateId = reader.GetInt32(1);
-                oldOriginal = reader.GetString(2);
-                oldFormatted = reader.GetString(3);
-                newOriginal = reader.GetString(4);
-                newFormatted = reader.GetString(5);
+                _duplicateCandidateID = Convert.ToInt32(_duplicateCandidate);
             }
+
+            await General.CopyBlobs(candidateID.ToString(), _duplicateCandidateID.ToString()).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -483,70 +473,11 @@ public class CandidateController : ControllerBase
         }
         finally
         {
-            await _connection.CloseAsync();
+            await _connection.CloseAsync().ConfigureAwait(false);
         }
 
-        return Ok(_duplicateCandidate);
+        return Ok(_duplicateCandidateID);
     }
-
-    /*private static DataTable Education(JsonArray education)
-    {
-        DataTable _tableEducation = new();
-        _tableEducation.Columns.Add("Degree", typeof(string));
-        _tableEducation.Columns.Add("College", typeof(string));
-        _tableEducation.Columns.Add("State", typeof(string));
-        _tableEducation.Columns.Add("Country", typeof(string));
-        _tableEducation.Columns.Add("Year", typeof(string));
-
-        foreach (JsonNode _education in education)
-        {
-            if (_education == null)
-            {
-                continue;
-            }
-
-            DataRow _row = _tableEducation.NewRow();
-            _row["Degree"] = _education["Course"]?.ToString() ?? "";
-            _row["College"] = _education["School"]?.ToString() ?? "";
-            _row["State"] = _education["State"]?.ToString() ?? "";
-            _row["Country"] = _education["Country"]?.ToString() ?? "";
-            _row["Year"] = _education["Period"]?.ToString() ?? "";
-            _tableEducation.Rows.Add(_row);
-        }
-
-        return _tableEducation;
-    }
-
-    private static DataTable Experience(JsonArray experience)
-    {
-        DataTable _tableExperience = new();
-        _tableExperience.Columns.Add("Employer", typeof(string));
-        _tableExperience.Columns.Add("Start", typeof(string));
-        _tableExperience.Columns.Add("End", typeof(string));
-        _tableExperience.Columns.Add("Location", typeof(string));
-        _tableExperience.Columns.Add("Title", typeof(string));
-        _tableExperience.Columns.Add("Description", typeof(string));
-
-        foreach (JsonNode _experience in experience)
-        {
-            if (_experience == null)
-            {
-                continue;
-            }
-
-            DataRow _row = _tableExperience.NewRow();
-            _row["Employer"] = _experience["Company"]?.ToString() ?? "";
-            //string[] _period = _experience?["Period"]?.ToString().Split('-');
-            _row["Start"] = _experience["Start"]?.ToString() ?? "";
-            _row["End"] = _experience["End"]?.ToString() ?? "";
-            _row["Location"] = _experience["Location"]?.ToString() ?? "";
-            _row["Title"] = _experience["Title"]?.ToString() ?? "";
-            _row["Description"] = _experience["Description"]?.ToString() ?? "";
-            _tableExperience.Rows.Add(_row);
-        }
-
-        return _tableExperience;
-    }*/
 
     [HttpGet]
     public async Task<ActionResult<string>> GenerateSummary(int candidateID, int requisitionID)
@@ -614,19 +545,7 @@ public class CandidateController : ControllerBase
 
         using JsonDocument _doc = JsonDocument.Parse(response.Content ?? string.Empty);
         string _content = _doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
-        /*JsonDocument _json = JsonDocument.Parse(_content);
-  JsonElement _root = _json.RootElement;
 
-  Model.Keywords = _root.TryGetProperty("Keywords", out JsonElement kw) ? kw.GetString() : "";
-  Model.Summary = _root.TryGetProperty("Summary", out JsonElement sum) ? sum.GetString() : "";
-  Model.Title = _root.TryGetProperty("Title", out JsonElement title) ? title.GetString() : "";*/
-        /*Model.FirstName = _root.TryGetProperty("FirstName", out JsonElement fName) ? fName.GetString() : "";
-  Model.LastName = _root.TryGetProperty("LastName", out JsonElement lName) ? lName.GetString() : "";
-  Model.Address1 = _root.TryGetProperty("Address", out JsonElement addr) && addr.GetString().NotNullOrWhiteSpace() ? addr.GetString() : Model.Address1;
-  Model.City = _root.TryGetProperty("City", out JsonElement city) && city.GetString().NotNullOrWhiteSpace() ? city.GetString() : Model.City;
-  Model.ZipCode = _root.TryGetProperty("Zip", out JsonElement zip) && zip.GetString().NotNullOrWhiteSpace() ? zip.GetString() : Model.ZipCode;
-  Model.Email = _root.TryGetProperty("Email", out JsonElement email) && email.GetString().NotNullOrWhiteSpace() ? email.GetString() : Model.Email;
-  Model.Phone1 = _root.TryGetProperty("Phone", out JsonElement phone) && phone.GetString().NotNullOrWhiteSpace() ? phone.GetString() : Model.Phone1;*/
         return Ok(_content.NullOrWhiteSpace() ? "" : _content);
     }
 

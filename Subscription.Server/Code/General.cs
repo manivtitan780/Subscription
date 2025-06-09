@@ -117,7 +117,8 @@ public class General //(Container container)
                    CloseOnEscape = true,
                    AnimationSettings = new() {Effect = DialogEffect.Fade, Duration = 300},
                    PrimaryButtonOptions = new() {Content = "Yes"},
-                   CancelButtonOptions = new() {Content = "No"}
+                   CancelButtonOptions = new() {Content = "No"},
+                   ZIndex = 100000
                };
     }
 

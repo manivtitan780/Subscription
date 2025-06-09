@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     05-09-2025 19:48
+// Last Updated On:     06-09-2025 15:47
 // *****************************************/
 
 #endregion
@@ -177,7 +177,7 @@ public partial class Candidates
 
     private int RequisitionID { get; set; }
 
-    private int RoleID { get; set; } = 5;
+    private int RoleID { get; } = 5;
 
     private string RoleName { get; set; }
 
@@ -265,6 +265,25 @@ public partial class Candidates
                                                                                                          SearchModel.Page = 1;
                                                                                                          await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                                      });
+
+    private Task ChangeStatus() => ExecuteMethod(async () =>
+                                                 {
+                                                     await Grid.ShowSpinnerAsync();
+                                                     Dictionary<string, string> _parameters = new()
+                                                                                              {
+                                                                                                  {"candidateID", _target.ID.ToString()},
+                                                                                                  {"user", User}
+                                                                                              };
+
+                                                     string _response = await General.ExecuteRest<string>("Candidate/ChangeStatus", _parameters);
+
+                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                     {
+                                                         _target.Status = _response;
+                                                     }
+
+                                                     await Grid.HideSpinnerAsync();
+                                                 });
 
     private Task ClearFilter() => ExecuteMethod(async () =>
                                                 {
@@ -414,6 +433,22 @@ public partial class Candidates
                                                                 await JsRuntime.InvokeVoidAsync("open", $"{NavManager.BaseUri}Download/{_queryString}", "_blank");
                                                             });
 
+    private async Task DuplicateCandidate()
+    {
+        if (await DialogService.ConfirmAsync(null, "Duplicate Candidate?", General.DialogOptions("Are you sure you want to duplicate this candidate?")).ConfigureAwait(false))
+        {
+            Dictionary<string, string> _parameters = new() {{"candidateID", _target.ID.ToString()}, {"user", User}};
+
+            int _duplicateCandidateID = await General.ExecuteRest<int>("Candidate/DuplicateCandidate", _parameters).ConfigureAwait(false);
+
+            if (_duplicateCandidateID > 0)
+            {
+                SearchModel.Page = 1;
+                await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
+            }
+        }
+    }
+
     private Task EditActivity(int id) => ExecuteMethod(async () =>
                                                        {
                                                            SelectedActivity = ActivityPanel.SelectedRow;
@@ -427,14 +462,12 @@ public partial class Candidates
                                                                                        .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
                                                                                        .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
                                                                await DialogActivity.ShowDialog();
-
                                                            }
                                                            catch (Exception ex)
                                                            {
                                                                Console.WriteLine(ex.Message);
                                                                //Ignore this error. No need to log this error.
                                                            }
-
                                                        });
 
     private Task EditCandidate() => ExecuteMethod(async () =>
@@ -1202,28 +1235,12 @@ public partial class Candidates
             //return AddResume(1);
             case "itemChangeStatus":
                 return ChangeStatus();
+            case "itemDuplicateCandidate":
+                return DuplicateCandidate();
         }
 
         return Task.CompletedTask;
     }
-
-    private Task ChangeStatus() => ExecuteMethod(async () =>
-                                                  {
-                                                      await Grid.ShowSpinnerAsync();
-                                                      Dictionary<string, string> _parameters = new()
-                                                                                               {
-                                                                                                   {"candidateID", _target.ID.ToString()},
-                                                                                                   {"user", User}
-                                                                                               };
-
-                                                      string _response = await General.ExecuteRest<string>("Candidate/ChangeStatus", _parameters);
-
-                                                      if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                      {
-                                                          _target.Status = _response;
-                                                      }
-                                                      await Grid.HideSpinnerAsync();
-                                                  });
 
     private (string Code, string Name) SplitState(int stateID)
     {
