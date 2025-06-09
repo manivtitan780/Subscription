@@ -155,7 +155,7 @@ public partial class ViewPDFDocument
     /// <returns>A Task representing the asynchronous operation.</returns>
     private async Task OpenDialog()
     {
-        await Spinner.ShowAsync();
+        /*await Spinner.ShowAsync();
         await Task.Yield();
         string _base64String = "";
         string _entity = EntityType switch
@@ -203,7 +203,7 @@ public partial class ViewPDFDocument
         DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : DocumentLocation + ".pdf";
         await PdfViewer.LoadAsync("data:application/pdf;base64," + _base64String);
         await Spinner.HideAsync();
-        StateHasChanged();
+        StateHasChanged();*/
     }
 
     /// <summary>
