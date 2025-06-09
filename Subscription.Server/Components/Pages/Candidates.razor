@@ -20,12 +20,12 @@
 <PageHeader PageName="Candidate"/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="AddCandidate" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" 
-				Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh" 
-				ShowAdd="@(RequisitionID == 0)" ShowSearch="@(RequisitionID == 0)" ShowSubmit="@(RequisitionID > 0)" Submit="SubmitSelectedCandidate" TotalCount="@Count" ValueChange="AutocompleteValueChange">
+	<GridHeader AddMethod="AddCandidate" AdvancedSearch="AdvancedSearch" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page"
+	            Endpoint="Candidate/SearchCandidates" Name="@(SearchModel.Name)" PageChanged="PageChanging" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanging" RefreshGrid="Refresh"
+	            ShowAdd="@(RequisitionID == 0)" ShowSearch="@(RequisitionID == 0)" ShowSubmit="@(RequisitionID > 0)" Submit="SubmitSelectedCandidate" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
-			<SfGrid AAllowSelection="true" AllowMultiSorting="false" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid" 
-					TValue="Candidate" Width="100%">
+			<SfGrid AAllowSelection="true" AllowMultiSorting="false" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" @ref="Grid"
+			        TValue="Candidate" Width="100%">
 				<GridSelectionSettings EnableToggle="true" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" PageChanging="GridPageChanging" RowSelecting="RowSelected" TValue="Candidate"/>
 				<GridColumns>
@@ -40,7 +40,7 @@
 						</Template>
 					</GridColumn>
 					<GridColumn Field="@nameof(Candidate.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-					<GridColumn Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="12%">
+					<GridColumn Field="@nameof(Candidate.Phone)" HeaderText="Phone" Width="10%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -62,7 +62,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Location)" HeaderText="Location" Width="18%">
+					<GridColumn Field="@nameof(Candidate.Location)" HeaderText="Location" Width="16%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -74,7 +74,7 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Status)" HeaderText="Status" Width="10%">
+					<GridColumn Field="@nameof(Candidate.Status)" HeaderText="Status" Width="8%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -96,7 +96,19 @@
 							}
 						</Template>
 					</GridColumn>
-					<GridColumn Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="12%">
+					<GridColumn Field="@nameof(Candidate.Owner)" HeaderText="Owner" Width="8%">
+						<Template Context="aCon">
+							@{
+								if (aCon is Candidate _con)
+								{
+									<span>
+										@(_con.Owner)
+									</span>
+								}
+							}
+						</Template>
+					</GridColumn>
+					<GridColumn Field="@nameof(Candidate.Updated)" HeaderText="Updated" Width="10%">
 						<Template Context="aCon">
 							@{
 								if (aCon is Candidate _con)
@@ -117,27 +129,33 @@
 							{
 								<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear"
 								             OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCandidates" title="Action" Visible="HasEditRights">
-									@* Visible="UserRights.EditCandidate" *@
 									<SpeedDialItems>
-										<SpeedDialItem IconCss="e-icons e-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate"/>
-										<SpeedDialItem IconCss="e-icons e-star-filled" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C."/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume"/>
-										<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment"/>
 										@if (context is Candidate _con)
 										{
-											if (_con.Status == "Available")
+											if (_con.Owner == User || _con.Owner == "ADMIN")
 											{
-												<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Disable Candidate" Title="Disable Candidate" />
+												<SpeedDialItem IconCss="e-icons e-edit" ID="itemEditCandidate" Text="Edit Candidate" Title="Edit Candidate"/>
+												<SpeedDialItem IconCss="e-icons e-star-filled" ID="itemEditRating" Text="Edit Rating" Title="Edit Rating"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-mpc" ID="itemEditMPC" Text="Edit M.P.C." Title="Edit M.P.C."/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-skill" ID="itemAddSkill" Text="Add Skill" Title="Add Skill"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-education" ID="itemAddEducation" Text="Add Education" Title="Add Education"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-experience" ID="itemAddExperience" Text="Add Experience" Title="Add Experience"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-notes" ID="itemAddNotes" Text="Add Notes" Title="Add Notes"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-originalresume" ID="itemOriginalResume" Text="Update Original Resume" Title="Update Original Resume"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-formatresume" ID="itemFormattedResume" Text="Update Formatted Resume" Title="Update Formatted Resume"/>
+												<SpeedDialItem IconCss="speeddial-icons speeddial-icon-attachment" ID="itemAddAttachment" Text="Add Attachment" Title="Add Attachment"/>
+												if (_con.Status == "Available")
+												{
+													<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Disable Candidate" Title="Disable Candidate"/>
+												}
+												else
+												{
+													<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Enable Candidate" Title="Enable Candidate"/>
+												}
 											}
 											else
 											{
-												<SpeedDialItem IconCss="e-icons e-sorting-1" ID="itemChangeStatus" Text="Enable Candidate" Title="Enable Candidate"/>
+												<SpeedDialItem IconCss="e-icons e-duplicate" ID="itemDuplicateCandidate" Text="Duplicate Candidate" Title="Duplicate Candidate"/>
 											}
 										}
 									</SpeedDialItems>
@@ -168,7 +186,7 @@
 													<PanelDisplayText Label="Alternate Phone#" Text="@_candDetailsObject.Phone2.FormatPhoneNumber()"/>
 													<PanelDisplayText Label="Title" Text="@_candDetailsObject.Title"/>
 													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.CultureCurrency()} - " +
-													                                                  $"{_candDetailsObject.HourlyRateHigh.CultureCurrency()}")"/>
+													                                                $"{_candDetailsObject.HourlyRateHigh.CultureCurrency()}")"/>
 													<PanelDisplayText Label="Salary Expected" Text="@($"{_candDetailsObject.SalaryLow.CultureCurrency()} - " + $"{_candDetailsObject.SalaryHigh.CultureCurrency()}")"/>
 												</div>
 												<div class="leftLayout">
@@ -243,14 +261,14 @@
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
 																<Template>
-																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick" 
-																			  IconCss="e-icons e-align-right"/>
+																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"
+																	          IconCss="e-icons e-align-right"/>
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 															<RichTextEditorCustomToolbarItem Name="Formatted">
 																<Template>
 																	<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"
-																			  IconCss="e-icons e-justify"/>
+																	          IconCss="e-icons e-justify"/>
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 														</RichTextEditorCustomToolbarItems>
@@ -265,7 +283,7 @@
 										</ChildContent>
 										<ContentTemplate>
 											<DownloadsPanel CandidateID="_target.ID" DeleteDocument="DeleteDocument" DownloadDocument="DownloadDocument" EditRights="HasEditRights" Model="@_candDocumentsObject"
-															@ref="DownloadsPanel"/>
+											                @ref="DownloadsPanel"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -273,7 +291,7 @@
 											<TabHeader Text="Candidate Activity"/>
 										</ChildContent>
 										<ContentTemplate>
-											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"  /> 
+											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"/>
 											@*TODO: Activity Panel Rights to be set*@
 										</ContentTemplate>
 									</TabItem>

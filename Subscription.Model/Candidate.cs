@@ -153,6 +153,8 @@ public class Candidate
 	///     This property is used to store and retrieve the zip code of the candidate. It is a string value.
 	/// </remarks>
 	public string ZipCode { get; set; }
+	
+	public string Owner { get; set; }
 
 	/// <summary>
 	///     Resets all properties of the Candidates object to their default values.
@@ -178,6 +180,7 @@ public class Candidate
         Rating = 3;
         OriginalResume = false;
         FormattedResume = false;
+		Owner = "";
     }
 
 	/// <summary>

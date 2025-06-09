@@ -444,6 +444,50 @@ public class CandidateController : ControllerBase
 
         return Ok(_documentDetails);
     }
+    
+    [HttpPost]
+    public async Task<ActionResult<string>> DuplicateCandidate(int candidateID, string user)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("DuplicateCandidate", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("CandidateID", candidateID);
+        _command.Parameters.Add("NewCandidateID", SqlDbType.Int).Direction = ParameterDirection.Output;
+        _command.Varchar("User", 10, user);
+
+        string _duplicateCandidate = "[]";
+        try
+        {
+            await _connection.OpenAsync();
+            _duplicateCandidate = (await _command.ExecuteScalarAsync())?.ToString();
+            await using SqlDataReader reader = await _command.ExecuteReaderAsync();
+
+            string oldOriginal = null, newOriginal = null, oldFormatted = null, newFormatted = null;
+            int sourceCandidateId = 0, newCandidateId = 0;
+
+            // First result: candidate-level file mapping
+            if (await reader.ReadAsync())
+            {
+                sourceCandidateId = reader.GetInt32(0);
+                newCandidateId = reader.GetInt32(1);
+                oldOriginal = reader.GetString(2);
+                oldFormatted = reader.GetString(3);
+                newOriginal = reader.GetString(4);
+                newFormatted = reader.GetString(5);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error duplicating candidate. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_duplicateCandidate);
+    }
 
     /*private static DataTable Education(JsonArray education)
     {

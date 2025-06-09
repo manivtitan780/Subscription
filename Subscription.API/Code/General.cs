@@ -18,6 +18,9 @@
 using System.Security.Cryptography;
 using System.Text;
 
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+
 using FluentStorage.Blobs;
 
 using Newtonsoft.Json;
@@ -397,15 +400,39 @@ public static class General
     /// </summary>
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-    public static byte[] SHA512PasswordHash(string inputText) => SHA512.HashData(new UTF8Encoding().GetBytes(inputText));
+    internal static byte[] SHA512PasswordHash(string inputText) => SHA512.HashData(new UTF8Encoding().GetBytes(inputText));
 
     /// <summary>
     ///     Computes the SHA-512 hash of the input text.
     /// </summary>
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-    public static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.HashData(inputText);
+    internal static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.HashData(inputText);
 
+    internal static async Task CopyBlobs(string sourceCandidateID, string destinationCandidateID)
+    {
+        string _connectionString = Start.AzureBlob;
+        string _containerName = Start.AzureBlobContainer;
+        string _source = $"Candidate/{sourceCandidateID}/";
+        string _destination = $"Candidate/{destinationCandidateID}/";
+        BlobContainerClient containerClient = new(_connectionString, _containerName);
+
+        List<Task> _copyTasks = [];
+        await foreach (BlobItem _blobItem in containerClient.GetBlobsAsync(prefix: _source))
+        {
+            string _sourceBlobName = _blobItem.Name;
+            string _targetBlobName = _destination + _sourceBlobName[_source.Length..];
+            BlobClient _sourceBlob = containerClient.GetBlobClient(_sourceBlobName);
+            BlobClient _targetBlob = containerClient.GetBlobClient(_targetBlobName);
+
+            Uri _sourceUri = _sourceBlob.Uri;
+
+            // Start server-side copy
+            _copyTasks.Add(_targetBlob.StartCopyFromUriAsync(_sourceUri));
+        }
+        
+        await Task.WhenAll(_copyTasks).ConfigureAwait(false);
+    }
     internal static async Task UploadToBlob(IFormFile file, string blobPath)
     {
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);

@@ -470,6 +470,29 @@ public class RequisitionController : ControllerBase
 
             /*GMailSend _send = new();
                 GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
+            using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
+            _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
+            _smtpClient.EnableSsl = true;
+
+            MailMessage _mailMessage = new()
+                                       {
+                                           From = new("maniv@hire-titan.com", "Mani-Meow"),
+                                           Subject = _templateSingle.Subject,
+                                           Body = _templateSingle.Template,
+                                           IsBodyHtml = true
+                                       };
+            _mailMessage.To.Add("manivenkit@gmail.com"); //TODO: After testing remove this and enable the below code
+            // _mailMessage.To.Add("jolly@hire-titan.com");
+            /*foreach (KeyValues _emailAddress in _emailAddresses)
+            {
+                _mailMessage.To.Add(new MailAddress(_emailAddress.KeyValue, _emailAddress.Text));
+            }
+            foreach (KeyValues _cc in _emailCC)
+            {
+                _mailMessage.CC.Add(new MailAddress(_cc.KeyValue, _cc.Text));
+            }*/
+
+            await _smtpClient.SendMailAsync(_mailMessage);
             return Ok(0);
         }
         catch (Exception ex)
