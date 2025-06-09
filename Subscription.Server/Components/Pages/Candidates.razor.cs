@@ -446,6 +446,7 @@ public partial class Candidates
                 SearchModel.Page = 1;
                 SearchModel.Name = _target.Name[.._target.Name.IndexOf('(')].Trim();
                 SearchModel.ActiveRequisitionsOnly = false;
+                SearchModel.ShowArchive = false;
                 await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
             }
         }
@@ -715,6 +716,7 @@ public partial class Candidates
                 else
                 {
                     SearchModel.Clear();
+                    SearchModel.User = User;
                     await SaveStorage().ConfigureAwait(false);
                 }
             }
@@ -724,7 +726,7 @@ public partial class Candidates
             }
 
             //_stopwatch.Start();
-            await SetDataSource();
+            await SetDataSource().ConfigureAwait(false);
             //_stopwatch.Stop();
             //await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
         }
@@ -866,7 +868,7 @@ public partial class Candidates
                                                           _target.Location = $"{_candDetailsObject.City}, {SplitState(_candDetailsObject.StateID).Code}, {_candDetailsObject.ZipCode}";
                                                       }
 
-                                                      _target.Updated = DateTime.Today.CultureDate() + "[ADMIN]";
+                                                      _target.Updated = DateTime.Today.CultureDate() + "[" + User + "]";
                                                       _target.Status = "Available";
                                                       SetupAddress();
                                                       SetCommunication();
@@ -1029,6 +1031,7 @@ public partial class Candidates
     {
         if (RequisitionID == 0)
         {
+            SearchModel.User = User;
             await SessionStorage.SetItemAsync(StorageName, SearchModel);
         }
 
@@ -1087,11 +1090,11 @@ public partial class Candidates
         _stopwatch.Reset();
         _stopwatch.Start();
         */
-        await Grid.ShowSpinnerAsync();
-        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false);
+        await Grid.ShowSpinnerAsync().ConfigureAwait(false);
+        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false).ConfigureAwait(false);
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
         await Grid.Refresh().ConfigureAwait(false);
-        await Grid.HideSpinnerAsync();
+        await Grid.HideSpinnerAsync().ConfigureAwait(false);
         /*
         _stopwatch.Stop();
         await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");

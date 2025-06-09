@@ -115,6 +115,12 @@
 							<SfSwitch @bind-Checked="Model.ActiveRequisitionsOnly" CssClass="switchYesNo" ID="checkedActive" OffLabel="NO" OnLabel="YES" TChecked="bool"/>
 						</Template>
 					</FormItem>
+					<FormItem ColumnSpan="2" Field="@nameof(Model.ShowArchive)">
+						<Template>
+							<label class="e-form-label" for="checkedArchive">Show Archived Candidates:</label>
+							<SfSwitch @bind-Checked="Model.ShowArchive" CssClass="switchYesNo" ID="checkedArchive" OffLabel="NO" OnLabel="YES" TChecked="bool"/>
+						</Template>
+					</FormItem>
 				</FormGroup>
 			</FormItems>
 		</SfDataForm>

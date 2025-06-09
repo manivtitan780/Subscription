@@ -743,6 +743,7 @@ public class CandidateController : ControllerBase
         _command.Varchar("Security", 10, searchModel.SecurityClearance ?? "");
         _command.Varchar("User", 10, searchModel.User ?? "");
         _command.Bit("ActiveRequisitionsOnly", searchModel.ActiveRequisitionsOnly);
+        _command.Bit("ShowArchive", searchModel.ShowArchive);
         //_command.Int("OptionalCandidateID", candidateID);
         //_command.Bit("ThenProceed", thenProceed);
 
