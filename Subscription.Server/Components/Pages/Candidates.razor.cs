@@ -444,6 +444,8 @@ public partial class Candidates
             if (_duplicateCandidateID > 0)
             {
                 SearchModel.Page = 1;
+                SearchModel.Name = _target.Name[.._target.Name.IndexOf('(')].Trim();
+                SearchModel.ActiveRequisitionsOnly = false;
                 await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
             }
         }
