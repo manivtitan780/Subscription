@@ -1,38 +1,25 @@
-﻿#region Header
+#region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           AddDocumentDialog.razor.cs
+// File Name:           UpdateResume.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          12-16-2024 19:12
-// Last Updated On:     06-10-2025 19:30
+// Created On:          06-10-2025 19:06
+// Last Updated On:     06-10-2025 19:31
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
-/// <summary>
-///     Represents a dialog for adding a document to a candidate.
-/// </summary>
-/// <remarks>
-///     This class is a Blazor component that provides a user interface for uploading a document to a candidate.
-///     It includes parameters for handling various events such as upload completion, upload initiation, cancellation, and
-///     saving.
-///     It also provides methods to show the dialog and to enable or disable buttons within the dialog.
-/// </remarks>
-public partial class AddDocumentDialog
+public partial class UpdateResume : ComponentBase
 {
     private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
 
-    internal MemoryStream AddedDocument { get; set; } = new();
+    private MemoryStream AddedDocument { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document upload is cancelled.
@@ -101,7 +88,7 @@ public partial class AddDocumentDialog
     ///     of a candidate.
     /// </remarks>
     [Parameter]
-    public CandidateDocument Model { get; set; }
+    public CandidateResume Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document details are saved.
@@ -130,19 +117,10 @@ public partial class AddDocumentDialog
     [Parameter]
     public bool SequentialUpload { get; set; } = true;
 
-    /// <summary>
-    ///     Gets or sets the instance of the Syncfusion Blazor Spinner component used in the dialog.
-    /// </summary>
-    /// <value>
-    ///     The instance of the Syncfusion Blazor Spinner component.
-    /// </value>
-    /// <remarks>
-    ///     The Spinner component is used to indicate the processing state when a user interacts with the dialog, such as when
-    ///     uploading a document or saving changes.
-    /// </remarks>
-    private SfSpinner Spinner { get; set; }
-
     private bool VisibleSpinner { get; set; }
+
+    [Parameter]
+    public string ResumeType { get; set; }
 
     /// <summary>
     ///     Asynchronously executes the cancellation process for the document dialog.

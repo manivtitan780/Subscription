@@ -1032,7 +1032,7 @@ public class CandidateController : ControllerBase
                                                IsBodyHtml = true
                                            };
                 _mailMessage.To.Add("manivenkit@gmail.com");
-                _smtpClient.Send(_mailMessage);
+                // _smtpClient.Send(_mailMessage);
                 /*GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
             }
         }
