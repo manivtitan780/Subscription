@@ -998,22 +998,22 @@ public class CandidateController : ControllerBase
                     }
                 }
 
-                _templateSingle.Subject = _templateSingle.Subject!.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                         .Replace("$FULL_NAME$", $"{candidateDetails.FirstName} {candidateDetails.LastName}")
-                                                         .Replace("$FIRST_NAME$", candidateDetails.FirstName)
-                                                         .Replace("$LAST_NAME$", candidateDetails.LastName)
-                                                         .Replace("$CAND_LOCATION$", GetCandidateLocation(candidateDetails, _stateName))
-                                                         .Replace("$CAND_PHONE_PRIMARY$", candidateDetails.Phone1.StripAndFormatPhoneNumber())
-                                                         .Replace("$CAND_SUMMARY$", candidateDetails.Summary)
-                                                         .Replace("$LOGGED_USER$", userName);
-                _templateSingle.Template = _templateSingle.Template!.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                          .Replace("$FULL_NAME$", $"{candidateDetails.FirstName} {candidateDetails.LastName}")
-                                                          .Replace("$FIRST_NAME$", candidateDetails.FirstName)
-                                                          .Replace("$LAST_NAME$", candidateDetails.LastName)
-                                                          .Replace("$CAND_LOCATION$", GetCandidateLocation(candidateDetails, _stateName))
-                                                          .Replace("$CAND_PHONE_PRIMARY$", candidateDetails.Phone1.StripAndFormatPhoneNumber())
-                                                          .Replace("$CAND_SUMMARY$", candidateDetails.Summary)
-                                                          .Replace("$LOGGED_USER$", userName);
+                _templateSingle.Subject = _templateSingle.Subject!.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                         .Replace("{FullName}", $"{candidateDetails.FirstName} {candidateDetails.LastName}")
+                                                         .Replace("{FirstName}", candidateDetails.FirstName)
+                                                         .Replace("{LastName}", candidateDetails.LastName)
+                                                         .Replace("{CandidateLocation}", GetCandidateLocation(candidateDetails, _stateName))
+                                                         .Replace("{CandidatePhone}", candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                         .Replace("{CandidateSummary}", candidateDetails.Summary)
+                                                         .Replace("{LoggedInUser}", userName);
+                _templateSingle.Template = _templateSingle.Template!.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                          .Replace("{FullName}", $"{candidateDetails.FirstName} {candidateDetails.LastName}")
+                                                          .Replace("{FirstName}", candidateDetails.FirstName)
+                                                          .Replace("{LastName}", candidateDetails.LastName)
+                                                          .Replace("{CandidateLocation}", GetCandidateLocation(candidateDetails, _stateName))
+                                                          .Replace("{CandidatePhone}", candidateDetails.Phone1.StripAndFormatPhoneNumber())
+                                                          .Replace("{CandidateSummary}", candidateDetails.Summary)
+                                                          .Replace("{LoggedInUser}", userName);
 
                 /*SendResponse? _email = await Email.From("maniv@hire-titan.com")
                                                   .To("manivenkit@gmail.com", "Mani Bhai")

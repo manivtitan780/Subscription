@@ -165,7 +165,7 @@
 						@* Add Buttons End *@
 						@if (context is Candidate)
 						{
-							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
+							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
 								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
 								<TabAnimationSettings>
 									<TabAnimationPrevious Effect="AnimationEffect.None"/>
@@ -256,25 +256,23 @@
 										</ChildContent>
 										<ContentTemplate>
 											<div class="resumeContainerBox">
-												<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"
-												          IconCss="e-icons e-align-right"/>
-												<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"
-												          IconCss="e-icons e-justify"/>
 												<SfRichTextEditor Height="278px" Readonly="true" Value="@_candDetailsObject.TextResume">
-													@*<RichTextEditorToolbarSettings Items="@_tools1">
+													<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
 																<Template>
-																	
+																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"
+																	          IconCss="e-icons e-align-right"/>
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 															<RichTextEditorCustomToolbarItem Name="Formatted">
 																<Template>
-																	
+																	<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"
+																	          IconCss="e-icons e-justify"/>
 																</Template>
 															</RichTextEditorCustomToolbarItem>
 														</RichTextEditorCustomToolbarItems>
-													</RichTextEditorToolbarSettings>*@
+													</RichTextEditorToolbarSettings>
 												</SfRichTextEditor>
 											</div>
 										</ContentTemplate>
