@@ -8,7 +8,7 @@
 // File Name:           Start.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-05-2025 20:02
-// Last Updated On:     05-06-2025 19:50
+// Last Updated On:     06-11-2025 19:41
 // *****************************************/
 
 #endregion
@@ -20,6 +20,8 @@ public class Start
     public static string Access { get; set; }
 
     public static string AccountName { get; set; }
+
+    public static string AllowedExtensions { get; set; }
 
     public static string APIHost { get; set; }
 

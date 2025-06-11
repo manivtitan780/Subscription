@@ -139,6 +139,7 @@ _app.Use(async (context, next) =>
                  Start.Model = _config["AzureOpenAI:Model"];
                  Start.Prompt = _config["AzureOpenAI:Prompt"];
                  Start.DeploymentName = _config["AzureOpenAI:DeploymentName"];
+                 Start.AllowedExtensions = _config["AllowedExtensions"];
              }
 
              await next.Invoke();

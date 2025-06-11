@@ -25,6 +25,9 @@ using FluentStorage.Blobs;
 
 using Newtonsoft.Json;
 
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Parsing;
+
 #endregion
 
 namespace Subscription.API.Code;
@@ -441,6 +444,52 @@ public static class General
         await _storage.WriteAsync(blobPath, stream);
     }
 
+    internal static string ExtractTextFromPdf(IFormFile file)
+    {
+        using PdfLoadedDocument _document = new(file.OpenReadStream());
+        StringBuilder _resumeText = new();
+        foreach (object page in _document.Pages)
+        {
+            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
+        }
+
+        _document.Close();
+        
+        return _resumeText.ToString();
+     }
+    
+    internal static string ExtractTextFromPdf(byte[] file)
+    {
+        using PdfLoadedDocument _document = new(new MemoryStream(file));
+        StringBuilder _resumeText = new();
+        foreach (object page in _document.Pages)
+        {
+            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
+        }
+
+        _document.Close();
+        
+        return _resumeText.ToString();
+    }
+
+    internal static string ExtractTextFromWord(IFormFile file)
+    {
+        using WordDocument _document = new(file.OpenReadStream(), FormatType.Automatic);
+        string _resumeText = _document.GetText();
+        _document.Close();
+        
+        return _resumeText;
+    }
+    
+    internal static string ExtractTextFromWord(byte[] file)
+    {
+        using WordDocument _document = new(new MemoryStream(file), FormatType.Automatic);
+        string _resumeText = _document.GetText();
+        _document.Close();
+        
+        return _resumeText;
+    }
+    
     internal static async Task UploadToBlob(byte[] file, string blobPath)
     {
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);

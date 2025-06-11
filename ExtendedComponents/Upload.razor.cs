@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           Upload.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-16-2024 20:12
-// Last Updated On:     12-16-2024 21:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     06-11-2025 19:42
 // *****************************************/
 
 #endregion
@@ -29,11 +29,7 @@ public partial class Upload : ComponentBase
     ///     which contains information about the completed upload action.
     /// </summary>
     [Parameter]
-    public EventCallback<ActionCompleteEventArgs> AfterUpload
-    {
-        get;
-        set;
-    }
+    public EventCallback<ActionCompleteEventArgs> AfterUpload { get; set; }
 
     /// <summary>
     ///     Gets or sets the string of allowed file extensions for the UploaderControl.
@@ -41,11 +37,7 @@ public partial class Upload : ComponentBase
     ///     By default, the allowed extensions are ".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls".
     /// </summary>
     [Parameter]
-    public string AllowedExtensions
-    {
-        get;
-        set;
-    } = ".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls";
+    public string AllowedExtensions { get; set; } = ".pdf,.docx,.doc,.rtf,.xps,.txt,.xlsx,.xls";
 
     /// <summary>
     ///     Gets or sets a value indicating whether the file upload should start automatically after a file is selected.
@@ -54,11 +46,7 @@ public partial class Upload : ComponentBase
     ///     The default value is true.
     /// </summary>
     [Parameter]
-    public bool AutoUpload
-    {
-        get;
-        set;
-    } = true;
+    public bool AutoUpload { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the callback event that is triggered before a file upload operation starts.
@@ -66,22 +54,14 @@ public partial class Upload : ComponentBase
     ///     which contains information about the upload action that is about to start.
     /// </summary>
     [Parameter]
-    public EventCallback<BeforeUploadEventArgs> BeforeUpload
-    {
-        get;
-        set;
-    }
+    public EventCallback<BeforeUploadEventArgs> BeforeUpload { get; set; }
 
     /// <summary>
     ///     Gets or sets the child content of the UploaderControl. This is a RenderFragment that can be used to
     ///     render additional HTML content or Razor components within the UploaderControl.
     /// </summary>
     [Parameter]
-    public RenderFragment? ChildContent
-    {
-        get;
-        set;
-    }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     ///     Gets or sets the callback event that is triggered when a file is selected in the UploaderControl.
@@ -89,22 +69,14 @@ public partial class Upload : ComponentBase
     ///     which contains information about the selected file.
     /// </summary>
     [Parameter]
-    public EventCallback<SelectedEventArgs> FileSelected
-    {
-        get;
-        set;
-    }
+    public EventCallback<SelectedEventArgs> FileSelected { get; set; }
 
     /// <summary>
     ///     Gets or sets the ID of the UpdaterControl. This ID is used as the 'for' attribute value for the label and the
     ///     'Target' attribute value for the tooltip in the HTML markup.
     /// </summary>
     [Parameter]
-    public string ID
-    {
-        get;
-        set;
-    } = "";
+    public string ID { get; set; } = "";
 
     /// <summary>
     ///     Gets or sets a value indicating whether multiple file selection is allowed in the UploaderControl.
@@ -113,11 +85,7 @@ public partial class Upload : ComponentBase
     ///     The default value is false.
     /// </summary>
     [Parameter]
-    public bool Multiple
-    {
-        get;
-        set;
-    }
+    public bool Multiple { get; set; }
 
     /// <summary>
     ///     Gets or sets the callback event that is triggered when the value of the file input changes in the UploaderControl.
@@ -125,11 +93,7 @@ public partial class Upload : ComponentBase
     ///     which contains information about the file input change event.
     /// </summary>
     [Parameter]
-    public EventCallback<UploadChangeEventArgs> OnFileUpload
-    {
-        get;
-        set;
-    }
+    public EventCallback<UploadChangeEventArgs> OnFileUpload { get; set; }
 
     /// <summary>
     ///     Gets or sets the callback event that is triggered when a file is removed from the UploaderControl.
@@ -137,22 +101,14 @@ public partial class Upload : ComponentBase
     ///     which contains information about the file removal event.
     /// </summary>
     [Parameter]
-    public EventCallback<RemovingEventArgs> OnRemove
-    {
-        get;
-        set;
-    }
+    public EventCallback<RemovingEventArgs> OnRemove { get; set; }
 
     /// <summary>
     ///     Gets or sets the placeholder text for the UpdaterControl component.
     ///     This property allows for setting a display text in the date input field when it is empty.
     /// </summary>
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public string? Placeholder { get; set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the file upload should be sequential.
@@ -161,9 +117,5 @@ public partial class Upload : ComponentBase
     ///     The default value is false.
     /// </summary>
     [Parameter]
-    public bool SequentialUpload
-    {
-        get;
-        set;
-    }
+    public bool SequentialUpload { get; set; }
 }

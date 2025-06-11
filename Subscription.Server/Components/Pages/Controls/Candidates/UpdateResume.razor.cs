@@ -119,7 +119,7 @@ public partial class UpdateResume : ComponentBase
     ///     It is typically invoked when the user triggers the cancel action in the workflow dialog.
     /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task CancelDocumentDialog(MouseEventArgs args)
+    private async Task CancelResumeDialog(MouseEventArgs args)
     {
         VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
@@ -201,7 +201,7 @@ public partial class UpdateResume : ComponentBase
     ///     event callback.
     ///     It is typically triggered when the user confirms the save operation in the dialog.
     /// </remarks>
-    private async Task SaveDocumentDialog(EditContext editContext)
+    private async Task SaveResumeDialog(EditContext editContext)
     {
         VisibleSpinner = true;
         await Save.InvokeAsync(editContext);

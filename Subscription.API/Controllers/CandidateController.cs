@@ -8,14 +8,18 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     04-17-2025 19:23
+// Last Updated On:     06-11-2025 20:07
 // *****************************************/
 
 #endregion
 
+#region Using
+
 using System.Text.Json;
 
 using RestSharp;
+
+#endregion
 
 namespace Subscription.API.Controllers;
 
@@ -222,7 +226,7 @@ public class CandidateController : ControllerBase
         }
         finally
         {
-            await _connection.CloseAsync(); 
+            await _connection.CloseAsync();
         }
 
         return Ok(_status);
@@ -444,7 +448,7 @@ public class CandidateController : ControllerBase
 
         return Ok(_documentDetails);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<string>> DuplicateCandidate(int candidateID, string user)
     {
@@ -1049,6 +1053,152 @@ public class CandidateController : ControllerBase
         return Ok(0);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
+                                                                  string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")
+    {
+        string _activities = "[]";
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        try
+        {
+            await using SqlCommand _command = new("SaveCandidateActivity", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("SubmissionId", activity.ID);
+            _command.Int("CandidateID", candidateID);
+            _command.Int("RequisitionID", activity.RequisitionID);
+            _command.Varchar("Notes", 1000, activity.Notes);
+            _command.Char("Status", 3, activity.NewStatusCode.NullOrWhiteSpace() ? activity.StatusCode : activity.NewStatusCode);
+            _command.Varchar("User", 10, user);
+            _command.Bit("ShowCalendar", activity.ShowCalendar);
+            _command.Date("DateTime", activity.DateTimeInterview == DateTime.MinValue ? DBNull.Value : activity.DateTimeInterview);
+            _command.Char("Type", 1, activity.TypeOfInterview);
+            _command.Varchar("PhoneNumber", 20, activity.PhoneNumber);
+            _command.Varchar("InterviewDetails", 2000, activity.InterviewDetails);
+            _command.Bit("UpdateSchedule", false);
+            _command.Bit("CandScreen", isCandidateScreen);
+            _command.Char("RoleID", 2, roleID);
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            while (await _reader.ReadAsync())
+            {
+                _activities = _reader.NString(0);
+                /*_activities.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
+                                    _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9), _reader.GetString(10),
+                                    _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14), _reader.GetString(15),
+                                    _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18), _reader.NDateTime(19), _reader.GetString(20),
+                                    _reader.NString(21), _reader.NString(22), _reader.GetBoolean(23)));*/
+            }
+
+            await _reader.NextResultAsync();
+            // string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _company = ""; //, _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "";
+            //bool _firstTime = false;
+            await _reader.ReadAsync();
+            (string _firstName, string _lastName, string _reqCode, string _reqTitle, string _company) = (_reader.NString(0), _reader.NString(1), _reader.NString(2), _reader.NString(3),
+                                                                                                         _reader.NString(8));
+            /*_firstName = _reader.NString(0);
+            _lastName = _reader.NString(1);
+            _reqCode = _reader.NString(2);
+            _reqTitle = _reader.NString(3);
+            //_original = _reader.NString(4);
+            //_originalInternal = _reader.NString(5);
+            //_formatted = _reader.NString(6);
+            //_formattedInternal = _reader.NString(7);
+            //_firstTime = _reader.GetBoolean(8);
+            _company = _reader.GetString(8);*/
+
+            List<EmailTemplates> _templates = [];
+            Dictionary<string, string> _emailAddresses = new();
+            Dictionary<string, string> _emailCC = new();
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
+            }
+
+            await _reader.CloseAsync();
+
+            if (_templates.Count != 0)
+            {
+                EmailTemplates _templateSingle = _templates[0];
+                if (!_templateSingle.CC.NullOrWhiteSpace())
+                {
+                    string[] _ccArray = _templateSingle.CC.Split(",");
+                    foreach (string _cc in _ccArray)
+                    {
+                        _emailCC.Add(_cc, _cc);
+                    }
+                }
+
+                _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                         .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
+                                                         .Replace("$FIRST_NAME$", _firstName)
+                                                         .Replace("$LAST_NAME$", _lastName)
+                                                         .Replace("$REQ_ID$", _reqCode)
+                                                         .Replace("$REQ_TITLE$", _reqTitle)
+                                                         .Replace("$COMPANY$", _company)
+                                                         .Replace("$SUBMISSION_NOTES$", activity.Notes)
+                                                         .Replace("$SUBMISSION_STATUS$", activity.Status)
+                                                         .Replace("$LOGGED_USER$", user);
+
+                _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
+                                                          .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
+                                                          .Replace("$FIRST_NAME$", _firstName)
+                                                          .Replace("$LAST_NAME$", _lastName)
+                                                          .Replace("$REQ_ID$", _reqCode)
+                                                          .Replace("$REQ_TITLE$", _reqTitle)
+                                                          .Replace("$COMPANY$", _company)
+                                                          .Replace("$SUBMISSION_NOTES$", activity.Notes)
+                                                          .Replace("$SUBMISSION_STATUS$", activity.Status)
+                                                          .Replace("$LOGGED_USER$", user);
+
+                List<string> _attachments = [];
+                //string _pathDest = "";
+                //if (_firstTime)
+                //{
+                //    string _path = "";
+                //    if (!_formatted.NullOrWhiteSpace())
+                //    {
+                //        _path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formattedInternal);
+                //        _pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formatted);
+                //    }
+                //    else
+                //    {
+                //        _path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _originalInternal);
+                //        _pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _original);
+                //    }
+
+                //    if (!_path.NullOrWhiteSpace() && !_pathDest.NullOrWhiteSpace() && System.IO.File.Exists(_path))
+                //    {
+                //        System.IO.File.Copy(_path, _pathDest, true);
+                //        _attachments.Add(_pathDest);
+                //    }
+                //}
+
+                //GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, _attachments);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving candidate activity. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+            //
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_activities);
+    }
+
     [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public async Task<ActionResult<string>> SaveCandidateWithResume(CandidateDetailsResume candidateDetailsResume, string userName = "")
     {
@@ -1221,152 +1371,6 @@ public class CandidateController : ControllerBase
         }
 
         return Ok(0);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<string>> SaveCandidateActivity(CandidateActivity activity, int candidateID, string user, string roleID = "RS", bool isCandidateScreen = true,
-                                                                  string emailAddress = "maniv@titan-techs.com", string uploadPath = "", string jsonPath = "")
-    {
-        string _activities = "[]";
-
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        try
-        {
-            await using SqlCommand _command = new("SaveCandidateActivity", _connection);
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("SubmissionId", activity.ID);
-            _command.Int("CandidateID", candidateID);
-            _command.Int("RequisitionID", activity.RequisitionID);
-            _command.Varchar("Notes", 1000, activity.Notes);
-            _command.Char("Status", 3, activity.NewStatusCode.NullOrWhiteSpace() ? activity.StatusCode : activity.NewStatusCode);
-            _command.Varchar("User", 10, user);
-            _command.Bit("ShowCalendar", activity.ShowCalendar);
-            _command.Date("DateTime", activity.DateTimeInterview == DateTime.MinValue ? DBNull.Value : activity.DateTimeInterview);
-            _command.Char("Type", 1, activity.TypeOfInterview);
-            _command.Varchar("PhoneNumber", 20, activity.PhoneNumber);
-            _command.Varchar("InterviewDetails", 2000, activity.InterviewDetails);
-            _command.Bit("UpdateSchedule", false);
-            _command.Bit("CandScreen", isCandidateScreen);
-            _command.Char("RoleID", 2, roleID);
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (await _reader.ReadAsync())
-            {
-                _activities = _reader.NString(0);
-                /*_activities.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
-                                    _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9), _reader.GetString(10),
-                                    _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14), _reader.GetString(15),
-                                    _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18), _reader.NDateTime(19), _reader.GetString(20),
-                                    _reader.NString(21), _reader.NString(22), _reader.GetBoolean(23)));*/
-            }
-
-            await _reader.NextResultAsync();
-            // string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _company = ""; //, _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "";
-            //bool _firstTime = false;
-            await _reader.ReadAsync();
-            (string _firstName, string _lastName, string _reqCode, string _reqTitle, string _company) = (_reader.NString(0), _reader.NString(1), _reader.NString(2), _reader.NString(3),
-                                                                                                         _reader.NString(8));
-            /*_firstName = _reader.NString(0);
-            _lastName = _reader.NString(1);
-            _reqCode = _reader.NString(2);
-            _reqTitle = _reader.NString(3);
-            //_original = _reader.NString(4);
-            //_originalInternal = _reader.NString(5);
-            //_formatted = _reader.NString(6);
-            //_formattedInternal = _reader.NString(7);
-            //_firstTime = _reader.GetBoolean(8);
-            _company = _reader.GetString(8);*/
-
-            List<EmailTemplates> _templates = [];
-            Dictionary<string, string> _emailAddresses = new();
-            Dictionary<string, string> _emailCC = new();
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _templates.Add(new(_reader.NString(0), _reader.NString(1), _reader.NString(2)));
-            }
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _emailAddresses.Add(_reader.NString(0), _reader.NString(1));
-            }
-
-            await _reader.CloseAsync();
-
-            if (_templates.Count != 0)
-            {
-                EmailTemplates _templateSingle = _templates[0];
-                if (!_templateSingle.CC.NullOrWhiteSpace())
-                {
-                    string[] _ccArray = _templateSingle.CC.Split(",");
-                    foreach (string _cc in _ccArray)
-                    {
-                        _emailCC.Add(_cc, _cc);
-                    }
-                }
-
-                _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                         .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
-                                                         .Replace("$FIRST_NAME$", _firstName)
-                                                         .Replace("$LAST_NAME$", _lastName)
-                                                         .Replace("$REQ_ID$", _reqCode)
-                                                         .Replace("$REQ_TITLE$", _reqTitle)
-                                                         .Replace("$COMPANY$", _company)
-                                                         .Replace("$SUBMISSION_NOTES$", activity.Notes)
-                                                         .Replace("$SUBMISSION_STATUS$", activity.Status)
-                                                         .Replace("$LOGGED_USER$", user);
-
-                _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                          .Replace("$FULL_NAME$", $"{_firstName} {_lastName}")
-                                                          .Replace("$FIRST_NAME$", _firstName)
-                                                          .Replace("$LAST_NAME$", _lastName)
-                                                          .Replace("$REQ_ID$", _reqCode)
-                                                          .Replace("$REQ_TITLE$", _reqTitle)
-                                                          .Replace("$COMPANY$", _company)
-                                                          .Replace("$SUBMISSION_NOTES$", activity.Notes)
-                                                          .Replace("$SUBMISSION_STATUS$", activity.Status)
-                                                          .Replace("$LOGGED_USER$", user);
-
-                List<string> _attachments = [];
-                //string _pathDest = "";
-                //if (_firstTime)
-                //{
-                //    string _path = "";
-                //    if (!_formatted.NullOrWhiteSpace())
-                //    {
-                //        _path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formattedInternal);
-                //        _pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _formatted);
-                //    }
-                //    else
-                //    {
-                //        _path = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _originalInternal);
-                //        _pathDest = Path.Combine(uploadPath, "Uploads", "Candidate", candidateID.ToString(), _original);
-                //    }
-
-                //    if (!_path.NullOrWhiteSpace() && !_pathDest.NullOrWhiteSpace() && System.IO.File.Exists(_path))
-                //    {
-                //        System.IO.File.Copy(_path, _pathDest, true);
-                //        _attachments.Add(_pathDest);
-                //    }
-                //}
-
-                //GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, _attachments);
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving candidate activity. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-            //
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_activities);
     }
 
     [HttpPost]
@@ -1898,6 +1902,65 @@ public class CandidateController : ControllerBase
         }
 
         return Ok(_activities);
+    }
+
+    [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
+    public async Task<ActionResult<string>> UpdateResume(IFormFile file)
+    {
+        string _fileName = file.FileName;
+        string _candidateID = Request.Form["candidateID"].ToString();
+        string _resumeType = Request.Form["type"].ToString();
+        string _internalFileName = Guid.NewGuid().ToString("N");
+        bool _updateTextResume = Request.Form["updateTextResume"].ToBoolean();
+        string _textResume = "";
+
+        if (_updateTextResume)
+        {
+            if (Path.GetExtension(_fileName).Equals(".pdf", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _textResume = General.ExtractTextFromPdf(file);
+            }
+            else if (Path.GetExtension(_fileName).Equals(".doc", StringComparison.CurrentCultureIgnoreCase)
+                     || Path.GetExtension(_fileName).Equals(".docx", StringComparison.CurrentCultureIgnoreCase)
+                     || Path.GetExtension(_fileName).Equals(".rtf", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _textResume = General.ExtractTextFromWord(file);
+            }
+        }
+
+        // Create the folder path
+        string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
+
+        await General.UploadToBlob(file, _blobPath);
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        string _returnVal = "[]";
+        try
+        {
+            await using SqlCommand _command = new("SaveCandidateResume", _connection);
+            _command.CommandType = CommandType.StoredProcedure;
+            _command.Int("CandidateId", _candidateID.ToInt32());
+            _command.Varchar("InternalFileName", 50, _internalFileName);
+            _command.Int("ResumeType", Request.Form["type"].ToInt32());
+            _command.Varchar("User", 10, Request.Form["user"].ToString());
+            _command.Varchar("TextResume", -1, _textResume);
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+
+            while (await _reader.ReadAsync())
+            {
+                _returnVal = _reader.NString(0, "[]");
+            }
+
+            await _reader.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving candidate document. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+
+        return Ok(_returnVal);
     }
 
     [HttpPost, RequestSizeLimit(62_914_560)] //60 MB

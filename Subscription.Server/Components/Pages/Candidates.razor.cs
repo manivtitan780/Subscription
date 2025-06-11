@@ -1030,7 +1030,8 @@ public partial class Candidates
                                                                                                                             {"mime", ResumeUpdate.Mime},
                                                                                                                             {"candidateID", _target.ID.ToString()},
                                                                                                                             {"user", User},
-                                                                                                                            {"type", ResumeType}
+                                                                                                                            {"type", ResumeType},
+                                                                                                                            {"updateTextResume", _resume.UpdateTextResume.ToString()}
                                                                                                                         };
 
                                                                                string _response = await General.ExecuteRest<string>("Candidate/UpdateResume", _parameters, null, true,
