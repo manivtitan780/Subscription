@@ -17,7 +17,7 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 public partial class UpdateResume : ComponentBase
 {
-    private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
+    private readonly CandidateResumeValidator _candidateResumeValidator = new();
 
     internal MemoryStream AddedDocument { get; set; } = new();
 
