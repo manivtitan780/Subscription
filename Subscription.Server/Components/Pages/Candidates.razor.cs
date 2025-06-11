@@ -8,7 +8,7 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     06-09-2025 15:47
+// Last Updated On:     06-11-2025 19:13
 // *****************************************/
 
 #endregion
@@ -109,8 +109,6 @@ public partial class Candidates
 
     private bool DownloadOriginal { get; set; }
 
-    private DownloadsPanel PanelDownload { get; set; }
-
     public EditContext EditConEducation { get; set; }
 
     public EditContext EditConExperience { get; set; }
@@ -156,6 +154,8 @@ public partial class Candidates
 
     private CandidateDocument NewDocument { get; } = new();
 
+    private CandidateResume NewResume { get; } = new();
+
     private List<KeyValues> NextSteps { get; set; } = [];
 
     private NotesPanel NotesPanel { get; set; }
@@ -163,6 +163,8 @@ public partial class Candidates
     public bool OriginalExists { get; set; }
 
     private int Page { get; set; } = 1;
+
+    private DownloadsPanel PanelDownload { get; set; }
 
     private MarkupString RatingDate { get; set; }
 
@@ -176,6 +178,10 @@ public partial class Candidates
     private RedisService RedisService { get; set; }
 
     private int RequisitionID { get; set; }
+
+    private string ResumeType { get; set; }
+
+    private UpdateResume ResumeUpdate { get; set; }
 
     private int RoleID { get; } = 5;
 
@@ -685,7 +691,7 @@ public partial class Candidates
                                                                               try
                                                                               {
                                                                                   await PanelDownload.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume",
-                                                                                                                  _response.InternalFileName);
+                                                                                                                 _response.InternalFileName);
                                                                               }
                                                                               catch (Exception ex)
                                                                               {
@@ -1014,6 +1020,30 @@ public partial class Candidates
                                                                           }
                                                                       });
 
+    private Task SaveResume(EditContext resume) => ExecuteMethod(async () =>
+                                                                       {
+                                                                           if (resume.Model is CandidateResume _resume)
+                                                                           {
+                                                                               Dictionary<string, string> _parameters = new()
+                                                                                                                        {
+                                                                                                                            {"filename", ResumeUpdate.FileName},
+                                                                                                                            {"mime", ResumeUpdate.Mime},
+                                                                                                                            {"candidateID", _target.ID.ToString()},
+                                                                                                                            {"user", User},
+                                                                                                                            {"type", ResumeType}
+                                                                                                                        };
+
+                                                                               string _response = await General.ExecuteRest<string>("Candidate/UpdateResume", _parameters, null, true,
+                                                                                                                                    ResumeUpdate.AddedDocument.ToStreamByteArray(),
+                                                                                                                                    ResumeUpdate.FileName);
+
+                                                                               if (_response.NotNullOrWhiteSpace())
+                                                                               {
+                                                                                   _candDetailsObject.TextResume = _response;
+                                                                               }
+                                                                           }
+                                                                       });
+
     private Task SaveSkill(EditContext skill) => ExecuteMethod(async () =>
                                                                {
                                                                    if (skill.Model is CandidateSkills _skill)
@@ -1240,11 +1270,11 @@ public partial class Candidates
                 return AddDocument();
             case "itemOriginalResume":
                 _selectedTab = 5;
-                return Task.CompletedTask;
+                return UpdateCandidateResume(true);
             //return AddResume(0);
             case "itemFormattedResume":
                 _selectedTab = 5;
-                return Task.CompletedTask;
+                return UpdateCandidateResume(false);
             //return AddResume(1);
             case "itemChangeStatus":
                 return ChangeStatus();
@@ -1253,6 +1283,12 @@ public partial class Candidates
         }
 
         return Task.CompletedTask;
+    }
+
+    private async Task UpdateCandidateResume(bool isOriginal)
+    {
+        ResumeType = isOriginal ? "Original" : "Formatted";
+        await ResumeUpdate.ShowDialog().ConfigureAwait(false);
     }
 
     private (string Code, string Name) SplitState(int stateID)

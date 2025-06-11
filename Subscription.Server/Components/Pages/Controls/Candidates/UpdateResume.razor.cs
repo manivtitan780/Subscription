@@ -19,7 +19,7 @@ public partial class UpdateResume : ComponentBase
 {
     private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
 
-    private MemoryStream AddedDocument { get; set; } = new();
+    internal MemoryStream AddedDocument { get; set; } = new();
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document upload is cancelled.
@@ -47,19 +47,6 @@ public partial class UpdateResume : ComponentBase
     ///     It provides methods to show or hide the dialog programmatically.
     /// </remarks>
     private SfDialog Dialog { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the list of document types available for upload.
-    /// </summary>
-    /// <value>
-    ///     The list of document types represented as IntValues.
-    /// </value>
-    /// <remarks>
-    ///     This list is used to populate the dropdown control for selecting the document type during the upload process.
-    ///     Each IntValues item represents a document type with a unique identifier.
-    /// </remarks>
-    [Parameter]
-    public List<IntValues> DocumentTypes { get; set; }
 
     /// <summary>
     ///     Gets or sets the EditForm instance for the document upload dialog.
