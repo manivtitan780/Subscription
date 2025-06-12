@@ -305,27 +305,30 @@ public class RequisitionController : ControllerBase
         _command.Varchar("RoleID", 2, roleID);
         try
         {
-            string _requisitionDetail = "{}", _activity = "[]", _documents = "[]";
+            string _requisitionDetail = "{}", _activity = "[]", _documents = "[]", _notes = "[]";
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             while (await _reader.ReadAsync())
             {
-                _requisitionDetail = _reader.NString(0);
+                _requisitionDetail = _reader.NString(0, "{}");
             }
 
             await _reader.NextResultAsync(); //Activity
             while (await _reader.ReadAsync())
             {
-                _activity = _reader.NString(0);
+                _activity = _reader.NString(0, "[]");
             }
 
             await _reader.NextResultAsync();
-            if (_reader.HasRows)
+            while (await _reader.ReadAsync())
             {
-                while (await _reader.ReadAsync())
-                {
-                    _documents = _reader.NString(0);
-                }
+                _documents = _reader.NString(0, "[]");
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _notes = _reader.NString(0, "[]");
             }
 
             await _reader.CloseAsync();
@@ -334,7 +337,8 @@ public class RequisitionController : ControllerBase
                       {
                           Activity = _activity,
                           Documents = _documents,
-                          Requisition = _requisitionDetail
+                          Requisition = _requisitionDetail,
+                          Notes = _notes
                       });
         }
         catch (Exception ex)

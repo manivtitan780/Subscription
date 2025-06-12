@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     06-05-2025 15:05
+// Last Updated On:     06-12-2025 20:59
 // *****************************************/
 
 #endregion
@@ -20,6 +20,7 @@ public partial class Requisitions
     private const string StorageName = "RequisitionGrid";
 
     private List<CandidateActivity> _candActivityObject = [];
+    private List<CandidateNotes> _reqNotesObject;
     private List<IntValues> _education = [], _eligibility = [], _experience = [];
     private List<JobOptions> /*_companies = [], */ _jobOptions = [];
 
@@ -44,6 +45,50 @@ public partial class Requisitions
     private List<Workflow> _workflows;
 
     private ActivityPanelRequisition ActivityPanel { get; set; }
+    private CandidateNotes SelectedNotes { get; set; } = new();
+
+    private Dictionary<string, string> CreateParameters(int id) => new()
+                                                                   {
+                                                                       {"id", id.ToString()},
+                                                                       {"requisitionID", _target.ID.ToString()},
+                                                                       {"user", User}
+                                                                   };
+
+
+    private Task DeleteNotes(int id) => ExecuteMethod(async () =>
+                                                      {
+                                                          Dictionary<string, string> _parameters = CreateParameters(id);
+                                                          string _response = await General.ExecuteRest<string>("Requisition/DeleteNotes", _parameters);
+
+                                                          _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                      });
+
+    private Task EditNotes(int id) => ExecuteMethod(async () =>
+                                                    {
+                                                        VisibleSpinner = true;
+                                                        if (id == 0)
+                                                        {
+                                                            if (SelectedNotes == null)
+                                                            {
+                                                                SelectedNotes = new();
+                                                            }
+                                                            else
+                                                            {
+                                                                SelectedNotes.Clear();
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
+                                                        }
+
+                                                        EditConNotes = new(SelectedNotes!);
+                                                        VisibleSpinner = false;
+                                                        await Task.Yield();
+                                                        //await CandidateNotesDialog.ShowDialog();
+                                                    });
+
+    public EditContext EditConNotes { get; set; }
 
     private List<Company> Companies { get; set; } = [];
 
@@ -117,11 +162,13 @@ public partial class Requisitions
 
     private string Title { get; set; } = "Edit";
 
-    public UploadCandidate UploadCandidateDialog { get; set; }
+    private UploadCandidate UploadCandidateDialog { get; set; }
 
     private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    private RequisitionNotesPanel NotesPanel { get; set; }
 
     private Task AddDocument() => ExecuteMethod(async () =>
                                                 {
@@ -241,21 +288,19 @@ public partial class Requisitions
                                                                                                         VisibleSpinner = true;
                                                                                                         StatusRequisition.Status = _target.Status;
 
-                                                                                                        Dictionary<string, string> _parameters = new()
-                                                                                                                                                 {
-                                                                                                                                                     {"requisitionID", _target.ID.ToString()}
-                                                                                                                                                 };
+                                                                                                        Dictionary<string, string> _parameters = new() {{"requisitionID", _target.ID.ToString()}};
 
-                                                                                                        (string _requisition, string _activity, string _documents) =
+                                                                                                        (string _requisition, string _activity, string _documents, string _notes) =
                                                                                                             await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails",
                                                                                                                                                                 _parameters, null, false);
 
                                                                                                         _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition);
                                                                                                         _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];
+                                                                                                        _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? [];
                                                                                                         _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];
                                                                                                         SetSkills();
 
-                                                                                                        _selectedTab = _candActivityObject.Count > 0 ? 2 : 0;
+                                                                                                        _selectedTab = _candActivityObject.Count > 0 ? 3 : 0;
 
                                                                                                         VisibleSpinner = false;
                                                                                                     });

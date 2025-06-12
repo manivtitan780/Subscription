@@ -156,6 +156,14 @@
 								</TabItem>
 								<TabItem>
 									<ChildContent>
+										<TabHeader Text="Notes"/>
+									</ChildContent>
+									<ContentTemplate>
+										<RequisitionNotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" Model="@_reqNotesObject" @ref="NotesPanel" UserName="@User"/>
+									</ContentTemplate>
+								</TabItem>
+								<TabItem>
+									<ChildContent>
 										<TabHeader Text="Documents"/>
 									</ChildContent>
 									<ContentTemplate>
@@ -168,7 +176,7 @@
 										<TabHeader Text="Activity"/>
 									</ChildContent>
 									<ContentTemplate>
-										<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"  />
+										<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"/>
 									</ContentTemplate>
 								</TabItem>
 							</TabItems>

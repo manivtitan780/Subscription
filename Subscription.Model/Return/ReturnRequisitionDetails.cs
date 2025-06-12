@@ -15,4 +15,4 @@
 
 namespace Subscription.Model.Return;
 
-public record struct ReturnRequisitionDetails(string Requisition, string Activity, string Documents);
+public record struct ReturnRequisitionDetails(string Requisition, string Activity, string Documents, string Notes);

@@ -1,32 +1,21 @@
-﻿#region Header
+#region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           NotesPanel.razor.cs
+// File Name:           RequisitionNotesPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-05-2025 20:02
+// Created On:          06-12-2025 20:06
 // Last Updated On:     06-12-2025 20:57
 // *****************************************/
 
 #endregion
 
-namespace Subscription.Server.Components.Pages.Controls.Candidates;
+namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
-/// <summary>
-///     The NotesPanel class is a partial class that represents a panel for displaying and managing notes related to
-///     candidates.
-/// </summary>
-/// <remarks>
-///     The NotesPanel class includes properties for managing the display and interaction with notes, such as deletion and
-///     editing of notes,
-///     user rights for editing, and the display grid for the notes. It also includes methods for handling the deletion and
-///     editing of notes,
-///     and the selection of a row in the grid.
-/// </remarks>
-public partial class NotesPanel
+public partial class RequisitionNotesPanel : ComponentBase
 {
     private int _selectedID;
 
@@ -92,20 +81,6 @@ public partial class NotesPanel
 	///     The grid is bound to the Model property, which provides the data source for the grid.
 	/// </remarks>
 	private SfGrid<CandidateNotes> GridNotes { get; set; }
-
-	/// <summary>
-	///     Gets or sets a value indicating whether the current context is a requisition.
-	/// </summary>
-	/// <value>
-	///     true if the current context is a requisition; otherwise, false. The default is false.
-	/// </value>
-	/// <remarks>
-	///     This property is a boolean flag that determines if the current context is a requisition. If IsRequisition is true,
-	///     the context is a requisition; if IsRequisition is false, the context is not a requisition. The default value is
-	///     false, meaning that, by default, the context is not a requisition.
-	/// </remarks>
-	[Parameter]
-    public bool IsRequisition { get; set; }
 
 	/// <summary>
 	///     Gets or sets the model for the note entries.

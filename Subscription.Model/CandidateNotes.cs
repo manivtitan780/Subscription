@@ -3,12 +3,12 @@
 // /*****************************************
 // Copyright:           Titan-Techs.
 // Location:            Newtown, PA, USA
-// Solution:            ProfSvc_AppTrack
-// Project:             ProfSvc_Classes
+// Solution:            Subscription
+// Project:             Subscription.Model
 // File Name:           CandidateNotes.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja
-// Created On:          12-09-2022 15:57
-// Last Updated On:     10-26-2023 21:08
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     06-12-2025 20:57
 // *****************************************/
 
 #endregion
@@ -36,9 +36,9 @@ public class CandidateNotes
 	///     values.
 	/// </remarks>
 	public CandidateNotes()
-	{
-		Clear();
-	}
+    {
+        Clear();
+    }
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="CandidateNotes" /> class.
@@ -48,12 +48,12 @@ public class CandidateNotes
 	/// <param name="updatedBy">The name of the user who last updated the candidate's notes.</param>
 	/// <param name="notes">The notes for the candidate.</param>
 	public CandidateNotes(int id, DateTime updatedDate, string updatedBy, string notes)
-	{
-		ID = id;
-		UpdatedDate = updatedDate;
-		UpdatedBy = updatedBy;
-		Notes = notes;
-	}
+    {
+        ID = id;
+        UpdatedDate = updatedDate;
+        UpdatedBy = updatedBy;
+        Notes = notes;
+    }
 
 	/// <summary>
 	///     Gets or sets the ID of the candidate note.
@@ -64,11 +64,7 @@ public class CandidateNotes
 	/// <remarks>
 	///     This property is used as the primary key for the CandidateNotes object.
 	/// </remarks>
-	public int ID
-	{
-		get;
-		set;
-	}
+	public int ID { get; set; }
 
 	/// <summary>
 	///     Gets or sets the notes for the candidate.
@@ -79,11 +75,7 @@ public class CandidateNotes
 	/// <remarks>
 	///     This property is used to store any notes or comments about the candidate.
 	/// </remarks>
-	public string Notes
-	{
-		get;
-		set;
-	}
+	public string Notes { get; set; }
 
 	/// <summary>
 	///     Gets or sets the name of the user who last updated the candidate's notes.
@@ -94,11 +86,7 @@ public class CandidateNotes
 	/// <remarks>
 	///     This property is used to track the user who made the most recent modifications to the candidate's notes.
 	/// </remarks>
-	public string UpdatedBy
-	{
-		get;
-		set;
-	}
+	public string UpdatedBy { get; set; }
 
 	/// <summary>
 	///     Gets or sets the date and time when the candidate's notes were last updated.
@@ -109,11 +97,7 @@ public class CandidateNotes
 	/// <remarks>
 	///     This property is used to track the most recent modifications to the candidate's notes.
 	/// </remarks>
-	public DateTime UpdatedDate
-	{
-		get;
-		set;
-	}
+	public DateTime UpdatedDate { get; set; }
 
 	/// <summary>
 	///     Resets the properties of the CandidateNotes object to their default values.
@@ -123,12 +107,12 @@ public class CandidateNotes
 	///     the UpdatedDate to DateTime.MinValue, and the UpdatedBy and Notes to an empty string.
 	/// </remarks>
 	public void Clear()
-	{
-		ID = 0;
-		UpdatedDate = DateTime.MinValue;
-		UpdatedBy = "";
-		Notes = "";
-	}
+    {
+        ID = 0;
+        UpdatedDate = DateTime.MinValue;
+        UpdatedBy = "";
+        Notes = "";
+    }
 
 	/// <summary>
 	///     Creates a deep copy of the current CandidateNotes object.
