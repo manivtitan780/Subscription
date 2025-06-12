@@ -1934,33 +1934,31 @@ public class CandidateController : ControllerBase
         await General.UploadToBlob(file, _blobPath);
 
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string _returnVal = "[]";
+
         try
         {
-            await using SqlCommand _command = new("SaveCandidateResume", _connection);
+            await using SqlCommand _command = new("UpdateResume", _connection);
             _command.CommandType = CommandType.StoredProcedure;
             _command.Int("CandidateId", _candidateID.ToInt32());
-            _command.Varchar("InternalFileName", 50, _internalFileName);
-            _command.Int("ResumeType", Request.Form["type"].ToInt32());
+            _command.Varchar("InternalName", 50, _internalFileName);
+            _command.Varchar("FileName", 255, _fileName);
+            _command.Int("Type", Request.Form["type"].ToInt32());
             _command.Varchar("User", 10, Request.Form["user"].ToString());
             _command.Varchar("TextResume", -1, _textResume);
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            await _connection.OpenAsync().ConfigureAwait(false);
+            await _command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
-            while (await _reader.ReadAsync())
-            {
-                _returnVal = _reader.NString(0, "[]");
-            }
-
-            await _reader.CloseAsync();
+            return Ok(_textResume);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving candidate document. {ExceptionMessage}", ex.Message);
             return StatusCode(500, ex.Message);
         }
-
-        return Ok(_returnVal);
+        finally
+        {
+            await _connection.CloseAsync().ConfigureAwait(false);
+        }
     }
 
     [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
