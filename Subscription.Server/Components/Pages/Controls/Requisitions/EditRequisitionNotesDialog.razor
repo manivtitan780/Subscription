@@ -1,0 +1,35 @@
+@*
+<summary>
+    Represents the dialog for editing notes associated with a specific entity.
+</summary>
+<remarks>
+    This component displays a modal dialog that allows users to edit the notes of a specific entity.
+    It includes a form with a text box for entering notes, and uses validation and a spinner during long-running operations.
+</remarks>
+*@
+<SfDialog CssClass="dialogPopup" Header="@($"{Title} Notes")" Height="375px" IsModal="true" MinHeight="230px" @ref="Dialog" Target="#divTarget" Visible="false" Width="480px">
+	<ChildContent>
+		<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+		<DialogPositionData X="right" Y="center"/>
+		<DialogAnimationSettings Duration="500" Effect="DialogEffect.SlideRight"/>
+		<DialogEvents OnOpen="OpenDialog"></DialogEvents>
+		<SfDataForm EditContext="Context" ID="notesEditForm" OnValidSubmit="SaveNotesDialog" @ref="EditNotesForm" ValidationDisplayMode="FormValidationDisplay.Inline">
+			<FormButtons>
+				<SfButton CssClass="e-secondary" IconCss="e-icons e-close" OnClick="CancelNotesDialog" type="button">Cancel</SfButton>
+				<SfButton CssClass="e-primary" IconCss="e-icons e-save" type="submit">Save Note</SfButton>
+			</FormButtons>
+			<FormValidator>
+				<FluentValidationValidator Validator="_candidateNotesValidator"/>
+			</FormValidator>
+			<FormItems>
+				<FormGroup ColumnCount="1" ColumnSpacing="10px" CssClass="formGroup" ID="groupInfo" LabelText="@($"{Title} Notes")">
+					<FormItem ColumnSpan="1" Field="@nameof(Model.Notes)">
+						<Template>
+							<TextArea @bind-Value="Model.Notes" ID="textNotes" Placeholder="Notes" MaxLength="1000"></TextArea>
+						</Template>
+					</FormItem>
+				</FormGroup>
+			</FormItems>
+		</SfDataForm>
+	</ChildContent>
+</SfDialog>

@@ -352,6 +352,40 @@ public class RequisitionController : ControllerBase
         }
     }
 
+    [HttpPost]
+    public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int requisitionID, string user)
+    {
+        if (candidateNote == null)
+        {
+            return Ok("[]");
+        }
+
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new("SaveNote", _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+        _command.Int("Id", candidateNote.ID);
+        _command.Int("CandidateID", requisitionID);
+        _command.Varchar("Note", -1, candidateNote.Notes);
+        _command.Varchar("EntityType", 5, "REQ");
+        _command.Varchar("User", 10, user);
+        try
+        {
+            string _returnVal = "[]";
+            await _connection.OpenAsync();
+            _returnVal = (await _command.ExecuteScalarAsync())?.ToString();
+            return Ok(_returnVal);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error saving notes. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+    }
+
     /// <summary>
     ///     Saves a requisition to the database.
     /// </summary>

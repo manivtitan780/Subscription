@@ -8,7 +8,7 @@
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     06-12-2025 20:59
+// Last Updated On:     06-13-2025 20:05
 // *****************************************/
 
 #endregion
@@ -20,7 +20,6 @@ public partial class Requisitions
     private const string StorageName = "RequisitionGrid";
 
     private List<CandidateActivity> _candActivityObject = [];
-    private List<CandidateNotes> _reqNotesObject;
     private List<IntValues> _education = [], _eligibility = [], _experience = [];
     private List<JobOptions> /*_companies = [], */ _jobOptions = [];
 
@@ -29,6 +28,7 @@ public partial class Requisitions
     private MarkupString _reqDetailSkills = "".ToMarkupString();
     private RequisitionDetails _reqDetailsObject = new(), _reqDetailsObjectClone = new();
     private List<RequisitionDocuments> _reqDocumentsObject = [];
+    private List<CandidateNotes> _reqNotesObject;
 
     private List<string> _search = [];
 
@@ -45,50 +45,6 @@ public partial class Requisitions
     private List<Workflow> _workflows;
 
     private ActivityPanelRequisition ActivityPanel { get; set; }
-    private CandidateNotes SelectedNotes { get; set; } = new();
-
-    private Dictionary<string, string> CreateParameters(int id) => new()
-                                                                   {
-                                                                       {"id", id.ToString()},
-                                                                       {"requisitionID", _target.ID.ToString()},
-                                                                       {"user", User}
-                                                                   };
-
-
-    private Task DeleteNotes(int id) => ExecuteMethod(async () =>
-                                                      {
-                                                          Dictionary<string, string> _parameters = CreateParameters(id);
-                                                          string _response = await General.ExecuteRest<string>("Requisition/DeleteNotes", _parameters);
-
-                                                          _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
-                                                      });
-
-    private Task EditNotes(int id) => ExecuteMethod(async () =>
-                                                    {
-                                                        VisibleSpinner = true;
-                                                        if (id == 0)
-                                                        {
-                                                            if (SelectedNotes == null)
-                                                            {
-                                                                SelectedNotes = new();
-                                                            }
-                                                            else
-                                                            {
-                                                                SelectedNotes.Clear();
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
-                                                        }
-
-                                                        EditConNotes = new(SelectedNotes!);
-                                                        VisibleSpinner = false;
-                                                        await Task.Yield();
-                                                        //await CandidateNotesDialog.ShowDialog();
-                                                    });
-
-    public EditContext EditConNotes { get; set; }
 
     private List<Company> Companies { get; set; } = [];
 
@@ -113,6 +69,8 @@ public partial class Requisitions
 
     private DocumentsPanel DocumentsPanel { get; set; }
 
+    public EditContext EditConNotes { get; set; }
+
     private SfGrid<Requisition> Grid { get; set; }
 
     private bool HasEditRights { get; set; }
@@ -132,10 +90,14 @@ public partial class Requisitions
 
     private List<KeyValues> NextSteps { get; set; } = [];
 
+    private RequisitionNotesPanel NotesPanel { get; set; }
+
     [Inject]
     private RedisService RedisService { get; set; }
 
     private int RequisitionID { get; set; }
+
+    public EditNotesDialog RequisitionNotesDialog { get; set; }
 
     private int RoleID { get; } = 5;
 
@@ -148,6 +110,8 @@ public partial class Requisitions
     private CandidateActivity SelectedActivity { get; set; } = new();
 
     private RequisitionDocuments SelectedDownload { get; set; } = new();
+
+    private CandidateNotes SelectedNotes { get; set; } = new();
 
     [Inject]
     private ISessionStorageService SessionStorage { get; set; }
@@ -168,8 +132,6 @@ public partial class Requisitions
 
     private bool VisibleSpinner { get; set; }
 
-    private RequisitionNotesPanel NotesPanel { get; set; }
-
     private Task AddDocument() => ExecuteMethod(async () =>
                                                 {
                                                     if (NewDocument == null)
@@ -181,13 +143,13 @@ public partial class Requisitions
                                                         NewDocument.Clear();
                                                     }
 
-                                                    await DialogDocument.ShowDialog();
+                                                    await DialogDocument.ShowDialog().ConfigureAwait(false);
                                                 });
 
     private Task AdvancedSearch() => ExecuteMethod(async () =>
                                                    {
                                                        SearchModelClone = SearchModel.Copy();
-                                                       await DialogSearch.ShowDialog();
+                                                       await DialogSearch.ShowDialog().ConfigureAwait(false);
                                                    });
 
     private Task AllAlphabets(MouseEventArgs args) => ExecuteMethod(async () =>
@@ -217,6 +179,13 @@ public partial class Requisitions
     {
         await Refresh(null).ConfigureAwait(false);
     }
+
+    private Dictionary<string, string> CreateParameters(int id) => new()
+                                                                   {
+                                                                       {"id", id.ToString()},
+                                                                       {"requisitionID", _target.ID.ToString()},
+                                                                       {"user", User}
+                                                                   };
 
     private Task DataHandler(object obj) => ExecuteMethod(async () =>
                                                           {
@@ -272,6 +241,14 @@ public partial class Requisitions
                                                                _reqDocumentsObject = await General.ExecuteAndDeserialize<RequisitionDocuments>("Requisition/DeleteRequisitionDocument", _parameters)
                                                                                                   .ConfigureAwait(false);
                                                            });
+
+    private Task DeleteNotes(int id) => ExecuteMethod(async () =>
+                                                      {
+                                                          Dictionary<string, string> _parameters = CreateParameters(id);
+                                                          string _response = await General.ExecuteRest<string>("Requisition/DeleteNotes", _parameters);
+
+                                                          _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                      });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition) => ExecuteMethod(async () =>
                                                                                                     {
@@ -335,6 +312,31 @@ public partial class Requisitions
 
                                                              await DialogActivity.ShowDialog();
                                                          });
+
+    private Task EditNotes(int id) => ExecuteMethod(async () =>
+                                                    {
+                                                        VisibleSpinner = true;
+                                                        if (id == 0)
+                                                        {
+                                                            if (SelectedNotes == null)
+                                                            {
+                                                                SelectedNotes = new();
+                                                            }
+                                                            else
+                                                            {
+                                                                SelectedNotes.Clear();
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
+                                                        }
+
+                                                        EditConNotes = new(SelectedNotes!);
+                                                        VisibleSpinner = false;
+                                                        await Task.Yield();
+                                                        await RequisitionNotesDialog.ShowDialog().ConfigureAwait(false);
+                                                    });
 
     private Task EditRequisition(bool isAdd) => ExecuteMethod(async () =>
                                                               {
@@ -627,6 +629,26 @@ public partial class Requisitions
                                                                          }
                                                                      });
 
+    private Task SaveNote(EditContext note) => ExecuteMethod(async () =>
+                                                             {
+                                                                 if (note.Model is CandidateNotes _candidateNotes)
+                                                                 {
+                                                                     Dictionary<string, string> _parameters = new()
+                                                                                                              {
+                                                                                                                  {"requisitionID", _target.ID.ToString()},
+                                                                                                                  {"user", User}
+                                                                                                              };
+                                                                     string _response = await General.ExecuteRest<string>("Requisition/SaveNotes", _parameters, _candidateNotes);
+
+                                                                     if (_response.NullOrWhiteSpace() || _response == "[]")
+                                                                     {
+                                                                         return;
+                                                                     }
+
+                                                                     _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                                 }
+                                                             });
+
     private Task SaveRequisition(EditContext arg) => ExecuteMethod(async () =>
                                                                    {
                                                                        Dictionary<string, string> _parameters = new()
@@ -746,8 +768,12 @@ public partial class Requisitions
                 await EditRequisition(false);
                 break;
             case "itemAddDocument":
-                _selectedTab = 1;
+                _selectedTab = 2;
                 await AddDocument();
+                break;
+            case "itemAddNotes":
+                _selectedTab = 1;
+                await EditNotes(0);
                 break;
             case "itemSubmitExisting":
                 NavManager.NavigateTo($"{NavManager.BaseUri}candidate?reqid={_target.ID}", true);

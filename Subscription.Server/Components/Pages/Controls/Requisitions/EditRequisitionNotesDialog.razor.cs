@@ -1,21 +1,8 @@
-﻿#region Header
+using Microsoft.AspNetCore.Components;
 
-// /*****************************************
-// Copyright:           Titan-Techs.
-// Location:            Newtown, PA, USA
-// Solution:            Subscription
-// Project:             Subscription.Server
-// File Name:           EditNotesDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          12-04-2024 20:12
-// Last Updated On:     06-13-2025 19:48
-// *****************************************/
+namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
-#endregion
-
-namespace Subscription.Server.Components.Pages.Controls.Candidates;
-
-public partial class EditNotesDialog
+public partial class EditRequisitionNotesDialog : ComponentBase
 {
     private readonly CandidateNotesValidator _candidateNotesValidator = new();
 
@@ -29,7 +16,7 @@ public partial class EditNotesDialog
     private SfDataForm EditNotesForm { get; set; }
 
     [Parameter]
-    public string Entity { get; set; } = "Candidate";
+    public string Entity { get; set; } = "Requisition";
 
     [Parameter]
     public CandidateNotes Model { get; set; }
