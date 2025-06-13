@@ -187,7 +187,6 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
-	@*<SfSpinner CssClass="spinnerHeight" @ref="@SpinnerTop" Type="SpinnerType.Fluent2" ZIndex="12000"/>*@
 	<AddRequisitionDocument Model="@NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
 	<ChangeRequisitionStatus Model="StatusRequisition" @ref="DialogChangeStatus" ReqStatus="StatusRequisitionList" Save="SaveChangeRequisition"/>
 	<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
@@ -195,7 +194,7 @@
 	<EditActivityDialog IsCandidate="false" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflows"/>
 	<EditNotesDialog Model="SelectedNotes" @ref="RequisitionNotesDialog" Save="SaveNote" Title="Candidate" Entity="Requisition"/>
 	<AdvancedRequisitionSearch @ref="DialogSearch" Companies="Companies" JobOption="_jobOptions" StatusDropDown="_search" Model="SearchModelClone" Search="SearchRequisition"/>
-	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" RequisitionID="@(_target == null ? 0 : _target.ID)" ShowSubmissions="true" User="@User"/>
+	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" RequisitionID="@(_target is null ? 0 : _target.ID)" ShowSubmissions="true" User="@User"/>
 }
 else
 {
