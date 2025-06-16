@@ -7,7 +7,7 @@
 >>>>>>> 5260aa78ad41b5e4b380d9d65f15129d8d5d0612
 
 errorlog*.txt
-*.txt
+##*.txt
 
 # User-specific files
 *.rsuser

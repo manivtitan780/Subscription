@@ -1,0 +1,29 @@
+Account Manager Dashboard - Query Documentation
+Set 1: Time-Bound Metrics (7 days, MTD, QTD, HYTD, YTD)
+Query 1: Total Requisitions Created
+Counts all requisitions created by the logged-in user across different time periods. Uses the CreatedDate field to determine which period each requisition falls into. Provides a baseline metric for account manager activity and workload over time.
+
+Query 2: Active Requisitions (OPN, NEW, PAR)
+Counts requisitions created by the user that are still actively being recruited for. Filters for status codes OPN (Open), NEW (New), and PAR (Partially Filled) to show only positions that need candidates. Helps track the current active workload and open positions requiring attention.
+
+Query 3: Candidates in Interview (INT)
+Counts unique candidates currently in interview status for requisitions created by the user. Handles multiple interview records per candidate-requisition combination by counting each pair only once. Uses the most recent interview date (MAX(CreatedDate)) to determine the time period for reporting.
+
+Query 4: Offers Extended (OEX)
+Tracks the number of unique candidates who have received job offers for the user's requisitions. Counts each candidate-requisition combination only once, even if multiple offer-related activities exist. Provides insight into late-stage recruiting success and pending decisions.
+
+Query 5: Candidates Hired (HIR)
+Counts unique candidates who have accepted offers and been hired for the user's requisitions. Represents successful placements and completed recruiting cycles. Critical metric for measuring account manager effectiveness and goal achievement.
+
+Query 6: Hire-to-Offer Ratio (HIR/OEX)
+Calculates the acceptance rate by dividing hired candidates by offers extended for each time period. Returns 0.00 when no offers were made to avoid division by zero errors. Helps identify potential issues with compensation, candidate fit, or offer negotiation processes.
+
+
+Set 2: Recent Activity Report
+Query 7: 30-Day Submission Activity
+Displays all candidate submissions for the user's requisitions where the first submission occurred within the last 30 days. Shows current status, first submission date, last activity date, and notes from the most recent activity. Sorts results by company submission volume (descending), then alphabetically for ties, providing a prioritized view of client activity.
+
+
+Set 3: Placement Report
+Query 8: 3-Month Hire Report
+Lists all candidates hired within the last 3 months for requisitions created by the user. Shows the actual hire date and placeholder values for financial fields (salary, fees, commissions) that will be populated later. Provides a comprehensive view of recent successful placements for commission tracking and client billing purposes.RetryClaude can make mistakes. Please double-check responses.Researchbeta Opus 4
