@@ -26,18 +26,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.5" />
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.6" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.5">
+        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.6">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.4" />
-        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="29.2.10" />
-        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
-        <PackageReference Include="System.Runtime.Caching" Version="9.0.5" />
-        <PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
-        <PackageReference Include="System.Text.Json" Version="9.0.5" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="29.2.11" />
+        <PackageReference Include="System.Linq.Async" Version="6.0.3" />
+        <PackageReference Include="System.Runtime.Caching" Version="9.0.6" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
+        <PackageReference Include="System.Text.Json" Version="9.0.6" />
     </ItemGroup>
 
     <ItemGroup>
