@@ -1,0 +1,28 @@
+SET 1 - Submission Pipeline Metrics
+Query 1 - Total Submissions
+Counts all submissions created by the recruiter across different time periods (7D, MTD, QTD, HYTD, YTD). This provides a high-level view of the recruiter's activity volume. The query respects year boundaries by checking the earliest submission date.
+
+Query 2 - Active Requisitions Worked
+Counts unique requisitions with status NEW, OPN, or PAR that the recruiter has submitted candidates to. This shows how many active job openings the recruiter is currently working on. Helps track requisition coverage across time periods.
+
+Query 3 - Interview Stage Candidates
+Tracks candidates in INT (Interview) status where the recruiter made the initial submission. Uses the latest INT status date for time period categorization. Shows pipeline progression and interview scheduling effectiveness.
+
+Query 4 - Offers Extended
+Counts candidates who reached OEX (Offer Extended) status for requisitions where the recruiter was the first submitter. Indicates successful candidate progression through the hiring process. Uses latest OEX date for time period classification.
+
+Query 5 - Successful Hires
+Tracks candidates who achieved HIR (Hired) status where the recruiter initiated the submission. This is the key success metric showing actual placements. Demonstrates the recruiter's contribution to filling positions.
+
+Query 6 - Offer-to-Hire Conversion Rate
+Calculates the ratio of HIR to OEX statuses to show what percentage of extended offers result in successful hires. Helps identify potential issues in offer acceptance or negotiation. Returns 0 if no offers exist to prevent division errors.
+
+
+SET 2 - Recent Activity Detail
+Query 1 - Recent Submissions Detail
+Provides detailed information about all submissions made by the recruiter in the last 30 days. Companies are sorted by total submission count to highlight the most active clients. Shows current status and latest activity notes for each candidate-requisition combination.
+
+
+SET 3 - Placement Reporting
+Query 1 - Hired Candidates Report
+Lists all candidates hired in the last 3 months where the recruiter made the initial submission. Includes placeholder fields for financial data (salary, placement fees, commissions) that would typically come from other systems. Provides a foundation for commission tracking and placement analytics.
