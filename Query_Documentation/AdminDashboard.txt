@@ -1,0 +1,33 @@
+Generic Query (Dropdown):
+
+Retrieves active users with Role=5 for dropdown population. Returns UserName and concatenated full name. Filters only active users (Status=1) to ensure dropdown shows only valid options.
+
+
+SET 1  
+Query 1 (Requisitions Created):
+Counts total requisitions created by each user across five time periods (7D, MTD, QTD, HYTD, YTD). Uses requisition CreatedDate to determine which time period each record belongs to. Returns complete matrix showing all users and all periods, with 0 for periods where no requisitions were created. Only includes active users who created requisitions within the last year for performance optimization.
+
+Query 2 (Active Requisitions Updated):
+Counts requisitions with active statuses (NEW, OPN, PAR) that were last updated within each time period. Uses requisition UpdatedDate instead of CreatedDate to track recent activity on open positions. Follows same time period structure as Query 1 with complete user-period matrix. Helps track which recruiters are actively managing open requisitions.
+
+Query 3 (Face-to-Face Interviews):
+Counts unique candidate-requisition combinations that reached interview stage (INT status) within each time period. Uses MAX(CreatedDate) for each candidate-requisition-status combination to avoid double-counting multiple interview records. Leverages temp table for performance when processing submission status changes. Shows interview activity levels across recruiters and time periods.
+
+Query 4 (Offers Extended):
+Counts unique candidate-requisition combinations that received job offers (OEX status) within each time period. Similar structure to Query 3 but focuses on offer extension activity. Uses same temp table approach to handle multiple status change records efficiently. Tracks recruiter success in advancing candidates to offer stage.
+
+Query 5 (Hires Completed):
+Counts unique candidate-requisition combinations that resulted in successful hires (HIR status) within each time period. Represents the final successful outcome of the recruitment process. Uses consistent methodology with other submission-based queries for accurate candidate counting. Measures actual placement success across recruiters and time periods.
+
+Query 6 (OEX to HIR Conversion Ratio):
+Calculates the conversion ratio from offers extended to actual hires for each user and time period. Combines data from OEX and HIR status queries to compute success percentage. Returns 0 when no offers were extended to avoid division by zero errors. Provides key performance metric for measuring recruiter effectiveness in closing candidates.
+
+
+SET 2 
+Query 1 (Company Submission Activity):
+Displays detailed submission pipeline showing all candidate submissions within the last 3 months, grouped by company. Shows company name, requisition details, candidate information, current status, and activity timeline. Companies are sorted by total submission volume (highest first), with alphabetical sorting for ties. Within each company, records are sorted by requisition ID and first submission date for logical grouping.
+
+
+SET 3 
+Query 1 (Hired Candidates Report):
+Lists all successfully hired candidates from the past 3 months with comprehensive placement details. Focuses on HIR status submissions using MAX(CreatedDate) for accurate hire date tracking. Currently includes placeholder values for financial fields (salary, fees, commission) that can be populated later. Provides foundation for revenue tracking and commission calculations once integrated with financial data.
