@@ -12,14 +12,14 @@
 		<div class="header-content">
 			<h1 class="dashboard-title">
 				<i class="fas fa-chart-line"></i>
-				Recruitment Dashboard - @selectedUser
+				Recruitment Dashboard - @_selectedUser
 			</h1>
 			<div class="header-controls">
 				<div class="time-selector">
 					<label>Time Period:</label>
 					<SfDropDownList TValue="string" TItem="string"
-					                DataSource="@timePeriods"
-					                @bind-Value="selectedTimePeriod"
+					                DataSource="@_timePeriods"
+					                @bind-Value="_selectedTimePeriod"
 					                Width="120px">
 					</SfDropDownList>
 				</div>
@@ -30,14 +30,14 @@
 		</div>
 	</div>
 
-	@if (isLoading)
+	@if (_isLoading)
 	{
 		<div class="loading-container">
 			<div class="spinner"></div>
 			<p>Loading dashboard data...</p>
 		</div>
 	}
-	else if (dashboardData != null)
+	else if (_dashboardData != null)
 	{
 		<!-- KPI Cards Section -->
 		<div class="kpi-grid">
@@ -51,7 +51,7 @@
 				</CardHeader>
 				<CardContent>
 					<div class="kpi-value">@GetMetricValue("Total Requisitions")</div>
-					<div class="kpi-subtitle">Created in @selectedTimePeriod</div>
+					<div class="kpi-subtitle">Created in @_selectedTimePeriod</div>
 				</CardContent>
 			</SfCard>
 
@@ -135,7 +135,7 @@
 				</div>
 			</CardHeader>
 			<CardContent>
-				<SfGrid DataSource="@timeMetrics" AllowSorting="true"
+				<SfGrid DataSource="@_timeMetrics" AllowSorting="true"
 				        GridLines="GridLine.Both" Height="300">
 					<GridColumns>
 						<GridColumn Field="DateRange" HeaderText="Time Period" Width="120"></GridColumn>
@@ -160,7 +160,7 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid DataSource="@recentActivity" AllowSorting="true"
+								<SfGrid DataSource="@_recentActivity" AllowSorting="true"
 								        AllowPaging="true" PageSize="10"
 								        GridLines="GridLine.Both" Height="500">
 									<GridPageSettings PageSizes="true"></GridPageSettings>
@@ -185,7 +185,7 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid DataSource="@placements" AllowSorting="true"
+								<SfGrid DataSource="@_placements" AllowSorting="true"
 								        AllowPaging="true" PageSize="10"
 								        GridLines="GridLine.Both" Height="500">
 									<GridPageSettings PageSizes="true"></GridPageSettings>
