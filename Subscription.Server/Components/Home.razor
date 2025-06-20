@@ -1,34 +1,26 @@
 @page "/dashboard"
-@using Syncfusion.Blazor.Cards
-
-@inject IJSRuntime JSRuntime
-@inject HttpClient Http
+@layout SubscriptionLayout
 
 <PageTitle>Recruitment Dashboard</PageTitle>
 
-<div class="dashboard-container">
-	<!-- Header Section -->
-	<div class="dashboard-header">
-		<div class="header-content">
-			<h1 class="dashboard-title">
-				<i class="fas fa-chart-line"></i>
-				Recruitment Dashboard - @_selectedUser
-			</h1>
-			<div class="header-controls">
-				<div class="time-selector">
-					<label>Time Period:</label>
-					<SfDropDownList TValue="string" TItem="string"
-					                DataSource="@_timePeriods"
-					                @bind-Value="_selectedTimePeriod"
-					                Width="120px">
-					</SfDropDownList>
-				</div>
-				<SfButton IsPrimary="true" IconCss="fas fa-sync-alt" OnClick="RefreshData">
-					Refresh
-				</SfButton>
+<PageHeader></PageHeader>
+<div class="dashboard-header">
+	<div class="header-content">
+		<h1 class="dashboard-title">
+			<i class="fas fa-chart-line"></i>
+			Recruitment Dashboard - @User
+		</h1>
+		<div class="header-controls">
+			<div class="time-selector">
+				<label>Time Period:</label>
+				<SfDropDownList TValue="string" TItem="string" DataSource="@_timePeriods" @bind-Value="_selectedTimePeriod" Width="120px"/>
 			</div>
+			<SfButton IsPrimary="true" IconCss="e-icons e-refresh" OnClick="RefreshData" Content="Refresh"/>
 		</div>
 	</div>
+</div>
+<div class="dashboard-container" style="height: calc(100vh - 192px); overflow-y: auto;">
+	<!-- Header Section -->
 
 	@if (_isLoading)
 	{
@@ -50,8 +42,12 @@
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div class="kpi-value">@GetMetricValue("Total Requisitions")</div>
-					<div class="kpi-subtitle">Created in @_selectedTimePeriod</div>
+					<div class="kpi-value">
+						<span style="margin-left: 15px;">@GetMetricValue("Total Requisitions")</span>
+					</div>
+					<div class="kpi-subtitle">
+						<span style="margin-left: 5px; margin-bottom: 25px">Created in @_selectedTimePeriod</span>
+					</div>
 				</CardContent>
 			</SfCard>
 
@@ -64,8 +60,12 @@
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div class="kpi-value">@GetMetricValue("Active Requisitions")</div>
-					<div class="kpi-subtitle">Currently recruiting</div>
+					<div class="kpi-value">
+						<span style="margin-left: 15px;">@GetMetricValue("Active Requisitions")</span>
+					</div>
+					<div class="kpi-subtitle">
+						<span style="margin-left: 5px; margin-bottom: 25px">Currently recruiting</span>
+					</div>
 				</CardContent>
 			</SfCard>
 
@@ -78,8 +78,12 @@
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div class="kpi-value">@GetMetricValue("Candidates in Interview")</div>
-					<div class="kpi-subtitle">Active interviews</div>
+					<div class="kpi-value">
+						<span style="margin-left: 15px;">@GetMetricValue("Candidates in Interview")</span>
+					</div>
+					<div class="kpi-subtitle">
+						<span style="margin-left: 5px; margin-bottom: 25px">Active interviews</span>
+					</div>
 				</CardContent>
 			</SfCard>
 
@@ -92,8 +96,12 @@
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div class="kpi-value">@GetMetricValue("Offers Extended")</div>
-					<div class="kpi-subtitle">Pending decisions</div>
+					<div class="kpi-value">
+						<span style="margin-left: 15px;">@GetMetricValue("Offers Extended")</span>
+					</div>
+					<div class="kpi-subtitle">
+						<span style="margin-left: 5px; margin-bottom: 25px">Pending decisions</span>
+					</div>
 				</CardContent>
 			</SfCard>
 
@@ -106,8 +114,12 @@
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div class="kpi-value">@GetMetricValue("Candidates Hired")</div>
-					<div class="kpi-subtitle">Successful placements</div>
+					<div class="kpi-value">
+						<span style="margin-left: 15px;">@GetMetricValue("Candidates Hired")</span>
+					</div>
+					<div class="kpi-subtitle">
+						<span style="margin-left: 5px; margin-bottom: 25px">Successful placements</span>
+					</div>
 				</CardContent>
 			</SfCard>
 
@@ -120,8 +132,12 @@
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div class="kpi-value">@GetHireToOfferRatio()%</div>
-					<div class="kpi-subtitle">Hire-to-offer ratio</div>
+					<div class="kpi-value">
+						<span style="margin-left: 15px;">@GetHireToOfferRatio()</span>
+					</div>
+					<div class="kpi-subtitle">
+						<span style="margin-left: 5px; margin-bottom: 25px">Hire-to-offer ratio</span>
+					</div>
 				</CardContent>
 			</SfCard>
 		</div>
@@ -136,7 +152,7 @@
 			</CardHeader>
 			<CardContent>
 				<SfGrid DataSource="@_timeMetrics" AllowSorting="true"
-				        GridLines="GridLine.Both" Height="300">
+				        GridLines="GridLine.Both" Height="225px">
 					<GridColumns>
 						<GridColumn Field="DateRange" HeaderText="Time Period" Width="120"></GridColumn>
 						<GridColumn Field="TotalRequisitions" HeaderText="Requisitions" Width="120" TextAlign="TextAlign.Center"></GridColumn>
@@ -160,10 +176,8 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid DataSource="@_recentActivity" AllowSorting="true"
-								        AllowPaging="true" PageSize="10"
-								        GridLines="GridLine.Both" Height="500">
-									<GridPageSettings PageSizes="true"></GridPageSettings>
+								<SfGrid DataSource="@_recentActivity" AllowSorting="true" AllowPaging="true" PageSize="10" GridLines="GridLine.Both" Height="500">
+									<GridPageSettings PageSizes="true"/>
 									<GridColumns>
 										<GridColumn Field="Company" HeaderText="Company" Width="150"></GridColumn>
 										<GridColumn Field="Requisition" HeaderText="Req #" Width="100"></GridColumn>
@@ -185,10 +199,8 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid DataSource="@_placements" AllowSorting="true"
-								        AllowPaging="true" PageSize="10"
-								        GridLines="GridLine.Both" Height="500">
-									<GridPageSettings PageSizes="true"></GridPageSettings>
+								<SfGrid DataSource="@_placements" AllowSorting="true" AllowPaging="true" PageSize="10" GridLines="GridLine.Both" Height="500">
+									<GridPageSettings PageSizes="true"/>
 									<GridColumns>
 										<GridColumn Field="Company" HeaderText="Company" Width="150"></GridColumn>
 										<GridColumn Field="RequisitionNumber" HeaderText="Req #" Width="100"></GridColumn>
@@ -222,7 +234,7 @@
 
 <style>
 	.dashboard-container {
-		max-width: 1400px;
+		max-width: 100vw;
 		margin: 0 auto;
 		padding: 20px;
 		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -275,7 +287,7 @@
 
 	.kpi-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 		gap: 20px;
 		margin-bottom: 24px;
 	}
@@ -369,7 +381,7 @@
 		background: #fff;
 		border-radius: 8px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		overflow: hidden;
+		/*overflow: hidden;*/
 	}
 
 	.tab-content {

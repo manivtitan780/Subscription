@@ -8,7 +8,7 @@
 // File Name:           Home.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          06-13-2025 20:06
-// Last Updated On:     06-18-2025 20:54
+// Last Updated On:     06-20-2025 19:05
 // *****************************************/
 
 #endregion
@@ -18,14 +18,29 @@ namespace Subscription.Server.Components;
 public partial class Home : ComponentBase
 {
     // Data models - these would match your API response classes
-    private DashboardData? _dashboardData;
+    private DashboardData _dashboardData;
     private bool _isLoading = true;
     private List<HiredPlacement> _placements = [];
     private List<RecentActivity> _recentActivity = [];
     private string _selectedTimePeriod = "MTD";
-    private readonly string _selectedUser = "DAVE";
-    private List<TimeMetric> _timeMetrics = [];
+    private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
+    private readonly List<TimeMetric> _timeMetrics = [];
     private readonly List<string> _timePeriods = ["7 days", "MTD", "QTD", "HYTD", "YTD"];
+
+    [Inject]
+    private ILocalStorageService LocalStorage { get; set; }
+
+    [Inject]
+    private NavigationManager NavManager { get; set; }
+
+    private string RoleName { get; set; }
+
+    [Inject]
+    private ISessionStorageService SessionStorage { get; set; }
+
+    private string User { get; set; }
+
+    private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
     private string GetHireToOfferRatio()
     {
@@ -52,60 +67,55 @@ public partial class Home : ComponentBase
                };
     }
 
-    // Mock data methods - replace with actual API calls
-    private DashboardData GetMockDashboardData() => new() {User = _selectedUser};
-
-    private List<HiredPlacement> GetMockPlacements() =>
-    [
-        new()
-        {
-            Company = "Enterprise Corp", RequisitionNumber = "REQ001", NumPosition = 1, Title = "Senior Architect", CandidateName = "Alex Brown", DateHired = DateTime.Now.AddDays(-30),
-            SalaryOffered = 120000, PlacementFee = 24000,
-            CommissionPercent = 0.05m, CommissionEarned = 1200
-        },
-        new()
-        {
-            Company = "Growth LLC", RequisitionNumber = "REQ002", NumPosition = 2, Title = "Data Scientist", CandidateName = "Lisa Chen", DateHired = DateTime.Now.AddDays(-45),
-            SalaryOffered = 110000, PlacementFee = 22000,
-            CommissionPercent = 0.05m, CommissionEarned = 1100
-        }
-    ];
-
-    private List<RecentActivity> GetMockRecentActivity() =>
-    [
-        new()
-        {
-            Company = "Tech Solutions Inc", Requisition = "REQ001", NumPosition = 2, Title = "Senior Developer", CandidateName = "John Smith", CurrentStatus = "INT",
-            DateFirstSubmitted = DateTime.Now.AddDays(-5),
-            LastActivityDate = DateTime.Now.AddDays(-1), ActivityNotes = "Second round interview scheduled"
-        },
-        new()
-        {
-            Company = "Digital Innovations", Requisition = "REQ002", NumPosition = 1, Title = "Product Manager", CandidateName = "Sarah Johnson", CurrentStatus = "OEX",
-            DateFirstSubmitted = DateTime.Now.AddDays(-10),
-            LastActivityDate = DateTime.Now.AddDays(-2), ActivityNotes = "Offer extended, awaiting response"
-        },
-        new()
-        {
-            Company = "StartupCorp", Requisition = "REQ003", NumPosition = 3, Title = "Frontend Developer", CandidateName = "Mike Wilson", CurrentStatus = "HIR",
-            DateFirstSubmitted = DateTime.Now.AddDays(-15),
-            LastActivityDate = DateTime.Now.AddDays(-3), ActivityNotes = "Offer accepted, start date confirmed"
-        }
-    ];
-
     private async Task LoadDashboardData()
     {
         _isLoading = true;
         try
         {
             // Call your WebAPI endpoint
-            // dashboardData = await Http.GetFromJsonAsync<DashboardData>($"api/dashboard/{selectedUser}");
+            Dictionary<string, string> _parameters = new()
+                                                     {
+                                                         {"user", "DAVE"}
+                                                     };
+            ReturnDashboard _response = await General.ExecuteRest<ReturnDashboard>("Dashboard/GetAccountsManagerDashboard", _parameters, null, false);
+
+            _dashboardData ??= new();
+            _dashboardData.UserName = User;
+            List<DateCount> _dateCountsTotalRequisition = General.DeserializeObject<List<DateCount>>(_response.TotalRequisitions);
+            List<DateCount> _dateCountsActiveRequisition = General.DeserializeObject<List<DateCount>>(_response.ActiveRequisitions);
+            List<DateCount> _dateCountsCandidatesInInterview = General.DeserializeObject<List<DateCount>>(_response.CandidatesInInterview);
+            List<DateCount> _dateCountsOffersExtended = General.DeserializeObject<List<DateCount>>(_response.OffersExtended);
+            List<DateCount> _dateCountsCandidatesHired = General.DeserializeObject<List<DateCount>>(_response.CandidatesHired);
+            List<RatioCount> _ratioCounts = General.DeserializeObject<List<RatioCount>>(_response.HireToOfferRatio);
+            _recentActivity = General.DeserializeObject<List<RecentActivity>>(_response.RecentActivity);
+            _placements = General.DeserializeObject<List<HiredPlacement>>(_response.Placements);
 
             // For demo purposes, using mock data
-            await Task.Delay(1000); // Simulate API call
-            _dashboardData = GetMockDashboardData();
+            /*await Task.Delay(1000); // Simulate API call
+            _dashboardData = GetMockDashboardData();*/
 
-            ProcessDashboardData();
+            string[] periods = ["7 days", "MTD", "QTD", "HYTD", "YTD"];
+
+            foreach (string period in periods)
+            {
+                DateCount _total = _dateCountsTotalRequisition.FirstOrDefault(d => d.Period == period);
+                DateCount _active = _dateCountsActiveRequisition.FirstOrDefault(d => d.Period == period);
+                DateCount _interview = _dateCountsCandidatesInInterview.FirstOrDefault(d => d.Period == period);
+                DateCount _offers = _dateCountsOffersExtended.FirstOrDefault(d => d.Period == period);
+                DateCount _hired = _dateCountsCandidatesHired.FirstOrDefault(d => d.Period == period);
+                RatioCount _ratio = _ratioCounts.FirstOrDefault(d => d.Period == period);
+
+                _timeMetrics.Add(new()
+                                 {
+                                     DateRange = period,
+                                     TotalRequisitions = _total.Count,
+                                     ActiveRequisitions = _active.Count,
+                                     CandidatesInInterview = _interview.Count,
+                                     OffersExtended = _offers.Count,
+                                     CandidatesHired = _hired.Count,
+                                     HireToOfferRatio = _ratio.Ratio
+                                 });
+            }
         }
         catch (Exception ex)
         {
@@ -122,31 +132,30 @@ public partial class Home : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadDashboardData();
-    }
+        await ExecuteMethod(async () =>
+                            {
+                                // Get user claims
+                                IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
 
-    private void ProcessDashboardData()
-    {
-        if (_dashboardData == null)
-        {
-            return;
-        }
+                                if (_claims == null)
+                                {
+                                    NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
+                                }
+                                else
+                                {
+                                    IEnumerable<Claim> _enumerable = _claims as Claim[] ?? _claims.ToArray();
+                                    User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
+                                    if (User.NullOrWhiteSpace())
+                                    {
+                                        NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
+                                    }
+                                }
 
-        // Process time metrics for the summary grid
-        _timeMetrics =
-        [
-            new() {DateRange = "7 days", TotalRequisitions = 5, ActiveRequisitions = 4, CandidatesInInterview = 2, OffersExtended = 1, CandidatesHired = 1, HireToOfferRatio = 1.0m},
-            new() {DateRange = "MTD", TotalRequisitions = 12, ActiveRequisitions = 9, CandidatesInInterview = 4, OffersExtended = 2, CandidatesHired = 2, HireToOfferRatio = 1.0m},
-            new() {DateRange = "QTD", TotalRequisitions = 28, ActiveRequisitions = 18, CandidatesInInterview = 7, OffersExtended = 4, CandidatesHired = 3, HireToOfferRatio = 0.75m},
-            new() {DateRange = "HYTD", TotalRequisitions = 45, ActiveRequisitions = 25, CandidatesInInterview = 9, OffersExtended = 6, CandidatesHired = 4, HireToOfferRatio = 0.67m},
-            new() {DateRange = "YTD", TotalRequisitions = 67, ActiveRequisitions = 32, CandidatesInInterview = 12, OffersExtended = 8, CandidatesHired = 6, HireToOfferRatio = 0.75m}
-        ];
+                                await LoadDashboardData();
+                            });
 
-        // Mock recent activity data
-        _recentActivity = GetMockRecentActivity();
-
-        // Mock placement data
-        _placements = GetMockPlacements();
+        await base.OnInitializedAsync();
     }
 
     private async Task RefreshData()

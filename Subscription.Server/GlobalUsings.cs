@@ -70,6 +70,8 @@ global using StackExchange.Redis;
 global using Subscription.Model.Return;
 global using Subscription.Server.Components.Pages.Controls.Admin;
 
+global using Syncfusion.Blazor.Cards;
+
 global using BeforeOpenEventArgs = Syncfusion.Blazor.Popups.BeforeOpenEventArgs;
 
 //global using Syncfusion.Blazor.SfPdfViewer;

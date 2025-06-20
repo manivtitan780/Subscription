@@ -16,7 +16,7 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class Dashboard : ControllerBase
+public class DashboardController : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<ReturnDashboard>> GetAccountsManagerDashboard(string user)
