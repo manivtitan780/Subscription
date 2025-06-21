@@ -107,7 +107,7 @@ public partial class Home : ComponentBase
 
                 _timeMetrics.Add(new()
                                  {
-                                     DateRange = period,
+                                     DateRange = GetPeriod(period),
                                      TotalRequisitions = _total.Count,
                                      ActiveRequisitions = _active.Count,
                                      CandidatesInInterview = _interview.Count,
@@ -128,6 +128,19 @@ public partial class Home : ComponentBase
             _isLoading = false;
             StateHasChanged();
         }
+    }
+
+    private string GetPeriod(string period)
+    {
+        return period switch
+               {
+                   "7 days" => "Last 7 Days",
+                   "MTD" => "Month To Date",
+                   "QTD" => "Quarter To Date",
+                   "HYTD" => "Half Year To Date",
+                   "YTD" => "Year To Date",
+                   _ => "All Time"
+               };
     }
 
     protected override async Task OnInitializedAsync()
@@ -161,5 +174,16 @@ public partial class Home : ComponentBase
     private async Task RefreshData()
     {
         await LoadDashboardData();
+    }
+
+    private string GetRoleName()
+    {
+        return RoleName switch
+               {
+                   "AD" => "Administrator",
+                   "RS" => "Accounts Manager",
+                   "RC" => "Recruiter",
+                   _ => "Full Desk"
+               };
     }
 }

@@ -8,7 +8,7 @@
 	<div class="header-content">
 		<h1 class="dashboard-title">
 			<i class="fas fa-chart-line"></i>
-			Recruitment Dashboard - @User
+			@GetRoleName() Dashboard - @User
 		</h1>
 		<div class="header-controls">
 			<div class="time-selector">
@@ -188,12 +188,12 @@
 										</CaptionTemplate>
 									</GridGroupSettings>
 									<GridColumns>
-										<GridColumn Field="Company" HeaderText="Company" Width="150" />
-										<GridColumn Field="CandidateName" HeaderText="Candidate" Width="150" />
-										<GridColumn Field="CurrentStatus" HeaderText="Status" Width="100" TextAlign="TextAlign.Center" />
-										<GridColumn Field="DateFirstSubmitted" HeaderText="First Submitted" Width="120" Type="ColumnType.Date" Format="d" />
-										<GridColumn Field="LastActivityDate" HeaderText="Last Activity" Width="120" Type="ColumnType.Date" Format="d" />
-										<GridColumn Field="ActivityNotes" HeaderText="Notes" Width="200" />
+										<GridColumn Field="Company" HeaderText="Company" Width="150" Visible="false" />
+										<GridColumn Field="CandidateName" HeaderText="Candidate" Width="12%" />
+										<GridColumn Field="CurrentStatus" HeaderText="Status" Width="12%" TextAlign="TextAlign.Center" />
+										<GridColumn Field="DateFirstSubmitted" HeaderText="First Submitted" Width="10%" Type="ColumnType.Date" Format="d" />
+										<GridColumn Field="LastActivityDate" HeaderText="Last Activity" Width="10%" Type="ColumnType.Date" Format="d" />
+										<GridColumn Field="ActivityNotes" HeaderText="Notes" Width="56%" />
 									</GridColumns>
 								</SfGrid>
 							</div>
