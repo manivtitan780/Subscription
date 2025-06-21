@@ -26,7 +26,7 @@ public partial class Home : ComponentBase
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
     private readonly List<TimeMetric> _timeMetrics = [];
     private readonly List<string> _timePeriods = ["7 days", "MTD", "QTD", "HYTD", "YTD"];
-
+    private readonly string[] _groupColumns = ["Company"];
     [Inject]
     private ILocalStorageService LocalStorage { get; set; }
 

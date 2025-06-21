@@ -3,7 +3,7 @@
 
 <PageTitle>Recruitment Dashboard</PageTitle>
 
-<PageHeader></PageHeader>
+<PageHeader PageName="Dashboard"></PageHeader>
 <div class="dashboard-header">
 	<div class="header-content">
 		<h1 class="dashboard-title">
@@ -176,18 +176,24 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid DataSource="@_recentActivity" AllowSorting="true" AllowPaging="true" PageSize="10" GridLines="GridLine.Both" Height="500">
-									<GridPageSettings PageSizes="true"/>
+								<SfGrid AllowGrouping="true" DataSource="@_recentActivity" GridLines="GridLine.Both" Height="500">
+									<GridGroupSettings Columns="@_groupColumns" ShowDropArea="false">
+										<CaptionTemplate>
+											@{
+												if (context is CaptionTemplateContext _data)
+												{
+													<span>Company: @_data.Key</span>
+												}
+											}
+										</CaptionTemplate>
+									</GridGroupSettings>
 									<GridColumns>
-										<GridColumn Field="Company" HeaderText="Company" Width="150"/>
-										<GridColumn Field="Requisition" HeaderText="Req #" Width="100"/>
-										<GridColumn Field="NumPosition" HeaderText="Positions" Width="90" TextAlign="TextAlign.Center"/>
-										<GridColumn Field="Title" HeaderText="Job Title" Width="200"/>
-										<GridColumn Field="CandidateName" HeaderText="Candidate" Width="150"/>
-										<GridColumn Field="CurrentStatus" HeaderText="Status" Width="100" TextAlign="TextAlign.Center"/>
-										<GridColumn Field="DateFirstSubmitted" HeaderText="First Submitted" Width="120" Type="ColumnType.Date" Format="d"/>
-										<GridColumn Field="LastActivityDate" HeaderText="Last Activity" Width="120" Type="ColumnType.Date" Format="d"/>
-										<GridColumn Field="ActivityNotes" HeaderText="Notes" Width="200"/>
+										<GridColumn Field="Company" HeaderText="Company" Width="150" />
+										<GridColumn Field="CandidateName" HeaderText="Candidate" Width="150" />
+										<GridColumn Field="CurrentStatus" HeaderText="Status" Width="100" TextAlign="TextAlign.Center" />
+										<GridColumn Field="DateFirstSubmitted" HeaderText="First Submitted" Width="120" Type="ColumnType.Date" Format="d" />
+										<GridColumn Field="LastActivityDate" HeaderText="Last Activity" Width="120" Type="ColumnType.Date" Format="d" />
+										<GridColumn Field="ActivityNotes" HeaderText="Notes" Width="200" />
 									</GridColumns>
 								</SfGrid>
 							</div>

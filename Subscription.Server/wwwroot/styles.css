@@ -37,6 +37,7 @@
     --c-yellow: #fec10f;
     --c-yellowlight: #fec10f;
     --c-yellowlight: rgba(254, 193, 15, 0.5);
+    --c-yellowlightless: rgba(254, 193, 15, 0.2);
     --c-content: white;
     /* Purple */
     /*--c-red: #640045;
@@ -522,6 +523,10 @@ body, form, html {
 .e-rowcell a {
     color: var(--c-red);
     text-decoration: none;
+}
+
+.e-grid .e-groupcaption, .e-grid .e-recordplusexpand, .e-grid .e-recordpluscollapse {
+    background-color: var(--c-yellowlightless);
 }
 
 /* #endregion Grid Detailed Arrows */
