@@ -19,10 +19,17 @@ namespace Subscription.API.Controllers;
 public class DashboardController : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ReturnDashboard>> GetAccountsManagerDashboard(string user)
+    public async Task<ActionResult<ReturnDashboard>> GetAccountsManagerDashboard(string roleName, string user)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DashboardAccountsManager", _connection);
+        string _procedureName = roleName switch
+                                {
+                                    "FD" or "RS" => "DashboardAccountsManager",
+                                    "RC" => "DashboardRecruiters",
+                                    "AD" => "DashboardAdmin",
+                                    _ => "DashboardAccountsManager"
+                                };
+        await using SqlCommand _command = new(_procedureName, _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("User", 10, user);
         try

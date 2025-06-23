@@ -14,6 +14,7 @@
 			<div class="time-selector">
 				<label>Time Period:</label>
 				<SfDropDownList TValue="string" TItem="string" DataSource="@_timePeriods" @bind-Value="_selectedTimePeriod" Width="120px"/>
+				
 			</div>
 			<SfButton IsPrimary="true" IconCss="e-icons e-refresh" OnClick="RefreshData" Content="Refresh"/>
 		</div>
@@ -46,7 +47,7 @@
 						<span style="margin-left: 15px;">@GetMetricValue("Total Requisitions")</span>
 					</div>
 					<div class="kpi-subtitle">
-						<span style="margin-left: 5px; margin-bottom: 25px">Created in @_selectedTimePeriod</span>
+						<span style="margin-left: 5px; margin-bottom: 25px">Created in @GetPeriod(_selectedTimePeriod)</span>
 					</div>
 				</CardContent>
 			</SfCard>

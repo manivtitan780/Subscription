@@ -27,6 +27,7 @@ public partial class Home : ComponentBase
     private readonly List<TimeMetric> _timeMetrics = [];
     private readonly List<string> _timePeriods = ["7 days", "MTD", "QTD", "HYTD", "YTD"];
     private readonly string[] _groupColumns = ["Company"];
+
     [Inject]
     private ILocalStorageService LocalStorage { get; set; }
 
@@ -50,7 +51,7 @@ public partial class Home : ComponentBase
 
     private string GetMetricValue(string metricName)
     {
-        TimeMetric metric = _timeMetrics.FirstOrDefault(m => m.DateRange == _selectedTimePeriod);
+        TimeMetric metric = _timeMetrics.FirstOrDefault(m => m.DateRange == GetPeriod(_selectedTimePeriod));
         if (metric == null)
         {
             return "0";
@@ -75,6 +76,7 @@ public partial class Home : ComponentBase
             // Call your WebAPI endpoint
             Dictionary<string, string> _parameters = new()
                                                      {
+                                                         {"roleName", RoleName},
                                                          {"user", "DAVE"}
                                                      };
             ReturnDashboard _response = await General.ExecuteRest<ReturnDashboard>("Dashboard/GetAccountsManagerDashboard", _parameters, null, false);
@@ -130,17 +132,32 @@ public partial class Home : ComponentBase
         }
     }
 
-    private string GetPeriod(string period)
+    private static string GetPeriod(string period, bool reverse = false)
     {
-        return period switch
-               {
-                   "7 days" => "Last 7 Days",
-                   "MTD" => "Month To Date",
-                   "QTD" => "Quarter To Date",
-                   "HYTD" => "Half Year To Date",
-                   "YTD" => "Year To Date",
-                   _ => "All Time"
-               };
+        if (!reverse)
+        {
+            return period switch
+                   {
+                       "7 days" => "Last 7 Days",
+                       "MTD" => "Month To Date",
+                       "QTD" => "Quarter To Date",
+                       "HYTD" => "Half Year To Date",
+                       "YTD" => "Year To Date",
+                       _ => "All Time"
+                   };
+        }
+        else
+        {
+            return period switch
+                   {
+                       "Last 7 Days" => "7 days",
+                       "Month To Date" => "MTD",
+                       "Quarter To Date" => "QTD",
+                       "Half Year To Date" => "HYTD",
+                       "Year To Date" => "YTD",
+                       _ => "ALL"
+                   };
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -185,5 +202,11 @@ public partial class Home : ComponentBase
                    "RC" => "Recruiter",
                    _ => "Full Desk"
                };
+    }
+
+    private Task GetMetData(ChangeEventArgs<string, string> arg)
+    {
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }
