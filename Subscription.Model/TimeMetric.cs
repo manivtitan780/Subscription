@@ -17,17 +17,23 @@ namespace Subscription.Model;
 
 public class TimeMetric
 {
-    public string DateRange { get; set; } = "";
+    public List<string> DateRange { get; set; } = [];
 
-    public int TotalRequisitions { get; set; }
+    public List<int> TotalRequisitions { get; set; } = [];
 
-    public int ActiveRequisitions { get; set; }
+    public List<int> ActiveRequisitions { get; set; } = [];
 
-    public int CandidatesInInterview { get; set; }
+    public List<int> CandidatesInInterview { get; set; } = [];
 
-    public int OffersExtended { get; set; }
+    public List<int> OffersExtended { get; set; } = [];
 
-    public int CandidatesHired { get; set; }
+    public List<int> CandidatesHired { get; set; } = [];
 
-    public decimal HireToOfferRatio { get; set; }
+    public List<decimal> HireToOfferRatio { get; set; } = [];
+    
+    public List<RecentActivity> RecentActivities { get; set; } = [];
+    
+    public List<HiredPlacement> Placements { get; set; } = [];
+
+    public List<string> User { get; set; } = [];
 }

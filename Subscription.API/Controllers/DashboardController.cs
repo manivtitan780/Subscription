@@ -5,10 +5,10 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.API
-// File Name:           Dashboard.cs
+// File Name:           DashboardController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          06-18-2025 20:06
-// Last Updated On:     06-18-2025 21:08
+// Last Updated On:     06-24-2025 20:30
 // *****************************************/
 
 #endregion
@@ -31,14 +31,25 @@ public class DashboardController : ControllerBase
                                 };
         await using SqlCommand _command = new(_procedureName, _connection);
         _command.CommandType = CommandType.StoredProcedure;
-        _command.Varchar("User", 10, user);
+        if (roleName is not "AD")
+        {
+            _command.Varchar("User", 10, user);
+        }
+
         try
         {
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            string _totalRequisitions = "[]", _activeRequisitions = "[]", _candidatesInInterview = "[]", _offersExtended = "[]", _candidatesHired = "[]", _hireToOfferRatio = "[]",
+            string _users = "[]", _totalRequisitions = "[]", _activeRequisitions = "[]", _candidatesInInterview = "[]", _offersExtended = "[]", _candidatesHired = "[]", _hireToOfferRatio = "[]",
                    _recentActivity = "[]", _placements = "[]";
+            while (await _reader.ReadAsync())
+            {
+                _users = _reader.NString(0);
+            }
+
+            await _reader.NextResultAsync();
+
             while (await _reader.ReadAsync())
             {
                 _totalRequisitions = _reader.NString(0);
@@ -90,8 +101,8 @@ public class DashboardController : ControllerBase
 
             return Ok(new ReturnDashboard
                       {
-                          TotalRequisitions = _totalRequisitions, ActiveRequisitions = _activeRequisitions, CandidatesInInterview = _candidatesInInterview, OffersExtended = _offersExtended,
-                          CandidatesHired = _candidatesHired, HireToOfferRatio = _hireToOfferRatio, RecentActivity = _recentActivity, Placements = _placements
+                          Users = _users, TotalRequisitions = _totalRequisitions, ActiveRequisitions = _activeRequisitions, CandidatesInInterview = _candidatesInInterview,
+                          OffersExtended = _offersExtended, CandidatesHired = _candidatesHired, HireToOfferRatio = _hireToOfferRatio, RecentActivity = _recentActivity, Placements = _placements
                       });
         }
         catch (Exception ex)

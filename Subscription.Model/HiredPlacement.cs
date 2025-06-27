@@ -13,8 +13,11 @@
 
 #endregion
 
+using JetBrains.Annotations;
+
 namespace Subscription.Model;
 
+[UsedImplicitly] 
 public record struct HiredPlacement(
     string Company,
     string RequisitionNumber,
@@ -28,9 +31,10 @@ public record struct HiredPlacement(
     decimal SalaryOffered,
     decimal PlacementFee,
     decimal CommissionPercent,
-    decimal CommissionEarned)
-{
-    /*public string Company { get; set; }
+    decimal CommissionEarned,
+    string User);
+/*{
+    public string Company { get; set; }
 
     public string RequisitionNumber { get; set; }
 
@@ -54,5 +58,5 @@ public record struct HiredPlacement(
 
     public decimal CommissionPercent { get; set; }
 
-    public decimal CommissionEarned { get; set; }*/
-}
+    public decimal CommissionEarned { get; set; }
+}*/

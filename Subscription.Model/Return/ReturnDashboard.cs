@@ -16,6 +16,7 @@
 namespace Subscription.Model.Return;
 
 public record struct ReturnDashboard(
+    string Users,
     string TotalRequisitions,
     string ActiveRequisitions,
     string CandidatesInInterview,

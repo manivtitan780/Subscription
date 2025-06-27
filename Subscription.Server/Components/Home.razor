@@ -12,9 +12,16 @@
 		</h1>
 		<div class="header-controls">
 			<div class="time-selector">
+				<label>Users:</label>
+				<SfDropDownList TValue="string" TItem="KeyValues" DataSource="Users" @bind-Value="_selectedUser" Width="200px">
+					<DropDownListFieldSettings Text="Text" Value="KeyValue"></DropDownListFieldSettings>
+				</SfDropDownList>
+			</div>
+		</div>
+		<div class="header-controls">
+			<div class="time-selector">
 				<label>Time Period:</label>
 				<SfDropDownList TValue="string" TItem="string" DataSource="@_timePeriods" @bind-Value="_selectedTimePeriod" Width="120px"/>
-				
 			</div>
 			<SfButton IsPrimary="true" IconCss="e-icons e-refresh" OnClick="RefreshData" Content="Refresh"/>
 		</div>
@@ -177,7 +184,7 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid AllowGrouping="true" DataSource="@_recentActivity" GridLines="GridLine.Both" Height="500">
+								@*<SfGrid AllowGrouping="true" DataSource="@_recentActivity" GridLines="GridLine.Both" Height="500">
 									<GridGroupSettings Columns="@_groupColumns" ShowDropArea="false">
 										<CaptionTemplate>
 											@{
@@ -196,7 +203,7 @@
 										<GridColumn Field="LastActivityDate" HeaderText="Last Activity" Width="10%" Type="ColumnType.Date" Format="d" />
 										<GridColumn Field="ActivityNotes" HeaderText="Notes" Width="56%" />
 									</GridColumns>
-								</SfGrid>
+								</SfGrid>*@
 							</div>
 						</ContentTemplate>
 					</TabItem>
@@ -206,7 +213,7 @@
 						</ChildContent>
 						<ContentTemplate>
 							<div class="tab-content">
-								<SfGrid DataSource="@_placements" AllowSorting="true" AllowPaging="true" PageSize="10" GridLines="GridLine.Both" Height="500">
+								@*<SfGrid DataSource="@_placements" GridLines="GridLine.Both" Height="500">
 									<GridPageSettings PageSizes="true"/>
 									<GridColumns>
 										<GridColumn Field="Company" HeaderText="Company" Width="150"/>
@@ -220,7 +227,7 @@
 										<GridColumn Field="CommissionPercent" HeaderText="Commission %" Width="120" Format="P2" TextAlign="TextAlign.Center"/>
 										<GridColumn Field="CommissionEarned" HeaderText="Commission" Width="120" Format="C0" TextAlign="TextAlign.Right"/>
 									</GridColumns>
-								</SfGrid>
+								</SfGrid>*@
 							</div>
 						</ContentTemplate>
 					</TabItem>
