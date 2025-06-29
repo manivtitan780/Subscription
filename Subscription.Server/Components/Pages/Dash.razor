@@ -1,17 +1,18 @@
 @page "/dash"
 @using System.Text.Json
+@using Subscription.Server.Components.Pages.Controls.Dashboard
+@using AnimationEffect = Syncfusion.Blazor.AnimationEffect
 @layout SubscriptionLayout
 
 
-<PageHeader PageName="Dashboard"></PageHeader>
+<PageHeader PageName="Dashboard"/>
 
 <div class="dashboard-container">
     <!-- Loading Spinner -->
-    @if (IsLoading)
+    @if (_isLoading)
     {
         <div class="loading-overlay">
-            <SfSpinner @bind-Visible="IsLoading" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000">
-            </SfSpinner>
+            <SfSpinner @bind-Visible="_isLoading" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
         </div>
     }
 
@@ -21,9 +22,9 @@
             <div class="dashboard-title">
                 <h2>Account Manager Performance Dashboard</h2>
                 <div class="selected-user-info">
-                    @if (!string.IsNullOrEmpty(SelectedUserText))
+                    @if (!string.IsNullOrEmpty(_selectedUserText))
                     {
-                        <span class="user-badge">@SelectedUserText</span>
+                        <span class="user-badge">@_selectedUserText</span>
                     }
                 </div>
             </div>
@@ -31,38 +32,27 @@
             <div class="dashboard-controls">
                 <div class="control-group">
                     <label class="control-label">Select User:</label>
-                    <SfDropDownList TValue="string" TItem="UserItem"
-                                    DataSource="@UsersList"
-                                    @bind-Value="@SelectedUser"
-                                    
-                                    Placeholder="Select User"
-                                    Width="200px">@*ValueChanged="@OnUserChanged"*@
-                        <DropDownListFieldSettings Value="KeyValue" Text="Text"></DropDownListFieldSettings>
+                    <SfDropDownList @bind-Value="@_selectedUser" DataSource="@_usersList" Placeholder="Select User" TItem="UserItem" TValue="string" Width="200px">
+                        <DropDownListFieldSettings Value="KeyValue" Text="Text"/>
+                        <DropDownListEvents TValue="string" TItem="UserItem" ValueChange="OnUserChangedEventRaise"/>
                     </SfDropDownList>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label">Select Period:</label>
-                    <SfDropDownList TValue="string" TItem="PeriodItem"
-                                    DataSource="@PeriodsList"
-                                    @bind-Value="@SelectedPeriod"
-                                   
-                                    Width="180px">@* ValueChanged="@OnPeriodChanged"*@
-                        <DropDownListFieldSettings Value="Value" Text="Text"></DropDownListFieldSettings>
+                    <SfDropDownList @bind-Value="@_selectedPeriod" DataSource="@_periodsList" TItem="PeriodItem" TValue="string" Width="180px">
+                        <DropDownListFieldSettings Value="Value" Text="Text"/>
+                        <DropDownListEvents TValue="string" TItem="PeriodItem" ValueChange="OnPeriodChangedEventRaise"/>
                     </SfDropDownList>
                 </div>
 
-                <SfButton CssClass="e-primary refresh-btn"
-                          OnClick="@RefreshDashboard"
-                          IconCss="e-icons e-refresh">
-                    Refresh
-                </SfButton>
+                <SfButton CssClass="e-primary refresh-btn" IconCss="e-icons e-refresh" OnClick="@RefreshDashboard">Refresh</SfButton>
             </div>
         </div>
     </div>
 
     <!-- Main Dashboard Content -->
-    <div class="dashboard-content" style="@(IsLoading ? "display: none;" : "")">
+    <div class="dashboard-content" style="@(_isLoading ? "display: none;" : "")">
 
         <!-- KPI Cards Section -->
         <div class="kpi-section">
@@ -70,89 +60,12 @@
                 <h3>Key Performance Indicators - @GetPeriodDisplayName()</h3>
             </div>
             <div class="kpi-cards">
-                <SfCard class="kpi-card requisitions-card">
-                    <CardContent>
-                        <div class="kpi-content">
-                            <div class="kpi-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="kpi-details">
-                                <div class="kpi-value">@GetSelectedUserMetric("TotalRequisitions")</div>
-                                <div class="kpi-label">Total Requisitions</div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </SfCard>
-
-                <SfCard class="kpi-card active-card">
-                    <CardContent>
-                        <div class="kpi-content">
-                            <div class="kpi-icon">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
-                            <div class="kpi-details">
-                                <div class="kpi-value">@GetSelectedUserMetric("ActiveRequisitions")</div>
-                                <div class="kpi-label">Active Requisitions</div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </SfCard>
-
-                <SfCard class="kpi-card interview-card">
-                    <CardContent>
-                        <div class="kpi-content">
-                            <div class="kpi-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="kpi-details">
-                                <div class="kpi-value">@GetSelectedUserMetric("CandidatesInInterview")</div>
-                                <div class="kpi-label">Candidates In Interview</div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </SfCard>
-
-                <SfCard class="kpi-card offers-card">
-                    <CardContent>
-                        <div class="kpi-content">
-                            <div class="kpi-icon">
-                                <i class="fas fa-handshake"></i>
-                            </div>
-                            <div class="kpi-details">
-                                <div class="kpi-value">@GetSelectedUserMetric("OffersExtended")</div>
-                                <div class="kpi-label">Offers Extended</div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </SfCard>
-
-                <SfCard class="kpi-card hired-card">
-                    <CardContent>
-                        <div class="kpi-content">
-                            <div class="kpi-icon">
-                                <i class="fas fa-user-check"></i>
-                            </div>
-                            <div class="kpi-details">
-                                <div class="kpi-value">@GetSelectedUserMetric("CandidatesHired")</div>
-                                <div class="kpi-label">Candidates Hired</div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </SfCard>
-
-                <SfCard class="kpi-card ratio-card">
-                    <CardContent>
-                        <div class="kpi-content">
-                            <div class="kpi-icon">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="kpi-details">
-                                <div class="kpi-value">@GetSelectedUserRatio()</div>
-                                <div class="kpi-label">Hire to Offer Ratio</div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </SfCard>
+                <KPICard CssClass="requisitions-card" IconClass="e-icons e-file-new" Label="Total Requisitions" Value="@GetSelectedUserMetric("TotalRequisitions").ToString()"  />
+                <KPICard CssClass="active-card" IconClass="e-icons e-work" Label="Active Requisitions" Value="@GetSelectedUserMetric("ActiveRequisitions").ToString()"  />
+                <KPICard CssClass="interview-card" IconClass="e-icons e-people" Label="Candidates In Interview" Value="@GetSelectedUserMetric("CandidatesInInterview").ToString()"  />
+                <KPICard CssClass="offers-card" IconClass="e-icons e-mail" Label="Offers Extended" Value="@GetSelectedUserMetric("OffersExtended").ToString()"  />
+                <KPICard CssClass="hired-card" IconClass="e-icons e-check" Label="Candidates Hired" Value="@GetSelectedUserMetric("CandidatesHired").ToString()"  />
+                <KPICard CssClass="ratio-card" IconClass="e-icons e-success" Label="Hire to Offer Ratio" Value="@GetSelectedUserRatio()"  />
             </div>
         </div>
 
@@ -163,25 +76,23 @@
                     <SfCard>
                         <CardContent>
                             <div class="chart-title">Performance Comparison - All Users (@GetPeriodDisplayName())</div>
-                            <SfChart Width="100%" Height="300px">
-                                <ChartArea>
-                                    <ChartAreaBorder Color="transparent"></ChartAreaBorder>
-                                </ChartArea>
-                                <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
-                                </ChartPrimaryXAxis>
-                                <ChartSeriesCollection>
-                                    <ChartSeries DataSource="@GetChartData()" XName="User" YName="TotalRequisitions"
-                                                 Name="Total Requisitions" Type="ChartSeriesType.Column" Fill="#4f81bd">
-                                    </ChartSeries>
-                                    <ChartSeries DataSource="@GetChartData()" XName="User" YName="ActiveRequisitions"
-                                                 Name="Active Requisitions" Type="ChartSeriesType.Column" Fill="#f79646">
-                                    </ChartSeries>
-                                    <ChartSeries DataSource="@GetChartData()" XName="User" YName="CandidatesHired"
-                                                 Name="Candidates Hired" Type="ChartSeriesType.Column" Fill="#9cbb58">
-                                    </ChartSeries>
-                                </ChartSeriesCollection>
-                                <ChartLegendSettings Visible="true" Position="LegendPosition.Bottom"></ChartLegendSettings>
-                            </SfChart>
+                            <div class="chart-wrapper">
+                                <SfChart Height="300px" @ref="_chartRef" Width="100%">
+                                    <ChartArea>
+                                    <ChartAreaBorder Color="transparent"/>
+                                    </ChartArea>
+                                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"/>
+                                    <ChartTooltipSettings Enable="true" Shared="true" Format="${series.name}: ${point.y}"/>
+                                    <ChartSeriesCollection>
+                                        <ChartSeries DataSource="@_chartData" XName="User" YName="TotalRequisitions" Name="Total Requisitions" Type="ChartSeriesType.Column" Fill="#4f81bd"/>
+                                        <ChartSeries DataSource="@_chartData" XName="User" YName="ActiveRequisitions" Name="Active Requisitions" Type="ChartSeriesType.Column" Fill="#f79646"/>
+                                        <ChartSeries DataSource="@_chartData" XName="User" YName="CandidatesInInterview" Name="Candidates Interview" Type="ChartSeriesType.Column" Fill="#9cbb58"/>
+                                        <ChartSeries DataSource="@_chartData" XName="User" YName="OffersExtended" Name="Offer Extended" Type="ChartSeriesType.Column" Fill="#9cbb58"/>
+                                        <ChartSeries DataSource="@_chartData" XName="User" YName="CandidatesHired" Name="Candidates Hired" Type="ChartSeriesType.Column" Fill="#9cbb58"/>
+                                    </ChartSeriesCollection>
+                                    <ChartLegendSettings Visible="true" Position="LegendPosition.Bottom"/>
+                                </SfChart>
+                            </div>
                         </CardContent>
                     </SfCard>
                 </div>
@@ -195,15 +106,15 @@
                     <div class="section-title">
                         <h3>Performance Summary - All Time Periods</h3>
                     </div>
-                    <SfGrid DataSource="@GetSummaryGridData()" AllowSorting="true" AllowFiltering="false" Height="300">
+                    <SfGrid DataSource="@GetSummaryGridData()" Height="225">
                         <GridColumns>
-                            <GridColumn Field="TimePeriod" HeaderText="Time Period" Width="150" TextAlign="TextAlign.Left"></GridColumn>
-                            <GridColumn Field="Requisitions" HeaderText="Requisitions" Width="120" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="Active" HeaderText="Active" Width="100" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="Interviews" HeaderText="Interviews" Width="120" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="Offers" HeaderText="Offers" Width="100" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="Hired" HeaderText="Hired" Width="100" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="SuccessRate" HeaderText="Success Rate" Width="120" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="TimePeriod" HeaderText="Time Period" TextAlign="TextAlign.Left" Width="150"  />
+                            <GridColumn Field="Requisitions" HeaderText="Requisitions" TextAlign="TextAlign.Center" Width="120"  />
+                            <GridColumn Field="Active" HeaderText="Active" TextAlign="TextAlign.Center" Width="100"  />
+                            <GridColumn Field="Interviews" HeaderText="Interviews" TextAlign="TextAlign.Center" Width="120"  />
+                            <GridColumn Field="Offers" HeaderText="Offers" TextAlign="TextAlign.Center" Width="100"  />
+                            <GridColumn Field="Hired" HeaderText="Hired" TextAlign="TextAlign.Center" Width="100"  />
+                            <GridColumn Field="SuccessRate" HeaderText="Success Rate" TextAlign="TextAlign.Center" Width="120"  />
                         </GridColumns>
                     </SfGrid>
                 </CardContent>
@@ -215,540 +126,79 @@
             <SfCard>
                 <CardContent>
                     <div class="section-title">
-                        <h3>Recent Activity - @SelectedUserText</h3>
+                        <h3>Activity & Placements - @_selectedUserText</h3>
                     </div>
-                    <SfGrid DataSource="@GetUserRecentActivity()" AllowSorting="true" AllowPaging="true" PageSize="10" Height="400">
-                        <GridPageSettings PageSize="10"></GridPageSettings>
-                        <GridColumns>
-                            <GridColumn Field="Company" HeaderText="Company" Width="300" TextAlign="TextAlign.Left"></GridColumn>
-                            <GridColumn Field="CandidateName" HeaderText="Candidate" Width="150" TextAlign="TextAlign.Left"></GridColumn>
-                            <GridColumn Field="CurrentStatus" HeaderText="Status" Width="100" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="DateFirstSubmitted" HeaderText="Submitted Date" Width="140" Format="MM/dd/yyyy" TextAlign="TextAlign.Center"></GridColumn>
-                            <GridColumn Field="LastActivityDate" HeaderText="Last Activity" Width="140" Format="MM/dd/yyyy" TextAlign="TextAlign.Center"></GridColumn>
-                        </GridColumns>
-                    </SfGrid>
+
+                    <SfTab CssClass="e-fill" ID="tabDashboard" ShowCloseButton="false" Width="100%">
+                        <TabAnimationSettings>
+                            <TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"/>
+                            <TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"/>
+                        </TabAnimationSettings>
+                        <TabItems>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Recent Activity"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <SfGrid AllowGrouping="true" DataSource="@GetUserRecentActivity()" Height="350">
+                                        <GridGroupSettings Columns="@(new string[] {"Company"})" ShowDropArea="false"/>
+                                        <GridColumns>
+                                            <GridColumn Field="Company" HeaderText="Company" TextAlign="TextAlign.Left" Width="250"/>
+                                            <GridColumn Field="CandidateName" HeaderText="Candidate" TextAlign="TextAlign.Left" Width="130"/>
+                                            <GridColumn Field="CurrentStatus" HeaderText="Status" TextAlign="TextAlign.Center" Width="80"/>
+                                            <GridColumn Field="DateFirstSubmitted" Format="MM/dd/yyyy" HeaderText="Submitted" TextAlign="TextAlign.Center" Width="110"/>
+                                            <GridColumn Field="LastActivityDate" Format="MM/dd/yyyy" HeaderText="Last Activity" TextAlign="TextAlign.Center" Width="110"/>
+                                        </GridColumns>
+                                        <GridTemplates>
+                                            <DetailTemplate>
+                                                @{
+                                                    RecentActivityItem activity = (context as RecentActivityItem);
+                                                }
+                                                <div class="activity-detail">
+                                                    <div class="activity-detail-header">
+                                                        <strong>Activity Notes:</strong>
+                                                    </div>
+                                                    <div class="activity-detail-content">
+                                                        @if (!string.IsNullOrEmpty(activity.ActivityNotes))
+                                                        {
+                                                            @((MarkupString)activity.ActivityNotes.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))
+                                                        }
+                                                        else
+                                                        {
+                                                            <em>No activity notes available</em>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </DetailTemplate>
+                                        </GridTemplates>
+                                    </SfGrid>
+                                </ContentTemplate>
+                            </TabItem>
+
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Hired Placements"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <SfGrid DataSource="@GetUserHiredPlacements()" Height="350">
+                                        <GridColumns>
+                                            <GridColumn Field="Company" HeaderText="Company" TextAlign="TextAlign.Left" Width="200"/>
+                                            <GridColumn Field="RequisitionNumber" HeaderText="Req #" TextAlign="TextAlign.Center" Width="100"/>
+                                            <GridColumn Field="Title" HeaderText="Position" TextAlign="TextAlign.Left" Width="180"/>
+                                            <GridColumn Field="CandidateName" HeaderText="Candidate" TextAlign="TextAlign.Left" Width="140"/>
+                                            <GridColumn Field="DateHired" Format="MM/dd/yyyy" HeaderText="Hired Date" TextAlign="TextAlign.Center" Width="100"/>
+                                            <GridColumn Field="StartDate" Format="MM/dd/yyyy" HeaderText="Start Date" TextAlign="TextAlign.Center" Width="100"/>
+                                            <GridColumn Field="SalaryOffered" HeaderText="Salary" TextAlign="TextAlign.Right" Width="100" Format="C0"/>
+                                            <GridColumn Field="PlacementFee" HeaderText="Fee" TextAlign="TextAlign.Right" Width="100" Format="C0"/>
+                                            <GridColumn Field="CommissionEarned" HeaderText="Commission" TextAlign="TextAlign.Right" Width="110" Format="C0"/>
+                                        </GridColumns>
+                                    </SfGrid>
+                                </ContentTemplate>
+                            </TabItem>
+                        </TabItems>
+                    </SfTab>
                 </CardContent>
             </SfCard>
         </div>
     </div>
 </div>
-
-<style>
-    .dashboard-container {
-        width: 100%;
-        min-height: 100vh;
-        background-color: #f8f9fa;
-        position: relative;
-    }
-
-    .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        flex-direction: column;
-    }
-
-    .loading-text {
-        margin-top: 20px;
-        font-size: 16px;
-        color: #666;
-        font-weight: 500;
-    }
-
-    .dashboard-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .dashboard-title h2 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 600;
-    }
-
-    .user-badge {
-        background-color: rgba(255, 255, 255, 0.2);
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 14px;
-        margin-top: 5px;
-        display: inline-block;
-    }
-
-    .dashboard-controls {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-
-    .control-group {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .control-label {
-        font-size: 14px;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .refresh-btn {
-        height: 36px;
-        margin-top: 20px;
-    }
-
-    .dashboard-content {
-        padding: 20px;
-        height: calc(100vh - 200px);
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    .kpi-section {
-        margin-bottom: 30px;
-    }
-
-    .section-title {
-        margin-bottom: 15px;
-    }
-
-    .section-title h3 {
-        color: #333;
-        font-size: 20px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .kpi-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-
-    .kpi-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .kpi-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .kpi-content {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-    }
-
-    .kpi-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: white;
-        margin-right: 15px;
-    }
-
-    .requisitions-card .kpi-icon {
-        background: linear-gradient(135deg, #4f81bd, #5b9bd5);
-    }
-
-    .active-card .kpi-icon {
-        background: linear-gradient(135deg, #f79646, #fbb040);
-    }
-
-    .interview-card .kpi-icon {
-        background: linear-gradient(135deg, #9cbb58, #a9cc5a);
-    }
-
-    .offers-card .kpi-icon {
-        background: linear-gradient(135deg, #8064a2, #9575b8);
-    }
-
-    .hired-card .kpi-icon {
-        background: linear-gradient(135deg, #4bacc6, #4fb3d4);
-    }
-
-    .ratio-card .kpi-icon {
-        background: linear-gradient(135deg, #f15a24, #f26c4f);
-    }
-
-    .kpi-details {
-        flex: 1;
-    }
-
-    .kpi-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: #333;
-        line-height: 1;
-    }
-
-    .kpi-label {
-        font-size: 14px;
-        color: #666;
-        margin-top: 5px;
-        font-weight: 500;
-    }
-
-    .charts-section {
-        margin-bottom: 30px;
-    }
-
-    .charts-row {
-        display: grid;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-
-    .chart-container {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .chart-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 15px;
-        padding: 20px 20px 0 20px;
-    }
-
-    .summary-section, .activity-section {
-        margin-bottom: 30px;
-    }
-
-    .summary-section .e-card, .activity-section .e-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-   
-
-    /*.dashboard-controls {
-        justify-content: center;
-    }
-
-    .kpi-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .dashboard-content {
-        padding: 15px;
-    }*/
-    
-</style>
-
-@code {
-    private bool IsLoading = true;
-    private ReturnDashboard _response;
-    private string User = "DAVE"; // This should come from your authentication/session
-    private string SelectedUser = "";
-    private string SelectedUserText = "";
-    private string SelectedPeriod = "QTD_COUNT";
-
-    private List<UserItem> UsersList = new();
-
-    private List<PeriodItem> PeriodsList = new()
-                                           {
-                                               new() {Value = "LAST7D_COUNT", Text = "Last 7 Days"},
-                                               new() {Value = "MTD_COUNT", Text = "Month To Date"},
-                                               new() {Value = "QTD_COUNT", Text = "Quarter To Date"},
-                                               new() {Value = "HYTD_COUNT", Text = "Half Year To Date"},
-                                               new() {Value = "YTD_COUNT", Text = "Year To Date"}
-                                           };
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadDashboardData();
-    }
-
-    private async Task LoadDashboardData()
-    {
-        IsLoading = true;
-        StateHasChanged();
-
-        try
-        {
-            Dictionary<string, string> _parameters = new()
-                                                     {
-                                                         {"roleName", "AD"},
-                                                         {"user", User}
-                                                     };
-
-            _response = await General.ExecuteRest<ReturnDashboard>("Dashboard/GetAccountsManagerDashboard", _parameters, null, false);
-
-            // Parse Users
-            var users = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(_response.Users);
-            UsersList = users.Select(u => new UserItem {KeyValue = u["KeyValue"], Text = u["Text"]}).ToList();
-
-            // Set default selected user
-            if (UsersList.Any(u => u.KeyValue == User))
-            {
-                SelectedUser = User;
-                SelectedUserText = UsersList.First(u => u.KeyValue == User).Text;
-            }
-            else if (UsersList.Any())
-            {
-                SelectedUser = UsersList.First().KeyValue;
-                SelectedUserText = UsersList.First().Text;
-            }
-        }
-        catch (Exception ex)
-        {
-            // Handle error - you might want to show a toast notification
-            Console.WriteLine($"Error loading dashboard: {ex.Message}");
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnUserChanged(string newUser)
-    {
-        SelectedUser = newUser;
-        SelectedUserText = UsersList.FirstOrDefault(u => u.KeyValue == newUser)?.Text ?? "";
-        StateHasChanged();
-    }
-
-    private async Task OnPeriodChanged(string newPeriod)
-    {
-        SelectedPeriod = newPeriod;
-        StateHasChanged();
-    }
-
-    private async Task RefreshDashboard()
-    {
-        await LoadDashboardData();
-    }
-
-    private string GetPeriodDisplayName()
-    {
-        return PeriodsList.FirstOrDefault(p => p.Value == SelectedPeriod)?.Text ?? "Quarter To Date";
-    }
-
-    private int GetSelectedUserMetric(string metricType)
-    {
-        if (_response.Equals(default(ReturnDashboard))) return 0;
-
-        try
-        {
-            var dataProperty = typeof(ReturnDashboard).GetProperty(metricType)?.GetValue(_response)?.ToString();
-            if (string.IsNullOrEmpty(dataProperty)) return 0;
-
-            var data = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dataProperty);
-            var userRecord = data?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-
-            if (userRecord != null && userRecord.ContainsKey(SelectedPeriod))
-            {
-                return Convert.ToInt32(userRecord[SelectedPeriod]);
-            }
-        }
-        catch
-        {
-        }
-
-        return 0;
-    }
-
-    private string GetSelectedUserRatio()
-    {
-        if (_response.Equals(default(ReturnDashboard))) return "0.00%";
-
-        try
-        {
-            var data = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.HireToOfferRatio);
-            var userRecord = data?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-
-            if (userRecord != null && userRecord.ContainsKey(SelectedPeriod.Replace("_COUNT", "_RATIO")))
-            {
-                var ratio = Convert.ToDouble(userRecord[SelectedPeriod.Replace("_COUNT", "_RATIO")]);
-                return $"{ratio:P2}";
-            }
-        }
-        catch
-        {
-        }
-
-        return "0.00%";
-    }
-
-    private List<ChartDataPoint> GetChartData()
-    {
-        var chartData = new List<ChartDataPoint>();
-        
-        if (_response.Equals(default(ReturnDashboard))) return chartData;
-
-        try
-        {
-            var totalReqData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.TotalRequisitions);
-            var activeReqData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.ActiveRequisitions);
-            var hiredData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.CandidatesHired);
-
-            foreach (var user in UsersList)
-            {
-                var totalReq = totalReqData?.FirstOrDefault(d => d["User"].ToString() == user.KeyValue);
-                var activeReq = activeReqData?.FirstOrDefault(d => d["User"].ToString() == user.KeyValue);
-                var hired = hiredData?.FirstOrDefault(d => d["User"].ToString() == user.KeyValue);
-
-                chartData.Add(new ChartDataPoint
-                {
-                    User = user.Text,
-                    TotalRequisitions = totalReq != null ? Convert.ToInt32(totalReq[SelectedPeriod]) : 0,
-                    ActiveRequisitions = activeReq != null ? Convert.ToInt32(activeReq[SelectedPeriod]) : 0,
-                    CandidatesHired = hired != null ? Convert.ToInt32(hired[SelectedPeriod]) : 0
-                });
-            }
-        }
-        catch { }
-
-        return chartData;
-    }
-
-    private List<SummaryGridItem> GetSummaryGridData()
-    {
-        var summaryData = new List<SummaryGridItem>();
-        
-        if (_response.Equals(default(ReturnDashboard))) return summaryData;
-
-        try
-        {
-            var periods = new[] { "LAST7D_COUNT", "MTD_COUNT", "QTD_COUNT", "HYTD_COUNT", "YTD_COUNT" };
-            var periodNames = new[] { "Last 7 Days", "Month To Date", "Quarter To Date", "Half Year To Date", "Year To Date" };
-
-            var totalReqData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.TotalRequisitions);
-            var activeReqData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.ActiveRequisitions);
-            var interviewData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.CandidatesInInterview);
-            var offersData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.OffersExtended);
-            var hiredData = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.CandidatesHired);
-
-            var userTotalReq = totalReqData?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-            var userActiveReq = activeReqData?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-            var userInterview = interviewData?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-            var userOffers = offersData?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-            var userHired = hiredData?.FirstOrDefault(d => d["User"].ToString() == SelectedUser);
-
-            for (int i = 0; i < periods.Length; i++)
-            {
-                var requisitions = userTotalReq != null ? Convert.ToInt32(userTotalReq[periods[i]]) : 0;
-                var active = userActiveReq != null ? Convert.ToInt32(userActiveReq[periods[i]]) : 0;
-                var interviews = userInterview != null ? Convert.ToInt32(userInterview[periods[i]]) : 0;
-                var offers = userOffers != null ? Convert.ToInt32(userOffers[periods[i]]) : 0;
-                var hired = userHired != null ? Convert.ToInt32(userHired[periods[i]]) : 0;
-                var successRate = offers > 0 ? ((double)hired / offers * 100).ToString("F2") + "%" : "0.00%";
-
-                summaryData.Add(new SummaryGridItem
-                {
-                    TimePeriod = periodNames[i],
-                    Requisitions = requisitions,
-                    Active = active,
-                    Interviews = interviews,
-                    Offers = offers,
-                    Hired = hired,
-                    SuccessRate = successRate
-                });
-            }
-        }
-        catch { }
-
-        return summaryData;
-    }
-
-    private List<RecentActivityItem> GetUserRecentActivity()
-    {
-        if (_response.Equals(default(ReturnDashboard))) return new List<RecentActivityItem>();
-
-        try
-        {
-            var activities = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(_response.RecentActivity);
-            return activities?.Where(a => a["User"].ToString() == SelectedUser)
-                           .Select(a => new RecentActivityItem
-                           {
-                               Company = a["Company"].ToString(),
-                               CandidateName = a["CandidateName"].ToString(),
-                               CurrentStatus = a["CurrentStatus"].ToString(),
-                               DateFirstSubmitted = DateTime.Parse(a["DateFirstSubmitted"].ToString()),
-                               LastActivityDate = DateTime.Parse(a["LastActivityDate"].ToString()),
-                               ActivityNotes = a["ActivityNotes"].ToString()
-                           })
-                           .OrderByDescending(a => a.LastActivityDate)
-                           .ToList() ?? new List<RecentActivityItem>();
-        }
-        catch
-        {
-            return new List<RecentActivityItem>();
-        }
-    }
-
-    // Data Models
-    public class UserItem
-    {
-        public string KeyValue { get; set; }
-        public string Text { get; set; }
-    }
-
-    public class PeriodItem
-    {
-        public string Value { get; set; }
-        public string Text { get; set; }
-    }
-
-    public class ChartDataPoint
-    {
-        public string User { get; set; }
-        public int TotalRequisitions { get; set; }
-        public int ActiveRequisitions { get; set; }
-        public int CandidatesHired { get; set; }
-    }
-
-    public class SummaryGridItem
-    {
-        public string TimePeriod { get; set; }
-        public int Requisitions { get; set; }
-        public int Active { get; set; }
-        public int Interviews { get; set; }
-        public int Offers { get; set; }
-        public int Hired { get; set; }
-        public string SuccessRate { get; set; }
-    }
-
-    public class RecentActivityItem
-    {
-        public string Company { get; set; }
-        public string CandidateName { get; set; }
-        public string CurrentStatus { get; set; }
-        public DateTime DateFirstSubmitted { get; set; }
-        public DateTime LastActivityDate { get; set; }
-        public string ActivityNotes { get; set; }
-    }
-}

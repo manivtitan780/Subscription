@@ -1,0 +1,76 @@
+CREATE TABLE [dbo].[ActiveUsersView]
+(
+    [CreatedBy] VARCHAR(10) NOT NULL,
+    [FullName] VARCHAR(101) NULL,
+    [Role] TINYINT NOT NULL,
+    [Status] BIT NOT NULL,  -- Changed from INT to BIT
+    [LastRequisitionDate] DATE NULL,
+    [RequisitionCount] SMALLINT NOT NULL DEFAULT(0),
+    [RefreshDate] SMALLDATETIME NOT NULL DEFAULT(GETDATE()),
+    
+    CONSTRAINT [PK_ActiveUsersView] PRIMARY KEY NONCLUSTERED ([CreatedBy])
+) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+
+CREATE TABLE [dbo].[SubmissionMetricsView]
+(
+    [CreatedBy] VARCHAR(10) NOT NULL,
+    [MetricDate] DATE NOT NULL,
+    [Period] VARCHAR(10) NOT NULL, -- '7D', 'MTD', 'QTD', 'HYTD', 'YTD'
+    
+    -- Submission counts by status (optimized)
+    [INT_Count] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [OEX_Count] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [HIR_Count] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [Total_Submissions] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    
+    -- Calculated ratios (optimized)
+    [OEX_HIR_Ratio] DECIMAL(5,2) NOT NULL DEFAULT(0),  -- Was DECIMAL(10,4)
+    
+    -- Requisition metrics (optimized)
+    [Requisitions_Created] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [Active_Requisitions_Updated] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    
+    [RefreshDate] SMALLDATETIME NOT NULL DEFAULT(GETDATE()),
+    
+    CONSTRAINT [PK_SubmissionMetricsView] PRIMARY KEY NONCLUSTERED ([CreatedBy], [MetricDate], [Period])
+) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+
+CREATE TABLE [dbo].[TimingAnalyticsView]
+(
+    [CreatedBy] VARCHAR(10) NOT NULL,
+    [RequisitionId] INT NOT NULL,  -- Keep as INT (could be large)
+    [RequisitionCode] VARCHAR(50) NOT NULL,
+    [CompanyName] VARCHAR(255) NOT NULL,
+    [Title] VARCHAR(255) NOT NULL,
+    [CandidateId] INT NOT NULL,  -- Keep as INT (could be large)
+    
+    -- Requisition dates for Time to Fill calculation
+    [RequisitionCreatedDate] DATE NOT NULL,
+    [RequisitionUpdatedDate] DATE NULL,
+    [RequisitionStatus] CHAR(3) NOT NULL,
+    
+    -- Time to Fill/Hire calculations (optimized)
+    [TimeToFill_Days] SMALLINT NULL,  -- Was INT
+    [TimeToHire_Days] SMALLINT NULL,  -- Was INT
+    [FirstSubmissionDate] DATE NULL,
+    [HireDate] DATE NULL,
+    
+    -- Stage timing (days spent in each stage) - all optimized
+    [PEN_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [REJ_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [HLD_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [PHN_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [URW_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [INT_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [RHM_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [DEC_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [NOA_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [OEX_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [ODC_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [HIR_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    [WDR_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
+    
+    [RefreshDate] SMALLDATETIME NOT NULL DEFAULT(GETDATE()),
+    
+    CONSTRAINT [PK_TimingAnalyticsView] PRIMARY KEY NONCLUSTERED ([CreatedBy], [RequisitionId], [CandidateId])
+) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
