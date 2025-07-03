@@ -48,10 +48,10 @@
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.6" />
         <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.6" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
-        <PackageReference Include="Syncfusion.Blazor.Cards" Version="30.1.37" />
-        <PackageReference Include="Syncfusion.Blazor.Themes" Version="30.1.37" />
-        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="30.1.37" />
-        <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="30.1.37" />
+        <PackageReference Include="Syncfusion.Blazor.Cards" Version="30.1.38" />
+        <PackageReference Include="Syncfusion.Blazor.Themes" Version="30.1.38" />
+        <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="30.1.38" />
+        <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="30.1.38" />
         <PackageReference Include="System.Text.Json" Version="9.0.6" />
     </ItemGroup>
 
