@@ -15,7 +15,7 @@
 
 namespace Subscription.Model.Return;
 
-public record struct ReturnDashboard(
+public record struct ReturnDashboardOld(
     string Users,
     string TotalRequisitions,
     string ActiveRequisitions,
@@ -25,3 +25,11 @@ public record struct ReturnDashboard(
     string HireToOfferRatio,
     string RecentActivity,
     string Placements);
+
+public record struct ReturnDashboard(
+    string Users,
+    string ConsolidatedMetrics,
+    string RecentActivity,
+    string Placements,
+    string RequisitionTimingAnalytics,
+    string CompanyTimingAnalytics);

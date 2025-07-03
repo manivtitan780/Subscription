@@ -1,76 +1,332 @@
+USE [Subscription]
+GO
+
+/****** Object:  Table [dbo].[ActiveUsersView]    Script Date: 03-07-2025 16:31:50 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE TABLE [dbo].[ActiveUsersView]
 (
-    [CreatedBy] VARCHAR(10) NOT NULL,
-    [FullName] VARCHAR(101) NULL,
-    [Role] TINYINT NOT NULL,
-    [Status] BIT NOT NULL,  -- Changed from INT to BIT
-    [LastRequisitionDate] DATE NULL,
-    [RequisitionCount] SMALLINT NOT NULL DEFAULT(0),
-    [RefreshDate] SMALLDATETIME NOT NULL DEFAULT(GETDATE()),
-    
-    CONSTRAINT [PK_ActiveUsersView] PRIMARY KEY NONCLUSTERED ([CreatedBy])
-) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+	[CreatedBy] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[FullName] [varchar](101) COLLATE Latin1_General_CI_AI NULL,
+	[Role] [tinyint] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[LastRequisitionDate] [date] NULL,
+	[RequisitionCount] [smallint] NOT NULL,
+	[RefreshDate] [smalldatetime] NOT NULL,
+
+ CONSTRAINT [PK_ActiveUsersView]  PRIMARY KEY NONCLUSTERED 
+(
+	[CreatedBy] ASC
+)
+)WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+ALTER TABLE [dbo].[ActiveUsersView] ADD  DEFAULT ((0)) FOR [RequisitionCount]
+GO
+
+ALTER TABLE [dbo].[ActiveUsersView] ADD  DEFAULT (getdate()) FOR [RefreshDate]
+GO
+
+/****** Object:  Table [dbo].[DateRangeLookup]    Script Date: 03-07-2025 16:31:34 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[DateRangeLookup]
+(
+	[Period] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[StartDate] [date] NOT NULL,
+	[EndDate] [date] NOT NULL,
+	[RefreshDate] [smalldatetime] NOT NULL,
+
+ CONSTRAINT [PK_DateRangeLookup]  PRIMARY KEY NONCLUSTERED 
+(
+	[Period] ASC
+)
+)WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+ALTER TABLE [dbo].[DateRangeLookup] ADD  DEFAULT (getdate()) FOR [RefreshDate]
+GO
+
+/****** Object:  Table [dbo].[PlacementReportView]    Script Date: 03-07-2025 16:32:32 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[PlacementReportView]
+(
+	[CreatedBy] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[RequisitionId] [int] NOT NULL,
+	[CandidateId] [int] NOT NULL,
+	[CompanyName] [varchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[RequisitionNumber] [varchar](50) COLLATE Latin1_General_CI_AI NOT NULL,
+	[NumPosition] [smallint] NOT NULL,
+	[RequisitionTitle] [varchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[CandidateName] [varchar](101) COLLATE Latin1_General_CI_AI NOT NULL,
+	[DateHired] [date] NOT NULL,
+	[SalaryOffered] [decimal](9, 2) NOT NULL,
+	[StartDate] [date] NOT NULL,
+	[DateInvoiced] [date] NOT NULL,
+	[DatePaid] [date] NOT NULL,
+	[PlacementFee] [decimal](9, 2) NOT NULL,
+	[CommissionPercent] [decimal](5, 2) NOT NULL,
+	[CommissionEarned] [decimal](9, 2) NOT NULL,
+	[RefreshDate] [smalldatetime] NOT NULL,
+
+INDEX [IX_PlacementReport_Company_Date] NONCLUSTERED 
+(
+	[CompanyName] ASC,
+	[DateHired] DESC,
+	[CreatedBy] ASC
+),
+INDEX [IX_PlacementReport_User] NONCLUSTERED HASH 
+(
+	[CreatedBy]
+)WITH ( BUCKET_COUNT = 64),
+ CONSTRAINT [PK_PlacementReportView]  PRIMARY KEY NONCLUSTERED 
+(
+	[CreatedBy] ASC,
+	[RequisitionId] ASC,
+	[CandidateId] ASC
+)
+)WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT ((0.00)) FOR [SalaryOffered]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT (getdate()) FOR [StartDate]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT (getdate()) FOR [DateInvoiced]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT (getdate()) FOR [DatePaid]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT ((0.00)) FOR [PlacementFee]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT ((0.00)) FOR [CommissionPercent]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT ((0.00)) FOR [CommissionEarned]
+GO
+
+ALTER TABLE [dbo].[PlacementReportView] ADD  DEFAULT (getdate()) FOR [RefreshDate]
+GO
+
+/****** Object:  Table [dbo].[RecentActivityView]    Script Date: 03-07-2025 16:32:43 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[RecentActivityView]
+(
+	[CreatedBy] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[RequisitionId] [int] NOT NULL,
+	[CandidateId] [int] NOT NULL,
+	[CompanyName] [varchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[RequisitionCode] [varchar](50) COLLATE Latin1_General_CI_AI NOT NULL,
+	[RequisitionTitle] [varchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[Positions] [smallint] NOT NULL,
+	[CandidateName] [varchar](101) COLLATE Latin1_General_CI_AI NOT NULL,
+	[CurrentStatus] [char](3) COLLATE Latin1_General_CI_AI NOT NULL,
+	[DateFirstSubmitted] [date] NOT NULL,
+	[LastActivityDate] [date] NOT NULL,
+	[ActivityNotes] [varchar](5000) COLLATE Latin1_General_CI_AI NULL,
+	[SubmissionCount] [smallint] NOT NULL,
+	[RefreshDate] [smalldatetime] NOT NULL,
+
+INDEX [IX_RecentActivity_Company] NONCLUSTERED 
+(
+	[CompanyName] ASC,
+	[CreatedBy] ASC
+),
+INDEX [IX_RecentActivity_User] NONCLUSTERED HASH 
+(
+	[CreatedBy]
+)WITH ( BUCKET_COUNT = 64),
+ CONSTRAINT [PK_RecentActivityView]  PRIMARY KEY NONCLUSTERED 
+(
+	[CreatedBy] ASC,
+	[RequisitionId] ASC,
+	[CandidateId] ASC
+)
+)WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+ALTER TABLE [dbo].[RecentActivityView] ADD  DEFAULT (getdate()) FOR [RefreshDate]
+GO
+
+/****** Object:  Table [dbo].[SubmissionMetricsView]    Script Date: 03-07-2025 16:32:59 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
 
 CREATE TABLE [dbo].[SubmissionMetricsView]
 (
-    [CreatedBy] VARCHAR(10) NOT NULL,
-    [MetricDate] DATE NOT NULL,
-    [Period] VARCHAR(10) NOT NULL, -- '7D', 'MTD', 'QTD', 'HYTD', 'YTD'
-    
-    -- Submission counts by status (optimized)
-    [INT_Count] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [OEX_Count] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [HIR_Count] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [Total_Submissions] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    
-    -- Calculated ratios (optimized)
-    [OEX_HIR_Ratio] DECIMAL(5,2) NOT NULL DEFAULT(0),  -- Was DECIMAL(10,4)
-    
-    -- Requisition metrics (optimized)
-    [Requisitions_Created] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [Active_Requisitions_Updated] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    
-    [RefreshDate] SMALLDATETIME NOT NULL DEFAULT(GETDATE()),
-    
-    CONSTRAINT [PK_SubmissionMetricsView] PRIMARY KEY NONCLUSTERED ([CreatedBy], [MetricDate], [Period])
-) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+	[CreatedBy] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[MetricDate] [date] NOT NULL,
+	[Period] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[INT_Count] [smallint] NOT NULL,
+	[OEX_Count] [smallint] NOT NULL,
+	[HIR_Count] [smallint] NOT NULL,
+	[Total_Submissions] [smallint] NOT NULL,
+	[OEX_HIR_Ratio] [decimal](5, 2) NOT NULL,
+	[Requisitions_Created] [smallint] NOT NULL,
+	[Active_Requisitions_Updated] [smallint] NOT NULL,
+	[RefreshDate] [smalldatetime] NOT NULL,
+
+INDEX [IX_SubmissionMetricsView_CreatedBy] NONCLUSTERED 
+(
+	[CreatedBy] ASC
+),
+ CONSTRAINT [PK_SubmissionMetricsView]  PRIMARY KEY NONCLUSTERED 
+(
+	[CreatedBy] ASC,
+	[Period] ASC,
+	[MetricDate] ASC
+)
+)WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [INT_Count]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [OEX_Count]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [HIR_Count]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [Total_Submissions]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [OEX_HIR_Ratio]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [Requisitions_Created]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT ((0)) FOR [Active_Requisitions_Updated]
+GO
+
+ALTER TABLE [dbo].[SubmissionMetricsView] ADD  DEFAULT (getdate()) FOR [RefreshDate]
+GO
+
+/****** Object:  Table [dbo].[TimingAnalyticsView]    Script Date: 03-07-2025 16:33:13 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
 
 CREATE TABLE [dbo].[TimingAnalyticsView]
 (
-    [CreatedBy] VARCHAR(10) NOT NULL,
-    [RequisitionId] INT NOT NULL,  -- Keep as INT (could be large)
-    [RequisitionCode] VARCHAR(50) NOT NULL,
-    [CompanyName] VARCHAR(255) NOT NULL,
-    [Title] VARCHAR(255) NOT NULL,
-    [CandidateId] INT NOT NULL,  -- Keep as INT (could be large)
-    
-    -- Requisition dates for Time to Fill calculation
-    [RequisitionCreatedDate] DATE NOT NULL,
-    [RequisitionUpdatedDate] DATE NULL,
-    [RequisitionStatus] CHAR(3) NOT NULL,
-    
-    -- Time to Fill/Hire calculations (optimized)
-    [TimeToFill_Days] SMALLINT NULL,  -- Was INT
-    [TimeToHire_Days] SMALLINT NULL,  -- Was INT
-    [FirstSubmissionDate] DATE NULL,
-    [HireDate] DATE NULL,
-    
-    -- Stage timing (days spent in each stage) - all optimized
-    [PEN_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [REJ_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [HLD_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [PHN_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [URW_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [INT_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [RHM_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [DEC_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [NOA_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [OEX_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [ODC_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [HIR_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    [WDR_Days] SMALLINT NOT NULL DEFAULT(0),  -- Was INT
-    
-    [RefreshDate] SMALLDATETIME NOT NULL DEFAULT(GETDATE()),
-    
-    CONSTRAINT [PK_TimingAnalyticsView] PRIMARY KEY NONCLUSTERED ([CreatedBy], [RequisitionId], [CandidateId])
-) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+	[Context] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[CreatedBy] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+	[RequisitionId] [int] NOT NULL,
+	[RequisitionCode] [varchar](50) COLLATE Latin1_General_CI_AI NOT NULL,
+	[CompanyName] [varchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[Title] [varchar](255) COLLATE Latin1_General_CI_AI NOT NULL,
+	[CandidateId] [int] NOT NULL,
+	[RequisitionCreatedDate] [date] NOT NULL,
+	[RequisitionUpdatedDate] [date] NULL,
+	[RequisitionStatus] [char](3) COLLATE Latin1_General_CI_AI NOT NULL,
+	[TimeToFill_Days] [smallint] NULL,
+	[TimeToHire_Days] [smallint] NULL,
+	[FirstSubmissionDate] [date] NULL,
+	[HireDate] [date] NULL,
+	[PEN_Days] [smallint] NOT NULL,
+	[REJ_Days] [smallint] NOT NULL,
+	[HLD_Days] [smallint] NOT NULL,
+	[PHN_Days] [smallint] NOT NULL,
+	[URW_Days] [smallint] NOT NULL,
+	[INT_Days] [smallint] NOT NULL,
+	[RHM_Days] [smallint] NOT NULL,
+	[DEC_Days] [smallint] NOT NULL,
+	[NOA_Days] [smallint] NOT NULL,
+	[OEX_Days] [smallint] NOT NULL,
+	[ODC_Days] [smallint] NOT NULL,
+	[HIR_Days] [smallint] NOT NULL,
+	[WDR_Days] [smallint] NOT NULL,
+	[RefreshDate] [smalldatetime] NOT NULL,
+
+INDEX [IX_TimingAnalytics_Company] NONCLUSTERED 
+(
+	[CompanyName] ASC,
+	[Context] ASC,
+	[CreatedBy] ASC
+),
+INDEX [IX_TimingAnalytics_ContextUser] NONCLUSTERED HASH 
+(
+	[Context],
+	[CreatedBy]
+)WITH ( BUCKET_COUNT = 128),
+ CONSTRAINT [PK_TimingAnalyticsView]  PRIMARY KEY NONCLUSTERED 
+(
+	[Context] ASC,
+	[CreatedBy] ASC,
+	[RequisitionId] ASC,
+	[CandidateId] ASC
+)
+)WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [PEN_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [REJ_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [HLD_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [PHN_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [URW_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [INT_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [RHM_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [DEC_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [NOA_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [OEX_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [ODC_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [HIR_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT ((0)) FOR [WDR_Days]
+GO
+
+ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT (getdate()) FOR [RefreshDate]
+GO
+
+

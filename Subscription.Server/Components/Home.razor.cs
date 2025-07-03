@@ -132,12 +132,13 @@ private string _selectedUser = "";
             _dashboardData ??= new();
             _dashboardData.UserName = User;
             Users = General.DeserializeObject<List<KeyValues>>(_response.Users);
-            List<DateCount> _dateCountsTotalRequisition = General.DeserializeObject<List<DateCount>>(_response.TotalRequisitions);
+            /*List<DateCount> _dateCountsTotalRequisition = General.DeserializeObject<List<DateCount>>(_response.TotalRequisitions);
             List<DateCount> _dateCountsActiveRequisition = General.DeserializeObject<List<DateCount>>(_response.ActiveRequisitions);
             List<DateCount> _dateCountsCandidatesInInterview = General.DeserializeObject<List<DateCount>>(_response.CandidatesInInterview);
             List<DateCount> _dateCountsOffersExtended = General.DeserializeObject<List<DateCount>>(_response.OffersExtended);
             List<DateCount> _dateCountsCandidatesHired = General.DeserializeObject<List<DateCount>>(_response.CandidatesHired);
-            List<RatioCount> _ratioCounts = General.DeserializeObject<List<RatioCount>>(_response.HireToOfferRatio);
+            List<RatioCount> _ratioCounts = General.DeserializeObject<List<RatioCount>>(_response.HireToOfferRatio);*/
+            _consolidatedMetricsData = General.DeserializeObject<List<ConsolidatedMetrics>>(_response.ConsolidatedMetrics) ?? [];
             List<RecentActivity> _recentActivity = General.DeserializeObject<List<RecentActivity>>(_response.RecentActivity) ?? [];
             List<HiredPlacement> _placements = General.DeserializeObject<List<HiredPlacement>>(_response.Placements) ?? [];
 

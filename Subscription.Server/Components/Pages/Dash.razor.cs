@@ -23,16 +23,17 @@ namespace Subscription.Server.Components.Pages;
 
 public partial class Dash
 {
-    private List<DateCounts> _activeRequisitionsData = [];
+    /*private List<DateCounts> _activeRequisitionsData = [];
     private List<DateCounts> _candidatesHiredData = [];
     private List<DateCounts> _candidatesInInterviewData = [];
+    private List<DateCounts> _offersExtendedData = [];
+    private List<DateCounts> _totalRequisitionsData = [];
+    private List<RatioCounts> _hireToOfferRatioData = [];*/
+    private List<ConsolidatedMetrics> _consolidatedMetricsData = [];
+    private List<HiredPlacement> _hiredPlacementsData = [];
+    private bool _isLoading = true;
     private List<ChartDataPoint> _chartData = [];
     private SfChart _chartRef;
-
-    private List<HiredPlacement> _hiredPlacementsData = [];
-    private List<RatioCounts> _hireToOfferRatioData = [];
-    private bool _isLoading = true;
-    private List<DateCounts> _offersExtendedData = [];
 
     private readonly List<PeriodItem> _periodsList =
     [
@@ -50,7 +51,6 @@ public partial class Dash
     private string _selectedUserText = "";
 
     // Strongly typed data collections
-    private List<DateCounts> _totalRequisitionsData = [];
     private readonly string _user = "DAVE"; // This should come from your authentication/session
 
     private List<UserItem> _usersList = [];
@@ -75,7 +75,7 @@ public partial class Dash
 
     private int GetSelectedUserMetric(string metricType)
     {
-        DateCounts userData = metricType switch
+        /*DateCounts userData = metricType switch
                               {
                                   "TotalRequisitions" => _totalRequisitionsData.FirstOrDefault(d => d.User == _selectedUser),
                                   "ActiveRequisitions" => _activeRequisitionsData.FirstOrDefault(d => d.User == _selectedUser),
@@ -98,12 +98,37 @@ public partial class Dash
                    "HYTD_COUNT" => userData.HYTD_COUNT,
                    "YTD_COUNT" => userData.YTD_COUNT,
                    _ => 0
+               };*/
+        ConsolidatedMetrics userPeriodData = _consolidatedMetricsData.FirstOrDefault(m => m.User == _selectedUser && m.Period == GetSelectedPeriodCode());
+
+        if (userPeriodData == null) return 0;
+
+        return metricType switch
+               {
+                   "TotalRequisitions" => userPeriodData.RequisitionsCreated,
+                   "ActiveRequisitions" => userPeriodData.ActiveRequisitions,
+                   "CandidatesInInterview" => userPeriodData.INTSubmissions,
+                   "OffersExtended" => userPeriodData.OEXSubmissions,
+                   "CandidatesHired" => userPeriodData.HIRSubmissions,
+                   _ => 0
                };
     }
 
+    private string GetSelectedPeriodCode()
+    {
+        return _selectedPeriod switch
+               {
+                   "LAST7D_COUNT" => "7D",
+                   "MTD_COUNT" => "MTD",
+                   "QTD_COUNT" => "QTD",
+                   "HYTD_COUNT" => "HYTD",
+                   "YTD_COUNT" => "YTD",
+                   _ => "QTD"
+               };
+    }
     private string GetSelectedUserRatio()
     {
-        RatioCounts userData = _hireToOfferRatioData.FirstOrDefault(d => d.User == _selectedUser);
+        /*RatioCounts userData = _hireToOfferRatioData.FirstOrDefault(d => d.User == _selectedUser);
 
         if (userData.Equals(default))
         {
@@ -120,12 +145,15 @@ public partial class Dash
                           _ => 0f
                       };
 
-        return $"{ratio:P2}";
+        return $"{ratio:P2}";*/
+        ConsolidatedMetrics userPeriodData = _consolidatedMetricsData.FirstOrDefault(m => m.User == _selectedUser && m.Period == GetSelectedPeriodCode());
+
+        return userPeriodData?.OEXHIRRatio.ToString("P2") ?? "0.00%";
     }
 
     private List<SummaryGridItem> GetSummaryGridData()
     {
-        List<SummaryGridItem> summaryData = [];
+        /*List<SummaryGridItem> summaryData = [];
         string[] periodNames = ["Last 7 Days", "Month To Date", "Quarter To Date", "Half Year To Date", "Year To Date"];
 
         DateCounts userTotalReq = _totalRequisitionsData.FirstOrDefault(d => d.User == _selectedUser);
@@ -152,6 +180,37 @@ public partial class Dash
                                 Interviews = interviewCounts[i],
                                 Offers = offerCounts[i],
                                 Hired = hiredCounts[i],
+                                SuccessRate = successRate
+                            });
+        }
+
+        return summaryData;*/
+        List<SummaryGridItem> summaryData = [];
+        string[] periodNames = ["Last 7 Days", "Month To Date", "Quarter To Date", "Half Year To Date", "Year To Date"];
+        string[] periodCodes = ["7D", "MTD", "QTD", "HYTD", "YTD"];
+
+        for (int i = 0; i < periodNames.Length; i++)
+        {
+            var userPeriodData = _consolidatedMetricsData
+               .FirstOrDefault(m => m.User == _selectedUser && m.Period == periodCodes[i]);
+
+            int totalCount = userPeriodData?.RequisitionsCreated ?? 0;
+            int activeCount = userPeriodData?.ActiveRequisitions ?? 0;
+            int interviewCount = userPeriodData?.INTSubmissions ?? 0;
+            int offerCount = userPeriodData?.OEXSubmissions ?? 0;
+            int hiredCount = userPeriodData?.HIRSubmissions ?? 0;
+
+            string successRate = offerCount > 0 ?
+                                     ((double)hiredCount / offerCount * 100).ToString("F2") + "%" : "0.00%";
+
+            summaryData.Add(new()
+                            {
+                                TimePeriod = periodNames[i],
+                                Requisitions = totalCount,
+                                Active = activeCount,
+                                Interviews = interviewCount,
+                                Offers = offerCount,
+                                Hired = hiredCount,
                                 SuccessRate = successRate
                             });
         }
@@ -193,12 +252,13 @@ public partial class Dash
             _usersList = users.Select(u => new UserItem {KeyValue = u["KeyValue"], Text = u["Text"]}).ToList();
 
             // Deserialize all data into strongly typed objects
-            _totalRequisitionsData = General.DeserializeObject<List<DateCounts>>(_response.TotalRequisitions) ?? [];
+            /*_totalRequisitionsData = General.DeserializeObject<List<DateCounts>>(_response.TotalRequisitions) ?? [];
             _activeRequisitionsData = General.DeserializeObject<List<DateCounts>>(_response.ActiveRequisitions) ?? [];
             _candidatesInInterviewData = General.DeserializeObject<List<DateCounts>>(_response.CandidatesInInterview) ?? [];
             _offersExtendedData = General.DeserializeObject<List<DateCounts>>(_response.OffersExtended) ?? [];
             _candidatesHiredData = General.DeserializeObject<List<DateCounts>>(_response.CandidatesHired) ?? [];
-            _hireToOfferRatioData = General.DeserializeObject<List<RatioCounts>>(_response.HireToOfferRatio) ?? [];
+            _hireToOfferRatioData = General.DeserializeObject<List<RatioCounts>>(_response.HireToOfferRatio) ?? [];*/
+            _consolidatedMetricsData = General.DeserializeObject<List<ConsolidatedMetrics>>(_response.ConsolidatedMetrics) ?? [];
             _recentActivityData = General.DeserializeObject<List<RecentActivityItem>>(_response.RecentActivity) ?? [];
             _hiredPlacementsData = General.DeserializeObject<List<HiredPlacement>>(_response.Placements) ?? [];
             
@@ -299,7 +359,7 @@ public partial class Dash
 
     private void UpdateChartData()
     {
-        _chartData.Clear();
+        /*_chartData.Clear();
 
         foreach (UserItem user in _usersList)
         {
@@ -314,6 +374,28 @@ public partial class Dash
             int interviewValue = !interview.Equals(default) ? GetCountByPeriod(interview) : 0;
             int offersValue = !offers.Equals(default) ? GetCountByPeriod(offers) : 0;
             int hiredValue = !hired.Equals(default) ? GetCountByPeriod(hired) : 0;
+
+            _chartData.Add(new()
+                           {
+                               User = user.Text,
+                               TotalRequisitions = totalValue,
+                               ActiveRequisitions = activeValue,
+                               CandidatesInInterview = interviewValue,
+                               OffersExtended = offersValue,
+                               CandidatesHired = hiredValue
+                           });
+        }*/
+        _chartData.Clear();
+
+        foreach (UserItem user in _usersList)
+        {
+            ConsolidatedMetrics userPeriodData = _consolidatedMetricsData.FirstOrDefault(m => m.User == user.KeyValue && m.Period == GetSelectedPeriodCode());
+
+            int totalValue = userPeriodData?.RequisitionsCreated ?? 0;
+            int activeValue = userPeriodData?.ActiveRequisitions ?? 0;
+            int interviewValue = userPeriodData?.INTSubmissions ?? 0;
+            int offersValue = userPeriodData?.OEXSubmissions ?? 0;
+            int hiredValue = userPeriodData?.HIRSubmissions ?? 0;
 
             _chartData.Add(new()
                            {

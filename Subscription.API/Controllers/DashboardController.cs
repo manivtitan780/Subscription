@@ -8,7 +8,7 @@
 // File Name:           DashboardController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          06-18-2025 20:06
-// Last Updated On:     06-24-2025 20:30
+// Last Updated On:     07-03-2025 20:37
 // *****************************************/
 
 #endregion
@@ -41,8 +41,7 @@ public class DashboardController : ControllerBase
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            string _users = "[]", _totalRequisitions = "[]", _activeRequisitions = "[]", _candidatesInInterview = "[]", _offersExtended = "[]", _candidatesHired = "[]", _hireToOfferRatio = "[]",
-                   _recentActivity = "[]", _placements = "[]";
+            string _users = "[]", _consolidatedMetrics = "[]", _recentActivity = "[]", _placements = "[]", _requisitionTimingAnalytics = "[]", _companyTimingAnalytics = "[]";
             while (await _reader.ReadAsync())
             {
                 _users = _reader.NString(0);
@@ -52,37 +51,7 @@ public class DashboardController : ControllerBase
 
             while (await _reader.ReadAsync())
             {
-                _totalRequisitions = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _activeRequisitions = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _candidatesInInterview = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _offersExtended = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _candidatesHired = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
-            {
-                _hireToOfferRatio = _reader.NString(0);
+                _consolidatedMetrics = _reader.NString(0);
             }
 
             await _reader.NextResultAsync();
@@ -97,12 +66,28 @@ public class DashboardController : ControllerBase
                 _placements = _reader.NString(0);
             }
 
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _requisitionTimingAnalytics = _reader.NString(0);
+            }
+
+            await _reader.NextResultAsync();
+            while (await _reader.ReadAsync())
+            {
+                _companyTimingAnalytics = _reader.NString(0);
+            }
+
             await _reader.CloseAsync();
 
             return Ok(new ReturnDashboard
                       {
-                          Users = _users, TotalRequisitions = _totalRequisitions, ActiveRequisitions = _activeRequisitions, CandidatesInInterview = _candidatesInInterview,
-                          OffersExtended = _offersExtended, CandidatesHired = _candidatesHired, HireToOfferRatio = _hireToOfferRatio, RecentActivity = _recentActivity, Placements = _placements
+                          Users = _users,
+                          ConsolidatedMetrics = _consolidatedMetrics,
+                          RecentActivity = _recentActivity,
+                          Placements = _placements,
+                          RequisitionTimingAnalytics = _requisitionTimingAnalytics,
+                          CompanyTimingAnalytics = _companyTimingAnalytics
                       });
         }
         catch (Exception ex)

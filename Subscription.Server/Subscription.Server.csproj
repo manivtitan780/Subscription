@@ -94,6 +94,7 @@
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
         <Content Remove="FileRaz.razor" />
+        <Content Remove="Components\Home.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -150,6 +151,7 @@
 
     <ItemGroup>
       <Compile Remove="FileRaz.razor.cs" />
+      <Compile Remove="Components\Home.razor.cs" />
     </ItemGroup>
 
     <ItemGroup>
