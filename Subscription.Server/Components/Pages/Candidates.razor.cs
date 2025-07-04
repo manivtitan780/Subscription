@@ -8,14 +8,14 @@
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 19:02
-// Last Updated On:     06-11-2025 19:13
+// Last Updated On:     07-04-2025 20:11
 // *****************************************/
 
 #endregion
 
 #region Using
 
-using System.Diagnostics;
+using System.Text;
 
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
@@ -24,7 +24,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace Subscription.Server.Components.Pages;
 
-public partial class Candidates
+public partial class Candidates : IDisposable
 {
     private const string StorageName = "CandidatesGrid";
     private List<CandidateActivity> _candActivityObject = [];
@@ -37,10 +37,17 @@ public partial class Candidates
     private List<CandidateRating> _candRatingObject = [];
     private List<CandidateSkills> _candSkillsObject = [];
 
+    private bool _disposed;
+
+    private DotNetObjectReference<Candidates> _dotNetReference;
+
     private List<IntValues> _eligibility = [], _experience = [], _documentTypes = [];
     //private bool _formattedExists, _originalExists;
 
     private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [];
+    private Dictionary<string, string> _jobOptionsDict;
+
+    private readonly Dictionary<string, string> _reusableParameters = new();
 
     //private Query _query = new();
 
@@ -52,7 +59,9 @@ public partial class Candidates
     private List<StateCache> _states = [];
     private List<StatusCode> _statusCodes = [];
 
-    private readonly Stopwatch _stopwatch = new();
+    private readonly StringBuilder _stringBuilder = new();
+
+    //private readonly Stopwatch _stopwatch = new();
     private readonly SubmitCandidateRequisition _submitCandidateModel = new();
 
     private Candidate _target;
@@ -109,13 +118,13 @@ public partial class Candidates
 
     private bool DownloadOriginal { get; set; }
 
-    public EditContext EditConEducation { get; set; }
+    //public EditContext EditConEducation { get; set; }
 
-    public EditContext EditConExperience { get; set; }
+    //public EditContext EditConExperience { get; set; }
 
-    public EditContext EditConNotes { get; set; }
+    //public EditContext EditConNotes { get; set; }
 
-    public EditContext EditConSkill { get; set; }
+    //public EditContext EditConSkill { get; set; }
 
     private EducationPanel EducationPanel { get; set; }
 
@@ -223,6 +232,23 @@ public partial class Candidates
     [Inject]
     private ZipCodeService ZipCodeService { get; set; }
 
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            // Dispose managed resources
+            _semaphoreMainPage?.Dispose();
+            _dotNetReference?.Dispose();
+
+            // Clear large collections
+            ClearAllCollections();
+
+            _disposed = true;
+        }
+
+        GC.SuppressFinalize(this);
+    }
+
     private async Task AddCandidate(MouseEventArgs arg)
     {
         if (await DialogService.ConfirmAsync(null, "Auto-Fill Candidate?", General.DialogOptions("Do you want to auto-fill the candidate details?")))
@@ -291,6 +317,19 @@ public partial class Candidates
                                                      await Grid.HideSpinnerAsync();
                                                  });
 
+    private void ClearAllCollections()
+    {
+        _candActivityObject?.Clear();
+        _candDocumentsObject?.Clear();
+        _candEducationObject?.Clear();
+        _candExperienceObject?.Clear();
+        _candidateNotesObject?.Clear();
+        _candMPCObject?.Clear();
+        _candRatingObject?.Clear();
+        _candSkillsObject?.Clear();
+        DataSource?.Clear();
+    }
+
     private Task ClearFilter() => ExecuteMethod(async () =>
                                                 {
                                                     SearchModel.Clear();
@@ -303,16 +342,25 @@ public partial class Candidates
         await Refresh().ConfigureAwait(false);
     }
 
-    private Dictionary<string, string> CreateParameters(int id) => new()
-                                                                   {
-                                                                       {"id", id.ToString()},
-                                                                       {"candidateID", _target.ID.ToString()},
-                                                                       {"user", User}
-                                                                   };
+    private Dictionary<string, string> CreateParameters(int id)
+    {
+        _reusableParameters.Clear();
+        _reusableParameters["id"] = id.ToString();
+        _reusableParameters["candidateID"] = _target.ID.ToString();
+        _reusableParameters["user"] = User;
+        return _reusableParameters;
+
+        /*return new()
+               {
+                   {"id", id.ToString()},
+                   {"candidateID", _target.ID.ToString()},
+                   {"user", User}
+               };*/
+    }
 
     private Task DataHandler() => ExecuteMethod(async () =>
                                                 {
-                                                    DotNetObjectReference<Candidates> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
+                                                    _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
                                                     await JsRuntime.InvokeAsync<string>("detail", _dotNetReference);
                                                     //  send the dotnet ref to JS side
                                                     if (Grid.TotalItemCount > 0)
@@ -432,6 +480,27 @@ public partial class Candidates
     [JSInvokable("DetailCollapse")]
     public void DetailRowCollapse() => _target = null;
 
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed && disposing)
+        {
+            // Dispose managed resources
+            _semaphoreMainPage?.Dispose();
+            _dotNetReference?.Dispose();
+
+            // Clear large collections
+            ClearAllCollections();
+
+            // Clear edit contexts
+            //EditConEducation = null;
+            //EditConExperience = null;
+            //EditConNotes = null;
+            //EditConSkill = null;
+
+            _disposed = true;
+        }
+    }
+
     private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
                                                             {
                                                                 SelectedDownload = PanelDownload.SelectedRow;
@@ -528,7 +597,7 @@ public partial class Candidates
                                                                 SelectedEducation = EducationPanel.SelectedRow != null ? EducationPanel.SelectedRow.Copy() : new();
                                                             }
 
-                                                            EditConEducation = new(SelectedEducation!);
+                                                            //EditConEducation = new(SelectedEducation!);
                                                             VisibleSpinner = false;
                                                             await CandidateEducationDialog.ShowDialog();
                                                         });
@@ -552,7 +621,7 @@ public partial class Candidates
                                                                  SelectedExperience = ExperiencePanel.SelectedRow != null ? ExperiencePanel.SelectedRow.Copy() : new();
                                                              }
 
-                                                             EditConExperience = new(SelectedExperience!);
+                                                             //EditConExperience = new(SelectedExperience!);
                                                              VisibleSpinner = false;
                                                              await CandidateExperienceDialog.ShowDialog();
                                                          });
@@ -576,7 +645,7 @@ public partial class Candidates
                                                             SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
                                                         }
 
-                                                        EditConNotes = new(SelectedNotes!);
+                                                        //EditConNotes = new(SelectedNotes!);
                                                         VisibleSpinner = false;
                                                         await CandidateNotesDialog.ShowDialog();
                                                     });
@@ -600,7 +669,7 @@ public partial class Candidates
                                                                SelectedSkill = SkillPanel.SelectedRow != null ? SkillPanel.SelectedRow.Copy() : new();
                                                            }
 
-                                                           EditConSkill = new(SelectedSkill!);
+                                                           //EditConSkill = new(SelectedSkill!);
                                                            VisibleSpinner = false;
                                                            await CandidateSkillDialog.ShowDialog();
                                                        });
@@ -717,6 +786,11 @@ public partial class Candidates
                                                                                        await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                                    });
 
+    private void InitializeJobOptionsDictionary()
+    {
+        _jobOptionsDict = _jobOptions?.ToDictionary(x => x.KeyValue, x => x.Text) ?? new();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -813,6 +887,7 @@ public partial class Candidates
                                 _workflow = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
                                 _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.Communications)]);
                                 _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.DocumentTypes)]);
+                                InitializeJobOptionsDictionary();
                             });
 
         await base.OnInitializedAsync();
@@ -1021,29 +1096,29 @@ public partial class Candidates
                                                                       });
 
     private Task SaveResume(EditContext resume) => ExecuteMethod(async () =>
-                                                                       {
-                                                                           if (resume.Model is CandidateResume _resume)
-                                                                           {
-                                                                               Dictionary<string, string> _parameters = new()
-                                                                                                                        {
-                                                                                                                            {"filename", ResumeUpdate.FileName},
-                                                                                                                            {"mime", ResumeUpdate.Mime},
-                                                                                                                            {"candidateID", _target.ID.ToString()},
-                                                                                                                            {"user", User},
-                                                                                                                            {"type", ResumeType},
-                                                                                                                            {"updateTextResume", _resume.UpdateTextResume.ToString()}
-                                                                                                                        };
+                                                                 {
+                                                                     if (resume.Model is CandidateResume _resume)
+                                                                     {
+                                                                         Dictionary<string, string> _parameters = new()
+                                                                                                                  {
+                                                                                                                      {"filename", ResumeUpdate.FileName},
+                                                                                                                      {"mime", ResumeUpdate.Mime},
+                                                                                                                      {"candidateID", _target.ID.ToString()},
+                                                                                                                      {"user", User},
+                                                                                                                      {"type", ResumeType},
+                                                                                                                      {"updateTextResume", _resume.UpdateTextResume.ToString()}
+                                                                                                                  };
 
-                                                                               string _response = await General.ExecuteRest<string>("Candidate/UpdateResume", _parameters, null, true,
-                                                                                                                                    ResumeUpdate.AddedDocument.ToStreamByteArray(),
-                                                                                                                                    ResumeUpdate.FileName);
+                                                                         string _response = await General.ExecuteRest<string>("Candidate/UpdateResume", _parameters, null, true,
+                                                                                                                              ResumeUpdate.AddedDocument.ToStreamByteArray(),
+                                                                                                                              ResumeUpdate.FileName);
 
-                                                                               if (_response.NotNullOrWhiteSpace())
-                                                                               {
-                                                                                   _candDetailsObject.TextResume = _response;
-                                                                               }
-                                                                           }
-                                                                       });
+                                                                         if (_response.NotNullOrWhiteSpace())
+                                                                         {
+                                                                             _candDetailsObject.TextResume = _response;
+                                                                         }
+                                                                     }
+                                                                 });
 
     private Task SaveSkill(EditContext skill) => ExecuteMethod(async () =>
                                                                {
@@ -1128,12 +1203,12 @@ public partial class Candidates
         /*
         _stopwatch.Reset();
         _stopwatch.Start();
-        */
-        await Grid.ShowSpinnerAsync().ConfigureAwait(false);
+        */  
+        await Grid.ShowSpinnerAsync();
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false).ConfigureAwait(false);
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);
-        await Grid.Refresh().ConfigureAwait(false);
-        await Grid.HideSpinnerAsync().ConfigureAwait(false);
+        await Grid.Refresh();
+        await Grid.HideSpinnerAsync();
         /*
         _stopwatch.Stop();
         await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt",$"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
@@ -1162,7 +1237,35 @@ public partial class Candidates
 
     private void SetJobOption()
     {
-        if (_jobOptions is {Count: > 0} && !string.IsNullOrWhiteSpace(_candDetailsObject.JobOptions))
+        _stringBuilder.Clear(); // Reuse same instance
+
+        if (_jobOptionsDict?.Count > 0 && !string.IsNullOrWhiteSpace(_candDetailsObject.JobOptions))
+        {
+            string[] keys = _candDetailsObject.JobOptions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            foreach (string key in keys)
+            {
+                if (!_jobOptionsDict.TryGetValue(key, out string text))
+                {
+                    continue;
+                }
+
+                if (_stringBuilder.Length > 0)
+                {
+                    _stringBuilder.Append(", ");
+                }
+
+                _stringBuilder.Append(text);
+            }
+
+            CandidateJobOptions = _stringBuilder.ToString().ToMarkupString();
+        }
+        else
+        {
+            CandidateJobOptions = string.Empty.ToMarkupString();
+        }
+
+        /*if (_jobOptions is {Count: > 0} && !string.IsNullOrWhiteSpace(_candDetailsObject.JobOptions))
         {
             IEnumerable<string> _matchedTexts = _candDetailsObject.JobOptions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                                                                   .Select(key => _jobOptions.FirstOrDefault(option => option.KeyValue == key)?.Text)
@@ -1173,7 +1276,7 @@ public partial class Candidates
         else
         {
             CandidateJobOptions = string.Empty.ToMarkupString();
-        }
+        }*/
     }
 
     private void SetTaxTerm()
@@ -1286,12 +1389,6 @@ public partial class Candidates
         return Task.CompletedTask;
     }
 
-    private async Task UpdateCandidateResume(bool isOriginal)
-    {
-        ResumeType = isOriginal ? "Original" : "Formatted";
-        await ResumeUpdate.ShowDialog().ConfigureAwait(false);
-    }
-
     private (string Code, string Name) SplitState(int stateID)
     {
         StateCache _stateSplit = _states.FirstOrDefault(state => state.KeyValue == stateID);
@@ -1324,4 +1421,10 @@ public partial class Candidates
                                                                        _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
                                                                    }
                                                                });
+
+    private async Task UpdateCandidateResume(bool isOriginal)
+    {
+        ResumeType = isOriginal ? "Original" : "Formatted";
+        await ResumeUpdate.ShowDialog().ConfigureAwait(false);
+    }
 }

@@ -13,6 +13,8 @@
 
 #endregion
 
+using Microsoft.AspNetCore.Components;
+
 namespace Subscription.Model;
 
 /// <summary>
@@ -52,7 +54,7 @@ public class Candidate
 	///     candidate.
 	/// </remarks>
 	public bool FormattedResume { get; set; }
-
+	
 	/// <summary>
 	///     Gets or sets the unique identifier for the candidate.
 	/// </summary>

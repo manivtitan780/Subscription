@@ -23,7 +23,7 @@ public class ZipCodeService(IMemoryCache cache, RedisService redisService)
 
                                                                                          RedisValue _value = await redisService.GetAsync(nameof(CacheObjects.Zips));
 
-                                                                                         if (_value.IsNullOrEmpty && _value == "[]")
+                                                                                         if (_value.IsNullOrEmpty || _value == "[]")
                                                                                          {
                                                                                              return [];
                                                                                          }

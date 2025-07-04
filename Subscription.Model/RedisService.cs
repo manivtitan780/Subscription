@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           RedisService.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          04-15-2024 19:04
-// Last Updated On:     01-13-2025 19:17
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-06-2025 16:02
+// Last Updated On:     07-04-2025 19:46
 // *****************************************/
 
 #endregion
@@ -25,7 +25,7 @@ namespace Subscription.Model;
 ///     This class is responsible for establishing a connection with a Redis database and providing methods to interact
 ///     with it.
 /// </remarks>
-public class RedisService
+public class RedisService : IDisposable
 {
     /// <summary>
     ///     Initializes a new instance of the RedisService class.
@@ -40,11 +40,24 @@ public class RedisService
     /// </remarks>
     public RedisService(string hostName, int sslPort, string access, bool ssl)
     {
-        ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect($"{hostName}:{sslPort},password={access},ssl={ssl},abortConnect=False");
+        _redis = ConnectionMultiplexer.Connect($"{hostName}:{sslPort},password={access},ssl={ssl},abortConnect=False");
         _db = _redis.GetDatabase();
     }
 
     private readonly IDatabase _db;
+    private bool _disposed;
+    private readonly ConnectionMultiplexer _redis;
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            _redis?.Dispose();
+            _disposed = true;
+        }
+
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     ///     Asynchronously retrieves a batch of values from the Redis database.
@@ -84,6 +97,11 @@ public class RedisService
     ///     the key exists.
     /// </returns>
     public Task<bool> CheckKeyExists(string key) => _db.KeyExistsAsync(key);
+
+    public async Task CreateAsync(string key, string items)
+    {
+        await _db.StringSetAsync(key, items, when: When.Always);
+    }
 
     /// <summary>
     ///     Asynchronously creates a batch set in Redis.
@@ -153,11 +171,6 @@ public class RedisService
 
         await _db.StringSetAsync(key, JsonConvert.SerializeObject(createItems), when: When.Always);
         return createItems;
-    }
-
-    public async Task CreateAsync(string key, string items)
-    {
-        await _db.StringSetAsync(key, items, when: When.Always);
     }
 
     /// <summary>
