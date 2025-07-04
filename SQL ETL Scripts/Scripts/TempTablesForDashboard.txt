@@ -329,4 +329,47 @@ GO
 ALTER TABLE [dbo].[TimingAnalyticsView] ADD  DEFAULT (getdate()) FOR [RefreshDate]
 GO
 
+CREATE TABLE [dbo].[CandidateQualityMetricsView]
+(
+    [CreatedBy] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+    [MetricDate] [date] NOT NULL,
+    [Period] [varchar](10) COLLATE Latin1_General_CI_AI NOT NULL,
+    [Total_Submissions] [smallint] NOT NULL,
+    [Reached_INT] [smallint] NOT NULL,
+    [Reached_OEX] [smallint] NOT NULL,
+    [Reached_HIR] [smallint] NOT NULL,
+    [PEN_to_INT_Ratio] [decimal](5, 2) NOT NULL,
+    [INT_to_OEX_Ratio] [decimal](5, 2) NOT NULL,
+    [OEX_to_HIR_Ratio] [decimal](5, 2) NOT NULL,
+    [RefreshDate] [smalldatetime] NOT NULL,
 
+    INDEX [IX_CandidateQualityMetricsView_CreatedBy] NONCLUSTERED 
+    (
+        [CreatedBy] ASC
+    ),
+    CONSTRAINT [PK_CandidateQualityMetricsView] PRIMARY KEY NONCLUSTERED 
+    (
+        [CreatedBy] ASC,
+        [Period] ASC,
+        [MetricDate] ASC
+    )
+) WITH ( MEMORY_OPTIMIZED = ON , DURABILITY = SCHEMA_AND_DATA )
+GO
+
+-- Default values
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0)) FOR [Total_Submissions]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0)) FOR [Reached_INT]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0)) FOR [Reached_OEX]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0)) FOR [Reached_HIR]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0.00)) FOR [PEN_to_INT_Ratio]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0.00)) FOR [INT_to_OEX_Ratio]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT ((0.00)) FOR [OEX_to_HIR_Ratio]
+GO
+ALTER TABLE [dbo].[CandidateQualityMetricsView] ADD DEFAULT (getdate()) FOR [RefreshDate]
+GO

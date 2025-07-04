@@ -1480,3 +1480,163 @@ BEGIN
 END;
 
 GO
+
+CREATE OR ALTER PROCEDURE [dbo].[Dashboard_Refactor_CandidateQualityMetrics]
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET ARITHABORT ON;
+    
+    DECLARE @RefreshStart DATETIME2 = SYSDATETIME();
+    DECLARE @Today DATE = CAST(GETDATE() AS DATE);
+    
+    BEGIN TRY
+        -- Clear existing data
+        DELETE FROM [dbo].[CandidateQualityMetricsView];
+        
+        -- Date calculations
+        DECLARE @YearStart DATE = DATEFROMPARTS(YEAR(@Today), 1, 1);
+        DECLARE @StartDate7D DATE = DATEADD(DAY, -6, @Today);
+        DECLARE @StartDateMTD DATE = DATEADD(DAY, 1, EOMONTH(@Today, -1));
+        DECLARE @StartDateQTD DATE = DATEADD(QUARTER, DATEDIFF(QUARTER, 0, @Today), 0);
+        DECLARE @StartDateHYTD DATE = CASE 
+            WHEN MONTH(@Today) <= 6 THEN DATEFROMPARTS(YEAR(@Today), 1, 1)
+            ELSE DATEFROMPARTS(YEAR(@Today), 7, 1)
+        END;
+        
+        -- Get latest submission status per candidate+requisition combo
+        WITH LatestSubmissions AS (
+            SELECT 
+                S.CreatedBy,
+                S.RequisitionId,
+                S.CandidateId,
+                S.Status,
+                CAST(S.CreatedDate AS DATE) as SubmissionDate,
+                ROW_NUMBER() OVER (
+                    PARTITION BY S.CreatedBy, S.RequisitionId, S.CandidateId 
+                    ORDER BY S.CreatedDate DESC
+                ) as rn
+            FROM dbo.Submissions S
+            INNER JOIN dbo.ActiveUsersView A ON S.CreatedBy = A.CreatedBy
+            WHERE A.Status = 1
+        ),
+        CurrentStatus AS (
+            SELECT 
+                CreatedBy,
+                RequisitionId,
+                CandidateId,
+                Status,
+                SubmissionDate
+            FROM LatestSubmissions 
+            WHERE rn = 1
+        ),
+        QualityMetrics AS (
+            SELECT 
+                U.CreatedBy,
+                -- 7D metrics
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDate7D AND @Today 
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as Total_7D,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDate7D AND @Today 
+                    AND CS.Status IN ('INT', 'RHM', 'DEC', 'NOA', 'OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as INT_7D,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDate7D AND @Today 
+                    AND CS.Status IN ('OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as OEX_7D,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDate7D AND @Today 
+                    AND CS.Status = 'HIR'
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as HIR_7D,
+                
+                -- MTD metrics
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateMTD AND @Today 
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as Total_MTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateMTD AND @Today 
+                    AND CS.Status IN ('INT', 'RHM', 'DEC', 'NOA', 'OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as INT_MTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateMTD AND @Today 
+                    AND CS.Status IN ('OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as OEX_MTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateMTD AND @Today 
+                    AND CS.Status = 'HIR'
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as HIR_MTD,
+                
+                -- QTD metrics
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateQTD AND @Today 
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as Total_QTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateQTD AND @Today 
+                    AND CS.Status IN ('INT', 'RHM', 'DEC', 'NOA', 'OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as INT_QTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateQTD AND @Today 
+                    AND CS.Status IN ('OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as OEX_QTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateQTD AND @Today 
+                    AND CS.Status = 'HIR'
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as HIR_QTD,
+                
+                -- HYTD metrics
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateHYTD AND @Today 
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as Total_HYTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateHYTD AND @Today 
+                    AND CS.Status IN ('INT', 'RHM', 'DEC', 'NOA', 'OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as INT_HYTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateHYTD AND @Today 
+                    AND CS.Status IN ('OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as OEX_HYTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @StartDateHYTD AND @Today 
+                    AND CS.Status = 'HIR'
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as HIR_HYTD,
+                
+                -- YTD metrics
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @YearStart AND @Today 
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as Total_YTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @YearStart AND @Today 
+                    AND CS.Status IN ('INT', 'RHM', 'DEC', 'NOA', 'OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as INT_YTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @YearStart AND @Today 
+                    AND CS.Status IN ('OEX', 'ODC', 'HIR', 'WDR')
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as OEX_YTD,
+                COUNT(DISTINCT CASE WHEN CS.SubmissionDate BETWEEN @YearStart AND @Today 
+                    AND CS.Status = 'HIR'
+                    THEN CONCAT(CS.RequisitionId, '-', CS.CandidateId) END) as HIR_YTD
+            FROM dbo.ActiveUsersView U
+            LEFT JOIN CurrentStatus CS ON U.CreatedBy = CS.CreatedBy
+            WHERE U.Status = 1
+            GROUP BY U.CreatedBy
+        )
+        
+        -- Insert calculated metrics for all periods
+        INSERT INTO [dbo].[CandidateQualityMetricsView]
+        (CreatedBy, MetricDate, Period, Total_Submissions, Reached_INT, Reached_OEX, Reached_HIR, 
+         PEN_to_INT_Ratio, INT_to_OEX_Ratio, OEX_to_HIR_Ratio, RefreshDate)
+        SELECT 
+            CreatedBy, @Today, Period, Total_Submissions, Reached_INT, Reached_OEX, Reached_HIR,
+            CASE WHEN Total_Submissions > 0 THEN CAST((Reached_INT * 100.0 / Total_Submissions) AS DECIMAL(5,2)) ELSE 0.00 END,
+            CASE WHEN Reached_INT > 0 THEN CAST((Reached_OEX * 100.0 / Reached_INT) AS DECIMAL(5,2)) ELSE 0.00 END,
+            CASE WHEN Reached_OEX > 0 THEN CAST((Reached_HIR * 100.0 / Reached_OEX) AS DECIMAL(5,2)) ELSE 0.00 END,
+            GETDATE()
+        FROM (
+            SELECT CreatedBy, '7D' as Period, Total_7D as Total_Submissions, INT_7D as Reached_INT, OEX_7D as Reached_OEX, HIR_7D as Reached_HIR FROM QualityMetrics
+            UNION ALL
+            SELECT CreatedBy, 'MTD' as Period, Total_MTD, INT_MTD, OEX_MTD, HIR_MTD FROM QualityMetrics
+            UNION ALL
+            SELECT CreatedBy, 'QTD' as Period, Total_QTD, INT_QTD, OEX_QTD, HIR_QTD FROM QualityMetrics
+            UNION ALL
+            SELECT CreatedBy, 'HYTD' as Period, Total_HYTD, INT_HYTD, OEX_HYTD, HIR_HYTD FROM QualityMetrics
+            UNION ALL
+            SELECT CreatedBy, 'YTD' as Period, Total_YTD, INT_YTD, OEX_YTD, HIR_YTD FROM QualityMetrics
+        ) AllPeriods;
+        
+        -- Log success
+        DECLARE @Duration_MS INT = DATEDIFF(MILLISECOND, @RefreshStart, SYSDATETIME());
+        PRINT 'CandidateQualityMetricsView refreshed successfully in ' + CAST(@Duration_MS AS VARCHAR(10)) + 'ms';
+        
+    END TRY
+    BEGIN CATCH
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY();
+        DECLARE @ErrorState INT = ERROR_STATE();
+        
+        PRINT 'Error refreshing CandidateQualityMetricsView: ' + @ErrorMessage;
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END;
+GO
