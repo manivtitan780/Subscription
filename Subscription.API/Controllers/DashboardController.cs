@@ -8,7 +8,7 @@
 // File Name:           DashboardController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          06-18-2025 20:06
-// Last Updated On:     07-03-2025 20:37
+// Last Updated On:     07-04-2025 16:21
 // *****************************************/
 
 #endregion
@@ -19,15 +19,18 @@ namespace Subscription.API.Controllers;
 public class DashboardController : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ReturnDashboard>> GetAccountsManagerDashboard(string roleName, string user)
+    public async Task<ActionResult<ReturnDashboard>> GetDashboard(string roleName, string user)
     {
+        /*Stopwatch _stopwatch = Stopwatch.StartNew();
+        _stopwatch.Reset();
+        _stopwatch.Start();*/
         await using SqlConnection _connection = new(Start.ConnectionString);
         string _procedureName = roleName switch
                                 {
-                                    "FD" or "RS" => "DashboardAccountsManager",
-                                    "RC" => "DashboardRecruiters",
-                                    "AD" => "DashboardAdmin",
-                                    _ => "DashboardAccountsManager"
+                                    "FD" or "RS" => "DashboardAccountsManager_Refactor",
+                                    "RC" => "DashboardRecruiters_Refactor",
+                                    "AD" => "DashboardAdmin_Refactor",
+                                    _ => "DashboardAccountsManager_Refactor"
                                 };
         await using SqlCommand _command = new(_procedureName, _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -79,6 +82,10 @@ public class DashboardController : ControllerBase
             }
 
             await _reader.CloseAsync();
+
+            /*_stopwatch.Stop();
+            await System.IO.File.AppendAllTextAsync(@"C:\Logs\ZipLog.txt", $"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
+            //await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt", $"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");*/
 
             return Ok(new ReturnDashboard
                       {
