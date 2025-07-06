@@ -6,14 +6,12 @@
 // Solution:            Subscription
 // Project:             Subscription.API
 // File Name:           Program.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-28-2024 19:12
-// Last Updated On:     01-14-2025 18:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     07-06-2025 20:13
 // *****************************************/
 
 #endregion
-
-using System.ClientModel;
 
 WebApplicationBuilder _builder = WebApplication.CreateBuilder(args);
 
@@ -47,17 +45,24 @@ _builder.Services.AddSingleton<RedisService>(_ =>
                                                  return new(host, port, access, false);
                                              });
 
-_builder.Services.AddSingleton<OpenAIClient>(sp =>
+_builder.Services.AddSingleton<OpenAIClient>(_ =>
                                              {
-                                                 IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
                                                  string _apiKey = _config["AzureOpenAI:APIKey"];
                                                  string _endpoint = _config["AzureOpenAI:Endpoint"];
                                                  OpenAIClientOptions _options = new()
                                                                                 {
-                                                                                    Endpoint = new Uri(_endpoint ?? "")
+                                                                                    Endpoint = new(_endpoint ?? "")
                                                                                 };
                                                  return new(new(_apiKey ?? ""), _options);
                                              });
+
+_builder.Services.AddScoped(_ =>
+                            {
+                                SmtpClient client = new(_config["Email:Host"], (_config["Email:Port"] ?? string.Empty).ToInt32(587));
+                                client.Credentials = new NetworkCredential(_config["Email:UserName"], _config["Email:Password"]);
+                                client.EnableSsl = true;
+                                return client;
+                            });
 
 /*GraphSenderOptions _graphOptions = new()
                                    {

@@ -15,6 +15,7 @@
 
 #region Using
 
+using System.Text;
 using System.Text.Json;
 
 using RestSharp;
@@ -208,7 +209,7 @@ public class CandidateController : ControllerBase
         {
             return Ok(_status);
         }
-
+ 
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("ChangeCandidateStatus", _connection);
         _command.CommandType = CommandType.StoredProcedure;
