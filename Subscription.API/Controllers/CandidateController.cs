@@ -297,13 +297,20 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     public async Task<ActionResult<string>> DeleteExperience(int id, int candidateID, string user)
     {
         // await Task.Delay(1);
-        string _experiences = "[]";
+        // string _experiences = "[]";
         if (id == 0)
         {
-            return Ok(_experiences);
+            return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("DeleteCandidateExperience", command =>
+                                                                    {
+                                                                        command.Int("Id", id);
+                                                                        command.Int("candidateId", candidateID);
+                                                                        command.Varchar("User", 10, user);
+                                                                    }, "DeleteExperience", "Error deleting candidate experience.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("DeleteCandidateExperience", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Id", id);
@@ -324,19 +331,26 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_experiences);
+        return Ok(_experiences);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteNotes(int id, int candidateID, string user)
     {
-        string _notes = "[]";
+        //string _notes = "[]";
         if (id == 0)
         {
             return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("DeleteCandidateNotes", command =>
+                                                               {
+                                                                   command.Int("Id", id);
+                                                                   command.Int("candidateId", candidateID);
+                                                                   command.Varchar("User", 10, user);
+                                                               }, "DeleteNotes", "Error deleting candidate notes.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("DeleteCandidateNotes", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Id", id);
@@ -357,19 +371,26 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_notes);
+        return Ok(_notes);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteSkill(int id, int candidateID, string user)
     {
-        string _skills = "[]";
+        //string _skills = "[]";
         if (id == 0)
         {
-            return Ok(_skills);
+            return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("DeleteCandidateSkill", command =>
+                                                               {
+                                                                   command.Int("Id", id);
+                                                                   command.Int("candidateId", candidateID);
+                                                                   command.Varchar("User", 10, user);
+                                                               }, "DeleteSkill", "Error deleting candidate skill.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("DeleteCandidateSkill", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Id", id);
@@ -390,13 +411,23 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_skills);
+        return Ok(_skills);*/
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> DownloadFile(int documentID)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        if (documentID == 0)
+        {
+            return Ok("[]");
+        }
+        
+        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command =>
+                                                                  {
+                                                                      command.Int("DocumentID", documentID);
+                                                                  }, "DownloadFile", "Error fetching candidate document details.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("GetCandidateDocumentDetails", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("DocumentID", documentID);
@@ -417,12 +448,24 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_documentDetails);
+        return Ok(_documentDetails);*/
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> DownloadResume(int candidateID, string resumeType)
     {
+        if (candidateID == 0)
+        {
+            return Ok("[]");
+        }
+
+        return await ExecuteQueryAsync("DownloadCandidateResume", command =>
+                                                                  {
+                                                                      command.Int("CandidateDocumentId", documentID);
+                                                                      command.Varchar("User", 10, user); //TODO: make sure you delete the associated document from Azure filesystem too.
+                                                                  }, "DeleteCandidateDocument", "Error deleting candidate document.");
+
+        
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("DownloadCandidateResume", _connection);
         _command.CommandType = CommandType.StoredProcedure;
