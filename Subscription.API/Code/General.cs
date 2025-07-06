@@ -45,6 +45,33 @@ public static class General
         return SHA512PasswordHash(inputWithSalt);
     }
 
+    public static async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        string _result = "[]";
+        try
+        {
+            await _connection.OpenAsync();
+            _result = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
+        }
+        catch (SqlException ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return new StatusCodeResult(500); // Note: Static methods can't return ActionResult directly
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return new OkObjectResult(_result);
+    }
+    
     /// <summary>
     ///     Deserializes a JSON string to an object of a specified type.
     /// </summary>

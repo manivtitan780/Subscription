@@ -8,14 +8,13 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     06-11-2025 20:07
+// Last Updated On:     07-06-2025 20:28
 // *****************************************/
 
 #endregion
 
 #region Using
 
-using System.Text;
 using System.Text.Json;
 
 using RestSharp;
@@ -25,7 +24,7 @@ using RestSharp;
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]")]
-public class CandidateController : ControllerBase
+public class CandidateController(SmtpClient smtpClient) : ControllerBase
 {
     // private static readonly string[] JSONSerializable = ["Skill"];
 
@@ -204,13 +203,18 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> ChangeStatus(int candidateID, string user)
     {
-        string _status = "[]";
         if (candidateID == 0)
         {
-            return Ok(_status);
+            return Ok("[]");
         }
- 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+
+        return await ExecuteQueryAsync("ChangeCandidateStatus", command =>
+                                                                {
+                                                                    command.Int("CandidateID", candidateID);
+                                                                    command.Varchar("User", 10, user);
+                                                                }, "ChangeCandidateStatus", "Error changing candidate status.");
+        
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("ChangeCandidateStatus", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("CandidateID", candidateID);
@@ -230,7 +234,7 @@ public class CandidateController : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_status);
+        return Ok(_status);*/
     }
 
     [HttpPost]
@@ -263,7 +267,7 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> DeleteEducation(int id, int candidateID, string user)
     {
-        await Task.Delay(1);
+        // await Task.Delay(1);
         string _education = "[]";
         if (id == 0)
         {
@@ -298,7 +302,7 @@ public class CandidateController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> DeleteExperience(int id, int candidateID, string user)
     {
-        await Task.Delay(1);
+        // await Task.Delay(1);
         string _experiences = "[]";
         if (id == 0)
         {
@@ -482,6 +486,33 @@ public class CandidateController : ControllerBase
         }
 
         return Ok(_duplicateCandidateID);
+    }
+
+    private async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        string _result = "[]";
+        try
+        {
+            await _connection.OpenAsync();
+            _result = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
+        }
+        catch (SqlException ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
+        }
+        finally
+        {
+            await _connection.CloseAsync();
+        }
+
+        return Ok(_result);
     }
 
     [HttpGet]
@@ -1025,19 +1056,17 @@ public class CandidateController : ControllerBase
                                                   .Subject("Chup chaap accept kar")
                                                   .Body("Bhai ka message aayela hain. Accept karne ka, samjha kya?")
                                                   .SendAsync();*/
-                using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
-                _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
-                _smtpClient.EnableSsl = true;
+                //using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
+                //_smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
+                //_smtpClient.EnableSsl = true;
 
-                MailMessage _mailMessage = new()
-                                           {
-                                               From = new("jolly@hire-titan.com", "Mani Bhai"),
-                                               Subject = _templateSingle.Subject,
-                                               Body = _templateSingle.Template,
-                                               IsBodyHtml = true
-                                           };
-                _mailMessage.To.Add("manivenkit@gmail.com");
-                // _smtpClient.Send(_mailMessage);
+                using MailMessage _mailMessage = new();
+                _mailMessage.From = new("jolly@hire-titan.com", "Mani Bhai");
+                _mailMessage.Subject = _templateSingle.Subject;
+                _mailMessage.Body = _templateSingle.Template;
+                _mailMessage.IsBodyHtml = true;
+                _mailMessage.To.Add("manivenkit@gmail.com"); //TODO: Use Multiple
+                smtpClient.Send(_mailMessage);
                 /*GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
             }
         }
