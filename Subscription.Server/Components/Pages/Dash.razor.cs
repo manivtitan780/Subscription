@@ -157,6 +157,8 @@ public partial class Dash
                                   .ToList();
     }
 
+    private List<RequisitionTimingAnalytics> _requisitionTimingData = [];
+    private List<CompanyTimingAnalytics> _companyTimingData = [];
     private async Task LoadDashboardData()
     {
         _isLoading = true;
@@ -180,7 +182,9 @@ public partial class Dash
             _consolidatedMetricsData = General.DeserializeObject<List<ConsolidatedMetrics>>(_response.ConsolidatedMetrics) ?? [];
             _recentActivityData = General.DeserializeObject<List<RecentActivityItem>>(_response.RecentActivity) ?? [];
             _hiredPlacementsData = General.DeserializeObject<List<HiredPlacement>>(_response.Placements) ?? [];
-
+            _requisitionTimingData = General.DeserializeObject<List<RequisitionTimingAnalytics>>(_response.RequisitionTimingAnalytics) ?? [];
+            _companyTimingData = General.DeserializeObject<List<CompanyTimingAnalytics>>(_response.CompanyTimingAnalytics) ?? [];
+            
             // Set default selected user
             if (_usersList.Any(u => u.KeyValue == _user))
             {
@@ -213,6 +217,20 @@ public partial class Dash
         }
     }
 
+    private List<RequisitionTimingAnalytics> GetUserRequisitionAnalytics()
+    {
+        return _requisitionTimingData.Where(r => r.CreatedBy == _selectedUser)
+                                     .OrderByDescending(r => r.PHNDays)
+                                     .ToList();
+    }
+
+    private List<CompanyTimingAnalytics> GetUserCompanyAnalytics()
+    {
+        return _companyTimingData.Where(c => c.CreatedBy == _selectedUser)
+                                 .OrderByDescending(c => c.TotalRequisitions)
+                                 .ToList();
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         await ExecuteMethod(async () =>

@@ -194,6 +194,41 @@
                                         </GridColumns>
                                     </SfGrid>
                                 </ContentTemplate>
+                            </TabItem><!-- Add these new tabs after Hired Placements tab -->
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Requisition Analytics"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <SfGrid DataSource="@GetUserRequisitionAnalytics()" Height="350">
+                                        <GridColumns>
+                                            <GridColumn Field="RequisitionCode" HeaderText="Requisition" TextAlign="TextAlign.Left" Width="150"/>
+                                            <GridColumn Field="CompanyName" HeaderText="Company" TextAlign="TextAlign.Left" Width="120"/>
+                                            <GridColumn Field="Title" HeaderText="Position" TextAlign="TextAlign.Left" Width="200"/>
+                                            <GridColumn Field="TotalCandidates" HeaderText="Candidates" TextAlign="TextAlign.Center" Width="100"/>
+                                            <GridColumn Field="PHNDays" HeaderText="Avg Presented (PHN) Days" TextAlign="TextAlign.Right" Width="120" Format="N1"/>
+                                            <GridColumn Field="INTDays" HeaderText="Avg Interview Days" TextAlign="TextAlign.Right" Width="130" Format="N1"/>
+                                            <GridColumn Field="TimeToFillDays" HeaderText="Time to Fill" TextAlign="TextAlign.Right" Width="120" Format="N1"/>
+                                        </GridColumns>
+                                    </SfGrid>
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Company Analytics"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <SfGrid DataSource="@GetUserCompanyAnalytics()" Height="350">
+                                        <GridColumns>
+                                            <GridColumn Field="CompanyName" HeaderText="Company" TextAlign="TextAlign.Left" Width="200"/>
+                                            <GridColumn Field="TotalRequisitions" HeaderText="Requisitions" TextAlign="TextAlign.Center" Width="120"/>
+                                            <GridColumn Field="TotalCandidates" HeaderText="Candidates" TextAlign="TextAlign.Center" Width="120"/>
+                                            <GridColumn Field="PHNDays" HeaderText="Avg Presented (PHN) Days" TextAlign="TextAlign.Right" Width="130" Format="N1"/>
+                                            <GridColumn Field="TimeToFillDays" HeaderText="Avg Time to Fill" TextAlign="TextAlign.Right" Width="140" Format="N1"/>
+                                            <GridColumn Field="TimeToHireDays" HeaderText="Avg Time to Hire" TextAlign="TextAlign.Right" Width="140" Format="N1"/>
+                                        </GridColumns>
+                                    </SfGrid>
+                                </ContentTemplate>
                             </TabItem>
                         </TabItems>
                     </SfTab>
