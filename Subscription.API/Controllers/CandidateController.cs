@@ -59,8 +59,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> DeleteEducation(int id, int candidateID, string user)
     {
-        // await Task.Delay(1);
-        //string _education = "[]";
         if (id == 0)
         {
             return Ok("[]");
@@ -72,36 +70,11 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                        command.Int("candidateId", candidateID);
                                                                        command.Varchar("User", 10, user);
                                                                    }, "DeleteEducation", "Error deleting candidate education.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DeleteCandidateEducation", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", id);
-        _command.Int("candidateId", candidateID);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _education = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error deleting education. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_education);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteExperience(int id, int candidateID, string user)
     {
-        // await Task.Delay(1);
-        // string _experiences = "[]";
         if (id == 0)
         {
             return Ok("[]");
@@ -113,35 +86,11 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                         command.Int("candidateId", candidateID);
                                                                         command.Varchar("User", 10, user);
                                                                     }, "DeleteExperience", "Error deleting candidate experience.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DeleteCandidateExperience", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", id);
-        _command.Int("candidateId", candidateID);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _experiences = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error deleting experience. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_experiences);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteNotes(int id, int candidateID, string user)
     {
-        //string _notes = "[]";
         if (id == 0)
         {
             return Ok("[]");
@@ -153,35 +102,11 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                    command.Int("candidateId", candidateID);
                                                                    command.Varchar("User", 10, user);
                                                                }, "DeleteNotes", "Error deleting candidate notes.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DeleteCandidateNotes", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", id);
-        _command.Int("candidateId", candidateID);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _notes = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error deleting notes. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_notes);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteSkill(int id, int candidateID, string user)
     {
-        //string _skills = "[]";
         if (id == 0)
         {
             return Ok("[]");
@@ -193,29 +118,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                    command.Int("candidateId", candidateID);
                                                                    command.Varchar("User", 10, user);
                                                                }, "DeleteSkill", "Error deleting candidate skill.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DeleteCandidateSkill", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", id);
-        _command.Int("candidateId", candidateID);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _skills = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error deleting skill. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_skills);*/
     }
 
     [HttpGet]
@@ -223,33 +125,13 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     {
         if (documentID == 0)
         {
-            return Ok("[]");
+            return Ok("{}");
         }
 
-        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command => { command.Int("DocumentID", documentID); }, "DownloadFile", "Error fetching candidate document details.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("GetCandidateDocumentDetails", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("DocumentID", documentID);
-
-        string _documentDetails = "[]";
-        try
-        {
-            await _connection.OpenAsync();
-            _documentDetails = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error downloading file. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_documentDetails);*/
+        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command =>
+                                                                      {
+                                                                          command.Int("DocumentID", documentID);
+                                                                      }, "DownloadFile", "Error fetching candidate document details.");
     }
 
     [HttpGet]
@@ -266,29 +148,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                       command.Varchar("ResumeType", 20, resumeType);
                                                                   }, "DeleteResume", "Error fetching candidate document details.");
 
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DownloadCandidateResume", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("CandidateID", candidateID);
-        _command.Varchar("ResumeType", 20, resumeType);
-
-        string _documentDetails = "[]";
-        try
-        {
-            await _connection.OpenAsync();
-            _documentDetails = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error downloading resume. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_documentDetails);*/
     }
 
     [HttpPost]
