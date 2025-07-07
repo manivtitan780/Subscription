@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     07-06-2025 20:41
+// Last Updated On:     07-07-2025 16:07
 // *****************************************/
 
 #endregion
@@ -26,180 +26,6 @@ namespace Subscription.API.Controllers;
 [ApiController, Route("api/[controller]/[action]")]
 public class CandidateController(SmtpClient smtpClient) : ControllerBase
 {
-    // private static readonly string[] JSONSerializable = ["Skill"];
-
-    /*private void CreateToolFunction(ChatCompletionOptions options)
-    {
-        options.Tools.Add(ChatTool.CreateFunctionTool("extract_candidate",
-                                                      "Extract candidate details from resume",
-                                                      BinaryData.FromObjectAsJson(new
-                                                                                  {
-                                                                                      type = "object",
-                                                                                      properties = new
-                                                                                                   {
-                                                                                                       FirstName = new
-                                                                                                                   {
-                                                                                                                       type = "string", description = "First name of the candidate"
-                                                                                                                   },
-                                                                                                       LastName = new {type = "string", description = "Last name of the candidate"},
-                                                                                                       PhoneNumbers = new
-                                                                                                                      {
-                                                                                                                          type = "string", description = "Phone number of the candidate"
-                                                                                                                      },
-                                                                                                       EmailAddresses = new
-                                                                                                                        {
-                                                                                                                            type = "string", description = "Email address of the candidate"
-                                                                                                                        },
-                                                                                                       PostalAddress = new
-                                                                                                                       {
-                                                                                                                           type = "object",
-                                                                                                                           properties = new
-                                                                                                                                        {
-                                                                                                                                            Street = new
-                                                                                                                                                     {
-                                                                                                                                                         type = "string",
-                                                                                                                                                         description = "Street address of the candidate"
-                                                                                                                                                     },
-                                                                                                                                            City = new
-                                                                                                                                                   {
-                                                                                                                                                       type = "string",
-                                                                                                                                                       description = "City of the candidate"
-                                                                                                                                                   },
-                                                                                                                                            State = new
-                                                                                                                                                    {
-                                                                                                                                                        type = "string",
-                                                                                                                                                        description = "State of the candidate"
-                                                                                                                                                    },
-                                                                                                                                            Zip = new
-                                                                                                                                                  {
-                                                                                                                                                      type = "string",
-                                                                                                                                                      description = "Zip code of the candidate"
-                                                                                                                                                  }
-                                                                                                                                        }
-                                                                                                                       },
-                                                                                                       CandidateSummary = new
-                                                                                                                          {
-                                                                                                                              type = "string",
-                                                                                                                              description = "Summary of the candidate"
-                                                                                                                          },
-                                                                                                       CandidateKeywords = new
-                                                                                                                           {
-                                                                                                                               type = "string",
-                                                                                                                               description = "Keywords related to the candidate"
-                                                                                                                           },
-                                                                                                       LinkedInProfile = new
-                                                                                                                         {
-                                                                                                                             type = "string",
-                                                                                                                             description = "LinkedIn profile of the candidate"
-                                                                                                                         },
-                                                                                                       TotalExperienceInMonths =
-                                                                                                           new
-                                                                                                           {
-                                                                                                               type = "integer",
-                                                                                                               description = "Total experience of the candidate"
-                                                                                                           },
-                                                                                                       EducationInfo = new
-                                                                                                                       {
-                                                                                                                           type = "array",
-                                                                                                                           items = new
-                                                                                                                                   {
-                                                                                                                                       Course = new
-                                                                                                                                                {
-                                                                                                                                                    type = "string",
-                                                                                                                                                    description = "Course name of the candidate"
-                                                                                                                                                },
-                                                                                                                                       School = new
-                                                                                                                                                {
-                                                                                                                                                    type = "string",
-                                                                                                                                                    description = "School name of the candidate"
-                                                                                                                                                },
-                                                                                                                                       Period = new
-                                                                                                                                                {
-                                                                                                                                                    type = "string",
-                                                                                                                                                    description = "Period of the education"
-                                                                                                                                                },
-                                                                                                                                       State = new
-                                                                                                                                               {
-                                                                                                                                                   type = "string",
-                                                                                                                                                   description = "State of the education"
-                                                                                                                                               },
-                                                                                                                                       Country = new
-                                                                                                                                                 {
-                                                                                                                                                     type = "string",
-                                                                                                                                                     description = "Country of the education"
-                                                                                                                                                 }
-                                                                                                                                   },
-                                                                                                                           description = "Education information of the candidate"
-                                                                                                                       },
-                                                                                                       EmploymentInfo = new
-                                                                                                                        {
-                                                                                                                            type = "array",
-                                                                                                                            items = new
-                                                                                                                                    {
-                                                                                                                                        Company = new
-                                                                                                                                                  {
-                                                                                                                                                      type = "string",
-                                                                                                                                                      description = "Company name of the candidate"
-                                                                                                                                                  },
-                                                                                                                                        Start = new
-                                                                                                                                                {
-                                                                                                                                                    type = "string",
-                                                                                                                                                    description = "Start date"
-                                                                                                                                                },
-                                                                                                                                        End = new
-                                                                                                                                              {
-                                                                                                                                                  type = "string",
-                                                                                                                                                  description = "End date"
-                                                                                                                                              },
-                                                                                                                                        Location = new
-                                                                                                                                                   {
-                                                                                                                                                       type = "string",
-                                                                                                                                                       description = "Location of the company"
-                                                                                                                                                   },
-                                                                                                                                        Title = new
-                                                                                                                                                {
-                                                                                                                                                    type = "string",
-                                                                                                                                                    description = "Title of the job profile"
-                                                                                                                                                }
-                                                                                                                                    },
-                                                                                                                            description = "Employment information of the candidate"
-                                                                                                                        },
-                                                                                                       Skills = new
-                                                                                                                {
-                                                                                                                    type = "array", items = new
-                                                                                                                                            {
-                                                                                                                                                type = "object",
-                                                                                                                                                properties = new
-                                                                                                                                                             {
-                                                                                                                                                                 Skill = new
-                                                                                                                                                                         {
-                                                                                                                                                                             type = "string",
-                                                                                                                                                                             description =
-                                                                                                                                                                                 "Skill of the candidate"
-                                                                                                                                                                         },
-                                                                                                                                                                 Period = new
-                                                                                                                                                                          {
-                                                                                                                                                                              type =
-                                                                                                                                                                                  "string",
-                                                                                                                                                                              description =
-                                                                                                                                                                                  "Period worked from to end the skill. If currently working end will be Present."
-                                                                                                                                                                          },
-                                                                                                                                                                 Month = new
-                                                                                                                                                                         {
-                                                                                                                                                                             type =
-                                                                                                                                                                                 "integer",
-                                                                                                                                                                             description =
-                                                                                                                                                                                 "Number of Months worked in the skill"
-                                                                                                                                                                         }
-                                                                                                                                                             },
-                                                                                                                                                required = JSONSerializable
-                                                                                                                                            },
-                                                                                                                    description = "Skills of the candidate"
-                                                                                                                }
-                                                                                                   }
-                                                                                  })));
-        ;
-    }*/
     [HttpPost]
     public async Task<ActionResult<string>> ChangeStatus(int candidateID, string user)
     {
@@ -421,11 +247,8 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
         {
             return Ok("[]");
         }
-        
-        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command =>
-                                                                  {
-                                                                      command.Int("DocumentID", documentID);
-                                                                  }, "DownloadFile", "Error fetching candidate document details.");
+
+        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command => { command.Int("DocumentID", documentID); }, "DownloadFile", "Error fetching candidate document details.");
 
         /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("GetCandidateDocumentDetails", _connection);
@@ -461,12 +284,11 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
 
         return await ExecuteQueryAsync("DownloadCandidateResume", command =>
                                                                   {
-                                                                      command.Int("CandidateDocumentId", documentID);
-                                                                      command.Varchar("User", 10, user); //TODO: make sure you delete the associated document from Azure filesystem too.
-                                                                  }, "DeleteCandidateDocument", "Error deleting candidate document.");
+                                                                      command.Int("CandidateID", candidateID);
+                                                                      command.Varchar("ResumeType", 20, resumeType);
+                                                                  }, "DeleteResume", "Error fetching candidate document details.");
 
-        
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("DownloadCandidateResume", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("CandidateID", candidateID);
@@ -488,19 +310,33 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_documentDetails);
+        return Ok(_documentDetails);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DuplicateCandidate(int candidateID, string user)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        if (candidateID == 0)
+        {
+            return Ok("[]");
+        }
+
+        ActionResult<string> _returnValue = await ExecuteQueryAsync("DuplicateCandidate", command =>
+                                                                                          {
+                                                                                              command.Int("CandidateID", candidateID);
+                                                                                              command.Varchar("User", 10, user);
+                                                                                          }, "DuplicateCandidate", "Error duplicating candidate.");
+        int _duplicateCandidateID = _returnValue.Value.ToInt32();
+
+        await General.CopyBlobs(candidateID.ToString(), _duplicateCandidateID.ToString()).ConfigureAwait(false); //TODO: Test this out thoroughly.
+        return Ok(_duplicateCandidateID);
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("DuplicateCandidate", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("CandidateID", candidateID);
         _command.Varchar("User", 10, user);
 
-        int _duplicateCandidateID = 0;
         try
         {
             await _connection.OpenAsync().ConfigureAwait(false);
@@ -522,7 +358,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync().ConfigureAwait(false);
         }
 
-        return Ok(_duplicateCandidateID);
+        return Ok(_duplicateCandidateID);*/
     }
 
     private async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
@@ -1443,13 +1279,24 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> SaveEducation(CandidateEducation education, int candidateID, string user)
     {
-        string _returnVal = "[]";
         if (education == null)
         {
-            return Ok(_returnVal);
+            return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("SaveEducation", command =>
+                                                        {
+                                                            command.Int("Id", education.ID);
+                                                            command.Int("CandidateID", candidateID);
+                                                            command.Varchar("Degree", 100, education.Degree);
+                                                            command.Varchar("College", 255, education.College);
+                                                            command.Varchar("State", 100, education.State);
+                                                            command.Varchar("Country", 100, education.Country);
+                                                            command.Varchar("Year", 10, education.Year);
+                                                            command.Varchar("User", 10, user);
+                                                        }, "SaveEducation", "Error saving candidate education.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveEducation", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Id", education.ID);
@@ -1475,19 +1322,31 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_returnVal);
+        return Ok(_returnVal);*/
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveExperience(CandidateExperience experience, int candidateID, string user)
     {
-        string _returnVal = "[]";
         if (experience == null)
         {
-            return Ok(_returnVal);
+            return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("SaveExperience", command =>
+                                                         {
+                                                             command.Int("Id", experience.ID);
+                                                             command.Int("CandidateID", candidateID);
+                                                             command.Varchar("Employer", 100, experience.Employer);
+                                                             command.Varchar("Start", 10, experience.Start);
+                                                             command.Varchar("End", 10, experience.End);
+                                                             command.Varchar("Location", 100, experience.Location);
+                                                             command.Varchar("Description", 1000, experience.Description);
+                                                             command.Varchar("Title", 1000, experience.Title);
+                                                             command.Varchar("User", 10, user);
+                                                         }, "SaveExperience", "Error saving candidate experience.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveExperience", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Id", experience.ID);
@@ -1514,7 +1373,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_returnVal);
+        return Ok(_returnVal);*/
     }
 
     [HttpPost]
@@ -1592,13 +1451,22 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int candidateID, string user)
     {
-        string _returnVal = "[]";
         if (candidateNote == null)
         {
-            return Ok(_returnVal);
+            return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("SaveNote", command =>
+                                                   {
+                                                       command.Int("Id", candidateNote.ID);
+                                                       command.Int("CandidateID", candidateID);
+                                                       command.Varchar("Note", -1, candidateNote.Notes);
+                                                       command.Bit("IsPrimary", false);
+                                                       command.Varchar("EntityType", 5, "CND");
+                                                       command.Varchar("User", 10, user);
+                                                   }, "SaveNotes", "Error saving candidate notes.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveNote", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("Id", candidateNote.ID);
@@ -1622,7 +1490,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_returnVal);
+        return Ok(_returnVal);*/
     }
 
     [HttpPost]
@@ -1700,13 +1568,22 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> SaveSkill(CandidateSkills skill, int candidateID, string user)
     {
-        string _returnVal = "[]";
         if (skill == null)
         {
-            return Ok(_returnVal);
+            return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("SaveSkill", command =>
+                                                    {
+                                                        command.Int("EntitySkillId", skill.ID);
+                                                        command.Varchar("Skill", 100, skill.Skill);
+                                                        command.Int("CandidateID", candidateID);
+                                                        command.SmallInt("LastUsed", skill.LastUsed);
+                                                        command.SmallInt("ExpMonth", skill.ExpMonth);
+                                                        command.Varchar("User", 10, user);
+                                                    }, "SaveSkill", "Error saving candidate skill.");
+
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveSkill", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Int("EntitySkillId", skill.ID);
@@ -1730,13 +1607,14 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_returnVal);
+        return Ok(_returnVal);*/
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> SearchCandidates(string filter)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
+        return await ExecuteQueryAsync("SearchCandidates", command => { command.Varchar("Name", 30, filter); }, "SearchCandidates", "Error searching candidates.");
+        /*await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SearchCandidates", _connection);
         _command.CommandType = CommandType.StoredProcedure;
         _command.Varchar("Name", 30, filter);
@@ -1758,35 +1636,8 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_candidates);
+        return Ok(_candidates);*/
     }
-
-    /*
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static DataTable Skills(JsonArray skills)
-    {
-        DataTable _tableSkills = new();
-        _tableSkills.Columns.Add("Skill", typeof(string));
-        _tableSkills.Columns.Add("LastUsed", typeof(int));
-        _tableSkills.Columns.Add("Month", typeof(int));
-
-        foreach (JsonNode _skill in skills)
-        {
-            if (_skill == null)
-            {
-                continue;
-            }
-
-            DataRow _row = _tableSkills.NewRow();
-            _row["Skill"] = _skill["Skill"]?.ToString() ?? "";
-            _row["LastUsed"] = _skill["PeriodOfUsage"]?.ToInt32() ?? 0;
-            _row["Month"] = _skill["MonthsOfUsage"]?.ToInt32() ?? 0;
-            _tableSkills.Rows.Add(_row);
-        }
-
-        return _tableSkills;
-    }
-    */
 
     [HttpPost]
     public async Task<ActionResult<bool>> SubmitCandidateRequisition(int requisitionID, int candidateID, string notes = "", string user = "", string roleID = "RS")
@@ -1939,12 +1790,19 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> UndoCandidateActivity(int submissionID, string user, string roleID = "RS", bool isCandidateScreen = true)
     {
-        string _activities = "[]";
         if (submissionID == 0)
         {
             return NotFound("Submission ID is not valid.");
         }
 
+        return await ExecuteQueryAsync("UndoCandidateActivity", command =>
+                                                                {
+                                                                    command.Int("Id", submissionID);
+                                                                    command.Varchar("User", 10, user);
+                                                                    command.Bit("CandScreen", isCandidateScreen);
+                                                                    command.Char("RoleID", 2, roleID);
+                                                                }, "UndoCandidateActivity", "Error undoing candidate activity.");
+        /*
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("UndoCandidateActivity", _connection);
         _command.CommandType = CommandType.StoredProcedure;
@@ -1968,7 +1826,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             await _connection.CloseAsync();
         }
 
-        return Ok(_activities);
+        return Ok(_activities);*/
     }
 
     [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
