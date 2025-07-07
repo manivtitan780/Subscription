@@ -379,7 +379,7 @@ public partial class Candidates : IDisposable
 
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
 
-                                                              _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
+                                                              _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response, false);
                                                           });
 
     private Task DeleteEducation(int id) => ExecuteMethod(async () =>
@@ -387,7 +387,7 @@ public partial class Candidates : IDisposable
                                                               Dictionary<string, string> _parameters = CreateParameters(id);
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", _parameters);
 
-                                                              _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
+                                                              _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response, false);
                                                           });
 
     private Task DeleteExperience(int id) => ExecuteMethod(async () =>
@@ -395,10 +395,7 @@ public partial class Candidates : IDisposable
                                                                Dictionary<string, string> _parameters = CreateParameters(id);
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", _parameters);
 
-                                                               if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                               {
-                                                                   _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
-                                                               }
+                                                               _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response, false);
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -406,7 +403,7 @@ public partial class Candidates : IDisposable
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteNotes", _parameters);
 
-                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response, false);
                                                       });
 
     private Task DeleteSkill(int id) => ExecuteMethod(async () =>
@@ -414,10 +411,7 @@ public partial class Candidates : IDisposable
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", _parameters);
 
-                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
-                                                          {
-                                                              _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
-                                                          }
+                                                          _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response, false);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
@@ -1203,7 +1197,7 @@ public partial class Candidates : IDisposable
         /*
         _stopwatch.Reset();
         _stopwatch.Start();
-        */  
+        */
         await Grid.ShowSpinnerAsync();
         (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Candidate/GetGridCandidates", null, SearchModel, false).ConfigureAwait(false);
         DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);

@@ -54,28 +54,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                       command.Int("CandidateDocumentId", documentID);
                                                                       command.Varchar("User", 10, user); //TODO: make sure you delete the associated document from Azure filesystem too.
                                                                   }, "DeleteCandidateDocument", "Error deleting candidate document.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DeleteCandidateDocument", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("CandidateDocumentId", documentID);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _documents = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error deleting candidate document. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_documents);*/
     }
 
     [HttpPost]
