@@ -8,7 +8,7 @@
 // File Name:           CandidateController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     07-07-2025 16:07
+// Last Updated On:     07-08-2025 16:07
 // *****************************************/
 
 #endregion
@@ -128,10 +128,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             return Ok("{}");
         }
 
-        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command =>
-                                                                      {
-                                                                          command.Int("DocumentID", documentID);
-                                                                      }, "DownloadFile", "Error fetching candidate document details.");
+        return await ExecuteQueryAsync("GetCandidateDocumentDetails", command => { command.Int("DocumentID", documentID); }, "DownloadFile", "Error fetching candidate document details.");
     }
 
     [HttpGet]
@@ -147,7 +144,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                       command.Int("CandidateID", candidateID);
                                                                       command.Varchar("ResumeType", 20, resumeType);
                                                                   }, "DeleteResume", "Error fetching candidate document details.");
-
     }
 
     [HttpPost]
@@ -163,39 +159,14 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                                                               command.Int("CandidateID", candidateID);
                                                                                               command.Varchar("User", 10, user);
                                                                                           }, "DuplicateCandidate", "Error duplicating candidate.");
-        int _duplicateCandidateID = _returnValue.Value.ToInt32();
+        int _duplicateCandidateID = 0;
+        if (_returnValue.Result is OkObjectResult _result)
+        {
+            _duplicateCandidateID = (_result.Value ?? 0).ToInt32();
+        }
 
         await General.CopyBlobs(candidateID.ToString(), _duplicateCandidateID.ToString()).ConfigureAwait(false); //TODO: Test this out thoroughly.
         return Ok(_duplicateCandidateID);
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("DuplicateCandidate", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("CandidateID", candidateID);
-        _command.Varchar("User", 10, user);
-
-        try
-        {
-            await _connection.OpenAsync().ConfigureAwait(false);
-            object _duplicateCandidate = await _command.ExecuteScalarAsync().ConfigureAwait(false);
-            if (_duplicateCandidate != null)
-            {
-                _duplicateCandidateID = Convert.ToInt32(_duplicateCandidate);
-            }
-
-            await General.CopyBlobs(candidateID.ToString(), _duplicateCandidateID.ToString()).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error duplicating candidate. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync().ConfigureAwait(false);
-        }
-
-        return Ok(_duplicateCandidateID);*/
     }
 
     private async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
@@ -426,36 +397,24 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
 
     private static string GetCandidateLocation(CandidateDetails candidateDetails, string stateName)
     {
-        //string _location = "";
         List<string> _parts = [];
 
         if (candidateDetails!.City.NotNullOrWhiteSpace())
         {
             _parts.Add(candidateDetails.City);
-            //_location = candidateDetails.City;
         }
 
         if (stateName.NotNullOrWhiteSpace())
         {
             _parts.Add(stateName);
-            //_location += ", " + stateName;
         }
-        /*else
-        {
-            _location = stateName;
-        }*/
 
         if (candidateDetails.ZipCode.NotNullOrWhiteSpace())
         {
             _parts.Add(candidateDetails.ZipCode);
-            //_location += ", " + candidateDetails.ZipCode;
         }
-        /*else
-        {
-            _location = candidateDetails.ZipCode;
-        }*/
 
-        return string.Join(", ", _parts); //_location;
+        return string.Join(", ", _parts);
     }
 
     [HttpGet]
@@ -543,108 +502,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                    _ => "application/octet-stream"
                };
     }
-
-    /*public async Task<ActionResult<string>> ParseCandidate(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-        {
-            return BadRequest("No file has been uploaded.");
-        }
-
-        string _fileContent = "";
-        string _prompt = Start.Prompt;
-        using (MemoryStream _stream = new())
-        {
-            await file.CopyToAsync(_stream);
-            _stream.Position = 0;
-            using (WordDocument _document = new(_stream, FormatType.Docx))
-            {
-                // Save the document as a string
-                _fileContent = _document.GetText();
-            }
-        }
-
-        string _detailedPrompt = string.Format(_prompt, _fileContent);
-
-        Uri _endpoint = new(Start.AzureOpenAIEndpoint);
-        AzureKeyCredential _credential = new(Start.AzureOpenAIKey);
-        AzureOpenAIClient _client = new(_endpoint, _credential);
-
-        ChatClient _chatClient = _client.GetChatClient(Start.DeploymentName); // This points to o3-mini
-
-        ChatCompletionOptions _chatOptions = new()
-                                             {
-                                                 Temperature = 0.2f,
-                                                 MaxOutputTokenCount = 10000,
-                                                 TopP = 0.3f,
-                                                 FrequencyPenalty = 0f,
-                                                 PresencePenalty = 0f
-                                             };
-        //_chatOptions.Tools.Add(ChatTool.CreateFunctionTool();
-        CreateToolFunction(_chatOptions);
-
-        List<ChatMessage> _messages =
-        [
-            new SystemChatMessage(Start.SystemChatMessage),
-            new UserChatMessage(_detailedPrompt)
-        ];
-
-        string _parsedJSON = "";
-        string _tempJSONFileName = Path.Combine($"{Guid.NewGuid():N}.json");
-        try
-        {
-            ChatCompletion _completeChatAsync = await _chatClient.CompleteChatAsync(_messages, _chatOptions);
-            _parsedJSON = _completeChatAsync.Content[0].Text;
-            //JsonSerializer.Serialize(_completeChatAsync);
-
-            /* Parse JSON to Objects #1#
-            JsonNode _rootNode = JsonNode.Parse(_parsedJSON)!;
-            if (_rootNode != null)
-            {
-                string _firstName = _rootNode["FirstName"]?.ToString() ?? "";
-                string _lastName = _rootNode["LastName"]?.ToString() ?? "";
-                string _phone = _rootNode["PhoneNumbers"]?[0]?.ToString() ?? "";
-                string _email = _rootNode["EmailAddresses"]?[0]?.ToString() ?? "";
-                string _street = _rootNode["PostalAddress"]?["Street"]?.ToString() ?? "";
-                string _city = _rootNode["PostalAddress"]?["City"]?.ToString() ?? "";
-                string _stateName = _rootNode["PostalAddress"]?["State"]?.ToString() ?? "";
-                int _stateID = 0;
-                if (_stateName.NotNullOrWhiteSpace())
-                {
-                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-
-                    RedisValue _value = await _service.GetAsync(CacheObjects.States.ToString());
-                    List<State> _states = General.DeserializeObject<List<State>>(_value.ToString());
-                    foreach (State _state in _states.Where(state => _stateName.Equals(state.Code.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                                                                    _stateName.Equals(state.StateName.Trim(), StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _stateID = _state.ID;
-                        break;
-                    }
-                }
-
-                string _zip = _rootNode["PostalAddress"]?["Zip"]?.ToString() ?? "";
-                string _summary = _rootNode["CandidateSummary"]?.ToString() ?? "";
-                string _keywords = _rootNode["CandidateKeywords"]?.ToString() ?? "";
-
-                /*Education#1#
-                DataTable _tableEducation = Education(_rootNode["EducationInfo"] as JsonArray);
-
-                /*Experience#1#
-                DataTable _tableExperience = Experience(_rootNode["EmploymentInfo"] as JsonArray);
-
-                /* Skills #1#
-                DataTable _tableSkills = Skills(_rootNode["Skills"] as JsonArray);
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error parsing candidate. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-
-        return Ok(_parsedJSON);
-    }*/
 
     [HttpPost, SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public async Task<ActionResult<int>> SaveCandidate(CandidateDetails candidateDetails, string userName = "")
@@ -823,30 +680,12 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             while (await _reader.ReadAsync())
             {
                 _activities = _reader.NString(0);
-                /*_activities.Add(new(_reader.GetString(0), _reader.GetDateTime(1), _reader.GetString(2), _reader.GetInt32(3), _reader.GetInt32(4),
-                                    _reader.GetString(5), _reader.GetString(6), _reader.GetInt32(7), _reader.GetBoolean(8), _reader.GetString(9), _reader.GetString(10),
-                                    _reader.GetString(11), _reader.GetBoolean(12), _reader.GetString(13), _reader.GetInt32(14), _reader.GetString(15),
-                                    _reader.GetInt32(16), _reader.GetString(17), _reader.GetBoolean(18), _reader.NDateTime(19), _reader.GetString(20),
-                                    _reader.NString(21), _reader.NString(22), _reader.GetBoolean(23)));*/
             }
 
             await _reader.NextResultAsync();
-            // string _firstName = "", _lastName = "", _reqCode = "", _reqTitle = "", _company = ""; //, _original = "", _originalInternal = "", _formatted = "", _formattedInternal = "";
-            //bool _firstTime = false;
             await _reader.ReadAsync();
             (string _firstName, string _lastName, string _reqCode, string _reqTitle, string _company) = (_reader.NString(0), _reader.NString(1), _reader.NString(2), _reader.NString(3),
                                                                                                          _reader.NString(8));
-            /*_firstName = _reader.NString(0);
-            _lastName = _reader.NString(1);
-            _reqCode = _reader.NString(2);
-            _reqTitle = _reader.NString(3);
-            //_original = _reader.NString(4);
-            //_originalInternal = _reader.NString(5);
-            //_formatted = _reader.NString(6);
-            //_formattedInternal = _reader.NString(7);
-            //_firstTime = _reader.GetBoolean(8);
-            _company = _reader.GetString(8);*/
-
             List<EmailTemplates> _templates = [];
             Dictionary<string, string> _emailAddresses = new();
             Dictionary<string, string> _emailCC = new();
@@ -899,7 +738,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                           .Replace("$SUBMISSION_STATUS$", activity.Status)
                                                           .Replace("$LOGGED_USER$", user);
 
-                List<string> _attachments = [];
+                //List<string> _attachments = [];
                 //string _pathDest = "";
                 //if (_firstTime)
                 //{
@@ -921,8 +760,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                 //        _attachments.Add(_pathDest);
                 //    }
                 //}
-
-                //GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, _attachments);
             }
         }
         catch (Exception ex)
@@ -1132,34 +969,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                             command.Varchar("Year", 10, education.Year);
                                                             command.Varchar("User", 10, user);
                                                         }, "SaveEducation", "Error saving candidate education.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SaveEducation", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", education.ID);
-        _command.Int("CandidateID", candidateID);
-        _command.Varchar("Degree", 100, education.Degree);
-        _command.Varchar("College", 255, education.College);
-        _command.Varchar("State", 100, education.State);
-        _command.Varchar("Country", 100, education.Country);
-        _command.Varchar("Year", 10, education.Year);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _returnVal = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving education. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_returnVal);*/
     }
 
     [HttpPost]
@@ -1182,35 +991,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                              command.Varchar("Title", 1000, experience.Title);
                                                              command.Varchar("User", 10, user);
                                                          }, "SaveExperience", "Error saving candidate experience.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SaveExperience", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", experience.ID);
-        _command.Int("CandidateID", candidateID);
-        _command.Varchar("Employer", 100, experience.Employer);
-        _command.Varchar("Start", 10, experience.Start);
-        _command.Varchar("End", 10, experience.End);
-        _command.Varchar("Location", 100, experience.Location);
-        _command.Varchar("Description", 1000, experience.Description);
-        _command.Varchar("Title", 1000, experience.Title);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _returnVal = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving experience. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_returnVal);*/
     }
 
     [HttpPost]
@@ -1271,17 +1051,12 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving MPC. {ExceptionMessage}", ex.Message);
-            //
         }
 
         return new()
                {
-                   {
-                       "MPCList", _mpc
-                   },
-                   {
-                       "FirstMPC", mpc
-                   }
+                   {"MPCList", _mpc},
+                   {"FirstMPC", mpc}
                };
     }
 
@@ -1302,32 +1077,6 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                        command.Varchar("EntityType", 5, "CND");
                                                        command.Varchar("User", 10, user);
                                                    }, "SaveNotes", "Error saving candidate notes.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SaveNote", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", candidateNote.ID);
-        _command.Int("CandidateID", candidateID);
-        _command.Varchar("Note", -1, candidateNote.Notes);
-        _command.Bit("IsPrimary", false);
-        _command.Varchar("EntityType", 5, "CND");
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _returnVal = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving notes. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_returnVal);*/
     }
 
     [HttpPost]
@@ -1340,12 +1089,8 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
             {
                 return new()
                        {
-                           {
-                               "RatingList", _rating
-                           },
-                           {
-                               "FirstRating", null
-                           }
+                           {"RatingList", _rating},
+                           {"FirstRating", null}
                        };
             }
 
@@ -1388,17 +1133,12 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving rating. {ExceptionMessage}", ex.Message);
-            //
         }
 
         return new()
                {
-                   {
-                       "RatingList", _rating
-                   },
-                   {
-                       "FirstRating", rating
-                   }
+                   {"RatingList", _rating},
+                   {"FirstRating", rating}
                };
     }
 
@@ -1419,61 +1159,12 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
                                                         command.SmallInt("ExpMonth", skill.ExpMonth);
                                                         command.Varchar("User", 10, user);
                                                     }, "SaveSkill", "Error saving candidate skill.");
-
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SaveSkill", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("EntitySkillId", skill.ID);
-        _command.Varchar("Skill", 100, skill.Skill);
-        _command.Int("CandidateID", candidateID);
-        _command.SmallInt("LastUsed", skill.LastUsed);
-        _command.SmallInt("ExpMonth", skill.ExpMonth);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            _returnVal = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving skill. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_returnVal);*/
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> SearchCandidates(string filter)
     {
         return await ExecuteQueryAsync("SearchCandidates", command => { command.Varchar("Name", 30, filter); }, "SearchCandidates", "Error searching candidates.");
-        /*await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SearchCandidates", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Varchar("Name", 30, filter);
-
-        string _candidates = "[]";
-        try
-        {
-            await _connection.OpenAsync();
-
-            _candidates = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error searching candidates. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_candidates);*/
     }
 
     [HttpPost]
@@ -1734,13 +1425,7 @@ public class CandidateController(SmtpClient smtpClient) : ControllerBase
         string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
 
         await General.UploadToBlob(file, _blobPath);
-        /*// Create a BlobStorage instance
-        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
-
-        await using (Stream stream = file.OpenReadStream())
-        {
-            await _storage.WriteAsync(_blobPath, stream);
-        }*/
+        // Create a BlobStorage instance
 
         await using SqlConnection _connection = new(Start.ConnectionString);
         string _returnVal = "[]";

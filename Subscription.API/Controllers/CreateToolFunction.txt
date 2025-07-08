@@ -1,4 +1,106 @@
     // private static readonly string[] JSONSerializable = ["Skill"];
+    /*public async Task<ActionResult<string>> ParseCandidate(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("No file has been uploaded.");
+        }
+
+        string _fileContent = "";
+        string _prompt = Start.Prompt;
+        using (MemoryStream _stream = new())
+        {
+            await file.CopyToAsync(_stream);
+            _stream.Position = 0;
+            using (WordDocument _document = new(_stream, FormatType.Docx))
+            {
+                // Save the document as a string
+                _fileContent = _document.GetText();
+            }
+        }
+
+        string _detailedPrompt = string.Format(_prompt, _fileContent);
+
+        Uri _endpoint = new(Start.AzureOpenAIEndpoint);
+        AzureKeyCredential _credential = new(Start.AzureOpenAIKey);
+        AzureOpenAIClient _client = new(_endpoint, _credential);
+
+        ChatClient _chatClient = _client.GetChatClient(Start.DeploymentName); // This points to o3-mini
+
+        ChatCompletionOptions _chatOptions = new()
+                                             {
+                                                 Temperature = 0.2f,
+                                                 MaxOutputTokenCount = 10000,
+                                                 TopP = 0.3f,
+                                                 FrequencyPenalty = 0f,
+                                                 PresencePenalty = 0f
+                                             };
+        //_chatOptions.Tools.Add(ChatTool.CreateFunctionTool();
+        CreateToolFunction(_chatOptions);
+
+        List<ChatMessage> _messages =
+        [
+            new SystemChatMessage(Start.SystemChatMessage),
+            new UserChatMessage(_detailedPrompt)
+        ];
+
+        string _parsedJSON = "";
+        string _tempJSONFileName = Path.Combine($"{Guid.NewGuid():N}.json");
+        try
+        {
+            ChatCompletion _completeChatAsync = await _chatClient.CompleteChatAsync(_messages, _chatOptions);
+            _parsedJSON = _completeChatAsync.Content[0].Text;
+            //JsonSerializer.Serialize(_completeChatAsync);
+
+            /* Parse JSON to Objects #1#
+            JsonNode _rootNode = JsonNode.Parse(_parsedJSON)!;
+            if (_rootNode != null)
+            {
+                string _firstName = _rootNode["FirstName"]?.ToString() ?? "";
+                string _lastName = _rootNode["LastName"]?.ToString() ?? "";
+                string _phone = _rootNode["PhoneNumbers"]?[0]?.ToString() ?? "";
+                string _email = _rootNode["EmailAddresses"]?[0]?.ToString() ?? "";
+                string _street = _rootNode["PostalAddress"]?["Street"]?.ToString() ?? "";
+                string _city = _rootNode["PostalAddress"]?["City"]?.ToString() ?? "";
+                string _stateName = _rootNode["PostalAddress"]?["State"]?.ToString() ?? "";
+                int _stateID = 0;
+                if (_stateName.NotNullOrWhiteSpace())
+                {
+                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
+
+                    RedisValue _value = await _service.GetAsync(CacheObjects.States.ToString());
+                    List<State> _states = General.DeserializeObject<List<State>>(_value.ToString());
+                    foreach (State _state in _states.Where(state => _stateName.Equals(state.Code.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                                                                    _stateName.Equals(state.StateName.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _stateID = _state.ID;
+                        break;
+                    }
+                }
+
+                string _zip = _rootNode["PostalAddress"]?["Zip"]?.ToString() ?? "";
+                string _summary = _rootNode["CandidateSummary"]?.ToString() ?? "";
+                string _keywords = _rootNode["CandidateKeywords"]?.ToString() ?? "";
+
+                /*Education#1#
+                DataTable _tableEducation = Education(_rootNode["EducationInfo"] as JsonArray);
+
+                /*Experience#1#
+                DataTable _tableExperience = Experience(_rootNode["EmploymentInfo"] as JsonArray);
+
+                /* Skills #1#
+                DataTable _tableSkills = Skills(_rootNode["Skills"] as JsonArray);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error parsing candidate. {ExceptionMessage}", ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+
+        return Ok(_parsedJSON);
+    }*/
+
     /*private void CreateToolFunction(ChatCompletionOptions options)
     {
         options.Tools.Add(ChatTool.CreateFunctionTool("extract_candidate",

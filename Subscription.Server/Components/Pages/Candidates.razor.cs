@@ -527,9 +527,9 @@ public partial class Candidates : IDisposable
                                                            NextSteps.Clear();
                                                            try
                                                            {
-                                                               List<string> nextCodes = _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
-                                                                                                 .SelectMany(flow => flow.Next.Split(','))
-                                                                                                 .Distinct().ToList();
+                                                               HashSet<string> nextCodes = _workflow.Where(flow => flow.Step == SelectedActivity.StatusCode)
+                                                                                                    .SelectMany(flow => flow.Next.Split(','))
+                                                                                                    .Distinct().ToHashSet();
                                                                NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")
                                                                                        .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
                                                                                        .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
