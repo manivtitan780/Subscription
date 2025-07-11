@@ -162,8 +162,21 @@ public static partial class Extensions
     /// <returns>
     ///     A DBNull value if the input is null, whitespace, or "0" (if isZero is true); otherwise, the trimmed input value.
     /// </returns>
-    public static object DBNull(this string s, bool isZero = false) => isZero ? string.IsNullOrWhiteSpace(s) || s.Trim() == "0" ? System.DBNull.Value : s.Trim() :
-                                                                       string.IsNullOrWhiteSpace(s) ? System.DBNull.Value : s.Trim();
+    public static object DBNull(this string s, bool isZero = false)
+    {
+        if (s.NullOrWhiteSpace())
+        {
+            return System.DBNull.Value;
+        }
+
+        string trimmed = s.Trim();
+        if (isZero && trimmed == "0")
+        {
+            return System.DBNull.Value;
+        }
+
+        return trimmed;
+    }
 
     /// <summary>
     ///     Decompresses a GZip compressed byte array to a string.
@@ -302,7 +315,7 @@ public static partial class Extensions
     ///     otherwise, false.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool NotNullOrWhiteSpace(this string? s) => !string.IsNullOrWhiteSpace(s);
+    public static bool NotNullOrWhiteSpace(this string? s) => !s.NullOrWhiteSpace();
 
     /// <summary>
     ///     Checks if the given string is null, empty, or consists only of white-space characters.

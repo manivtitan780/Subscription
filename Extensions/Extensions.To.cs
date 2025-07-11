@@ -174,7 +174,7 @@ public static partial class Extensions
 	/// </returns>
 	public static DateTime ToDateTime(this string s, string format = "MM/dd/yyyy")
     {
-        if (string.IsNullOrWhiteSpace(s))
+        if (s.NullOrWhiteSpace())
         {
             return System.DateTime.MinValue;
         }
