@@ -7,11 +7,13 @@
 // Project:             Extensions
 // File Name:           Extensions.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-07-2024 15:02
-// Last Updated On:     01-28-2025 19:01
+// Created On:          07-11-2025 20:07
+// Last Updated On:     07-11-2025 20:41
 // *****************************************/
 
 #endregion
+
+#region Using
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -23,11 +25,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
+#endregion
+
 namespace Extensions;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global"), SuppressMessage("ReSharper", "UnusedParameter.Global")]
 public static partial class Extensions
 {
+    private static readonly CultureInfo USCulture = new("en-us");
+
     /// <summary>
     ///     Compresses the input string using GZip compression.
     /// </summary>
@@ -80,7 +86,7 @@ public static partial class Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string CultureCurrency(this decimal d, string format = "c2", CultureInfo? c = null)
     {
-        c ??= new("en-us");
+        c ??= USCulture;
 
         return d.ToString(format, c);
     }
@@ -99,7 +105,7 @@ public static partial class Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string CultureDate(this DateTime d, string format = "d", CultureInfo? c = null)
     {
-        c ??= new("en-us");
+        c ??= USCulture;
 
         return d.ToString(format, c);
     }
@@ -124,7 +130,7 @@ public static partial class Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string CulturePercentage(this decimal d, string format = "p2", CultureInfo? c = null)
     {
-        c ??= new("en-us");
+        c ??= USCulture;
 
         return d.ToString(format, c);
     }
@@ -200,10 +206,11 @@ public static partial class Extensions
     ///     The method uses the ToInt64 extension method to convert the input string to a long.
     ///     The resulting long is then formatted to a phone number format.
     /// </remarks>
-    public static string FormatPhoneNumber(this string s) => s.ToInt64() > 0 ? $"{s.ToInt64():(###) ###-####}" : "";
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string StripAndFormatPhoneNumber(this string s) => s.StripPhoneNumber().FormatPhoneNumber();
+    public static string FormatPhoneNumber(this string s)
+    {
+        long phoneNumber = s.ToInt64();
+        return phoneNumber > 0 ? $"{phoneNumber:(###) ###-####}" : "";
+    }
 
     /// <summary>
     ///     Converts a Base64 encoded string to a regular string.
@@ -265,24 +272,22 @@ public static partial class Extensions
     /// </returns>
     public static bool IsValidUrl(this string url)
     {
-        string _url = url.ToLowerInvariant();
-
         // Check if the string is null, empty, or consists only of white-space characters
-        if (_url.NullOrWhiteSpace())
+        if (url.NullOrWhiteSpace())
         {
             return false;
         }
 
-        // Check if the string does not start with the HTTP/HTTPS protocols
-        if (!_url.StartsWith("http://") || !_url.StartsWith("https://"))
+        // Check if the string does not start with the HTTP/HTTPS protocols (case-insensitive)
+        if (!(url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
         {
             // Add the HTTPS protocol to the string
-            _url = $"https://{_url}";
+            url = $"https://{url}";
         }
 
         // Attempt to create a Uri object from the string
         // Check if the Uri object's Scheme property is HTTP or HTTPS
-        return Uri.TryCreate(_url, UriKind.Absolute, out Uri? _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
+        return Uri.TryCreate(url, UriKind.Absolute, out Uri? _result) && (_result.Scheme == Uri.UriSchemeHttp || _result.Scheme == Uri.UriSchemeHttps);
     }
 
     [GeneratedRegex("[^0-9]")]
@@ -375,6 +380,9 @@ public static partial class Extensions
     ///     True if the string is "1"; otherwise, false.
     /// </returns>
     public static bool StringToBoolean(this string s) => s == "1";
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string StripAndFormatPhoneNumber(this string s) => s.StripPhoneNumber().FormatPhoneNumber();
 
     /// <summary>
     ///     Strips non-numeric characters from a phone number.

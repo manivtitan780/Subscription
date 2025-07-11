@@ -33,10 +33,12 @@ public static partial class Extensions
     public static string ReadFromPdf(this Stream stream)
     {
         using PdfLoadedDocument _document = new(stream);
-        StringBuilder _resumeText = new();
-        foreach (object page in _document.Pages)
+        // Pre-allocate StringBuilder with estimated capacity based on page count
+        StringBuilder _resumeText = new(_document.Pages.Count * 1024);
+        
+        foreach (PdfLoadedPage page in _document.Pages)
         {
-            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
+            _resumeText.Append(page.ExtractText());
         }
 
         _document.Close();
@@ -47,7 +49,6 @@ public static partial class Extensions
     {
         using StreamReader reader = new(stream);
         string text = await reader.ReadToEndAsync();
-        reader.Close();
         return text;
     }
 }
