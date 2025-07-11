@@ -1,0 +1,66 @@
+/* Login Page Specific Styles */
+
+.grid-container {
+    border: 1px solid #dddddd;
+    display: grid;
+    grid-template-rows: 50px 20px 50px 50px 50px 50px;
+    grid-template-columns: 30% auto;
+    border-radius: 5px;
+    box-shadow: 3px 3px 7px #999999;
+    font-family: var(--font-family);
+    margin: 75px auto;
+    width: 400px;
+}
+
+.header, .footer {
+    grid-column: 1 / span 2;
+    background-color: var(--c-red);
+    color: white;
+    font-size: 20pt;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 10px;
+}
+
+.footer {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.left {
+    grid-column: 1;
+    max-width: 110px;
+    padding-left: 10px;
+}
+
+.left label {
+    font-size: 11pt;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+.e-hidden {
+    display: none;
+}
+
+.right {
+    grid-column: 2;
+    width: 100%;
+}
+
+.grid-container .e-btn.e-primary, .grid-container .e-css.e-btn.e-primary {
+    background: var(--c-yellow) !important;
+    border-color: var(--c-yellowlight) !important;
+    color: var(--c-bk) !important;
+}
+
+.upper {
+    text-transform: uppercase;
+}

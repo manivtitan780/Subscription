@@ -1,0 +1,20 @@
+@* 
+    Code Added by Gemini.
+    Reason: This new component encapsulates the display of the main company information.
+    It was extracted from the main Companies.razor file to improve modularity and make the parent component's markup cleaner.
+*@
+<div class="layout-2">
+    <div class="leftLayout">
+        <PanelDisplayText Label="Company Name" Text="@(Model.Name)"/>
+        <PanelDisplayText Label="EIN#" Text="@(FormatEIN(Model.EIN))"/>
+        <PanelDisplayText Label="Email Address" Text="@(Model.EmailAddress)"/>
+        <PanelDisplayText Label="Phone" Text="@(Model.Phone.FormatPhoneNumber())"/>
+        <PanelDisplayText Label="Address" MarkupText="@(Address)"/>
+        <PanelDisplayText Label="D-U-N-S Number" Text="@(FormatDUNS(Model.DUNS))"/>
+        <PanelDisplayText Label="NAICS Code" Text="@(Model.NAICSCode == 0 ? "" : $"[{Model.NAICSCode}] - {Model.NAICS}")"/>
+        <PanelDisplayText Label="Status" Text="@(Model.Status ? "Active" : "Inactive")"/>
+    </div>
+    <div class="rightLayout">
+        <PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" MarkupText="@(Model.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
+    </div>
+</div>
