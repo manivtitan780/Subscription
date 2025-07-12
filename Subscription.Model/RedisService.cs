@@ -77,7 +77,8 @@ public class RedisService : IDisposable
         RedisKey[] _keys = _keyArray.Select(k => (RedisKey)k).ToArray();
 
         RedisValue[] _values = await _db.StringGetAsync(_keys);
-        Dictionary<string, string> _return = new();
+        // Standardized collection initialization to modern C# 12 syntax for consistency
+        Dictionary<string, string> _return = [];
         int i = 0;
         foreach (string _key in _keyArray)
         {

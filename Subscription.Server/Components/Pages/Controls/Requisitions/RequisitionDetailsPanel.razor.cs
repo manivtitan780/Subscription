@@ -337,13 +337,13 @@ public partial class RequisitionDetailsPanel
     ///// </value>
     ///// <remarks>
     /////     This property is injected and used for operations like retrieving or storing data in Redis cache.
-    ///// </remarks>
-    //[Inject]
-    //private RedisService Redis
-    //{
-    //    get;
-    //    set;
-    //}
+    /// </remarks>
+    /// <summary>
+    ///     Gets or sets the Redis service for cache operations.
+    ///     Using DI singleton to avoid connection leaks.
+    /// </summary>
+    [Inject]
+    private RedisService RedisService { get; set; }
 
     /// <summary>
     ///     Handles the event when the selected company changes in the Requisition Details Panel.
@@ -369,9 +369,8 @@ public partial class RequisitionDetailsPanel
             if (company.ItemData != null)
             {
                 Model.CompanyName = company.ItemData.CompanyName;
-                RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-
-                RedisValue _cacheValues = await _service.GetAsync("Companies");
+                // Using injected RedisService singleton instead of creating new instances to avoid connection leaks
+                RedisValue _cacheValues = await RedisService.GetAsync("Companies");
                 string _returnValue = _cacheValues.ToString();
 
                 List<Company> _companyList = null;

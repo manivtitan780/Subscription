@@ -1,3 +1,7 @@
+Analyze the entire project from Subscription.sln, there are 5 projects in total in the sln, Extensions, ExtendedComponents, Subbscription.API, Subscription.Model and Subscription.Server. Any other folders or projects may be ignored. We have optimized Subscription.API completely. So once you have analyzed the Solution, we can start further optimizations starting with Extensions project and starting  particularly Extensions.cs and once we are finished with it we can then next go to Extensions.Add.cs then Extensions.Streams.cs and lastly Extensions.To.cs. Whenever you make any removal of code please make sure you comment that code with a comment as to why it was commented and any addition be also with a comment as to why we are adding it. All commented code will be removed by me manually later. Please don't suggest to remove any code which is commented.
+
+
+
 I've reviewed the code for EditSkillDialog.razor.cs, SkillPanel.razor, and SkillPanel.razor.cs. Here's a breakdown of my analysis:
 
   EditSkillDialog.razor.cs

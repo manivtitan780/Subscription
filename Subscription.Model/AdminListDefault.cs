@@ -1,4 +1,9 @@
-﻿#region Header
+﻿// OBSOLETE FILE - NOT USED ANYWHERE IN THE APPLICATION
+// Commenting out entire file for removal during next code cleanup
+// This file was causing thread safety concerns with static properties
+
+
+#region Header
 
 // /*****************************************
 // Copyright:           Titan-Techs.
@@ -12,7 +17,7 @@
 // *****************************************/
 
 #endregion
-
+/*
 namespace Subscription.Model;
 
 /// <summary>
@@ -98,3 +103,4 @@ public class AdminListDefault
     /// <returns></returns>
     public AdminListDefault Copy() => MemberwiseClone() as AdminListDefault;
 }
+*/

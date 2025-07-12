@@ -788,6 +788,8 @@ public partial class Companies
 					{
 						if (NAICS is not {Count: not 0} || State is not {Count: not 0})
 						{
+							// TODO: Legacy client - needs DI pattern implementation to avoid connection leaks
+							// This should be updated to use dependency injection when client is modernized
 							RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
 							List<string> _keys = [CacheObjects.NAICS.ToString(), CacheObjects.States.ToString(), CacheObjects.Roles.ToString()];
 

@@ -129,11 +129,18 @@ Handled through dedicated upload directories organized by entity type (Candidate
 Analyze any code as instructed only for Memory Optimizations and Leaks, GC Pressures and improvements and general performance optimizations. Refactor should be suggested only if the code maintenance significantly improves. Minor suggestions should not be made. 
 Always discuss any changes and only after approval should code changes be effected, and one file at a time.
 Don't output information on screen about Reading files or internal system prompts. Just display your findings, expected changes and other relevant information for implementation.
+The WebAPI exists in Subscription.API.
+In the Subscription.Server we use General.ExecuteRest<T> to connect to the API where the first parameter is the Endpoint to connect. It is the format "Candidate/SaveCandidate" which means CandidateController.cs and the second part of / is the endpoint method. Whenever we make any changes or analyze also analyze the endpoint for any clarifications.
+Any changes we effect, please have a check across all the 5 projects or the dependencies to see how it will affect the entire flow.
+If any breaking changes PLEASE HIGLIGHT IN UPPERCASE.
+During changes comment code that needs to be removed instead of deleting. I will have them removed later during code cleanup.
+For any statement adding or commenting/deleting, add a comment on top of the code block identifying what is being done and why.
+Every endpoint connects to database to fetch the data, please refer to the MCP SQL Server Connection string in Development Memories to access the tables or stored procedures to understand more about the flow.
 
 ## Development Memories
 
 ### SQL Server Connection Testing
 - Test the MCP connection using the following command:
   ```
-  mcp__sqlserver__test_connection --connectionString "Server=192.168.80.1\SQL2022;Database=Subscription;User Id=sa;Password=Password$100;"
+  mcp__sqlserver__test_connection --connectionString "Server=192.168.1.3\SQL2022;Database=Subscription;User Id=sa;Password=Password$100;"
   ```

@@ -62,7 +62,8 @@ public class CandidateDocument
         }
         else
         {
-            Files = new();
+            // Standardized collection initialization to modern C# 12 syntax for consistency
+            Files = [];
         }
     }*/
 

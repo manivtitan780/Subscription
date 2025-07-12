@@ -135,7 +135,9 @@ _app.Use(async (context, next) =>
                  Start.EmailClientID = _config["Email:ClientID"];
                  Start.TenantID = _config["Email:TenantID"];
 
-                 await General.SetCache();
+                 // Modified to use DI-provided RedisService singleton instead of creating new instances
+                RedisService redisService = _app.Services.GetRequiredService<RedisService>();
+                await General.SetCache(redisService);
                  _isSet = true;
              }
 

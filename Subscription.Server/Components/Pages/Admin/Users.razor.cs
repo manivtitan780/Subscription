@@ -65,6 +65,13 @@ public partial class Users : ComponentBase
     private NavigationManager NavManager { get; set; }
 
     /// <summary>
+    ///     Gets or sets the Redis service for cache operations.
+    ///     Using DI singleton to avoid connection leaks.
+    /// </summary>
+    [Inject]
+    private RedisService RedisService { get; set; }
+
+    /// <summary>
     ///     Gets or sets the RoleID for the current user. The RoleID is used to determine the user's permissions within the
     ///     application.
     /// </summary>
@@ -256,8 +263,8 @@ public partial class Users : ComponentBase
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
 
-                                    RedisService _service = new(Start.CacheServer, Start.CachePort.ToInt32(), Start.Access, false);
-                                    RedisValue _value = await _service.GetAsync(nameof(CacheObjects.Roles));
+                                    // Using injected RedisService singleton instead of creating new instances to avoid connection leaks
+                                    RedisValue _value = await RedisService.GetAsync(nameof(CacheObjects.Roles));
                                     string _roleString = _value.ToString();
                                     try
                                     {

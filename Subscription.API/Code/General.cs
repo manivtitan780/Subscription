@@ -104,9 +104,12 @@ public static class General
         return _memBytes;
     }
 
-    public static async Task SetCache()
+    // Modified to accept RedisService as parameter to avoid connection leaks
+    // Using DI-provided singleton instead of creating new instances
+    public static async Task SetCache(RedisService redisService)
     {
-        RedisService _service = new(Start.CacheServer, Start.CachePort!.ToInt32(), Start.Access, false);
+        // Using injected RedisService singleton instead of creating new instance
+        RedisService _service = redisService;
         bool _keyExists = await _service.CheckKeyExists(nameof(CacheObjects.Companies));
 
         if (!_keyExists)
