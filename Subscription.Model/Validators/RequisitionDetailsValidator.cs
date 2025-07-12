@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -38,22 +40,28 @@ public class RequisitionDetailsValidator : AbstractValidator<RequisitionDetails>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.CompanyID).NotNull().WithMessage("Company is required")
-                                 .GreaterThan(0).WithMessage("Company is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.CompanyID).NotNull().WithMessage(ValidationMessages.FieldRequired("Company"))
+                                 .GreaterThan(0).WithMessage(ValidationMessages.FieldRequired("Company"));
 
-        RuleFor(x => x.ZipCode).NotEmpty().WithMessage("Zip Code is required.")
-                               .Length(5).WithMessage("Zip Code should be exactly {MaxLength} characters long.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.ZipCode).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Zip Code"))
+                               .Length(BusinessConstants.FieldLengths.State).WithMessage(ValidationPatterns.ZipCodeBasicMessage);
 
-        RuleFor(x => x.City).NotEmpty().WithMessage("City is required.")
-                            .Length(2, 50).WithMessage("City should be between {MinLength} and {MaxLength} characters long.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.City).NotEmpty().WithMessage(ValidationMessages.FieldRequired("City"))
+                            .Length(2, BusinessConstants.FieldLengths.City).WithMessage(ValidationMessages.FieldBetweenLength("City"));
 
-        RuleFor(x => x.PositionTitle).NotEmpty().WithMessage("Position Title/Role is required.")
-                                     .Length(3, 200).WithMessage("Position Title/Role should not be between {MinLength} and {MaxLength} characters long.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.PositionTitle).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Position Title/Role"))
+                                     .Length(3, BusinessConstants.FieldLengths.Title).WithMessage(ValidationMessages.FieldBetweenLength("Position Title/Role"));
 
-        RuleFor(x => x.Description).NotEmpty().WithMessage("Position Description is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Description).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Position Description"));
 
-        RuleFor(x => x.Mandatory).NotEmpty().WithMessage("Keywords is required.")
-                                 .MinimumLength(5).WithMessage("Keywords should have more than {MinLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Mandatory).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Keywords"))
+                                 .MinimumLength(5).WithMessage(ValidationMessages.FieldMinLength("Keywords"));
 
         RuleFor(x => x.DueDate).GreaterThan(x => x.ExpectedStart).WithMessage("Due Date should be later than Expected Start Date.");
 

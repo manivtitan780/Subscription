@@ -11,6 +11,8 @@
 // *****************************************/
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class CandidateResumeValidator: AbstractValidator<CandidateResume>
@@ -19,6 +21,7 @@ public class CandidateResumeValidator: AbstractValidator<CandidateResume>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Files).NotEmpty().WithMessage("Select a file to upload.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Files).NotEmpty().WithMessage(ValidationMessages.FileSelectionRequired);
     }
 }

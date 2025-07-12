@@ -13,6 +13,9 @@
 
 #endregion
 
+// Added using statement for validation constants to eliminate magic strings
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -46,8 +49,9 @@ public class AdminListValidator : AbstractValidator<AdminList>
                                                               //.Must(CheckCodeExists).WithMessage(x => $"{x.Entity} Code already exists. Enter another code.");
                                                           });
 
-        RuleFor(x => x.Text).NotEmpty().WithMessage(x => $"{x.Entity} should not be empty.")
-                            .Length(2, 100).WithMessage(x => $"{x.Entity} should be between {{MinLength}} and {{MaxLength}} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Text).NotEmpty().WithMessage(x => $"{x.Entity} {ValidationMessages.ShouldNotBeEmpty}")
+                            .Length(2, BusinessConstants.FieldLengths.ShortDescription).WithMessage(x => $"{x.Entity} {ValidationMessages.BetweenLength}");
         //.Must((obj, text) => CheckTextExists(text, obj.ID, obj.Entity, obj.Code)).WithMessage(x => $"{x.Entity} already exists. Enter another {x.Entity}");
     }
 

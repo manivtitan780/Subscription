@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -39,8 +41,9 @@ public class DocumentTypesValidator : AbstractValidator<DocumentTypes>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Text).NotEmpty().WithMessage("Document Type is required.")
-                            .Length(2, 50).WithMessage("Document Type should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Text).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Document Type"))
+                            .Length(2, BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldBetweenLength("Document Type"));
         //.Must((obj, docType) => CheckDocumentTypeExists(docType, obj.KeyValue)).WithMessage("Document Type already exists. Enter another Document Type.");
     }
 

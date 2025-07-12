@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class CompanyLocationsValidator : AbstractValidator<CompanyLocations>
@@ -26,24 +28,31 @@ public class CompanyLocationsValidator : AbstractValidator<CompanyLocations>
 		//								RuleFor(x => x.CompanyID).NotEmpty().WithMessage("Select a Company");
 		//							});
 
-        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage("Email Address should not be empty.")
-                                    .Length(1, 255).WithMessage("Email Address should be less than {MaxLength} characters.")
-                                    .Must(s => s.IsValidEmail()).WithMessage("Please enter a valid e-mail address.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Email Address"))
+                                    .Length(1, BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldMaxLength("Email Address"))
+                                    .Must(s => s.IsValidEmail()).WithMessage(ValidationMessages.ValidEmailRequired);
 
-        RuleFor(x => x.StreetName).NotEmpty().WithMessage("Address should not be empty.")
-                                  .Length(5, 500).WithMessage("Address should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.StreetName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Address"))
+                                  .Length(5, 500).WithMessage(ValidationMessages.FieldBetweenLength("Address"));
 
-        RuleFor(x => x.City).NotEmpty().WithMessage("City Name should not be empty.")
-                            .Length(2, 100).WithMessage("City Name should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.City).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("City Name"))
+                            .Length(2, 100).WithMessage(ValidationMessages.FieldBetweenLength("City Name"));
 
-        RuleFor(x => x.StateID).NotEmpty().WithMessage("Select a State");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.StateID).NotEmpty().WithMessage(ValidationMessages.FieldRequired("State"));
 
-        RuleFor(x => x.ZipCode).NotEmpty().WithMessage("Zip Code should not be empty.")
-                               .Length(5).WithMessage("Zip Code should be exactly {MaxLength} digits.");
+        // Using ValidationMessages constants and ValidationPatterns to eliminate magic strings and improve maintainability
+        RuleFor(x => x.ZipCode).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Zip Code"))
+                               .Length(BusinessConstants.FieldLengths.State).WithMessage(ValidationPatterns.ZipCodeBasicMessage);
 
-        RuleFor(x => x.Phone).NotEmpty().WithMessage("Company Phone Number should not be empty.")
-                             .Length(10).WithMessage("Phone Number should be exactly {MaxLength} digits and in the format (000) 000-0000.");
+        // Using ValidationMessages constants and ValidationPatterns to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Phone).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Company Phone Number"))
+                             .Length(BusinessConstants.FieldLengths.PhoneNumber).WithMessage($"Phone Number {ValidationPatterns.PhoneNumberMessage}");
 
-        RuleFor(x => x.Notes).Length(0, 2000).WithMessage("Company Location Notes should be less than 2000 characters.");
+        // Using BusinessConstants for field length validation
+        RuleFor(x => x.Notes).Length(0, BusinessConstants.FieldLengths.Notes).WithMessage(ValidationMessages.FieldMaxLength("Company Location Notes"));
     }
 }

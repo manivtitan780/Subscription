@@ -13,6 +13,9 @@
 
 #endregion
 
+// Added using statement for validation constants to eliminate magic strings
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class CandidateDetailsValidator : AbstractValidator<CandidateDetails>
@@ -21,16 +24,19 @@ public class CandidateDetailsValidator : AbstractValidator<CandidateDetails>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(candidate => candidate.FirstName).NotEmpty().WithMessage("First Name is required.")
-                                                 .Length(1, 50).WithMessage("First Name must be between 1 and 50 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(candidate => candidate.FirstName).NotEmpty().WithMessage(ValidationMessages.FieldRequired("First Name"))
+                                                 .Length(1, BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldBetweenLength("First Name"));
 
         RuleFor(candidate => candidate.MiddleName).MaximumLength(50).WithMessage("Middle Name must be less than or equal to 50 characters.");
 
-        RuleFor(candidate => candidate.LastName).NotEmpty().WithMessage("Last Name is required.")
-                                                .Length(1, 50).WithMessage("Last Name must be between 1 and 50 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(candidate => candidate.LastName).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Last Name"))
+                                                .Length(1, BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldBetweenLength("Last Name"));
 
-        RuleFor(candidate => candidate.Title).NotEmpty().WithMessage("Title is required.")
-                                             .Length(1, 200).WithMessage("Title must be between 1 and 200 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(candidate => candidate.Title).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Title"))
+                                             .Length(1, BusinessConstants.FieldLengths.Title).WithMessage(ValidationMessages.FieldBetweenLength("Title"));
 
         RuleFor(candidate => candidate.Address1).NotEmpty().WithMessage("Address is required.")
                                                 .Length(1, 255).WithMessage("Address must be between 1 and 255 characters.");
@@ -40,12 +46,14 @@ public class CandidateDetailsValidator : AbstractValidator<CandidateDetails>
         RuleFor(candidate => candidate.City).NotEmpty().WithMessage("City is required.")
                                             .Length(1, 50).WithMessage("City must be between 1 and 50 characters.");
 
-        RuleFor(candidate => candidate.Email).NotEmpty().WithMessage("Email is required.")
-                                             .Length(5, 255).WithMessage("Email must be between 5 and 255 characters.")
-                                             .Must(s => s.IsValidEmail()).WithMessage("Please enter a valid e-mail address.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(candidate => candidate.Email).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Email"))
+                                             .Length(5, BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldBetweenLength("Email"))
+                                             .Must(s => s.IsValidEmail()).WithMessage(ValidationMessages.ValidEmailRequired);
 
-        RuleFor(candidate => candidate.Phone1).NotEmpty().WithMessage("Primary Phone is required.")
-                                              .Matches(@"^\d{10}$").WithMessage("Primary Phone must be in the format (000) 000-0000.");
+        // Using ValidationPatterns constants to eliminate magic strings and improve maintainability
+        RuleFor(candidate => candidate.Phone1).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Primary Phone"))
+                                              .Matches(ValidationPatterns.PhoneNumber).WithMessage($"Primary Phone {ValidationPatterns.PhoneNumberMessage}");
 
         RuleFor(candidate => candidate.Phone2).Matches(@"^\d{10}$").When(candidate => !candidate.Phone2.NullOrWhiteSpace())
                                               .WithMessage("Secondary Phone must be in the format (000) 000-0000.");

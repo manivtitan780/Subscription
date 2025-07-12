@@ -16,6 +16,8 @@
 #region Using
 
 using RestSharp;
+// Added using statement for validation constants to eliminate magic strings
+using Subscription.Model.Constants;
 
 #endregion
 
@@ -27,21 +29,24 @@ public class CompanyDetailsValidator : AbstractValidator<CompanyDetails>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Name).NotEmpty().WithMessage("Company Name should not be empty.")
-                            .Length(1, 100).WithMessage("Company Name should be less than 100 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Name).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Company Name"))
+                            .Length(1, BusinessConstants.FieldLengths.CompanyName).WithMessage(ValidationMessages.FieldMaxLength("Company Name"));
 
-        RuleFor(x => x.EIN).NotEmpty().WithMessage("Company EIN# should not be empty.")
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.EIN).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Company EIN#"))
                            .Length(9).WithMessage("Company EIN# should be exactly 9 digits and in the format 00-0000000")
                            .Must((companyDetails, text) => CheckEINExists(text, companyDetails.ID))
                            .WithMessage("Company EIN# is already associated with another company. Please enter the correct EIN#.");
 
-        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage("Email Address should not be empty.")
-                                    .Length(1, 255).WithMessage("Email Address should be less than 255 characters.")
-                                    .Must(s => s.IsValidEmail()).WithMessage("Please enter a valid e-mail address.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Email Address"))
+                                    .Length(1, BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldMaxLength("Email Address"))
+                                    .Must(s => s.IsValidEmail()).WithMessage(ValidationMessages.ValidEmailRequired);
 
         RuleFor(x => x.Website).MaximumLength(255).WithMessage("Website Address should be less than 255 characters.")
-                               .Must(s => !s.NullOrWhiteSpace() && (s.StartsWith("http://") || s.StartsWith("https://"))).WithMessage("Website Url should start with either http:// or https://")
-                               .Must(s => !s.NullOrWhiteSpace() && s.IsValidUrl()).WithMessage("Please enter a valid Website Url.");
+                               .Must(s => !s.NullOrWhiteSpace() && (s.StartsWith("http://") || s.StartsWith("https://"))).WithMessage(ValidationMessages.UrlProtocolRequired)
+                               .Must(s => !s.NullOrWhiteSpace() && s.IsValidUrl()).WithMessage(ValidationMessages.ValidUrlRequired);
 
         When(x => !x.DUNS.NullOrWhiteSpace(), () =>
                                               {
@@ -51,19 +56,24 @@ public class CompanyDetailsValidator : AbstractValidator<CompanyDetails>
 
         RuleFor(x => x.Notes).Length(0, 2000).WithMessage("Company Notes should be less than 2000 characters.");
 
-        RuleFor(x => x.StreetName).NotEmpty().WithMessage("Address should not be empty.")
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.StreetName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Address"))
                                   .Length(5, 500).WithMessage("Address should be between 5 and 500 characters.");
 
-        RuleFor(x => x.City).NotEmpty().WithMessage("City Name should not be empty.")
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.City).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("City Name"))
                             .Length(2, 100).WithMessage("City Name should be between 2 and 100 characters.");
 
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
         RuleFor(x => x.StateID).NotEmpty().WithMessage("Select a State");
 
-        RuleFor(x => x.ZipCode).NotEmpty().WithMessage("Zip Code should not be empty.")
-                               .Length(5).WithMessage("Zip Code should be exactly 5 digits.");
+        // Using ValidationPatterns constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.ZipCode).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Zip Code"))
+                               .Length(5).WithMessage(ValidationPatterns.ZipCodeBasicMessage);
 
-        RuleFor(x => x.Phone).NotEmpty().WithMessage("Company Phone Number should not be empty.")
-                             .Length(10).WithMessage("Phone Number should be exactly 10 digits and in the format (000) 000-0000.");
+        // Using ValidationPatterns constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Phone).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Company Phone Number"))
+                             .Length(BusinessConstants.FieldLengths.PhoneNumber).WithMessage($"Phone Number {ValidationPatterns.PhoneNumberMessage}");
 
         RuleFor(x => x.LocationNotes).Length(0, 2000).WithMessage("Location Notes should be less than 2000 characters.");
     }

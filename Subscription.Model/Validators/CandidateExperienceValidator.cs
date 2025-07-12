@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -36,10 +38,13 @@ public class CandidateExperienceValidator : AbstractValidator<CandidateExperienc
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Employer).NotEmpty().WithMessage("Employer is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Employer).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Employer"));
 
-        RuleFor(x => x.Location).NotEmpty().WithMessage("Location is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Location).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Location"));
 
-        RuleFor(x => x.Title).NotEmpty().WithMessage("Job Title is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Title).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Job Title"));
     }
 }

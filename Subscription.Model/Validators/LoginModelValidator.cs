@@ -13,15 +13,19 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class LoginModelValidator : AbstractValidator<LoginModel>
 {
     public LoginModelValidator()
     {
-        RuleFor(x => x.UserName).NotEmpty().WithMessage("Username should not be empty.")
-                                .MaximumLength(10).WithMessage("Username should be maximum 10 characters.");
-        RuleFor(x => x.Password).NotEmpty().WithMessage("Password should not be empty.")
-                                .MaximumLength(16).WithMessage("Password should be maximum 16 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.UserName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Username"))
+                                .MaximumLength(10).WithMessage(ValidationMessages.FieldMaxLength("Username"));
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Password).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Password"))
+                                .MaximumLength(BusinessConstants.ValidationRanges.PasswordMaxLength).WithMessage(ValidationMessages.FieldMaxLength("Password"));
     }
 }

@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -40,8 +42,9 @@ public class RoleValidator : AbstractValidator<Role>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Description).NotEmpty().WithMessage("Role Description cannot be empty.")
-                                   .MaximumLength(255).WithMessage("Role Description should be less than {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Description).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Role Description"))
+                                   .MaximumLength(BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldMaxLength("Role Description"));
 
         /*When(x => x.IsAdd, () =>
                            {
@@ -50,8 +53,9 @@ public class RoleValidator : AbstractValidator<Role>
                                                  .Must(CheckRoleIDExists).WithMessage("Role ID already exists. Enter another Role ID.");
                            });*/
 
-        RuleFor(x => x.RoleName).NotEmpty().WithMessage("Role Name cannot be empty.")
-                                .Length(2, 10).WithMessage("Role Name should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.RoleName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Role Name"))
+                                .Length(2, 10).WithMessage(ValidationMessages.FieldBetweenLength("Role Name"));
         //.Must((obj, role) => CheckRoleExists(obj.ID, role)).WithMessage("Role Name already exists. Enter another Role Name.");
     }
 

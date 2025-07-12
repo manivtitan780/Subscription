@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -40,8 +42,9 @@ public class WorkflowValidator : AbstractValidator<Workflow>
 
         RuleFor(x => x.Next).Length(0, 100).WithMessage("Next Step should be less than {MaxLength} characters.");
 
-        RuleFor(x => x.RoleIDs).NotEmpty().WithMessage("At least 1 Role ID is required")
-                               .Length(1, 50).WithMessage("Role IDs should be less than {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.RoleIDs).NotEmpty().WithMessage(ValidationMessages.FieldRequired("At least 1 Role ID"))
+                               .Length(1, BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldMaxLength("Role IDs"));
 
         // RuleFor(x => x.Step).Length(0, 3).WithMessage("Step should be less than {MaxLength} characters.");
     }

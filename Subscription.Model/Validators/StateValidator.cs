@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -42,13 +44,15 @@ public class StateValidator : AbstractValidator<State>
 
         When(x => x.ID == 0, () =>
                              {
-                                 RuleFor(x => x.Code).NotEmpty().WithMessage("State Code should not be empty.")
-                                                     .Length(2).WithMessage("State Code should be exactly {MaxLength} characters.");
+                                 // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+                                 RuleFor(x => x.Code).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("State Code"))
+                                                     .Length(2).WithMessage(ValidationMessages.FieldMaxLength("State Code"));
                                  //.Must(CheckStateCodeExists).WithMessage("State Code already exists. Enter another State Code.");
                              });
 
-        RuleFor(x => x.StateName).NotEmpty().WithMessage("State Name should not be empty.")
-                                 .Length(2, 50).WithMessage("State Code should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.StateName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("State Name"))
+                                 .Length(2, BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldBetweenLength("State Name"));
                                  //.Must((obj, state) => CheckStateExists(obj.Code, state));
     }
 

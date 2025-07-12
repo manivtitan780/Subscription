@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class TaxTermValidator : AbstractValidator<AdminList>
@@ -27,8 +29,9 @@ public class TaxTermValidator : AbstractValidator<AdminList>
                                                               //.Must(CheckCodeExists).WithMessage(x => $"{x.Entity} Code already exists. Enter another code.");
                                                           });
 
-        RuleFor(x => x.Text).NotEmpty().WithMessage(x => $"{x.Entity} should not be empty.")
-                            .Length(2, 100).WithMessage(x => $"{x.Entity} should be between {{MinLength}} and {{MaxLength}} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Text).NotEmpty().WithMessage(x => ValidationMessages.FieldShouldNotBeEmpty(x.Entity))
+                            .Length(2, BusinessConstants.FieldLengths.ShortDescription).WithMessage(x => ValidationMessages.FieldBetweenLength(x.Entity));
         //.Must((obj, text) => CheckTextExists(text, obj.ID, obj.Entity, obj.Code)).WithMessage(x => $"{x.Entity} already exists. Enter another {x.Entity}");
     }
 

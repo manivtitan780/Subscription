@@ -11,13 +11,16 @@
 // *****************************************/
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class NAICSValidator:AbstractValidator<NAICS>
 {
     public NAICSValidator()
     {
-        RuleFor(x => x.Title).NotEmpty().WithMessage("NAICS Title is required")
-                             .MaximumLength(255).WithMessage("NAICS Title must be less than 255 characters");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Title).NotEmpty().WithMessage(ValidationMessages.FieldRequired("NAICS Title"))
+                             .MaximumLength(BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldMaxLength("NAICS Title"));
     }
 }

@@ -11,6 +11,9 @@
 // *****************************************/
 #endregion
 
+// Added using statement for validation constants to eliminate magic strings
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class CompanyDocumentValidator : AbstractValidator<CompanyDocuments>
@@ -19,12 +22,15 @@ public class CompanyDocumentValidator : AbstractValidator<CompanyDocuments>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.DocumentName).NotEmpty().WithMessage("Document Name should not be empty.")
-                                    .Length(2, 255).WithMessage("Document should be between 2 and 255 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.DocumentName).NotEmpty().WithMessage(ValidationMessages.DocumentNameRequired)
+                                    .Length(BusinessConstants.ValidationRanges.DocumentNameMinLength, BusinessConstants.FieldLengths.DocumentName).WithMessage(ValidationMessages.DocumentNameLength);
 
-        RuleFor(x => x.Notes).NotEmpty().WithMessage("Document Notes should not be empty.")
-                             .Length(10, 2000).WithMessage("Document Notes should be between 10 and 2000 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Notes).NotEmpty().WithMessage(ValidationMessages.DocumentNotesRequired)
+                             .Length(BusinessConstants.ValidationRanges.DocumentNotesMinLength, BusinessConstants.FieldLengths.Notes).WithMessage(ValidationMessages.DocumentNotesLength);
 
-        RuleFor(x => x.Files).NotEmpty().WithMessage("Select a file to upload.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Files).NotEmpty().WithMessage(ValidationMessages.FileSelectionRequired);
     }
 }

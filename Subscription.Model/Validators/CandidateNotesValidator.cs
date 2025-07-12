@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -38,7 +40,8 @@ public class CandidateNotesValidator : AbstractValidator<CandidateNotes>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Notes).NotEmpty().WithMessage("Notes cannot be empty")
-                             .Length(5, 1000).WithMessage("Notes should be between 5 and 1000 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Notes).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Notes"))
+                             .Length(5, 1000).WithMessage(ValidationMessages.FieldBetweenLength("Notes"));
     }
 }

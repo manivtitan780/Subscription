@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class CandidateRatingValidator : AbstractValidator<CandidateRatingMPC>
@@ -21,7 +23,8 @@ public class CandidateRatingValidator : AbstractValidator<CandidateRatingMPC>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.RatingComments).NotEmpty().WithMessage("Comments is required.")
-                                .MaximumLength(255).WithMessage("Comments should not be more than 255 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.RatingComments).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Comments"))
+                                .MaximumLength(BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldMaxLength("Comments"));
     }
 }

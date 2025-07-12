@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -39,22 +41,26 @@ public class JobOptionsValidator : AbstractValidator<JobOptions>
 
         When(x => x.IsAdd, () =>
                            {
-                               RuleFor(x => x.KeyValue).NotEmpty().WithMessage("Job Option Code is required")
+                               // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+                               RuleFor(x => x.KeyValue).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Job Option Code"))
                                                    .Length(1).WithMessage("Job Option Code should be exactly {MaxLength} character.");
                                //.Must(CheckJobCodeExists).WithMessage("Job Option Code already exists. Enter another Job Option Code.");
                            });
 
         RuleFor(x => x.Description).MaximumLength(500).WithMessage("Job Option Description should be less than {MaxLength} characters.");
 
-        RuleFor(x => x.Text).NotEmpty().WithMessage("Job Option should not be empty.")
-                              .Length(2, 50).WithMessage("Job Option should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Text).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Job Option"))
+                              .Length(2, BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldBetweenLength("Job Option"));
                               //.Must((obj, option) => CheckJobOptionExists(obj.Code, option)).WithMessage("Job Option already exists. Enter another Job Option.");
 
-        RuleFor(x => x.PercentText).NotEmpty().WithMessage("Percent Text should not be empty.")
-                                   .Length(2, 255).WithMessage("Percent Text should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.PercentText).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Percent Text"))
+                                   .Length(2, BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldBetweenLength("Percent Text"));
 
-        RuleFor(x => x.RateText).NotEmpty().WithMessage("Rate Text should not be empty.")
-                                .Length(2, 255).WithMessage("Rate Text should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.RateText).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Rate Text"))
+                                .Length(2, BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldBetweenLength("Rate Text"));
 
         RuleFor(x => x.Tax).MaximumLength(20).WithMessage("Tax Terms should be less than {MaxLength} characters.");
     }

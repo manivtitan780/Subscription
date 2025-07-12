@@ -13,6 +13,9 @@
 
 #endregion
 
+// Added using statement for validation constants to eliminate magic strings
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 public class CompanyContactsValidator : AbstractValidator<CompanyContacts>
@@ -21,29 +24,36 @@ public class CompanyContactsValidator : AbstractValidator<CompanyContacts>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.CompanyID).NotEmpty().WithMessage("Company ID should not be empty.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.CompanyID).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Company ID"));
 
         RuleFor(x => x.Prefix).MaximumLength(10).WithMessage("Prefix should not be more than 10 characters.");
 
-        RuleFor(x => x.FirstName).NotEmpty().WithMessage("First Name should not be empty.")
-                                 .MaximumLength(50).WithMessage("First Name should not be more than 50 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.FirstName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("First Name"))
+                                 .MaximumLength(BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldMaxLength("First Name"));
 
         RuleFor(x => x.MiddleInitial).MaximumLength(10).WithMessage("Initial should not be more than 10 characters.");
 
-        RuleFor(x => x.LastName).NotEmpty().WithMessage("Last Name should not be empty.")
-                                .MaximumLength(50).WithMessage("Last Name should not be more than 50 characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.LastName).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Last Name"))
+                                .MaximumLength(BusinessConstants.FieldLengths.Name).WithMessage(ValidationMessages.FieldMaxLength("Last Name"));
 
         RuleFor(x => x.Suffix).MaximumLength(10).WithMessage("Suffix should not be more than 10 characters.");
 
-        RuleFor(x => x.LocationID).NotEmpty().WithMessage("Location is required. Select a location from the list.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.LocationID).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Location") + " Select a location from the list.");
 
-        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage("Email Address should not be empty.")
-                                    .Length(1, 255).WithMessage("Email Address should be less than 255 characters.")
-                                    .Must(s => s.IsValidEmail()).WithMessage("Please enter a valid e-mail address.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Email Address"))
+                                    .Length(1, BusinessConstants.FieldLengths.Email).WithMessage(ValidationMessages.FieldMaxLength("Email Address"))
+                                    .Must(s => s.IsValidEmail()).WithMessage(ValidationMessages.ValidEmailRequired);
 
-        RuleFor(x => x.Phone).NotEmpty().WithMessage("Company Phone Number should not be empty.")
-                             .Length(10).WithMessage("Phone Number should be exactly 10 digits and in the format (000) 000-0000.");
+        // Using ValidationPatterns constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Phone).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Company Phone Number"))
+                             .Length(BusinessConstants.FieldLengths.PhoneNumber).WithMessage($"Phone Number {ValidationPatterns.PhoneNumberMessage}");
 
-        RuleFor(x => x.Role).NotEmpty().WithMessage("Role is required. Select a role from the list.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Role).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Role") + " Select a role from the list.");
     }
 }

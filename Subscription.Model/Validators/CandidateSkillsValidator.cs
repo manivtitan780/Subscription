@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -39,8 +41,9 @@ public class CandidateSkillsValidator : AbstractValidator<CandidateSkills>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Skill).NotEmpty().WithMessage("Skill Name cannot be empty")
-                             .Length(2, 100).WithMessage("Skill Name should be between {MinLength} and {MaxLength} characters.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Skill).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Skill Name"))
+                             .Length(2, 100).WithMessage(ValidationMessages.FieldBetweenLength("Skill Name"));
 
         When(x => x.ExpMonth > 0, () =>
                                   {
@@ -48,7 +51,8 @@ public class CandidateSkillsValidator : AbstractValidator<CandidateSkills>
                                                               .WithMessage("Last Used should not be beyond current year. If currently being used or unknown enter Zero.");
                                   });
 
-        RuleFor(x => x.ExpMonth).Must(month => month <= 1000).WithMessage("Experience in months should not be more than 1000.");
+        // Using BusinessConstants for maximum experience validation
+        RuleFor(x => x.ExpMonth).Must(month => month <= BusinessConstants.MaxExperienceMonths).WithMessage($"Experience in months should not be more than {BusinessConstants.MaxExperienceMonths}.");
     }
 
 }

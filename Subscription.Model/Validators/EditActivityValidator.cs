@@ -12,6 +12,9 @@
 // *****************************************/
 
 #endregion
+
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -33,10 +36,12 @@ public class EditActivityValidator : AbstractValidator<CandidateActivity>
 	{
 		RuleLevelCascadeMode = CascadeMode.Stop;
 
-		RuleFor(x => x.Status).NotEmpty().WithMessage("Activity Status is required.");
+		// Using ValidationMessages constants to eliminate magic strings and improve maintainability
+		RuleFor(x => x.Status).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Activity Status"));
 		
-		RuleFor(x => x.Notes).NotEmpty().WithMessage("Activity Notes is required.")
-			.Length(2, 2000).WithMessage("Notes should be between {MinLength} to {MaxLength} characters."); ;
+		// Using ValidationMessages constants and BusinessConstants to eliminate magic strings and improve maintainability
+		RuleFor(x => x.Notes).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Activity Notes"))
+			.Length(2, BusinessConstants.FieldLengths.Notes).WithMessage(ValidationMessages.FieldBetweenLength("Notes"));
 	}
 }
 

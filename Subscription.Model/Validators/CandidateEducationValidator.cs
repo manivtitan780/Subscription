@@ -13,6 +13,8 @@
 
 #endregion
 
+using Subscription.Model.Constants;
+
 namespace Subscription.Model.Validators;
 
 /// <summary>
@@ -35,8 +37,10 @@ public class CandidateEducationValidator : AbstractValidator<CandidateEducation>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.College).NotEmpty().WithMessage("School/College/Institution is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.College).NotEmpty().WithMessage(ValidationMessages.FieldRequired("School/College/Institution"));
 
-        RuleFor(x => x.Degree).NotEmpty().WithMessage("Degree/Diploma/Course Name is required.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.Degree).NotEmpty().WithMessage(ValidationMessages.FieldRequired("Degree/Diploma/Course Name"));
     }
 }

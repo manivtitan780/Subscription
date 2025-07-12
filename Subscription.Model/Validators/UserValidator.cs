@@ -16,6 +16,8 @@
 #region Using
 
 using System.Text.RegularExpressions;
+// Added using statement for validation constants to eliminate magic strings
+using Subscription.Model.Constants;
 
 #endregion
 
@@ -61,12 +63,13 @@ public partial class UserValidator : AbstractValidator<User>
 
                                RuleFor(x => x.Password).NotEmpty().WithMessage("Password should not be empty.")
                                                        .Must(CheckPassword)
-                                                       .WithMessage("Password should be between 6 and 16 characters and contain at least 1 uppercase, lowercase character and 1 of either a numeric or special character.");
+                                                       .WithMessage(ValidationMessages.PasswordComplexity);
                            });
 
-        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage("Email Address should not be empty")
-                                    .Length(1, 200).WithMessage("Email Address should be less than {MaxLength} characters.")
-                                    .Must(s => s.IsValidEmail()).WithMessage("Please enter a valid e-mail address.");
+        // Using ValidationMessages constants to eliminate magic strings and improve maintainability
+        RuleFor(x => x.EmailAddress).NotEmpty().WithMessage(ValidationMessages.FieldShouldNotBeEmpty("Email Address"))
+                                    .Length(1, 200).WithMessage(ValidationMessages.FieldMaxLength("Email Address"))
+                                    .Must(s => s.IsValidEmail()).WithMessage(ValidationMessages.ValidEmailRequired);
     }
 
     /// <summary>
