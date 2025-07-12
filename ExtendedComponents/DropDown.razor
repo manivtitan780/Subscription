@@ -7,7 +7,8 @@
 		<label class="e-form-label" for="@ID">@($"{Placeholder}:")</label>
 	}
 }
-<SfDropDownList AllowFiltering="@AllowFilter" DataSource="@Model" Enabled="@Enabled" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="@ID" Placeholder="@Placeholder" Query="@Query" @ref="_drop" ShowClearButton="@ShowClearButton" TItem="TItem" TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression" Width="@Width">
+<SfDropDownList AllowFiltering="@AllowFilter" DataSource="@Model" Enabled="@Enabled" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="@ID" Placeholder="@Placeholder" @ref="_drop" ShowClearButton="@ShowClearButton" 
+				TItem="TItem" TValue="TValue" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression" Width="@Width">
 	<DropDownListEvents DataBound="@DataBound" TItem="TItem" TValue="TValue" ValueChange="@DropDownValueChange"/>
 	<DropDownListFieldSettings Text="@Text" Value="@Key"/>
 </SfDropDownList>

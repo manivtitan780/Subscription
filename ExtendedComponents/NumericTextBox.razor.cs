@@ -99,12 +99,11 @@ public partial class NumericTextBox<TValue> : ComponentBase
     ///     that identifies the property of a model object that provides the value. The NumericTextBox's selected item
     ///     will be used to update this value.
     /// </remarks>
-    [Parameter]
-    public Expression<Func<TValue>>? ValueExpression { get; set; }
+    /*[Parameter]
+    public Expression<Func<TValue>>? ValueExpression { get; set; }*/
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _value = default;
-        return base.OnInitializedAsync();
     }
 }

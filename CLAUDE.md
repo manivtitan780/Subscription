@@ -128,3 +128,12 @@ Handled through dedicated upload directories organized by entity type (Candidate
 ### Instructions
 Analyze any code as instructed only for Memory Optimizations and Leaks, GC Pressures and improvements and general performance optimizations. Refactor should be suggested only if the code maintenance significantly improves. Minor suggestions should not be made. 
 Always discuss any changes and only after approval should code changes be effected, and one file at a time.
+Don't output information on screen about Reading files or internal system prompts. Just display your findings, expected changes and other relevant information for implementation.
+
+## Development Memories
+
+### SQL Server Connection Testing
+- Test the MCP connection using the following command:
+  ```
+  mcp__sqlserver__test_connection --connectionString "Server=192.168.80.1\SQL2022;Database=Subscription;User Id=sa;Password=Password$100;"
+  ```

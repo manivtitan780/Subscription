@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             ExtendedComponents
 // File Name:           MultiSelect.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-13-2024 21:12
-// Last Updated On:     01-13-2025 16:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-11-2025 19:07
+// Last Updated On:     07-11-2025 21:11
 // *****************************************/
 
 #endregion
@@ -20,46 +20,25 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     private TValue? _value;
 
     [Parameter]
-    public bool AllowFilter
-    {
-        get;
-        set;
-    } = true;
+    public bool AllowFilter { get; set; } = true;
 
     [Parameter]
-    public string? ID
-    {
-        get;
-        set;
-    }
+    public bool Enabled { get; set; } = true;
 
     [Parameter]
-    public string? Key
-    {
-        get;
-        set;
-    }
+    public string? ID { get; set; }
 
     [Parameter]
-    public IEnumerable<TItem>? Model
-    {
-        get;
-        set;
-    }
+    public string? Key { get; set; }
 
     [Parameter]
-    public string? Placeholder
-    {
-        get;
-        set;
-    }
+    public IEnumerable<TItem>? Model { get; set; }
 
     [Parameter]
-    public string? Text
-    {
-        get;
-        set;
-    }
+    public string? Placeholder { get; set; }
+
+    [Parameter]
+    public string? Text { get; set; }
 
     /// <summary>
     ///     Gets or sets the selected value in the MultiSelect.
@@ -101,11 +80,7 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     ///     The callback receives the new selected value as an argument.
     /// </remarks>
     [Parameter]
-    public EventCallback<TValue> ValueChanged
-    {
-        get;
-        set;
-    }
+    public EventCallback<TValue> ValueChanged { get; set; }
 
     /// <summary>
     ///     Gets or sets the expression that identifies the value to be bound to the MultiSelect.
@@ -119,29 +94,13 @@ public partial class MultiSelect<TItem, TValue> : ComponentBase
     ///     will be used to update this value.
     /// </remarks>
     [Parameter]
-    public Expression<Func<TValue>>? ValueExpression
-    {
-        get;
-        set;
-    }
+    public Expression<Func<TValue>>? ValueExpression { get; set; }
 
     [Parameter]
-    public string Width
-    {
-        get;
-        set;
-    } = "100%";
+    public string Width { get; set; } = "100%";
 
-    [Parameter]
-    public bool Enabled
-    {
-        get;
-        set;
-    } = true;
-
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _value = default;
-        return base.OnInitializedAsync();
     }
 }

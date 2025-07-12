@@ -71,8 +71,10 @@ public partial class DropDown<TValue, TItem> : ComponentBase
     [Parameter]
     public string? Placeholder { get; set; }
 
+    /*
     [Parameter]
     public Query Query { get; set; } = new();
+    */
 
     [Parameter]
     public bool ShowClearButton { get; set; }
