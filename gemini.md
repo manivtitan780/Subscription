@@ -1,6 +1,6 @@
-# CLAUDE.md
+# GEMINI.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Gemini CLI when working with code in this repository.
 
 ## Project Overview
 
@@ -65,7 +65,6 @@ Configuration is loaded from `appsettings.json` files in each project, with envi
 ## Database and Caching
 
 - **Database**: SQL Server with connection strings in appsettings
-- **Structure**: Table Structure are present in the Subscription/SQL ETL Scripts/Scripts/DataStructure.sql and the Relations between the tables is explained in Relationships.txt. Stored Procedures maybe outdated, you may please refresh them but only when required. And when you refresh your memory update this document. This was last generated on 15 JULY 2025 at 15:20 IST. So when you refresh please check for last modified date which is later than this date.
 - **Caching**: Redis/Garnet cache server
 - **File Storage**: Azure Blob Storage for documents and uploads
 - **Local Uploads**: Stored in `wwwroot/uploads/` directory structure

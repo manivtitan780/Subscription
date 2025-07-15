@@ -1,0 +1,26 @@
+## Relationships
+There are multiple Admin Tables:
+Designation, DocumentType, Education, Eligibility, Experience, JobOptions, LeadDocuments, LeadIndustry, LeadSource, LeadStatus, NAICS, Preferences, Roles, Skills, State, StatusCode, TaxTerms, Templates, Users, VariableCommission, WorkflowActivity, ZipCodes.
+
+These are used in the main business tables Candidate, Requisitions, Submissions, Companies and Leads.
+
+## Candidate => table.
+For every Candidate there can be multiple CandidateDocument, CandidateEducation, CandidateEmployer, EntitySkills, Notes, Activity
+WHERE Candidate.ID equals CandidateDocument.CandidateId, CandidateEducation.CandidateId, CandidateEmployer.CandidateId and EntitySkills.EntitytId AND EntityType='CND' and Notes.EntitytId AND EntityType='CND'
+Activity will be discussed in Submissions below.
+
+## Requisitions => table;
+For every Requisitions there can be multiple RequisitionDocument, Notes, EntitySkills and Activity
+WHERE Requsitions.ID equals RequisitionDocument.RequisitionID and EntitySkills.EntitytId AND EntityType='REQ' and Notes.EntitytId AND EntityType='REQ'
+Acitivty below in Submissions
+
+## Companies => table
+For every company there can be multiple CompanyLocations, CompanyContacts, CompanyDocuments, Notes
+WHERE Company.ID equals CompanyLocations.CompanyID and CompanyContacts.CompanyID AND CompanyContacts.LocationID = CompanyLocations.ID and EntitySkills.EntitytId AND EntityType='CLI'
+
+## Submissions => table
+This is a composite table where a submission entry is created for a Candidate who is submitted for a Requsition.
+So, the relation is Submission.CandidateID = Candidate.ID AND Submission.RequisitionID = Requisition.ID AND Status=StatusCode.Id AND AppliesTo='SCN'
+Every time a status is changed a new record is created and this helps maintain the hierarchy. The user can undo an operation which means the recent record is deleted permanently and no archives are maintained for the record. The last remaining record can't be undone.
+
+

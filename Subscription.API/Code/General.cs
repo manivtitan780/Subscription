@@ -37,12 +37,22 @@ public static class General
 {
     public static byte[] ComputeHashWithSalt(string input, byte[] salt)
     {
+        // Optimized: Using ArrayPool to reduce GC pressure for password hashing
+        var bytePool = ArrayPool<byte>.Shared;
         byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-        byte[] inputWithSalt = new byte[inputBytes.Length + salt.Length];
-        Buffer.BlockCopy(inputBytes, 0, inputWithSalt, 0, inputBytes.Length);
-        Buffer.BlockCopy(salt, 0, inputWithSalt, inputBytes.Length, salt.Length);
+        byte[] inputWithSalt = bytePool.Rent(inputBytes.Length + salt.Length);
+        
+        try
+        {
+            Buffer.BlockCopy(inputBytes, 0, inputWithSalt, 0, inputBytes.Length);
+            Buffer.BlockCopy(salt, 0, inputWithSalt, inputBytes.Length, salt.Length);
 
-        return SHA512PasswordHash(inputWithSalt);
+            return SHA512PasswordHash(inputWithSalt.AsSpan(0, inputBytes.Length + salt.Length));
+        }
+        finally
+        {
+            bytePool.Return(inputWithSalt);
+        }
     }
 
     public static async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
@@ -82,15 +92,28 @@ public static class General
 
     internal static byte[] GenerateRandomString(int length = 8)
     {
-        //string _randomString = Path.GetRandomFileName().Replace(".", "")[..length];
-        StringBuilder _result = new(length);
-        while (_result.Length < length)
+        // Optimized: Using ArrayPool to reduce GC pressure for random string generation
+        var charPool = ArrayPool<char>.Shared;
+        char[] buffer = charPool.Rent(length);
+        
+        try
         {
-            string _randomString = Path.GetRandomFileName().Replace(".", "");
-            _result.Append(_randomString);
+            int position = 0;
+            while (position < length)
+            {
+                string randomString = Path.GetRandomFileName().Replace(".", "");
+                int copyLength = Math.Min(randomString.Length, length - position);
+                randomString.AsSpan(0, copyLength).CopyTo(buffer.AsSpan(position));
+                position += copyLength;
+            }
+            
+            // Convert to UTF8 bytes using the pooled buffer
+            return Encoding.UTF8.GetBytes(buffer, 0, length);
         }
-
-        return Encoding.UTF8.GetBytes(_result.ToString());
+        finally
+        {
+            charPool.Return(buffer);
+        }
     }
 
     internal static async Task<byte[]> ReadFromBlob(string blobPath)
@@ -143,7 +166,8 @@ public static class General
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
             string _companies = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _companies = _reader.NString(0);
             }
@@ -152,7 +176,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _companyContacts = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _companyContacts = _reader.NString(0);
             }
@@ -166,7 +191,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _titles = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _titles = _reader.NString(0);
             }
@@ -174,7 +200,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _documentTypes = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _documentTypes = _reader.NString(0);
             }
@@ -182,7 +209,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _educations = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _educations = _reader.NString(0);
             }
@@ -190,7 +218,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _eligibilities = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _eligibilities = _reader.NString(0);
             }
@@ -198,7 +227,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _experiences = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _experiences = _reader.NString(0, "[]");
             }
@@ -206,7 +236,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _jobOptions = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _jobOptions = _reader.NString(0, "[]");
             }
@@ -214,7 +245,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _leadIndustries = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _leadIndustries = _reader.NString(0, "[]");
             }
@@ -222,7 +254,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _leadSources = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _leadSources = _reader.NString(0, "[]");
             }
@@ -230,7 +263,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _leadStatuses = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _leadStatuses = _reader.NString(0, "[]");
             }
@@ -238,7 +272,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _naics = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _naics = _reader.NString(0, "[]");
             }
@@ -246,7 +281,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _roles = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _roles = _reader.NString(0, "[]");
             }
@@ -271,7 +307,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _skills = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _skills = _reader.NString(0, "[]");
             }
@@ -279,7 +316,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _states = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _states = _reader.NString(0, "[]");
             }
@@ -287,7 +325,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _statusCodes = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _statusCodes = _reader.NString(0, "[]");
             }
@@ -304,7 +343,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _taxTerms = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _taxTerms = _reader.NString(0, "[]");
             }
@@ -312,7 +352,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _users = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _users = _reader.NString(0, "[]");
             }
@@ -324,7 +365,8 @@ public static class General
 
             await _reader.NextResultAsync();
             string _workflows = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _workflows = _reader.NString(0, "[]");
             }
@@ -433,7 +475,7 @@ public static class General
     /// </summary>
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
-    internal static byte[] SHA512PasswordHash(string inputText) => SHA512.HashData(new UTF8Encoding().GetBytes(inputText));
+    internal static byte[] SHA512PasswordHash(string inputText) => SHA512.HashData(Encoding.UTF8.GetBytes(inputText));
 
     /// <summary>
     ///     Computes the SHA-512 hash of the input text.
@@ -441,6 +483,13 @@ public static class General
     /// <param name="inputText">The text to be hashed.</param>
     /// <returns>A byte array representing the SHA-512 hash of the input text.</returns>
     internal static byte[] SHA512PasswordHash(byte[] inputText) => SHA512.HashData(inputText);
+
+    /// <summary>
+    ///     Computes the SHA-512 hash of the input span.
+    /// </summary>
+    /// <param name="inputText">The span to be hashed.</param>
+    /// <returns>A byte array representing the SHA-512 hash of the input span.</returns>
+    internal static byte[] SHA512PasswordHash(ReadOnlySpan<byte> inputText) => SHA512.HashData(inputText);
 
     internal static async Task CopyBlobs(string sourceCandidateID, string destinationCandidateID)
     {
