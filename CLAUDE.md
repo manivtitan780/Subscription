@@ -137,6 +137,7 @@ If any breaking changes PLEASE HIGLIGHT IN UPPERCASE.
 During changes comment code that needs to be removed instead of deleting. I will have them removed later during code cleanup.
 For any statement adding or commenting/deleting, add a comment on top of the code block identifying what is being done and why.
 Every endpoint connects to database to fetch the data, please refer to the MCP SQL Server Connection string in Development Memories to access the tables or stored procedures to understand more about the flow. But before ask if I can provide the Stored Procedure data so that time to connect and fetch can be reduced.
+Refactor to use System.Text.Json where possible instead of Newtonsoft.Json which is being used primarily.
 
 ## Development Memories
 
