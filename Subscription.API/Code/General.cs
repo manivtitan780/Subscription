@@ -7,14 +7,15 @@
 // Project:             Subscription.API
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     05-09-2025 19:41
+// Created On:          07-15-2025 16:07
+// Last Updated On:     07-15-2025 16:30
 // *****************************************/
 
 #endregion
 
 #region Using
 
+using System.Buffers;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -38,10 +39,10 @@ public static class General
     public static byte[] ComputeHashWithSalt(string input, byte[] salt)
     {
         // Optimized: Using ArrayPool to reduce GC pressure for password hashing
-        var bytePool = ArrayPool<byte>.Shared;
+        ArrayPool<byte> bytePool = ArrayPool<byte>.Shared;
         byte[] inputBytes = Encoding.UTF8.GetBytes(input);
         byte[] inputWithSalt = bytePool.Rent(inputBytes.Length + salt.Length);
-        
+
         try
         {
             Buffer.BlockCopy(inputBytes, 0, inputWithSalt, 0, inputBytes.Length);
@@ -54,6 +55,39 @@ public static class General
             bytePool.Return(inputWithSalt);
         }
     }
+
+    internal static async Task CopyBlobs(string sourceCandidateID, string destinationCandidateID)
+    {
+        string _connectionString = Start.AzureBlob;
+        string _containerName = Start.AzureBlobContainer;
+        string _source = $"Candidate/{sourceCandidateID}/";
+        string _destination = $"Candidate/{destinationCandidateID}/";
+        BlobContainerClient containerClient = new(_connectionString, _containerName);
+
+        List<Task> _copyTasks = [];
+        await foreach (BlobItem _blobItem in containerClient.GetBlobsAsync(prefix: _source))
+        {
+            string _sourceBlobName = _blobItem.Name;
+            string _targetBlobName = _destination + _sourceBlobName[_source.Length..];
+            BlobClient _sourceBlob = containerClient.GetBlobClient(_sourceBlobName);
+            BlobClient _targetBlob = containerClient.GetBlobClient(_targetBlobName);
+
+            Uri _sourceUri = _sourceBlob.Uri;
+
+            // Start server-side copy
+            _copyTasks.Add(_targetBlob.StartCopyFromUriAsync(_sourceUri));
+        }
+
+        await Task.WhenAll(_copyTasks).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     Deserializes a JSON string to an object of a specified type.
+    /// </summary>
+    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
+    /// <param name="array">The JSON string representing the object to be deserialized.</param>
+    /// <returns>The deserialized object of type T.</returns>
+    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? "");
 
     public static async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
     {
@@ -81,21 +115,59 @@ public static class General
 
         return new OkObjectResult(_result);
     }
-    
-    /// <summary>
-    ///     Deserializes a JSON string to an object of a specified type.
-    /// </summary>
-    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
-    /// <param name="array">The JSON string representing the object to be deserialized.</param>
-    /// <returns>The deserialized object of type T.</returns>
-    internal static T DeserializeObject<T>(object array) => JsonConvert.DeserializeObject<T>(array?.ToString() ?? "");
+
+    internal static string ExtractTextFromPdf(IFormFile file)
+    {
+        using PdfLoadedDocument _document = new(file.OpenReadStream());
+        StringBuilder _resumeText = new();
+        foreach (object page in _document.Pages)
+        {
+            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
+        }
+
+        _document.Close();
+
+        return _resumeText.ToString();
+    }
+
+    internal static string ExtractTextFromPdf(byte[] file)
+    {
+        using PdfLoadedDocument _document = new(new MemoryStream(file));
+        StringBuilder _resumeText = new();
+        foreach (object page in _document.Pages)
+        {
+            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
+        }
+
+        _document.Close();
+
+        return _resumeText.ToString();
+    }
+
+    internal static string ExtractTextFromWord(IFormFile file)
+    {
+        using WordDocument _document = new(file.OpenReadStream(), FormatType.Automatic);
+        string _resumeText = _document.GetText();
+        _document.Close();
+
+        return _resumeText;
+    }
+
+    internal static string ExtractTextFromWord(byte[] file)
+    {
+        using WordDocument _document = new(new MemoryStream(file), FormatType.Automatic);
+        string _resumeText = _document.GetText();
+        _document.Close();
+
+        return _resumeText;
+    }
 
     internal static byte[] GenerateRandomString(int length = 8)
     {
         // Optimized: Using ArrayPool to reduce GC pressure for random string generation
-        var charPool = ArrayPool<char>.Shared;
+        ArrayPool<char> charPool = ArrayPool<char>.Shared;
         char[] buffer = charPool.Rent(length);
-        
+
         try
         {
             int position = 0;
@@ -106,7 +178,7 @@ public static class General
                 randomString.AsSpan(0, copyLength).CopyTo(buffer.AsSpan(position));
                 position += copyLength;
             }
-            
+
             // Convert to UTF8 bytes using the pooled buffer
             return Encoding.UTF8.GetBytes(buffer, 0, length);
         }
@@ -491,30 +563,6 @@ public static class General
     /// <returns>A byte array representing the SHA-512 hash of the input span.</returns>
     internal static byte[] SHA512PasswordHash(ReadOnlySpan<byte> inputText) => SHA512.HashData(inputText);
 
-    internal static async Task CopyBlobs(string sourceCandidateID, string destinationCandidateID)
-    {
-        string _connectionString = Start.AzureBlob;
-        string _containerName = Start.AzureBlobContainer;
-        string _source = $"Candidate/{sourceCandidateID}/";
-        string _destination = $"Candidate/{destinationCandidateID}/";
-        BlobContainerClient containerClient = new(_connectionString, _containerName);
-
-        List<Task> _copyTasks = [];
-        await foreach (BlobItem _blobItem in containerClient.GetBlobsAsync(prefix: _source))
-        {
-            string _sourceBlobName = _blobItem.Name;
-            string _targetBlobName = _destination + _sourceBlobName[_source.Length..];
-            BlobClient _sourceBlob = containerClient.GetBlobClient(_sourceBlobName);
-            BlobClient _targetBlob = containerClient.GetBlobClient(_targetBlobName);
-
-            Uri _sourceUri = _sourceBlob.Uri;
-
-            // Start server-side copy
-            _copyTasks.Add(_targetBlob.StartCopyFromUriAsync(_sourceUri));
-        }
-        
-        await Task.WhenAll(_copyTasks).ConfigureAwait(false);
-    }
     internal static async Task UploadToBlob(IFormFile file, string blobPath)
     {
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
@@ -523,52 +571,6 @@ public static class General
         await _storage.WriteAsync(blobPath, stream);
     }
 
-    internal static string ExtractTextFromPdf(IFormFile file)
-    {
-        using PdfLoadedDocument _document = new(file.OpenReadStream());
-        StringBuilder _resumeText = new();
-        foreach (object page in _document.Pages)
-        {
-            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
-        }
-
-        _document.Close();
-        
-        return _resumeText.ToString();
-     }
-    
-    internal static string ExtractTextFromPdf(byte[] file)
-    {
-        using PdfLoadedDocument _document = new(new MemoryStream(file));
-        StringBuilder _resumeText = new();
-        foreach (object page in _document.Pages)
-        {
-            _resumeText.Append(((PdfLoadedPage)page).ExtractText());
-        }
-
-        _document.Close();
-        
-        return _resumeText.ToString();
-    }
-
-    internal static string ExtractTextFromWord(IFormFile file)
-    {
-        using WordDocument _document = new(file.OpenReadStream(), FormatType.Automatic);
-        string _resumeText = _document.GetText();
-        _document.Close();
-        
-        return _resumeText;
-    }
-    
-    internal static string ExtractTextFromWord(byte[] file)
-    {
-        using WordDocument _document = new(new MemoryStream(file), FormatType.Automatic);
-        string _resumeText = _document.GetText();
-        _document.Close();
-        
-        return _resumeText;
-    }
-    
     internal static async Task UploadToBlob(byte[] file, string blobPath)
     {
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
