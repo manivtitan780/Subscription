@@ -45,43 +45,49 @@ public class DashboardController : ControllerBase
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
             string _users = "[]", _consolidatedMetrics = "[]", _recentActivity = "[]", _placements = "[]", _requisitionTimingAnalytics = "[]", _companyTimingAnalytics = "[]";
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _users = _reader.NString(0);
             }
 
             await _reader.NextResultAsync();
 
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _consolidatedMetrics = _reader.NString(0);
             }
 
             await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _recentActivity = _reader.NString(0);
             }
 
             await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _placements = _reader.NString(0);
             }
 
             await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _requisitionTimingAnalytics = _reader.NString(0);
             }
 
             await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Optimized: Using if instead of while since exactly 1 row is returned
+            if (await _reader.ReadAsync())
             {
                 _companyTimingAnalytics = _reader.NString(0);
             }
 
-            await _reader.CloseAsync();
+            // Removed: _reader.CloseAsync() is unnecessary with await using pattern
 
             /*_stopwatch.Stop();
             await System.IO.File.AppendAllTextAsync(@"C:\Logs\ZipLog.txt", $"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
@@ -99,7 +105,7 @@ public class DashboardController : ControllerBase
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error changing candidate status. {ExceptionMessage}", ex.Message);
+            Log.Error(ex, "Error fetching dashboard data. {ExceptionMessage}", ex.Message);
             return StatusCode(500, ex.Message);
         }
         finally

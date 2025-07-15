@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.API
 // File Name:           CompanyController.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          02-08-2024 15:02
-// Last Updated On:     01-11-2025 20:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-15-2025 21:07
+// Last Updated On:     07-15-2025 21:02
 // *****************************************/
 
 #endregion
@@ -21,19 +21,11 @@ namespace Subscription.API.Controllers;
 /*/// <param name="configuration">
 ///     The application configuration, injected by the ASP.NET Core DI container.
 /// </param>*/
-[ApiController, Route("api/[controller]/[action]")]
-[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[ApiController, Route("api/[controller]/[action]"), SuppressMessage("ReSharper", "UnusedParameter.Global")]
 public class CompanyController : ControllerBase
 {
     /// <summary>
     ///     Asynchronously checks if a company's Employer Identification Number (EIN) exists in the database.
-    ///     <para>
-    ///         <br />This method, Add, is designed to calculate the sum of two integers.
-    ///         It takes two parameters, each representing an integer. The method
-    ///         performs the addition operation on these two integers and returns
-    ///         the result. This result is an integer representing the sum of the
-    ///         input parameters.
-    ///     </para>
     /// </summary>
     /// <param name="companyID">
     ///     The ID of the company to check.
@@ -46,54 +38,96 @@ public class CompanyController : ControllerBase
     ///     the EIN exists (true) or not (false).
     /// </returns>
     [HttpGet]
-    public async Task<bool> CheckEIN(int companyID, string ein)
+    public async Task<ActionResult<bool>> CheckEIN(int companyID, string ein)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("CheckEIN", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", companyID);
-        _command.Varchar("EIN", 10, ein);
-        await _connection.OpenAsync();
-        bool _returnValue = false;
-        try
-        {
-            _returnValue = _command.ExecuteScalar().ToBoolean(); //true means the EIN exists and false means the EIN doesn't exist.
-        }
-        catch
-        {
-            //
-        }
-
-        await _connection.CloseAsync();
-
-        return _returnValue;
+        return await ExecuteBooleanAsync("CheckEIN", command =>
+                                                     {
+                                                         command.Int("ID", companyID);
+                                                         command.Varchar("EIN", 10, ein);
+                                                     }, "CheckEIN", "Error checking EIN existence."); //true means the EIN exists and false means the EIN doesn't exist.
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> DeleteCompanyDocument([FromQuery] int documentID, [FromQuery] string user)
     {
+        //TODO: make sure you delete the associated document from Azure filesystem too.
+        return await ExecuteScalarAsync("DeleteCompanyDocument", command =>
+                                                                 {
+                                                                     command.Int("ID", documentID);
+                                                                     command.Varchar("User", 10, user);
+                                                                 }, "DeleteCompanyDocument", "Error deleting company document.");
+    }
+
+    // Helper method for boolean operations
+    private async Task<ActionResult<bool>> ExecuteBooleanAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
         await using SqlConnection _connection = new(Start.ConnectionString);
-        string _documents = "[]";
-        await using SqlCommand _command = new("DeleteCompanyDocument", _connection);
+        await using SqlCommand _command = new(procedureName, _connection);
         _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", documentID);
-        _command.Varchar("User", 10, user); //TODO: make sure you delete the associated document from Azure filesystem too.
+
+        parameterBinder(_command);
+
+        bool _result = false;
         try
         {
             await _connection.OpenAsync();
-            _documents = (await _command.ExecuteScalarAsync())?.ToString();
+            _result = (await _command.ExecuteScalarAsync()).ToBoolean();
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error deleting company document. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
         }
 
-        return Ok(_documents);
+        return Ok(_result);
+    }
+
+    // Helper method for scalar operations returning string
+    private async Task<ActionResult<string>> ExecuteScalarAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        string _result = "[]";
+        try
+        {
+            await _connection.OpenAsync();
+            _result = await _command.ExecuteScalarAsync() as string ?? "[]";
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
+        }
+
+        return Ok(_result);
+    }
+
+    // Helper method for multi-resultset operations
+    private async Task<ActionResult<T>> ExecuteReaderAsync<T>(string procedureName, Action<SqlCommand> parameterBinder, Func<SqlDataReader, Task<T>> resultProcessor, string logContext, string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        try
+        {
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            
+            T _result = await resultProcessor(_reader);
+            return Ok(_result);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
+        }
     }
 
     /// <summary>
@@ -120,66 +154,50 @@ public class CompanyController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ReturnCompanyDetails>> GetCompanyDetails(int companyID, string user)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-
-        await using SqlCommand _command = new("GetCompanyDetails", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("CompanyID", companyID);
-        _command.Varchar("User", 10, user);
-
-        await _connection.OpenAsync();
-
-        string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]";
-        try
+        return await ExecuteReaderAsync("GetCompanyDetails", command =>
         {
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (await _reader.ReadAsync()) //Company Details
-            {
-                _company = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync(); //Company Locations
-            while (await _reader.ReadAsync())
-            {
-                _locations = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync(); //Company Contacts
-            while (await _reader.ReadAsync())
-            {
-                _contacts = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync(); //Company Documents
-            while (await _reader.ReadAsync())
-            {
-                _documents = _reader.NString(0);
-            }
+            command.Int("CompanyID", companyID);
+            command.Varchar("User", 10, user);
+        }, async reader =>
+        {
+            string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]";
             
-            await _reader.NextResultAsync(); //Company Requisitions
-            while (await _reader.ReadAsync())
+            // Company Details
+            if (await reader.ReadAsync())
             {
-                _requisitions = _reader.NString(0);
+                _company = reader.NString(0);
             }
 
-            await _reader.CloseAsync();
+            // Company Locations
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
+            {
+                _locations = reader.NString(0);
+            }
 
-            await _connection.CloseAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
+            // Company Contacts
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
+            {
+                _contacts = reader.NString(0);
+            }
 
-        return Ok(new
-                  {
-                      Company = _company,
-                      Locations = _locations,
-                      Contacts = _contacts,
-                      Documents = _documents,
-                      Requisitions = _requisitions
-                  });
+            // Company Documents
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
+            {
+                _documents = reader.NString(0);
+            }
+
+            // Company Requisitions
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
+            {
+                _requisitions = reader.NString(0);
+            }
+
+            return new ReturnCompanyDetails(_company, _contacts, _locations, _documents, _requisitions);
+        }, "GetCompanyDetails", "Error fetching company details.");
     }
 
     /// <summary>
@@ -198,56 +216,39 @@ public class CompanyController : ControllerBase
     ///     - "Count": The total number of companies matching the search parameters.
     /// </returns>
     [HttpGet]
-    public async Task<ActionResult<ReturnGrid>> GetGridCompanies([FromBody] CompanySearch searchModel, bool getMasterTables = true)
+    public async Task<ActionResult<ReturnGrid>> GetGridCompanies([FromQuery] CompanySearch searchModel, bool getMasterTables = true)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("GetCompanies", _connection);
-        int _count = 0;
-        string _companies = "[]";
-        try
+        return await ExecuteReaderAsync("GetCompanies", command =>
         {
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("RecordsPerPage", searchModel.ItemCount);
-            _command.Int("PageNumber", searchModel.Page);
-            _command.Int("SortColumn", searchModel.SortField);
-            _command.TinyInt("SortDirection", searchModel.SortDirection);
-            _command.Varchar("Name", 30, searchModel.CompanyName);
+            command.Int("RecordsPerPage", searchModel.ItemCount);
+            command.Int("PageNumber", searchModel.Page);
+            command.Int("SortColumn", searchModel.SortField);
+            command.TinyInt("SortDirection", searchModel.SortDirection);
+            command.Varchar("Name", 30, searchModel.CompanyName);
             //_command.Varchar("Phone", 20, searchModel.Phone);
             //_command.Varchar("Email", 255, searchModel.EmailAddress);
             //_command.Varchar("State", 255, searchModel.State);
             //_command.Bit("MyCompanies", searchModel.MyCompanies);
             //_command.Varchar("Status", 50, searchModel.Status);
-            _command.Varchar("UserName", 10, ""); //searchModel.User);
+            command.Varchar("UserName", 10, ""); //searchModel.User);
+        }, async reader =>
+        {
+            int _count = 0;
+            string _companies = "[]";
+            
+            // Count
+            await reader.ReadAsync();
+            _count = reader.GetInt32(0);
 
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-            await _reader.ReadAsync();
-            _count = _reader.GetInt32(0);
-
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Companies
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
             {
-                _companies = _reader.NString(0);
+                _companies = reader.NString(0);
             }
 
-            await _reader.CloseAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(new
-                  {
-                      Data = _companies,
-                      Count = _count
-                  });
+            return new ReturnGrid(_companies, _count);
+        }, "GetGridCompanies", "Error fetching companies grid data.");
     }
 
     /// <summary>
@@ -263,32 +264,7 @@ public class CompanyController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<string>> GetLocationList(int companyID)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        string _returnValue = "[]";
-        try
-        {
-            await using SqlCommand _command = new("GetLocationList", _connection);
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("CompanyID", companyID);
-
-            await _connection.OpenAsync();
-
-            // Execute the command asynchronously and get the data reader
-            object _result = (await _command.ExecuteScalarAsync())?.ToString();
-            if (_result != null)
-            {
-                _returnValue = _result.ToString();
-            }
-
-            await _connection.CloseAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error getting company details. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-
-        return Ok(_returnValue);
+        return await ExecuteScalarAsync("GetLocationList", command => { command.Int("CompanyID", companyID); }, "GetLocationList", "Error fetching company location list.");
     }
 
     /// <summary>
@@ -314,61 +290,45 @@ public class CompanyController : ControllerBase
             return StatusCode(500, "An internal error occurred while saving the company details.");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        string _companyDetails = "[]", _companyLocations = "[]";
-        await using SqlCommand _command = new("SaveCompany", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", company.ID);
-        _command.Varchar("CompanyName", 100, company.Name);
-        _command.Varchar("EIN", 9, company.EIN);
-        _command.Varchar("WebsiteURL", 255, company.Website);
-        _command.Varchar("DUN", 20, company.DUNS);
-        _command.Varchar("NAICSCode", 6, company.NAICSCode);
-        _command.Bit("Status", company.Status);
-        _command.Varchar("Notes", 2000, company.Notes);
-        _command.Varchar("StreetName", 500, company.StreetName);
-        _command.Varchar("City", 100, company.City);
-        _command.TinyInt("StateID", company.StateID);
-        _command.Varchar("ZipCode", 10, company.ZipCode);
-        _command.Varchar("CompanyEmail", 255, company.EmailAddress);
-        _command.Varchar("Phone", 20, company.Phone);
-        _command.Varchar("Extension", 10, company.Extension);
-        _command.Varchar("Fax", 20, company.Fax);
-        _command.Varchar("LocationNotes", 2000, company.LocationNotes);
-        _command.Varchar("User", 10, user);
-        try
+        return await ExecuteReaderAsync("SaveCompany", command =>
         {
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (await _reader.ReadAsync())
+            command.Int("ID", company.ID);
+            command.Varchar("CompanyName", 100, company.Name);
+            command.Varchar("EIN", 9, company.EIN);
+            command.Varchar("WebsiteURL", 255, company.Website);
+            command.Varchar("DUN", 20, company.DUNS);
+            command.Varchar("NAICSCode", 6, company.NAICSCode);
+            command.Bit("Status", company.Status);
+            command.Varchar("Notes", 2000, company.Notes);
+            command.Varchar("StreetName", 500, company.StreetName);
+            command.Varchar("City", 100, company.City);
+            command.TinyInt("StateID", company.StateID);
+            command.Varchar("ZipCode", 10, company.ZipCode);
+            command.Varchar("CompanyEmail", 255, company.EmailAddress);
+            command.Varchar("Phone", 20, company.Phone);
+            command.Varchar("Extension", 10, company.Extension);
+            command.Varchar("Fax", 20, company.Fax);
+            command.Varchar("LocationNotes", 2000, company.LocationNotes);
+            command.Varchar("User", 10, user);
+        }, async reader =>
+        {
+            string _companyDetails = "[]", _companyLocations = "[]";
+            
+            // Company Details
+            if (await reader.ReadAsync())
             {
-                _companyDetails = _reader.NString(0);
+                _companyDetails = reader.NString(0);
             }
 
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Company Locations
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
             {
-                _companyLocations = _reader.NString(0);
+                _companyLocations = reader.NString(0);
             }
 
-            await _reader.CloseAsync();
-            //_returnCode = (await _command.ExecuteScalarAsync())!.ToInt32();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving company details. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(new
-                  {
-                      Company = _companyDetails,
-                      Locations = _companyLocations
-                  });
+            return new ReturnCompanyDetails(_companyDetails, "[]", _companyLocations, "[]", "[]");
+        }, "SaveCompany", "Error saving company details.");
     }
 
     /// <summary>
@@ -392,47 +352,27 @@ public class CompanyController : ControllerBase
             return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
-
-        await using SqlCommand _command = new("SaveCompanyContact", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", contact.ID);
-        _command.Int("CompanyID", contact.CompanyID);
-        _command.Varchar("Prefix", 10, contact.Prefix);
-        _command.Varchar("FirstName", 50, contact.FirstName);
-        _command.Varchar("MiddleInitial", 10, contact.MiddleInitial);
-        _command.Varchar("LastName", 50, contact.LastName);
-        _command.Varchar("Suffix", 10, contact.Suffix);
-        _command.Int("CompanyLocationID", contact.LocationID);
-        _command.Varchar("Email", 255, contact.EmailAddress);
-        _command.Varchar("Phone", 20, contact.Phone);
-        _command.Varchar("Extension", 10, contact.Extension);
-        _command.Varchar("Fax", 20, contact.Fax);
-        _command.Varchar("Designation", 255, contact.Title);
-        _command.Varchar("Department", 255, contact.Department);
-        _command.TinyInt("Role", contact.RoleID!);
-        _command.Varchar("ContactNotes", 2000, contact.Notes);
-        _command.Bit("IsPrimaryContact", contact.PrimaryContact);
-        _command.Varchar("User", 10, user);
-
-        string _contacts = "[]";
-
-        try
-        {
-            await _connection.OpenAsync();
-            _contacts = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving company contact. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_contacts);
+        return await ExecuteScalarAsync("SaveCompanyContact", command =>
+                                                              {
+                                                                  command.Int("ID", contact.ID);
+                                                                  command.Int("CompanyID", contact.CompanyID);
+                                                                  command.Varchar("Prefix", 10, contact.Prefix);
+                                                                  command.Varchar("FirstName", 50, contact.FirstName);
+                                                                  command.Varchar("MiddleInitial", 10, contact.MiddleInitial);
+                                                                  command.Varchar("LastName", 50, contact.LastName);
+                                                                  command.Varchar("Suffix", 10, contact.Suffix);
+                                                                  command.Int("CompanyLocationID", contact.LocationID);
+                                                                  command.Varchar("Email", 255, contact.EmailAddress);
+                                                                  command.Varchar("Phone", 20, contact.Phone);
+                                                                  command.Varchar("Extension", 10, contact.Extension);
+                                                                  command.Varchar("Fax", 20, contact.Fax);
+                                                                  command.Varchar("Designation", 255, contact.Title);
+                                                                  command.Varchar("Department", 255, contact.Department);
+                                                                  command.TinyInt("Role", contact.RoleID);
+                                                                  command.Varchar("ContactNotes", 2000, contact.Notes);
+                                                                  command.Bit("IsPrimaryContact", contact.PrimaryContact);
+                                                                  command.Varchar("User", 10, user);
+                                                              }, "SaveCompanyContact", "Error saving company contact.");
     }
 
     /// <summary>
@@ -470,41 +410,22 @@ public class CompanyController : ControllerBase
             return Ok("[]");
         }
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
-
-        await using SqlCommand _command = new("SaveCompanyLocation", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("ID", location.ID);
-        _command.Varchar("CompanyID", 100, location.CompanyID);
-        _command.Varchar("StreetName", 500, location.StreetName);
-        _command.Varchar("City", 100, location.City);
-        _command.TinyInt("StateID", location.StateID);
-        _command.Varchar("ZipCode", 10, location.ZipCode);
-        _command.Varchar("CompanyEmail", 255, location.EmailAddress);
-        _command.Varchar("Phone", 20, location.Phone);
-        _command.Varchar("Extension", 10, location.Extension);
-        _command.Varchar("Fax", 20, location.Fax);
-        _command.Varchar("LocationNotes", 2000, location.Notes);
-        _command.Bit("isPrimaryLocation", location.PrimaryLocation);
-        _command.Varchar("User", 10, user);
-
-        string _locations = "[]";
-        try
-        {
-            await _connection.OpenAsync();
-            _locations = (await _command.ExecuteScalarAsync())?.ToString();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving company location. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_locations);
+        return await ExecuteScalarAsync("SaveCompanyLocation", command =>
+                                                               {
+                                                                   command.Int("ID", location.ID);
+                                                                   command.Int("CompanyID", location.CompanyID);
+                                                                   command.Varchar("StreetName", 500, location.StreetName);
+                                                                   command.Varchar("City", 100, location.City);
+                                                                   command.TinyInt("StateID", location.StateID);
+                                                                   command.Varchar("ZipCode", 10, location.ZipCode);
+                                                                   command.Varchar("CompanyEmail", 255, location.EmailAddress);
+                                                                   command.Varchar("Phone", 20, location.Phone);
+                                                                   command.Varchar("Extension", 10, location.Extension);
+                                                                   command.Varchar("Fax", 20, location.Fax);
+                                                                   command.Varchar("LocationNotes", 2000, location.Notes);
+                                                                   command.Bit("isPrimaryLocation", location.PrimaryLocation);
+                                                                   command.Varchar("User", 10, user);
+                                                               }, "SaveCompanyLocation", "Error saving company location.");
     }
 
     /// <summary>
@@ -527,38 +448,16 @@ public class CompanyController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<string>> SearchCompanies(string filter)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SearchCompanies", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Varchar("Company", 30, filter);
+        return await ExecuteScalarAsync("SearchCompanies", command => { command.Varchar("Company", 30, filter); }, "SearchCompanies", "Error searching companies.");
 
-        string _companies = "[]";
-        try
+        /*while (await _reader.ReadAsync())
         {
-            await _connection.OpenAsync();
-
-            _companies = (await _command.ExecuteScalarAsync())?.ToString();
-
-            /*while (await _reader.ReadAsync())
-            {
-                companyNames.Add(new()
-                                 {
-                                     Key = _reader.GetString(0),
-                                     Value = _reader.GetString(0)
-                                 });
-            }*/
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error searching companies. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-
-        return Ok(_companies);
+            companyNames.Add(new()
+                             {
+                                 Key = _reader.GetString(0),
+                                 Value = _reader.GetString(0)
+                             });
+        }*/
     }
 
     [HttpPost, RequestSizeLimit(62_914_560)] //60 MB
@@ -580,34 +479,14 @@ public class CompanyController : ControllerBase
             await _storage.WriteAsync(_blobPath, stream);
         }*/
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        string _returnVal = "[]";
-        try
-        {
-            await using SqlCommand _command = new("SaveCompanyDocuments", _connection);
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("CompanyId", _companyID.ToInt32());
-            _command.Varchar("DocumentName", 255, Request.Form["name"].ToString());
-            _command.Varchar("OriginalFileName", 255, _fileName);
-            _command.Varchar("InternalFileName", 50, _internalFileName);
-            _command.Varchar("Notes", 2000, Request.Form["notes"].ToString());
-            _command.Varchar("User", 10, Request.Form["user"].ToString());
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-            while (await _reader.ReadAsync())
-            {
-                _returnVal = _reader.NString(0, "[]");
-            }
-
-            await _reader.CloseAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving company document. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-
-        return Ok(_returnVal);
+        return await ExecuteScalarAsync("SaveCompanyDocuments", command =>
+                                                                {
+                                                                    command.Int("CompanyId", _companyID.ToInt32());
+                                                                    command.Varchar("DocumentName", 255, Request.Form["name"].ToString());
+                                                                    command.Varchar("OriginalFileName", 255, _fileName);
+                                                                    command.Varchar("InternalFileName", 50, _internalFileName);
+                                                                    command.Varchar("Notes", 2000, Request.Form["notes"].ToString());
+                                                                    command.Varchar("User", 10, Request.Form["user"].ToString());
+                                                                }, "UploadDocument", "Error saving company document.");
     }
 }

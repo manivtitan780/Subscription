@@ -8,7 +8,7 @@
 // File Name:           CompanyContacts.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-06-2025 16:02
-// Last Updated On:     03-01-2025 19:03
+// Last Updated On:     07-15-2025 20:23
 // *****************************************/
 
 #endregion
@@ -18,185 +18,65 @@ namespace Subscription.Model;
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CompanyContacts
 {
-    public string City
-    {
-        get;
-        set;
-    }
+    public string City { get; set; }
 
-    public int CompanyID
-    {
-        get;
-        set;
-    }
+    public int CompanyID { get; set; }
 
-    public string CompanyName
-    {
-        get;
-        set;
-    }
+    public string CompanyName { get; set; }
 
-    public string ContactName
-    {
-        get;
-        set;
-    }
+    public string ContactName { get; set; }
 
-    public string CreatedBy
-    {
-        get;
-        set;
-    }
+    public string CreatedBy { get; set; }
 
-    public DateTime CreatedDate
-    {
-        get;
-        set;
-    }
+    public DateTime CreatedDate { get; set; }
 
-    public string Department
-    {
-        get;
-        set;
-    }
+    public string Department { get; set; }
 
-    public string EmailAddress
-    {
-        get;
-        set;
-    }
+    public string EmailAddress { get; set; }
 
-    public string Extension
-    {
-        get;
-        set;
-    }
+    public string Extension { get; set; }
 
-    public string Fax
-    {
-        get;
-        set;
-    }
+    public string Fax { get; set; }
 
-    public string FirstName
-    {
-        get;
-        set;
-    }
+    public string FirstName { get; set; }
 
-    public int ID
-    {
-        get;
-        set;
-    }
+    public int ID { get; set; }
 
-    public string LastName
-    {
-        get;
-        set;
-    }
+    public string LastName { get; set; }
 
-    public int LocationID
-    {
-        get;
-        set;
-    }
+    public int LocationID { get; set; }
 
-    public string MiddleInitial
-    {
-        get;
-        set;
-    }
+    public string MiddleInitial { get; set; }
 
-    public string Notes
-    {
-        get;
-        set;
-    }
+    public string Notes { get; set; }
 
-    public string Phone
-    {
-        get;
-        set;
-    }
+    public string Phone { get; set; }
 
-    public string Prefix
-    {
-        get;
-        set;
-    }
+    public string Prefix { get; set; }
 
-    public bool PrimaryContact
-    {
-        get;
-        set;
-    }
+    public bool PrimaryContact { get; set; }
 
-    public string Role
-    {
-        get;
-        set;
-    }
+    public string Role { get; set; }
 
-    public int? RoleID
-    {
-        get;
-        set;
-    }
+    public int RoleID { get; set; }
 
-    public string RoleName
-    {
-        get;
-        set;
-    }
+    public string RoleName { get; set; }
 
-    public string State
-    {
-        get;
-        set;
-    }
+    public string State { get; set; }
 
-    public int StateID
-    {
-        get;
-        set;
-    }
+    public int StateID { get; set; }
 
-    public string StreetName
-    {
-        get;
-        set;
-    }
+    public string StreetName { get; set; }
 
-    public string Suffix
-    {
-        get;
-        set;
-    }
+    public string Suffix { get; set; }
 
-    public string Title
-    {
-        get;
-        set;
-    }
+    public string Title { get; set; }
 
-    public string UpdatedBy
-    {
-        get;
-        set;
-    }
+    public string UpdatedBy { get; set; }
 
-    public DateTime UpdatedDate
-    {
-        get;
-        set;
-    }
+    public DateTime UpdatedDate { get; set; }
 
-    public string ZipCode
-    {
-        get;
-        set;
-    }
+    public string ZipCode { get; set; }
 
     public void Clear()
     {
