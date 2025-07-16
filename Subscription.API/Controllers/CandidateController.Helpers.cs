@@ -129,13 +129,11 @@ public partial class CandidateController
             }
 
             // Memory optimization: Use injected SmtpClient instead of creating new instances
-            using MailMessage mailMessage = new()
-            {
-                From = new("jolly@hire-titan.com", "Mani Bhai"),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
+            using MailMessage mailMessage = new();
+            mailMessage.From = new("jolly@hire-titan.com", "Mani Bhai");
+            mailMessage.Subject = subject;
+            mailMessage.Body = body;
+            mailMessage.IsBodyHtml = true;
 
             mailMessage.To.Add("manivenkit@gmail.com"); // TODO: After testing, update with actual recipients
 
