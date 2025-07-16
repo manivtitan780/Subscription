@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     05-14-2025 19:51
+// Created On:          07-16-2025 15:07
+// Last Updated On:     07-16-2025 15:43
 // *****************************************/
 
 #endregion
@@ -16,38 +16,19 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]"), SuppressMessage("ReSharper", "UnusedMember.Local")]
-public class RequisitionController : ControllerBase
+public class RequisitionController(SmtpClient smtpClient) : ControllerBase
 {
-    /// <summary>
-    ///     Deletes a requisition document from the database.
-    /// </summary>
-    /// <param name="documentID">
-    ///     The ID of the document to be deleted.
-    /// </param>
-    /// <param name="user">
-    ///     The user who is performing the delete operation.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing the details of the deleted document.
-    /// </returns>
-    /// <description>
-    ///     The code first creates a SqlCommand object named _command with the name of the stored procedure to be executed, which is "DeleteRequisitionDocuments", and
-    ///     the SQL connection object _connection. The CommandType property of _command is set to CommandType.StoredProcedure, indicating that the command text is the
-    ///     name of a stored procedure.
-    ///     Next, two parameters are added to _command using extension methods Int and Varchar defined in the Extensions class. The Int method adds an integer
-    ///     parameter named "RequisitionDocId" with the value of documentID. The Varchar method adds a string parameter named "User" with a maximum size of 10
-    ///     characters and the value of user.
-    ///     Then, the code executes the command with _command.ExecuteReaderAsync(), which sends the SqlCommand to the SqlConnection and builds a SqlDataReader. The
-    ///     SqlDataReader provides a way of reading a forward-only stream of rows from a SQL Server database. The NextResult method is called to advance the data
-    ///     reader to the next result, when multiple result sets are returned.
-    ///     The code then checks if the data reader has any rows using the HasRows property. If it does, it enters a while loop that continues as long as there are
-    ///     more rows to read with the Read method.
-    ///     Inside the loop, a new RequisitionDocuments object is created with data from the current row and added to the _documents list.
-    ///     After all rows have been read, the data reader is closed with CloseAsync.
-    ///     If any exceptions occur during the execution of the try block, the catch block is executed. In this case, the catch block is empty, so no action is taken
-    ///     when an exception occurs.
-    ///     Finally, the method returns a new dictionary containing a single key-value pair. The key is "Document" and the value is the _documents list.
-    /// </description>
+    [HttpPost]
+    public async Task<ActionResult<string>> ChangeRequisitionStatus(int requisitionID, string statusCode, string user)
+    {
+        return await ExecuteQueryAsync("ChangeRequisitionStatus", command =>
+        {
+            command.Int("RequisitionID", requisitionID);
+            command.Char("Status", 3, statusCode);
+            command.Varchar("User", 10, user);
+        }, "ChangeRequisitionStatus", "Error changing requisition status.");
+    }
+
     [HttpPost]
     public async Task<ActionResult<string>> DeleteRequisitionDocument([FromQuery] int documentID, [FromQuery] string user)
     {
@@ -63,7 +44,8 @@ public class RequisitionController : ControllerBase
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
             _reader.NextResult();
-            while (_reader.Read())
+            // Memory optimization: Replace while loop with if statement for single record
+            if (_reader.Read())
             {
                 _documents = _reader.NString(0);
                 /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3),
@@ -71,7 +53,7 @@ public class RequisitionController : ControllerBase
                                    _reader.GetString(8)));*/
             }
 
-            await _reader.CloseAsync();
+            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             return Ok(_documents);
         }
@@ -80,71 +62,104 @@ public class RequisitionController : ControllerBase
             Log.Error(ex, "Error in DeleteRequisitionDocument {ExceptionMessage}", ex.Message);
             return StatusCode(500, ex.Message);
         }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
     }
 
-    /// <summary>
-    ///     Generates a location string based on the provided requisition details and state name.
-    /// </summary>
-    /// <param name="requisition">An instance of the RequisitionDetails class containing the city and zip code.</param>
-    /// <param name="stateName">The name of the state.</param>
-    /// <returns>
-    ///     A string representing the location, in the format of "City, State, ZipCode". If any part is not available, it
-    ///     will be omitted from the string.
-    /// </returns>
+    // Memory optimization: Centralized query execution helpers to eliminate connection leaks and code duplication
+    private async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        string _result = "[]";
+        try
+        {
+            await _connection.OpenAsync();
+            _result = (await _command.ExecuteScalarAsync())?.ToString() ?? "[]";
+        }
+        catch (SqlException ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
+        }
+        // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
+
+        return Ok(_result);
+    }
+
+    // Memory optimization: ExecuteReaderAsync helper for complex data retrieval operations
+    private async Task<ActionResult<T>> ExecuteReaderAsync<T>(string procedureName, Action<SqlCommand> parameterBinder, Func<SqlDataReader, Task<T>> readerProcessor, string logContext,
+                                                              string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        try
+        {
+            await _connection.OpenAsync();
+            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            T _result = await readerProcessor(_reader);
+            return Ok(_result);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
+        }
+        // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
+    }
+
+    // Memory optimization: ExecuteScalarAsync helper for single value operations
+    private async Task<ActionResult<T>> ExecuteScalarAsync<T>(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        try
+        {
+            await _connection.OpenAsync();
+            object _result = await _command.ExecuteScalarAsync();
+            return Ok((T)Convert.ChangeType(_result ?? default(T), typeof(T)));
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
+            return StatusCode(500, errorMessage);
+        }
+        // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
+    }
+
+    // Memory optimization: Efficient string building for location generation
     private static string GenerateLocation(RequisitionDetails requisition, string stateName)
     {
-        string _location = "";
-        if (!requisition.City.NullOrWhiteSpace())
+        List<string> _parts = [];
+
+        if (requisition.City.NotNullOrWhiteSpace())
         {
-            _location = requisition.City;
+            _parts.Add(requisition.City);
         }
 
-        if (!stateName.NullOrWhiteSpace())
+        if (stateName.NotNullOrWhiteSpace())
         {
-            _location += ", " + stateName;
-        }
-        else
-        {
-            _location = stateName;
+            _parts.Add(stateName);
         }
 
-        if (!requisition.ZipCode.NullOrWhiteSpace())
+        if (requisition.ZipCode.NotNullOrWhiteSpace())
         {
-            _location += ", " + requisition.ZipCode;
-        }
-        else
-        {
-            _location = requisition.ZipCode;
+            _parts.Add(requisition.ZipCode);
         }
 
-        return _location;
+        return string.Join(", ", _parts);
     }
 
-    /// <summary>
-    ///     Asynchronously retrieves a dictionary of requisition data based on the provided search parameters.
-    /// </summary>
-    /// <param name="reqSearch">An instance of the RequisitionSearch class containing the search parameters.</param>
-    /// <param name="getCompanyInformation">
-    ///     A boolean value indicating whether to retrieve company information. Default value
-    ///     is false.
-    /// </param>
-    /// <param name="requisitionID">An optional integer representing a specific requisition ID. Default value is 0.</param>
-    /// <param name="thenProceed">
-    ///     A boolean value indicating whether to proceed if the requisition ID is greater than 0.
-    ///     Default value is false.
-    /// </param>
-    /// <param name="user">
-    ///     A string value containing the logged-in user whose role should be a recruiter to fetch additional
-    ///     information from the companies list.
-    /// </param>
-    /// <returns>
-    ///     A dictionary containing requisition data, including requisitions, companies, contacts, skills, status count,
-    ///     count, and page.
-    /// </returns>
     [HttpGet]
     public async Task<ActionResult<ReturnGridRequisition>> GetGridRequisitions([FromBody] RequisitionSearch reqSearch, bool getCompanyInformation = false, int requisitionID = 0,
                                                                                bool thenProceed = false, string user = "")
@@ -186,9 +201,9 @@ public class RequisitionController : ControllerBase
             if (requisitionID > 0 && !thenProceed)
             {
                 _page = _reader.GetInt32(0);
-                await _reader.CloseAsync();
+                // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
-                await _connection.CloseAsync();
+                // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
                 return new ReturnGridRequisition {Page = _page};
             }
@@ -197,7 +212,8 @@ public class RequisitionController : ControllerBase
 
             await _reader.NextResultAsync();
 
-            while (await _reader.ReadAsync())
+            // Memory optimization: Replace while loop with if statement for single record
+            if (await _reader.ReadAsync())
             {
                 _requisitions = _reader.NString(0);
             }
@@ -205,7 +221,8 @@ public class RequisitionController : ControllerBase
             await _reader.NextResultAsync();
             if (getCompanyInformation)
             {
-                while (await _reader.ReadAsync())
+                // Memory optimization: Replace while loop with if statement for single record
+                if (await _reader.ReadAsync())
                 {
                     _statusCount = _reader.NString(0);
                 }
@@ -213,12 +230,13 @@ public class RequisitionController : ControllerBase
 
             await _reader.NextResultAsync();
             _page = reqSearch.Page;
-            while (await _reader.ReadAsync())
+            // Memory optimization: Replace while loop with if statement for single record
+            if (await _reader.ReadAsync())
             {
                 _page = _reader.GetInt32(0);
             }
 
-            await _reader.CloseAsync();
+            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             return Ok(new
                       {
@@ -235,45 +253,8 @@ public class RequisitionController : ControllerBase
             Log.Error(ex, "Error in GetGridRequisitions {ExceptionMessage}", ex.Message);
             return StatusCode(500, ex.Message);
         }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
     }
 
-    [HttpPost]
-    public async Task<ActionResult<string>> ChangeRequisitionStatus(int requisitionID, string statusCode, string user)
-    {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("ChangeRequisitionStatus", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("RequisitionID", requisitionID);
-        _command.Char("Status", 3, statusCode);
-        _command.Varchar("User", 10, user);
-        try
-        {
-            await _connection.OpenAsync();
-            string _status = (await _command.ExecuteScalarAsync())?.ToString();
-            await _connection.CloseAsync();
-
-            return Ok(_status);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error changing requisition status. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-    }
-
-    /// <summary>
-    ///     Converts a numerical priority value to a string representation.
-    /// </summary>
-    /// <param name="priority">The numerical priority value. Expected values are 0, 2, or any other number.</param>
-    /// <returns>A string representing the priority. "Low" for 0, "High" for 2, and "Medium" for any other number.</returns>
     private static string GetPriority(byte priority)
     {
         return priority switch
@@ -284,119 +265,73 @@ public class RequisitionController : ControllerBase
                };
     }
 
-    /// <summary>
-    ///     Asynchronously retrieves the details of a specific requisition.
-    /// </summary>
-    /// <param name="requisitionID">The ID of the requisition to retrieve details for.</param>
-    /// <param name="roleID">The ID of the role. Default value is "RC".</param>
-    /// <returns>A dictionary containing the requisition details, activity, and documents related to the specified requisition.</returns>
     [HttpGet]
     public async Task<ActionResult<ReturnRequisitionDetails>> GetRequisitionDetails([FromQuery] int requisitionID, [FromQuery] string roleID = "RC")
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        if (requisitionID == 0)
-        {
-            return StatusCode(500, "Requisition ID is not provided.");
-        }
+        if (requisitionID == 0) return StatusCode(500, "Requisition ID is not provided.");
 
-        await using SqlCommand _command = new("GetRequisitionDetails", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("RequisitionID", requisitionID);
-        _command.Varchar("RoleID", 2, roleID);
-        try
+        return await ExecuteReaderAsync("GetRequisitionDetails", command =>
         {
-            string _requisitionDetail = "{}", _activity = "[]", _documents = "[]", _notes = "[]";
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-            while (await _reader.ReadAsync())
+            command.Int("RequisitionID", requisitionID);
+            command.Varchar("RoleID", 2, roleID);
+        }, async reader =>
+        {
+            // Result Set 1: Requisition details
+            string requisitionDetail = "{}";
+            if (await reader.ReadAsync())
             {
-                _requisitionDetail = _reader.NString(0, "{}");
+                requisitionDetail = reader.NString(0, "{}");
             }
 
-            await _reader.NextResultAsync(); //Activity
-            while (await _reader.ReadAsync())
+            // Result Set 2: Activity
+            await reader.NextResultAsync();
+            string activity = "[]";
+            if (await reader.ReadAsync())
             {
-                _activity = _reader.NString(0, "[]");
+                activity = reader.NString(0, "[]");
             }
 
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Result Set 3: Documents
+            await reader.NextResultAsync();
+            string documents = "[]";
+            if (await reader.ReadAsync())
             {
-                _documents = _reader.NString(0, "[]");
+                documents = reader.NString(0, "[]");
             }
 
-            await _reader.NextResultAsync();
-            while (await _reader.ReadAsync())
+            // Result Set 4: Notes
+            await reader.NextResultAsync();
+            string notes = "[]";
+            if (await reader.ReadAsync())
             {
-                _notes = _reader.NString(0, "[]");
+                notes = reader.NString(0, "[]");
             }
 
-            await _reader.CloseAsync();
-
-            return Ok(new ReturnRequisitionDetails
-                      {
-                          Activity = _activity,
-                          Documents = _documents,
-                          Requisition = _requisitionDetail,
-                          Notes = _notes
-                      });
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error fetching requisition details. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
+            return new ReturnRequisitionDetails
+            {
+                Activity = activity,
+                Documents = documents,
+                Requisition = requisitionDetail,
+                Notes = notes
+            };
+        }, "GetRequisitionDetails", "Error fetching requisition details.");
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int requisitionID, string user)
     {
-        if (candidateNote == null)
-        {
-            return Ok("[]");
-        }
+        if (candidateNote == null) return Ok("[]");
 
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SaveNote", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Id", candidateNote.ID);
-        _command.Int("CandidateID", requisitionID);
-        _command.Varchar("Note", -1, candidateNote.Notes);
-        _command.Varchar("EntityType", 5, "REQ");
-        _command.Varchar("User", 10, user);
-        try
+        return await ExecuteQueryAsync("SaveNote", command =>
         {
-            string _returnVal = "[]";
-            await _connection.OpenAsync();
-            _returnVal = (await _command.ExecuteScalarAsync())?.ToString();
-            return Ok(_returnVal);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error saving notes. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
+            command.Int("Id", candidateNote.ID);
+            command.Int("CandidateID", requisitionID);
+            command.Varchar("Note", -1, candidateNote.Notes);
+            command.Varchar("EntityType", 5, "REQ");
+            command.Varchar("User", 10, user);
+        }, "SaveNotes", "Error saving notes.");
     }
 
-    /// <summary>
-    ///     Saves a requisition to the database.
-    /// </summary>
-    /// <param name="requisition">The details of the requisition to be saved.</param>
-    /// <param name="user">The user who is performing the save operation.</param>
-    /// <param name="jsonPath">The path to the JSON file containing the requisition details.</param>
-    /// <param name="emailAddress">The email address to which notifications will be sent. Defaults to "maniv@titan-techs.com".</param>
-    /// <returns>
-    ///     An integer indicating the status of the save operation. Returns -1 if the requisition is null, and 0
-    ///     otherwise.
-    /// </returns>
     [HttpPost]
     public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, [FromQuery] string user, [FromQuery] string jsonPath = "",
                                                          [FromQuery]
@@ -447,7 +382,8 @@ public class RequisitionController : ControllerBase
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            while (await _reader.ReadAsync())
+            // Memory optimization: Replace while loop with if statement for single record
+            if (await _reader.ReadAsync())
             {
                 _reqCode = _reader.NString(0);
             }
@@ -469,12 +405,13 @@ public class RequisitionController : ControllerBase
 
             await _reader.NextResultAsync();
             string _stateName = "";
-            while (await _reader.ReadAsync())
+            // Memory optimization: Replace while loop with if statement for single record
+            if (await _reader.ReadAsync())
             {
                 _stateName = _reader.GetString(0);
             }
 
-            await _reader.CloseAsync();
+            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             if (_templates.Count <= 0)
             {
@@ -508,9 +445,7 @@ public class RequisitionController : ControllerBase
 
             /*GMailSend _send = new();
                 GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
-            using SmtpClient _smtpClient = new(Start.EmailHost, Start.Port);
-            _smtpClient.Credentials = new NetworkCredential(Start.EmailUsername, Start.EmailPassword);
-            _smtpClient.EnableSsl = true;
+            // Memory optimization: Use injected SmtpClient instead of creating new instances
 
             MailMessage _mailMessage = new()
                                        {
@@ -530,7 +465,7 @@ public class RequisitionController : ControllerBase
                 _mailMessage.CC.Add(new MailAddress(_cc.KeyValue, _cc.Text));
             }*/
 
-            await _smtpClient.SendMailAsync(_mailMessage);
+            await smtpClient.SendMailAsync(_mailMessage);
             return Ok(0);
         }
         catch (Exception ex)
@@ -538,49 +473,17 @@ public class RequisitionController : ControllerBase
             Log.Error(ex, "Error saving requisition. {ExceptionMessage}", ex.Message);
             return StatusCode(500, ex.Message);
         }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> SearchRequisitions(string filter)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("SearchRequisitions", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Varchar("Requisition", 30, filter);
-
-        try
+        return await ExecuteQueryAsync("SearchRequisitions", command =>
         {
-            await _connection.OpenAsync();
-
-            string _requisitions = (await _command.ExecuteScalarAsync())?.ToString();
-
-            return Ok(_requisitions);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error searching requisitions. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
+            command.Varchar("Requisition", 30, filter);
+        }, "SearchRequisitions", "Error searching requisitions.");
     }
 
-    /// <summary>
-    ///     Asynchronously uploads a document to a specific requisition.
-    /// </summary>
-    /// <param name="file">The file to be uploaded as an IFormFile.</param>
-    /// <returns>A dictionary containing the details of the uploaded document.</returns>
-    /// <remarks>
-    ///     This method receives the file to be uploaded as an IFormFile. It also retrieves additional information such as the
-    ///     requisition ID, the filename, and other details from the form data of the request. The file is saved in a specific
-    ///     directory structure and its details are stored in the database using a stored procedure.
-    /// </remarks>
     [HttpPost, RequestSizeLimit(62914560)]
     public async Task<ActionResult<string>> UploadDocument(IFormFile file)
     {
@@ -620,7 +523,7 @@ public class RequisitionController : ControllerBase
                 _returnVal = _reader.NString(0);
             }
 
-            await _reader.CloseAsync();
+            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             return Ok(_returnVal);
         }
