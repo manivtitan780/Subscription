@@ -42,7 +42,7 @@ public partial class Login
                                                      {"userName", LoginModel.UserName},
                                                      {"password", LoginModel.Password}
                                                  };
-        string _response = await General.PostRest<string>("Login/LoginPage", _parameters);
+        string _response = await General.ExecuteRest<string>("Login/LoginPage", _parameters);
 
         if (_response.NullOrWhiteSpace())
         {

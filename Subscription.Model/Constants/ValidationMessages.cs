@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           ValidationMessages.cs
-// Created By:          Claude Code (Anthropic)
-// Created On:          07-12-2025
-// Last Updated On:     07-12-2025
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-12-2025 20:07
+// Last Updated On:     07-17-2025 16:25
 // *****************************************/
 
 #endregion
@@ -25,6 +25,16 @@ namespace Subscription.Model.Constants;
 /// </remarks>
 public static class ValidationMessages
 {
+    #region Password Validation Messages
+
+    /// <summary>
+    ///     Password complexity requirements message.
+    ///     Usage: UserValidator password validation.
+    /// </summary>
+    public const string PasswordComplexity = "Password should be between 6 and 16 characters and contain at least 1 uppercase, lowercase character and 1 of either a numeric or special character.";
+
+    #endregion
+
     #region Common Validation Messages
 
     /// <summary>
@@ -116,16 +126,6 @@ public static class ValidationMessages
     ///     Usage: URL format validation across entities.
     /// </summary>
     public const string ValidUrlRequired = "Please enter a valid Website Url.";
-
-    #endregion
-
-    #region Password Validation Messages
-
-    /// <summary>
-    ///     Password complexity requirements message.
-    ///     Usage: UserValidator password validation.
-    /// </summary>
-    public const string PasswordComplexity = "Password should be between 6 and 16 characters and contain at least 1 uppercase, lowercase character and 1 of either a numeric or special character.";
 
     #endregion
 

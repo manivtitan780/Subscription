@@ -244,7 +244,7 @@ public partial class Users : ComponentBase
     {
         await ExecuteMethod(async () =>
                             {
-                                IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
+                               IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
 
                                 if (_claims == null)
                                 {
@@ -262,6 +262,11 @@ public partial class Users : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
+                                    
+                                    if (!AdminScreens)
+                                    {
+                                        NavManager.NavigateTo($"{NavManager.BaseUri}dash", true);
+                                    }
 
                                     // Using injected RedisService singleton instead of creating new instances to avoid connection leaks
                                     RedisValue _value = await RedisService.GetAsync(nameof(CacheObjects.Roles));

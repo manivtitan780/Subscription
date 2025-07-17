@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           BusinessConstants.cs
-// Created By:          Claude Code (Anthropic)
-// Created On:          07-12-2025
-// Last Updated On:     07-12-2025
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-12-2025 20:07
+// Last Updated On:     07-17-2025 16:25
 // *****************************************/
 
 #endregion
@@ -26,28 +26,6 @@ namespace Subscription.Model.Constants;
 /// </remarks>
 public static class BusinessConstants
 {
-    #region Business Rule Limits
-
-    /// <summary>
-    ///     Maximum hourly rate allowed for candidates.
-    ///     Usage: CandidateDetailsValidator for hourly rate validation.
-    /// </summary>
-    public const decimal MaxHourlyRate = 2_000;
-
-    /// <summary>
-    ///     Maximum salary allowed for candidates.
-    ///     Usage: CandidateDetailsValidator for salary validation.
-    /// </summary>
-    public const decimal MaxSalary = 10_000_000;
-
-    /// <summary>
-    ///     Maximum experience in months allowed for candidate skills.
-    ///     Usage: CandidateSkillsValidator for experience validation.
-    /// </summary>
-    public const int MaxExperienceMonths = 1_000;
-
-    #endregion
-
     #region Field Length Constraints
 
     /// <summary>
@@ -233,6 +211,28 @@ public static class BusinessConstants
 
         #endregion
     }
+
+    #endregion
+
+    #region Business Rule Limits
+
+    /// <summary>
+    ///     Maximum hourly rate allowed for candidates.
+    ///     Usage: CandidateDetailsValidator for hourly rate validation.
+    /// </summary>
+    public const decimal MaxHourlyRate = 2_000;
+
+    /// <summary>
+    ///     Maximum salary allowed for candidates.
+    ///     Usage: CandidateDetailsValidator for salary validation.
+    /// </summary>
+    public const decimal MaxSalary = 10_000_000;
+
+    /// <summary>
+    ///     Maximum experience in months allowed for candidate skills.
+    ///     Usage: CandidateSkillsValidator for experience validation.
+    /// </summary>
+    public const int MaxExperienceMonths = 1_000;
 
     #endregion
 }

@@ -7,15 +7,9 @@
 // Project:             Subscription.API
 // File Name:           CandidateController.Gets.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-16-2025 18:07
-// Last Updated On:     07-16-2025 19:13
+// Created On:          07-16-2025 19:07
+// Last Updated On:     07-17-2025 16:23
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using System.Text.Json;
 
 #endregion
 
@@ -117,7 +111,10 @@ public partial class CandidateController
                                                                          activity = reader.NString(0, "[]");
                                                                      }
 
-                                                                     // Result Set 7: Documents
+                                                                     // Result Set 7: Managers
+                                                                     await reader.NextResultAsync();
+
+                                                                     //Result Set 8: Documents
                                                                      await reader.NextResultAsync();
                                                                      string documents = "[]";
                                                                      if (await reader.ReadAsync())
@@ -125,15 +122,7 @@ public partial class CandidateController
                                                                          documents = reader.NString(0, "[]");
                                                                      }
 
-                                                                     // Result Set 8: Rating/MPC data
-                                                                     await reader.NextResultAsync();
-                                                                     string ratingData = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         ratingData = reader.NString(0, "[]");
-                                                                     }
-
-                                                                     // Process Rating and MPC data using System.Text.Json consistently
+                                                                      // Process Rating and MPC data using System.Text.Json consistently
                                                                      List<CandidateRating> ratingList = [];
                                                                      List<CandidateMPC> mpcList = [];
                                                                      CandidateRatingMPC ratingMPC = new();

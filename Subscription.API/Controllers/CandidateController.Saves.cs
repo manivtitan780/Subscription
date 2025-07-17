@@ -15,8 +15,6 @@
 
 #region Using
 
-using System.Text.Json;
-
 #endregion
 
 namespace Subscription.API.Controllers;

@@ -2,7 +2,7 @@
 @layout SubscriptionLayout
 
 <PageHeader PageName="User"/>
-<AdminGrid AddMethod="() => EditUserAsync()" AutocompleteMethod="Admin_SearchUser" AutocompleteParameter="@("User")" Name="@UserAuto"Entity="User" HeaderContentPlural="Users" HeaderContentSingular="User" 
+<AdminGrid AddMethod="() => EditUserAsync()" AutocompleteMethod="Admin_SearchUser" AutocompleteParameter="@("User")" Name="@UserAuto" Entity="User" HeaderContentPlural="Users" HeaderContentSingular="User" 
 		   Height="140px" Page="User" RefreshGrid="RefreshGrid" RoleID="@RoleID" ValueChange="FilterGrid" Width="346px">
 	<GridContent>
 		<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@

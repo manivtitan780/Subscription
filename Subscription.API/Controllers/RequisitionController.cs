@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-16-2025 15:07
-// Last Updated On:     07-16-2025 15:43
+// Created On:          07-16-2025 16:07
+// Last Updated On:     07-16-2025 19:55
 // *****************************************/
 
 #endregion
@@ -22,11 +22,11 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
     public async Task<ActionResult<string>> ChangeRequisitionStatus(int requisitionID, string statusCode, string user)
     {
         return await ExecuteQueryAsync("ChangeRequisitionStatus", command =>
-        {
-            command.Int("RequisitionID", requisitionID);
-            command.Char("Status", 3, statusCode);
-            command.Varchar("User", 10, user);
-        }, "ChangeRequisitionStatus", "Error changing requisition status.");
+                                                                  {
+                                                                      command.Int("RequisitionID", requisitionID);
+                                                                      command.Char("Status", 3, statusCode);
+                                                                      command.Varchar("User", 10, user);
+                                                                  }, "ChangeRequisitionStatus", "Error changing requisition status.");
     }
 
     [HttpPost]
@@ -268,68 +268,74 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ReturnRequisitionDetails>> GetRequisitionDetails([FromQuery] int requisitionID, [FromQuery] string roleID = "RC")
     {
-        if (requisitionID == 0) return StatusCode(500, "Requisition ID is not provided.");
+        if (requisitionID == 0)
+        {
+            return StatusCode(500, "Requisition ID is not provided.");
+        }
 
         return await ExecuteReaderAsync("GetRequisitionDetails", command =>
-        {
-            command.Int("RequisitionID", requisitionID);
-            command.Varchar("RoleID", 2, roleID);
-        }, async reader =>
-        {
-            // Result Set 1: Requisition details
-            string requisitionDetail = "{}";
-            if (await reader.ReadAsync())
-            {
-                requisitionDetail = reader.NString(0, "{}");
-            }
+                                                                 {
+                                                                     command.Int("RequisitionID", requisitionID);
+                                                                     command.Varchar("RoleID", 2, roleID);
+                                                                 }, async reader =>
+                                                                    {
+                                                                        // Result Set 1: Requisition details
+                                                                        string requisitionDetail = "{}";
+                                                                        if (await reader.ReadAsync())
+                                                                        {
+                                                                            requisitionDetail = reader.NString(0, "{}");
+                                                                        }
 
-            // Result Set 2: Activity
-            await reader.NextResultAsync();
-            string activity = "[]";
-            if (await reader.ReadAsync())
-            {
-                activity = reader.NString(0, "[]");
-            }
+                                                                        // Result Set 2: Activity
+                                                                        await reader.NextResultAsync();
+                                                                        string activity = "[]";
+                                                                        if (await reader.ReadAsync())
+                                                                        {
+                                                                            activity = reader.NString(0, "[]");
+                                                                        }
 
-            // Result Set 3: Documents
-            await reader.NextResultAsync();
-            string documents = "[]";
-            if (await reader.ReadAsync())
-            {
-                documents = reader.NString(0, "[]");
-            }
+                                                                        // Result Set 3: Documents
+                                                                        await reader.NextResultAsync();
+                                                                        string documents = "[]";
+                                                                        if (await reader.ReadAsync())
+                                                                        {
+                                                                            documents = reader.NString(0, "[]");
+                                                                        }
 
-            // Result Set 4: Notes
-            await reader.NextResultAsync();
-            string notes = "[]";
-            if (await reader.ReadAsync())
-            {
-                notes = reader.NString(0, "[]");
-            }
+                                                                        // Result Set 4: Notes
+                                                                        await reader.NextResultAsync();
+                                                                        string notes = "[]";
+                                                                        if (await reader.ReadAsync())
+                                                                        {
+                                                                            notes = reader.NString(0, "[]");
+                                                                        }
 
-            return new ReturnRequisitionDetails
-            {
-                Activity = activity,
-                Documents = documents,
-                Requisition = requisitionDetail,
-                Notes = notes
-            };
-        }, "GetRequisitionDetails", "Error fetching requisition details.");
+                                                                        return new ReturnRequisitionDetails
+                                                                               {
+                                                                                   Activity = activity,
+                                                                                   Documents = documents,
+                                                                                   Requisition = requisitionDetail,
+                                                                                   Notes = notes
+                                                                               };
+                                                                    }, "GetRequisitionDetails", "Error fetching requisition details.");
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int requisitionID, string user)
     {
-        if (candidateNote == null) return Ok("[]");
+        if (candidateNote == null)
+        {
+            return Ok("[]");
+        }
 
         return await ExecuteQueryAsync("SaveNote", command =>
-        {
-            command.Int("Id", candidateNote.ID);
-            command.Int("CandidateID", requisitionID);
-            command.Varchar("Note", -1, candidateNote.Notes);
-            command.Varchar("EntityType", 5, "REQ");
-            command.Varchar("User", 10, user);
-        }, "SaveNotes", "Error saving notes.");
+                                                   {
+                                                       command.Int("Id", candidateNote.ID);
+                                                       command.Int("CandidateID", requisitionID);
+                                                       command.Varchar("Note", -1, candidateNote.Notes);
+                                                       command.Varchar("EntityType", 5, "REQ");
+                                                       command.Varchar("User", 10, user);
+                                                   }, "SaveNotes", "Error saving notes.");
     }
 
     [HttpPost]
@@ -478,10 +484,7 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<string>> SearchRequisitions(string filter)
     {
-        return await ExecuteQueryAsync("SearchRequisitions", command =>
-        {
-            command.Varchar("Requisition", 30, filter);
-        }, "SearchRequisitions", "Error searching requisitions.");
+        return await ExecuteQueryAsync("SearchRequisitions", command => { command.Varchar("Requisition", 30, filter); }, "SearchRequisitions", "Error searching requisitions.");
     }
 
     [HttpPost, RequestSizeLimit(62914560)]

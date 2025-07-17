@@ -255,8 +255,8 @@ public class AdminController(RedisService redisService) : ControllerBase
         }
 
         // Generate password hash and salt only when password is valid
-        byte[] _salt = General.GenerateRandomString(64);
-        byte[] _password = General.ComputeHashWithSalt(user.Password, _salt);
+        //byte[] _salt = General.GenerateRandomString(64);
+        (byte[] Hash, byte[] Salt) _password = PasswordHasher.HashPassword(user.Password);
 
         return await SaveEntityAsync("Admin_SaveUser", (command, entity) =>
                                                        {
@@ -267,8 +267,8 @@ public class AdminController(RedisService redisService) : ControllerBase
                                                            command.TinyInt("Role", entity.RoleID);
                                                            command.Bit("Status", entity.StatusEnabled);
                                                            command.Varchar("User", 10, AdminUser);
-                                                           command.Binary("Salt", 64, _salt);
-                                                           command.Binary("Password", 64, _password);
+                                                           command.Binary("Salt", 64, _password.Salt);
+                                                           command.Binary("Password", 64, _password.Hash);
                                                        }, cacheName, user, "User");
     }
 

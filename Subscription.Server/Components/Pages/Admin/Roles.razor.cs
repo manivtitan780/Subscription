@@ -262,6 +262,11 @@ public partial class Roles : ComponentBase
 
                                     // Set user permissions
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
+
+                                    if (!AdminScreens)
+                                    {
+                                        NavManager.NavigateTo($"{NavManager.BaseUri}dash", true);
+                                    }
                                 }
                             });
 
