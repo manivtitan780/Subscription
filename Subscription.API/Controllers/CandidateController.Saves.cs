@@ -8,12 +8,8 @@
 // File Name:           CandidateController.Saves.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          07-16-2025 19:07
-// Last Updated On:     07-16-2025 19:12
+// Last Updated On:     07-17-2025 19:50
 // *****************************************/
-
-#endregion
-
-#region Using
 
 #endregion
 
@@ -78,6 +74,10 @@ public partial class CandidateController
                                                                                   candidateDetails.Keywords.Length > 500 ? candidateDetails.Keywords[..500] : candidateDetails.Keywords);
                                                                   command.Varchar("@Status", 3, "AVL");
                                                                   command.Varchar("@TextResume", -1, candidateDetails.TextResume);
+                                                                  command.Varchar("@OriginalResume", 255, candidateDetails.OriginalResume);
+                                                                  command.Varchar("@FormattedResume", 255, candidateDetails.FormattedResume);
+                                                                  command.UniqueIdentifier("@OriginalFileID", DBNull.Value);
+                                                                  command.UniqueIdentifier("@FormattedFileID", DBNull.Value);
                                                                   command.Varchar("@Address1", 255, candidateDetails.Address1);
                                                                   command.Varchar("@Address2", 255, candidateDetails.Address2);
                                                                   command.Varchar("@City", 50, candidateDetails.City);
@@ -348,7 +348,7 @@ public partial class CandidateController
                                                                                             command.Varchar("@From", 10, user);
                                                                                         }, "SaveMPC", "Error saving MPC");
 
-            string _mpcNotes = result.Value ?? "";
+            string _mpcNotes = (result.Result as OkObjectResult)?.Value?.ToString() ?? "";
 
             // Memory optimization: Use System.Text.Json for processing
             if (_mpcNotes.NullOrWhiteSpace())
@@ -434,7 +434,7 @@ public partial class CandidateController
                                                                                                command.Varchar("@From", 10, user);
                                                                                            }, "SaveRating", "Error saving rating");
 
-            string _ratingNotes = result.Value ?? "";
+            string _ratingNotes = (result.Result as OkObjectResult)?.Value?.ToString() ?? "";
 
             // Memory optimization: Use System.Text.Json for processing
             if (_ratingNotes.NullOrWhiteSpace())

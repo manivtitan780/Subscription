@@ -165,7 +165,7 @@
 						@* Add Buttons End *@
 						@if (context is Candidate)
 						{
-							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="95%">
+							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
 								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
 								<TabAnimationSettings>
 									<TabAnimationPrevious Effect="AnimationEffect.None"/>
@@ -185,8 +185,7 @@
 													<PanelDisplayText Label="Phone#" Text="@_candDetailsObject.Phone1.FormatPhoneNumber()"/>
 													<PanelDisplayText Label="Alternate Phone#" Text="@_candDetailsObject.Phone2.FormatPhoneNumber()"/>
 													<PanelDisplayText Label="Title" Text="@_candDetailsObject.Title"/>
-													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.CultureCurrency()} - " +
-													                                                $"{_candDetailsObject.HourlyRateHigh.CultureCurrency()}")"/>
+													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.CultureCurrency()} - " + $"{_candDetailsObject.HourlyRateHigh.CultureCurrency()}")"/>
 													<PanelDisplayText Label="Salary Expected" Text="@($"{_candDetailsObject.SalaryLow.CultureCurrency()} - " + $"{_candDetailsObject.SalaryHigh.CultureCurrency()}")"/>
 												</div>
 												<div class="leftLayout">
