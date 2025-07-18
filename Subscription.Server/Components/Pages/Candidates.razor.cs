@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     07-04-2025 20:11
+// Created On:          07-11-2025 19:07
+// Last Updated On:     07-18-2025 20:28
 // *****************************************/
 
 #endregion
@@ -17,14 +17,11 @@
 
 using System.Text;
 
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
-
 #endregion
 
 namespace Subscription.Server.Components.Pages;
 
-public partial class Candidates : IDisposable
+public sealed partial class Candidates : IDisposable
 {
     private const string StorageName = "CandidatesGrid";
     private List<CandidateActivity> _candActivityObject = [];
@@ -49,10 +46,6 @@ public partial class Candidates : IDisposable
 
     private readonly Dictionary<string, string> _reusableParameters = new();
 
-    //private Query _query = new();
-
-    //private CandidateRatingMPC _ratingMPC = new();
-    //private List<Role> _roles;
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
@@ -130,7 +123,7 @@ public partial class Candidates : IDisposable
 
     private ExperiencePanel ExperiencePanel { get; set; }
 
-    private string FileName { get; set; }
+    //private string FileName { get; set; }
 
     private bool FormattedExists { get; set; }
 
@@ -138,7 +131,7 @@ public partial class Candidates : IDisposable
 
     private bool HasEditRights { get; set; }
 
-    private bool HasRendered { get; set; }
+    //private bool HasRendered { get; set; }
 
     private bool HasViewRights { get; set; }
 
@@ -150,7 +143,7 @@ public partial class Candidates : IDisposable
     [Inject]
     private ILocalStorageService LocalStorage { get; set; }
 
-    private string Mime { get; set; }
+    //private string Mime { get; set; }
 
     private MarkupString MPCDate { get; set; }
 
@@ -169,9 +162,9 @@ public partial class Candidates : IDisposable
 
     private NotesPanel NotesPanel { get; set; }
 
-    public bool OriginalExists { get; set; }
+    private bool OriginalExists { get; set; }
 
-    private int Page { get; set; } = 1;
+    //private int Page { get; set; } = 1;
 
     private DownloadsPanel PanelDownload { get; set; }
 
@@ -206,7 +199,7 @@ public partial class Candidates : IDisposable
 
     private CandidateEducation SelectedEducation { get; set; } = new();
 
-    private CandidateEducation SelectedEducationClone { get; set; } = new();
+    //private CandidateEducation SelectedEducationClone { get; set; } = new();
 
     private CandidateExperience SelectedExperience { get; set; } = new();
 
@@ -219,7 +212,7 @@ public partial class Candidates : IDisposable
 
     private SkillPanel SkillPanel { get; set; }
 
-    private SfSpinner Spinner { get; set; }
+    /*private SfSpinner Spinner { get; set; }*/
 
     private SubmitCandidate SubmitDialog { get; set; }
 
@@ -229,8 +222,8 @@ public partial class Candidates : IDisposable
 
     private bool VisibleSpinner { get; set; }
 
-    [Inject]
-    private ZipCodeService ZipCodeService { get; set; }
+    /*[Inject]
+    private ZipCodeService ZipCodeService { get; set; }*/
 
     public void Dispose()
     {
@@ -246,7 +239,7 @@ public partial class Candidates : IDisposable
             _disposed = true;
         }
 
-        GC.SuppressFinalize(this);
+        //GC.SuppressFinalize();
     }
 
     private async Task AddCandidate(MouseEventArgs arg)
@@ -300,21 +293,25 @@ public partial class Candidates : IDisposable
 
     private Task ChangeStatus() => ExecuteMethod(async () =>
                                                  {
-                                                     await Grid.ShowSpinnerAsync();
-                                                     Dictionary<string, string> _parameters = new()
-                                                                                              {
-                                                                                                  {"candidateID", _target.ID.ToString()},
-                                                                                                  {"user", User}
-                                                                                              };
-
-                                                     string _response = await General.ExecuteRest<string>("Candidate/ChangeStatus", _parameters);
-
-                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                     if (await DialogService.ConfirmAsync(null, "Change Candidate Status?",
+                                                                                          General.DialogOptions("Do you want to change the status of this candidate?")).ConfigureAwait(false))
                                                      {
-                                                         _target.Status = _response;
-                                                     }
+                                                         await Grid.ShowSpinnerAsync();
+                                                         Dictionary<string, string> _parameters = new()
+                                                                                                  {
+                                                                                                      {"candidateID", _target.ID.ToString()},
+                                                                                                      {"user", User}
+                                                                                                  };
 
-                                                     await Grid.HideSpinnerAsync();
+                                                         string _response = await General.ExecuteRest<string>("Candidate/ChangeStatus", _parameters);
+
+                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
+                                                         {
+                                                             _target.Status = _response;
+                                                         }
+
+                                                         await Grid.HideSpinnerAsync();
+                                                     }
                                                  });
 
     private void ClearAllCollections()
@@ -474,27 +471,6 @@ public partial class Candidates : IDisposable
     [JSInvokable("DetailCollapse")]
     public void DetailRowCollapse() => _target = null;
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed && disposing)
-        {
-            // Dispose managed resources
-            _semaphoreMainPage?.Dispose();
-            _dotNetReference?.Dispose();
-
-            // Clear large collections
-            ClearAllCollections();
-
-            // Clear edit contexts
-            //EditConEducation = null;
-            //EditConExperience = null;
-            //EditConNotes = null;
-            //EditConSkill = null;
-
-            _disposed = true;
-        }
-    }
-
     private Task DownloadDocument(int arg) => ExecuteMethod(async () =>
                                                             {
                                                                 SelectedDownload = PanelDownload.SelectedRow;
@@ -577,14 +553,7 @@ public partial class Candidates : IDisposable
                                                             VisibleSpinner = true;
                                                             if (id == 0)
                                                             {
-                                                                if (SelectedEducation == null)
-                                                                {
-                                                                    SelectedEducationClone = new();
-                                                                }
-                                                                else
-                                                                {
-                                                                    SelectedEducation.Clear();
-                                                                }
+                                                                SelectedEducation?.Clear();
                                                             }
                                                             else
                                                             {
@@ -753,8 +722,7 @@ public partial class Candidates : IDisposable
                                                                               DocumentDetails _response = General.DeserializeObject<DocumentDetails>(_restResponse);
                                                                               try
                                                                               {
-                                                                                  await PanelDownload.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume",
-                                                                                                                 _response.InternalFileName);
+                                                                                  await PanelDownload.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume", _response.InternalFileName);
                                                                               }
                                                                               catch (Exception ex)
                                                                               {
@@ -891,7 +859,7 @@ public partial class Candidates : IDisposable
 
     private async Task PageChanging(PageChangedEventArgs page)
     {
-        Page = page.CurrentPage;
+        //Page = page.CurrentPage;
         SearchModel.Page = page.CurrentPage;
         await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
     }
@@ -1104,10 +1072,9 @@ public partial class Candidates : IDisposable
                                                                                                                   };
 
                                                                          string _response = await General.ExecuteRest<string>("Candidate/UpdateResume", _parameters, null, true,
-                                                                                                                              ResumeUpdate.AddedDocument.ToStreamByteArray(),
-                                                                                                                              ResumeUpdate.FileName);
+                                                                                                                              ResumeUpdate.AddedDocument.ToStreamByteArray(), ResumeUpdate.FileName);
 
-                                                                         if (_response.NotNullOrWhiteSpace())
+                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]" && _resume.UpdateTextResume)
                                                                          {
                                                                              _candDetailsObject.TextResume = _response;
                                                                          }

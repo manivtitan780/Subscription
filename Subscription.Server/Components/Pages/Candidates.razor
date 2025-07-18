@@ -166,7 +166,7 @@
 						@if (context is Candidate)
 						{
 							<SfTab CssClass="e-fill" Height="340" ID="tabCandidates" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
-								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
+								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>@**@
 								<TabAnimationSettings>
 									<TabAnimationPrevious Effect="AnimationEffect.None"/>
 									<TabAnimationNext Effect="AnimationEffect.None"/>
@@ -302,19 +302,19 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
+	<AddDocumentDialog DocumentTypes="_documentTypes" Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
+	<AdvancedCandidateSearch Eligibility="_eligibility" JobOptions="_jobOptions" Model="SearchModelClone" @ref="DialogSearch" Search="SearchCandidate" StateDropDown="_states"/>
+	<EditActivityDialog IsCandidate="true" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
 	<EditCandidateDialog Model="_candDetailsObjectClone" Communication="_communication" Eligibility="_eligibility" Experience="_experience" Save="SaveCandidate" States="_states" JobOptions="_jobOptions"
 	                     TaxTerms="_taxTerms" @ref="CandidateDialog"/>
-	<EditSkillDialog Model="SelectedSkill" @ref="CandidateSkillDialog" Save="SaveSkill"/>
-	<EditActivityDialog IsCandidate="true" Model="SelectedActivity" ModelSteps="NextSteps" @ref="DialogActivity" Save="SaveActivity" Status="_workflow"/>
 	<EditEducationDialog Model="SelectedEducation" @ref="CandidateEducationDialog" Save="SaveEducation"/>
 	<EditExperienceDialog Model="SelectedExperience" @ref="CandidateExperienceDialog" Save="SaveExperience"/>
 	<EditNotesDialog Model="SelectedNotes" @ref="CandidateNotesDialog" Save="SaveNote" Title="Candidate" Entity="Candidate"/>
-	<AddDocumentDialog DocumentTypes="_documentTypes" Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
-	<UpdateResume ResumeType="@ResumeType" Model="NewResume" @ref="ResumeUpdate" Save="SaveResume"/>
+	<EditSkillDialog Model="SelectedSkill" @ref="CandidateSkillDialog" Save="SaveSkill"/>
 	<MPCCandidateDialog MPCGrid="_candMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
 	<RatingCandidateDialog RatingGrid="_candRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
 	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
-	<AdvancedCandidateSearch Eligibility="_eligibility" JobOptions="_jobOptions" Model="SearchModelClone" @ref="DialogSearch" Search="SearchCandidate" StateDropDown="_states"/>
+	<UpdateResume ResumeType="@ResumeType" Model="NewResume" @ref="ResumeUpdate" Save="SaveResume"/>
 	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" User="@User"/>
 }
 else

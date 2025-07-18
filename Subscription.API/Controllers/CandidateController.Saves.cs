@@ -525,10 +525,39 @@ public partial class CandidateController
     [HttpPost]
     public async Task<ActionResult<string>> UpdateResume(IFormFile file)
     {
-        return await ExecuteQueryAsync("UpdateCandidateResume", command =>
+        string _fileName = file.FileName;
+        string _candidateID = Request.Form["candidateID"].ToString();
+        string _internalFileName = Guid.NewGuid().ToString("N");
+        bool _updateTextResume = Request.Form["updateTextResume"].ToBoolean();
+        string _textResume = "";
+
+        if (_updateTextResume)
+        {
+            if (Path.GetExtension(_fileName).Equals(".pdf", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _textResume = General.ExtractTextFromPdf(file);
+            }
+            else if (Path.GetExtension(_fileName).Equals(".doc", StringComparison.CurrentCultureIgnoreCase)
+                     || Path.GetExtension(_fileName).Equals(".docx", StringComparison.CurrentCultureIgnoreCase)
+                     || Path.GetExtension(_fileName).Equals(".rtf", StringComparison.CurrentCultureIgnoreCase))
+            {
+                _textResume = General.ExtractTextFromWord(file);
+            }
+        }
+
+        // Create the folder path
+        string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
+
+        await General.UploadToBlob(file, _blobPath);
+
+        return await ExecuteQueryAsync("UpdateResume", command =>
                                                                 {
-                                                                    command.Varchar("FileName", 255, file.FileName);
-                                                                    command.Int("FileSize", (int)file.Length);
+                                                                    command.Int("CandidateId", _candidateID.ToInt32());
+                                                                    command.Varchar("InternalName", 50, _internalFileName);
+                                                                    command.Varchar("FileName", 255, _fileName);
+                                                                    command.Int("Type", Request.Form["type"].ToInt32());
+                                                                    command.Varchar("User", 10, Request.Form["user"].ToString());
+                                                                    command.Varchar("TextResume", -1, _textResume);
                                                                 }, "UpdateResume", "Error updating candidate resume.");
     }
 
@@ -539,15 +568,17 @@ public partial class CandidateController
         string _internalFileName = Guid.NewGuid().ToString("N");
 
         // Create a BlobStorage instance
-        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
 
         // Create the folder path
         string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
 
+        await General.UploadToBlob(file, _blobPath);
+        /*
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
         await using (Stream stream = file.OpenReadStream())
         {
             await _storage.WriteAsync(_blobPath, stream);
-        }
+        }*/
 
         return await ExecuteQueryAsync("SaveCandidateDocuments", command =>
                                                                  {

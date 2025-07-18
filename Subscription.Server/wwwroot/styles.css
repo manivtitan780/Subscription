@@ -954,6 +954,10 @@ div#tabCandidates div#e-content-tabCandidates_0 div.divPanelContainerVertical {
     height: 260px;
 }
 
+.e-tab.e-fill .e-tab-header .e-toolbar-item.e-active .e-tab-wrap, .e-tab .e-tab-header .e-toolbar-items .e-toolbar-item.e-active::before,
+.e-tab.e-fill.e-focused .e-tab-header .e-toolbar-item.e-active .e-tab-wrap:focus {
+    background: var(--c-red);
+}
 /* #endregion Tabs*/
 
 /* #region Login Page */

@@ -228,6 +228,6 @@ public partial class CandidateController
     [HttpGet]
     public async Task<ActionResult<string>> SearchCandidates(string filter)
     {
-        return await ExecuteQueryAsync("SearchCandidates", command => { command.Varchar("Filter", 50, filter); }, "SearchCandidates", "Error searching candidates.");
+        return await ExecuteQueryAsync("SearchCandidates", command => { command.Varchar("Name", 30, filter); }, "SearchCandidates", "Error searching candidates.");
     }
 }
