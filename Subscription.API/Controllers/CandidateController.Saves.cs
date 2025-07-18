@@ -535,10 +535,29 @@ public partial class CandidateController
     [HttpPost]
     public async Task<ActionResult<string>> UploadDocument(IFormFile file)
     {
-        return await ExecuteQueryAsync("UploadCandidateDocument", command =>
-                                                                  {
-                                                                      command.Varchar("FileName", 255, file.FileName);
-                                                                      command.Int("FileSize", (int)file.Length);
-                                                                  }, "UploadDocument", "Error uploading candidate document.");
+        string _candidateID = Request.Form["candidateID"].ToString();
+        string _internalFileName = Guid.NewGuid().ToString("N");
+
+        // Create a BlobStorage instance
+        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+
+        // Create the folder path
+        string _blobPath = $"{Start.AzureBlobContainer}/Candidate/{_candidateID}/{_internalFileName}";
+
+        await using (Stream stream = file.OpenReadStream())
+        {
+            await _storage.WriteAsync(_blobPath, stream);
+        }
+
+        return await ExecuteQueryAsync("SaveCandidateDocuments", command =>
+                                                                 {
+                                                                     command.Int("CandidateId", _candidateID.ToInt32());
+                                                                     command.Varchar("DocumentName", 255, Request.Form["name"].ToString());
+                                                                     command.Varchar("DocumentLocation", 255, file.FileName);
+                                                                     command.Varchar("DocumentNotes", 2000, Request.Form["notes"].ToString());
+                                                                     command.Varchar("InternalFileName", 50, _internalFileName);
+                                                                     command.Int("DocumentType", Request.Form["type"].ToInt32());
+                                                                     command.Varchar("DocsUser", 10, Request.Form["user"].ToString());
+                                                                 }, "UploadDocument", "Error uploading candidate document.");
     }
 }
