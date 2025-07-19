@@ -73,7 +73,7 @@
                     <FormItem ColumnSpan="1" Field="@nameof(Model.ExpectedStart)">
                         <Template>
                             <label class="e-form-label" for="dateStart">Expected Start Date:</label>
-                            <SfDatePicker @bind-Value="Model.ExpectedStart" Format="MM/dd/yyyy" ID="dateStart" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
+                            <SfDatePicker @bind-Value="Model.ExpectedStart" Format="MM/dd/yyyy" ID="dateStart" StrictMode="false" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
                                           OpenOnFocus="true" Placeholder="Start Date" TValue="DateTime">
                             </SfDatePicker>
                         </Template>
@@ -81,7 +81,7 @@
                     <FormItem ColumnSpan="1" Field="@nameof(Model.DueDate)">
                         <Template>
                             <label class="e-form-label" for="dateDue">Expected Due Date:</label>
-                            <SfDatePicker @bind-Value="Model.ExpectedStart" Format="MM/dd/yyyy" ID="dateDue" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
+                            <SfDatePicker @bind-Value="Model.DueDate" Format="MM/dd/yyyy" ID="dateDue" StrictMode="false" Max="@(DateTime.Today.AddMonths(6))" Min="@(DateTime.Today.AddMonths(-3))" 
                                           OpenOnFocus="true" Placeholder="Start Date" TValue="DateTime">
                             </SfDatePicker>
                         </Template>

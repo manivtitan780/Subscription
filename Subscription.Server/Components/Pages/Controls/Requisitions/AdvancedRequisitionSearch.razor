@@ -23,7 +23,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Company)">
 						<Template>
-							<DropDown @bind-Value="Model.Company" Model="Companies" ID="dropCompany" TItem="Company" TValue="string" Placeholder="Company" Text="CompanyName" Key="CompanyName" ShowClearButton="true"/>
+							<DropDown AllowFilter="true" @bind-Value="Model.Company" Model="Companies" ID="dropCompany" TItem="Company" TValue="string" Placeholder="Company" Text="CompanyName" Key="CompanyName" ShowClearButton="true"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="2" Field="@nameof(Model.Option)">

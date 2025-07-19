@@ -35,7 +35,7 @@
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.2" />
-        <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.47" />
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     </ItemGroup>
 

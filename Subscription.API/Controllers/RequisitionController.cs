@@ -8,7 +8,7 @@
 // File Name:           RequisitionController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          07-16-2025 16:07
-// Last Updated On:     07-16-2025 19:55
+// Last Updated On:     07-19-2025 20:16
 // *****************************************/
 
 #endregion
@@ -16,7 +16,7 @@
 namespace Subscription.API.Controllers;
 
 [ApiController, Route("api/[controller]/[action]"), SuppressMessage("ReSharper", "UnusedMember.Local")]
-public class RequisitionController(SmtpClient smtpClient) : ControllerBase
+public partial class RequisitionController(SmtpClient smtpClient) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<string>> ChangeRequisitionStatus(int requisitionID, string statusCode, string user)
@@ -30,11 +30,10 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> DeleteRequisitionDocument([FromQuery] int documentID, [FromQuery] string user)
+    public async Task<ActionResult<string>> DeleteRequisitionDocument(int documentID, string user)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
         await _connection.OpenAsync();
-        //List<RequisitionDocuments> _documents = [];
         try
         {
             string _documents = "[]";
@@ -43,17 +42,12 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             _command.Int("RequisitionDocId", documentID);
             _command.Varchar("User", 10, user);
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
+            
             _reader.NextResult();
-            // Memory optimization: Replace while loop with if statement for single record
             if (_reader.Read())
             {
                 _documents = _reader.NString(0);
-                /*_documents.Add(new(_reader.GetInt32(0), _reader.GetInt32(1), _reader.NString(2), _reader.NString(3),
-                                   _reader.NString(6), $"{_reader.NDateTime(5)} [{_reader.NString(4)}]", _reader.NString(7),
-                                   _reader.GetString(8)));*/
             }
-
-            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             return Ok(_documents);
         }
@@ -64,7 +58,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
         }
     }
 
-    // Memory optimization: Centralized query execution helpers to eliminate connection leaks and code duplication
     private async Task<ActionResult<string>> ExecuteQueryAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -84,12 +77,10 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
             return StatusCode(500, errorMessage);
         }
-        // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
         return Ok(_result);
     }
 
-    // Memory optimization: ExecuteReaderAsync helper for complex data retrieval operations
     private async Task<ActionResult<T>> ExecuteReaderAsync<T>(string procedureName, Action<SqlCommand> parameterBinder, Func<SqlDataReader, Task<T>> readerProcessor, string logContext,
                                                               string errorMessage)
     {
@@ -111,10 +102,8 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
             return StatusCode(500, errorMessage);
         }
-        // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
     }
 
-    // Memory optimization: ExecuteScalarAsync helper for single value operations
     private async Task<ActionResult<T>> ExecuteScalarAsync<T>(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -134,15 +123,13 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
             return StatusCode(500, errorMessage);
         }
-        // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
     }
 
-    // Memory optimization: Efficient string building for location generation
     private static string GenerateLocation(RequisitionDetails requisition, string stateName)
     {
         List<string> _parts = [];
 
-        if (requisition.City.NotNullOrWhiteSpace())
+        if (requisition.City.NotNullOrWhiteSpace() && !stateName.Contains(requisition.City))
         {
             _parts.Add(requisition.City);
         }
@@ -188,8 +175,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
         _command.Bit("ThenProceed", thenProceed);
         _command.Varchar("LoggedUser", 10, user);
 
-        // string _companies = "[]";
-        // string _companyContacts = "[]";
         try
         {
             string _requisitions = "[]", _statusCount = "[]";
@@ -201,9 +186,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             if (requisitionID > 0 && !thenProceed)
             {
                 _page = _reader.GetInt32(0);
-                // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
-
-                // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
                 return new ReturnGridRequisition {Page = _page};
             }
@@ -212,7 +194,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
 
             await _reader.NextResultAsync();
 
-            // Memory optimization: Replace while loop with if statement for single record
             if (await _reader.ReadAsync())
             {
                 _requisitions = _reader.NString(0);
@@ -221,7 +202,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             await _reader.NextResultAsync();
             if (getCompanyInformation)
             {
-                // Memory optimization: Replace while loop with if statement for single record
                 if (await _reader.ReadAsync())
                 {
                     _statusCount = _reader.NString(0);
@@ -230,13 +210,11 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
 
             await _reader.NextResultAsync();
             _page = reqSearch.Page;
-            // Memory optimization: Replace while loop with if statement for single record
+            
             if (await _reader.ReadAsync())
             {
                 _page = _reader.GetInt32(0);
             }
-
-            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             return Ok(new
                       {
@@ -266,7 +244,7 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ReturnRequisitionDetails>> GetRequisitionDetails([FromQuery] int requisitionID, [FromQuery] string roleID = "RC")
+    public async Task<ActionResult<ReturnRequisitionDetails>> GetRequisitionDetails(int requisitionID, string roleID = "RC")
     {
         if (requisitionID == 0)
         {
@@ -339,9 +317,7 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, [FromQuery] string user, [FromQuery] string jsonPath = "",
-                                                         [FromQuery]
-                                                         string emailAddress = "maniv@titan-techs.com")
+    public async Task<ActionResult<int>> SaveRequisition(RequisitionDetails requisition, string user, string jsonPath = "", string emailAddress = "maniv@titan-techs.com")
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
         await using SqlCommand _command = new("SaveRequisition", _connection);
@@ -388,7 +364,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            // Memory optimization: Replace while loop with if statement for single record
             if (await _reader.ReadAsync())
             {
                 _reqCode = _reader.NString(0);
@@ -411,13 +386,10 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
 
             await _reader.NextResultAsync();
             string _stateName = "";
-            // Memory optimization: Replace while loop with if statement for single record
             if (await _reader.ReadAsync())
             {
                 _stateName = _reader.GetString(0);
             }
-
-            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             if (_templates.Count <= 0)
             {
@@ -434,24 +406,20 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
                 }
             }
 
-            _templateSingle.Subject = _templateSingle.Subject.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                     .Replace("$REQ_ID$", _reqCode)
-                                                     .Replace("$REQ_TITLE$", requisition.PositionTitle)
-                                                     .Replace("$COMPANY$", requisition.CompanyName)
-                                                     .Replace("$DESCRIPTION$", requisition.Description)
-                                                     .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
-                                                     .Replace("$LOGGED_USER$", user);
-            _templateSingle.Template = _templateSingle.Template.Replace("$TODAY$", DateTime.Today.CultureDate())
-                                                      .Replace("$REQ_ID$", _reqCode)
-                                                      .Replace("$REQ_TITLE$", requisition.PositionTitle)
-                                                      .Replace("$COMPANY$", requisition.CompanyName)
-                                                      .Replace("$DESCRIPTION$", requisition.Description)
-                                                      .Replace("$LOCATION$", GenerateLocation(requisition, _stateName))
-                                                      .Replace("$LOGGED_USER$", user);
-
-            /*GMailSend _send = new();
-                GMailSend.SendEmail(jsonPath, emailAddress, _emailCC, _emailAddresses, _templateSingle.Subject, _templateSingle.Template, null);*/
-            // Memory optimization: Use injected SmtpClient instead of creating new instances
+            _templateSingle.Subject = _templateSingle.Subject.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                     .Replace("{RequisitionID}", _reqCode)
+                                                     .Replace("{RequisitionTitle}", requisition.PositionTitle)
+                                                     .Replace("{Company}", requisition.CompanyName)
+                                                     .Replace("{RequisitionDescription}", requisition.Description)
+                                                     .Replace("{RequisitionLocation}", GenerateLocation(requisition, _stateName))
+                                                     .Replace("{LoggedInUser}", user);
+            _templateSingle.Template = _templateSingle.Template.Replace("{TODAY}", DateTime.Today.CultureDate())
+                                                      .Replace("{RequisitionID}", _reqCode)
+                                                      .Replace("{RequisitionTitle}", requisition.PositionTitle)
+                                                      .Replace("{Company}", requisition.CompanyName)
+                                                      .Replace("{RequisitionDescription}", requisition.Description)
+                                                      .Replace("{RequisitionLocation}", GenerateLocation(requisition, _stateName))
+                                                      .Replace("{LoggedInUser}", user);
 
             MailMessage _mailMessage = new()
                                        {
@@ -525,8 +493,6 @@ public class RequisitionController(SmtpClient smtpClient) : ControllerBase
             {
                 _returnVal = _reader.NString(0);
             }
-
-            // Memory optimization: Removed manual CloseAsync() - await using handles disposal automatically
 
             return Ok(_returnVal);
         }

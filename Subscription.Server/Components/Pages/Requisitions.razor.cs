@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     06-13-2025 20:05
+// Created On:          07-11-2025 19:07
+// Last Updated On:     07-19-2025 15:40
 // *****************************************/
 
 #endregion
@@ -69,7 +69,7 @@ public partial class Requisitions
 
     private DocumentsPanel DocumentsPanel { get; set; }
 
-    public EditContext EditConNotes { get; set; }
+    //public EditContext EditConNotes { get; set; }
 
     private SfGrid<Requisition> Grid { get; set; }
 
@@ -97,7 +97,7 @@ public partial class Requisitions
 
     private int RequisitionID { get; set; }
 
-    public EditNotesDialog RequisitionNotesDialog { get; set; }
+    private EditNotesDialog RequisitionNotesDialog { get; set; }
 
     private int RoleID { get; } = 5;
 
@@ -332,7 +332,7 @@ public partial class Requisitions
                                                             SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
                                                         }
 
-                                                        EditConNotes = new(SelectedNotes!);
+                                                        //EditConNotes = new(SelectedNotes!);
                                                         VisibleSpinner = false;
                                                         await Task.Yield();
                                                         await RequisitionNotesDialog.ShowDialog().ConfigureAwait(false);
@@ -524,8 +524,8 @@ public partial class Requisitions
 
                                 if (_companyList?.Count > 0)
                                 {
-                                    IEnumerable<Company> _filtered = _companyList.Where(c => c.UpdatedBy == User || c.UpdatedBy == "ADMIN")
-                                                                                 .Select(c => new Company {ID = c.ID, CompanyName = c.CompanyName});
+                                    IEnumerable<Company> _filtered = _companyList.Select(c => new Company {ID = c.ID, CompanyName = c.CompanyName});
+                                    //.Where(c => c.UpdatedBy == User ||c.CreatedBy == User || c.UpdatedBy == "ADMIN")
 
                                     Companies.AddRange(_filtered);
                                 }

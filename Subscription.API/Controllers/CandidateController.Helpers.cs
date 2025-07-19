@@ -154,7 +154,7 @@ public partial class CandidateController
     {
         Dictionary<string, string> replacements = new()
         {
-            {"$TODAY$", DateTime.Today.CultureDate()},
+            {"{TODAY}", DateTime.Today.CultureDate()},
             {"$CANDIDATE_NAME$", $"{candidateDetails.FirstName} {candidateDetails.LastName}"},
             {"$CANDIDATE_EMAIL$", candidateDetails.Email},
             {"$USER_NAME$", userName},
@@ -169,11 +169,11 @@ public partial class CandidateController
     {
         Dictionary<string, string> replacements = new()
         {
-            {"$TODAY$", DateTime.Today.CultureDate()},
+            {"{TODAY}", DateTime.Today.CultureDate()},
             {"$CANDIDATE_NAME$", $"{firstName} {lastName}"},
             {"$REQ_CODE$", reqCode},
-            {"$REQ_TITLE$", reqTitle},
-            {"$COMPANY$", company},
+            {"{RequisitionTitle}", reqTitle},
+            {"{Company}", company},
             {"$SUBMISSION_NOTES$", submissionNotes},
             {"$SUBMISSION_STATUS$", submissionStatus},
             {"$USER_NAME$", user}
