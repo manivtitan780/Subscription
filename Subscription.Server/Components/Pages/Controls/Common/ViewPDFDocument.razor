@@ -1,4 +1,4 @@
-﻿<SfDialog AllowPrerender="true" CloseOnEscape="false" ID="dialogPdf" IsModal="true" MinHeight="85vh" @ref="Dialog" ShowCloseIcon="true" style="height: 85vh;" Target="#divTarget" Visible="false" Width="75vw">
+﻿<SfDialog AllowPrerender="true" CloseOnEscape="false" ID="dialogPdf" IsModal="true" MinHeight="90vh" @ref="Dialog" ShowCloseIcon="true" style="height: 90vh;" Target="#divTarget" Visible="false" Width="85vw">
 	<DialogPositionData X="center" Y="center"/>
 	<DialogAnimationSettings Duration="500" Effect="DialogEffect.Fade"/>
 	<DialogEvents OnOverlayModalClick="OverlayClick" Opened="OpenDialog" Closed="CloseDialog"/>
@@ -6,7 +6,7 @@
 		<Header>@($"Document: {DocumentName} ({DocumentLocation})")</Header>
 		<Content>
 			<SfSpinner CssClass="spinnerHeight" @ref="Spinner" Type="SpinnerType.Fluent2" ZIndex="12000"/>
-			<SfPdfViewer2 DownloadFileName="@DownloadFileName" EnableErrorDialog="false" Height="calc(85vh - 85px)" @ref="PdfViewer">
+			<SfPdfViewer2 DownloadFileName="@DownloadFileName" EnableErrorDialog="false" Height="calc(90vh - 85px)" @ref="PdfViewer">
 				<PdfViewerToolbarSettings ToolbarItems="_toolbarItems" ShowTooltip="false"></PdfViewerToolbarSettings>
 			</SfPdfViewer2>
 		</Content>

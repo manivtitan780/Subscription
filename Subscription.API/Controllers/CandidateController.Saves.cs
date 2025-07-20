@@ -515,7 +515,7 @@ public partial class CandidateController
     {
         return await ExecuteQueryAsync("UndoCandidateActivity", command =>
                                                                 {
-                                                                    command.Int("SubmissionID", submissionID);
+                                                                    command.Int("ID", submissionID);
                                                                     command.Varchar("User", 10, user);
                                                                     command.Char("RoleID", 2, roleID);
                                                                     command.Bit("CandScreen", isCandidateScreen);
