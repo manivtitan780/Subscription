@@ -58,7 +58,6 @@ public partial class CompanyController : ControllerBase
                                                                  }, "DeleteCompanyDocument", "Error deleting company document.");
     }
 
-    // Helper method for boolean operations
     private async Task<ActionResult<bool>> ExecuteBooleanAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -82,7 +81,6 @@ public partial class CompanyController : ControllerBase
         return Ok(_result);
     }
 
-    // Helper method for scalar operations returning string
     private async Task<ActionResult<string>> ExecuteScalarAsync(string procedureName, Action<SqlCommand> parameterBinder, string logContext, string errorMessage)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -106,7 +104,6 @@ public partial class CompanyController : ControllerBase
         return Ok(_result);
     }
 
-    // Helper method for multi-resultset operations
     private async Task<ActionResult<T>> ExecuteReaderAsync<T>(string procedureName, Action<SqlCommand> parameterBinder, Func<SqlDataReader, Task<T>> resultProcessor, string logContext, string errorMessage)
     {
         await using SqlConnection _connection = new(Start.ConnectionString);
@@ -165,35 +162,35 @@ public partial class CompanyController : ControllerBase
             // Company Details
             if (await reader.ReadAsync())
             {
-                _company = reader.NString(0);
+                _company = reader.NString(0, "[]");
             }
 
             // Company Locations
             await reader.NextResultAsync();
             if (await reader.ReadAsync())
             {
-                _locations = reader.NString(0);
+                _locations = reader.NString(0, "[]");
             }
 
             // Company Contacts
             await reader.NextResultAsync();
             if (await reader.ReadAsync())
             {
-                _contacts = reader.NString(0);
+                _contacts = reader.NString(0, "[]");
             }
 
             // Company Documents
             await reader.NextResultAsync();
             if (await reader.ReadAsync())
             {
-                _documents = reader.NString(0);
+                _documents = reader.NString(0, "[]");
             }
 
             // Company Requisitions
             await reader.NextResultAsync();
             if (await reader.ReadAsync())
             {
-                _requisitions = reader.NString(0);
+                _requisitions = reader.NString(0, "[]");
             }
 
             return new ReturnCompanyDetails(_company, _contacts, _locations, _documents, _requisitions);
@@ -215,8 +212,8 @@ public partial class CompanyController : ControllerBase
     ///     - "Companies": A list of companies matching the search parameters.
     ///     - "Count": The total number of companies matching the search parameters.
     /// </returns>
-    [HttpGet]
-    public async Task<ActionResult<ReturnGrid>> GetGridCompanies([FromQuery] CompanySearch searchModel, bool getMasterTables = true)
+    [HttpPost]
+    public async Task<ActionResult<ReturnGrid>> GetGridCompanies(CompanySearch searchModel, bool getMasterTables = true)
     {
         return await ExecuteReaderAsync("GetCompanies", command =>
         {

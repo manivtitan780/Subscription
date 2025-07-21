@@ -129,7 +129,7 @@
 													<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"/>
 													<PanelDisplayText Label="EIN#" Text="@(FormatEIN(_companyDetails.EIN))"/>
 													<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"/>
-													<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.FormatPhoneNumber())"/>
+													<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.StripAndFormatPhoneNumber())"/>
 													<PanelDisplayText Label="Address" MarkupText="@(Address)"/>
 													<PanelDisplayText Label="D-U-N-S Number" Text="@(FormatDUNS(_companyDetails.DUNS))"/>
 													<PanelDisplayText Label="NAICS Code" Text="@(_companyDetails.NAICSCode == 0 ? "" : $"[{_companyDetails.NAICSCode}] - {_companyDetails.NAICS}")"/>

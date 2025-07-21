@@ -52,7 +52,7 @@ public partial class Companies
 
     private DocumentPanel DocumentPanel { get; set; }
 
-    public EditContext EditConCompany { get; set; }
+    //public EditContext EditConCompany { get; set; }
 
     public EditContext EditConContact { get; set; }
 
@@ -181,7 +181,7 @@ public partial class Companies
                                                                                                     await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
                                                                                                                                                     false);
 
-                                                                                                EditConCompany = new(_companyDetails);
+                                                                                                //EditConCompany = new(_companyDetails);
                                                                                                 try
                                                                                                 {
                                                                                                     _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
@@ -394,13 +394,13 @@ public partial class Companies
 
     private async Task Refresh(MouseEventArgs arg) => await SetDataSource().ConfigureAwait(false);
 
-    private async Task RowSelected(RowSelectEventArgs<Company> company)
+    private void RowSelected(RowSelectEventArgs<Company> company)
     {
-        if (_selectedRowIndex != -1 && _selectedRowIndex != company.RowIndex)
+        /*if (_selectedRowIndex != -1 && _selectedRowIndex != company.RowIndex)
         {
             await Grid.CollapseAllDetailRowAsync();
             await Grid.ExpandCollapseDetailRowAsync(company.Data);
-        }
+        }*/
 
         _selectedRowIndex = company.RowIndex;
     }
@@ -508,7 +508,7 @@ public partial class Companies
 
     private async Task SetDataSource()
     {
-        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, false);
+        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, true);
         DataSource = Count > 0 ? General.DeserializeObject<List<Company>>(_data) : [];
         await Grid.Refresh().ConfigureAwait(false);
     }
