@@ -35,7 +35,7 @@ global using Microsoft.Extensions.Primitives;
 global using Microsoft.JSInterop;
 // Updated: Added System.Text.Json and Serilog for performance optimizations
 global using System.Text.Json;
-// TODO: Add after Serilog package installation: global using Serilog;
+global using Serilog;
 global using Newtonsoft.Json; // TODO: Remove after complete migration to System.Text.Json
 //global using Microsoft.Extensions.Logging;
 //global using Subscription.Server.Components.Pages.Controls.Common;

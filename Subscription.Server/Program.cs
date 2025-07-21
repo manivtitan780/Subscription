@@ -16,9 +16,8 @@
 #region Using
 
 using Microsoft.AspNetCore.ResponseCompression;
-// TODO: Add Serilog imports after package installation
-// using Serilog;
-// using Serilog.Sinks.MSSqlServer;
+using Serilog;
+// Database sink removed - Server project doesn't access DB directly
 
 using Subscription.Server.Components;
 
@@ -78,17 +77,19 @@ _builder.Services.AddSingleton<ZipCodeService>();
 // Note: RestClient singleton removed - will use dynamic host detection in ExecuteRest
 // This allows proper localhost vs server host detection per request
 
-// TODO: Enable Serilog after confirming database connection and package installation
-/*
+// Enable Serilog for comprehensive exception logging
+
 Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Error()
             .WriteTo.Console()
-            .WriteTo.MSSqlServer(_config.GetConnectionString("DBConnect"),
-                                 new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true})
+            .WriteTo.File(Path.Combine(Directory.GetCurrentDirectory(), "logs", "subscription-server-.log"), 
+                         rollingInterval: RollingInterval.Day,
+                         retainedFileCountLimit: 7,
+                         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
-
+            // Database logging removed - this project doesn't have direct DB access
+            // All DB logging should be handled by the API project
 _builder.Host.UseSerilog();
-*/
 
 WebApplication _app = _builder.Build();
 
