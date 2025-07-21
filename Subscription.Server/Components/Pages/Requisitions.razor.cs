@@ -28,7 +28,7 @@ public partial class Requisitions
     private MarkupString _reqDetailSkills = "".ToMarkupString();
     private RequisitionDetails _reqDetailsObject = new(), _reqDetailsObjectClone = new();
     private List<RequisitionDocuments> _reqDocumentsObject = [];
-    private List<CandidateNotes> _reqNotesObject;
+    private List<CandidateNotes> _reqNotesObject = [];
 
     private List<string> _search = [];
 

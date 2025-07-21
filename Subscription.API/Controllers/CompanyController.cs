@@ -157,7 +157,7 @@ public partial class CompanyController : ControllerBase
             command.Varchar("User", 10, user);
         }, async reader =>
         {
-            string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]";
+            string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]", _notes = "[]";
             
             // Company Details
             if (await reader.ReadAsync())
@@ -178,6 +178,13 @@ public partial class CompanyController : ControllerBase
             {
                 _contacts = reader.NString(0, "[]");
             }
+            
+            // Company Notes
+            await reader.NextResultAsync();
+            if (await reader.ReadAsync())
+            {
+                _notes = reader.NString(0, "[]");
+            }
 
             // Company Documents
             await reader.NextResultAsync();
@@ -193,7 +200,7 @@ public partial class CompanyController : ControllerBase
                 _requisitions = reader.NString(0, "[]");
             }
 
-            return new ReturnCompanyDetails(_company, _contacts, _locations, _documents, _requisitions);
+            return new ReturnCompanyDetails(_company, _contacts, _locations, _documents, _requisitions, _notes);
         }, "GetCompanyDetails", "Error fetching company details.");
     }
 
@@ -324,7 +331,7 @@ public partial class CompanyController : ControllerBase
                 _companyLocations = reader.NString(0);
             }
 
-            return new ReturnCompanyDetails(_companyDetails, "[]", _companyLocations, "[]", "[]");
+            return new ReturnCompanyDetails(_companyDetails, "[]", _companyLocations, "[]", "[]", "[]");
         }, "SaveCompany", "Error saving company details.");
     }
 

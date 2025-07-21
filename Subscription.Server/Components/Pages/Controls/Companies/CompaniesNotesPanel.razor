@@ -1,0 +1,44 @@
+<div>
+	<SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" ID="gridNotes" @ref="GridNotes" RowHeight="@RowHeight" SelectedRowIndex="0" TValue="CandidateNotes" Width="100%">
+		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+		<GridEvents RowSelected="RowSelected" TValue="CandidateNotes"/>
+		<GridColumns>
+			<GridColumn Field="@nameof(CandidateNotes.Notes)" HeaderText="Notes" Width="75%">
+				<Template Context="aCon">
+					@{
+						if (aCon is CandidateNotes _con)
+						{
+							<span title="@_con.Notes.Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine)" style="line-height: 1.5">
+								@(_con.Notes.ToMarkupString())
+							</span>
+						}
+					}
+				</Template>
+			</GridColumn>
+			<GridColumn Field="@nameof(CandidateNotes.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false"/>
+			<GridColumn HeaderText="Updated" Width="15%">
+				<Template Context="aCon">
+					@{
+						if (aCon is CandidateNotes _con)
+						{
+							<span>@($"{_con.UpdatedDate.ToString("d", new CultureInfo("en-us"))} [{_con.UpdatedBy}]")</span>
+						}
+					}
+				</Template>
+			</GridColumn>
+			<GridColumn Width="10%">
+				<Template Context="bCon">
+					@{
+						if (bCon is CandidateNotes _con && _con.UpdatedBy == UserName && EditRights)
+						{
+							<div class="buttonContain">
+								<SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditNotesDialog(_con.ID)"/>
+								<SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteNotesMethod(_con.ID)"/>
+							</div>
+						}
+					}
+				</Template>
+			</GridColumn>
+		</GridColumns>
+	</SfGrid>
+</div>

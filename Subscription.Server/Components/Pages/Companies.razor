@@ -136,7 +136,7 @@
 													<PanelDisplayText Label="Status" Text="@(_companyDetails.Status ? "Active" : "Inactive")"/>
 												</div>
 												<div class="rightLayout">
-													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" MarkupText="@(_companyDetails.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
+													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Description:" MarkupText="@(_companyDetails.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
 												</div>
 											</div>
 										</ContentTemplate>
@@ -155,6 +155,14 @@
 										</ChildContent>
 										<ContentTemplate>
 											<ContactPanel EditCompanyContact="EditCompanyContact" Model="_companyContacts" @ref="PanelContacts"/>
+										</ContentTemplate>
+									</TabItem>
+									<TabItem>
+										<ChildContent>
+											<TabHeader Text="Notes"/>
+										</ChildContent>
+										<ContentTemplate>
+											<CompaniesNotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" Model="@_companyNotesObject" EditRights="HasEditRights" @ref="NotesPanel" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>

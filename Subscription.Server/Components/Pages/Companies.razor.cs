@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     05-20-2025 20:11
+// Created On:          07-11-2025 19:07
+// Last Updated On:     07-21-2025 19:39
 // *****************************************/
 
 #endregion
@@ -25,6 +25,7 @@ public partial class Companies
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
+    private List<CandidateNotes> _companyNotesObject = [];
     private List<Requisition> _companyRequisitions = [];
 
     private int _selectedRowIndex = -1;
@@ -78,6 +79,8 @@ public partial class Companies
     private NavigationManager NavManager { get; set; }
 
     private CompanyDocuments NewDocument { get; } = new();
+
+    private CompaniesNotesPanel NotesPanel { get; set; }
 
     private ContactPanel PanelContacts { get; set; }
 
@@ -140,6 +143,13 @@ public partial class Companies
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                 });
 
+    private Dictionary<string, string> CreateParameters(int id) => new()
+                                                                   {
+                                                                       {"id", id.ToString()},
+                                                                       {"companyID", _target.ID.ToString()},
+                                                                       {"user", User}
+                                                                   };
+
     private Task DataHandler() => ExecuteMethod(async () =>
                                                 {
                                                     DotNetObjectReference<Companies> _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
@@ -157,6 +167,14 @@ public partial class Companies
                                                                                                                                                new() {{"documentID", arg.ToString()}, {"user", User}})
                                                                                                       .ConfigureAwait(false);
                                                                  });
+
+    private Task DeleteNotes(int id) => ExecuteMethod(async () =>
+                                                      {
+                                                          Dictionary<string, string> _parameters = CreateParameters(id);
+                                                          string _response = await General.ExecuteRest<string>("Company/DeleteNotes", _parameters);
+
+                                                          _companyNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                      });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
                                                                                             {
@@ -177,17 +195,18 @@ public partial class Companies
                                                                                                                                              {"companyID", _target.ID.ToString()},
                                                                                                                                              {"user", User}
                                                                                                                                          };
-                                                                                                (string _company, string _contacts, string _locations, string _documents, string _requisitions) =
+                                                                                                (string _company, string _contacts, string _locations, string _documents, string _requisitions,
+                                                                                                 string _notes) =
                                                                                                     await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
                                                                                                                                                     false);
 
-                                                                                                //EditConCompany = new(_companyDetails);
                                                                                                 try
                                                                                                 {
                                                                                                     _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
-                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
-                                                                                                    _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
                                                                                                     _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? [];
+                                                                                                    _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? [];
+                                                                                                    _companyNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? [];
+                                                                                                    _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
                                                                                                     _companyRequisitions = General.DeserializeObject<List<Requisition>>(_requisitions) ?? [];
                                                                                                     SetupAddress();
                                                                                                 }
@@ -288,6 +307,28 @@ public partial class Companies
                                                                  VisibleSpinner = false;
                                                                  await CompanyLocationDialog.ShowDialog();
                                                              });
+
+    private Task EditNotes(int id) => ExecuteMethod(async () =>
+                                                    {
+                                                        VisibleSpinner = true;
+                                                        if (id == 0)
+                                                        {
+                                                            /*if (SelectedNotes == null)
+                                                            {
+                                                                SelectedNotes = new();
+                                                            }
+                                                            else
+                                                            {
+                                                                SelectedNotes.Clear();
+                                                            }*/
+                                                        }
+
+                                                        /*SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();*/
+                                                        //EditConNotes = new(SelectedNotes!);
+                                                        VisibleSpinner = false;
+                                                        await Task.Yield();
+                                                        //await CompaniesNotesDialog.ShowDialog().ConfigureAwait(false);
+                                                    });
 
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
@@ -409,8 +450,9 @@ public partial class Companies
                                                             {
                                                                 // Dictionary<string, string> _parameters = new() {{"user", User}};
 
-                                                                (string _company, _, string _locations, _, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany", UserParameters(),
-                                                                                                                                                                _companyDetailsClone);
+                                                                (string _company, _, string _locations, _, _, _) = await General.ExecuteRest<ReturnCompanyDetails>("Company/SaveCompany",
+                                                                                                                                                                   UserParameters(),
+                                                                                                                                                                   _companyDetailsClone);
                                                                 _companyDetails = General.DeserializeObject<CompanyDetails>(_company);
                                                                 _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations);
 
@@ -508,7 +550,7 @@ public partial class Companies
 
     private async Task SetDataSource()
     {
-        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel, true);
+        (string _data, Count) = await General.ExecuteRest<ReturnGrid>("Company/GetGridCompanies", null, SearchModel);
         DataSource = Count > 0 ? General.DeserializeObject<List<Company>>(_data) : [];
         await Grid.Refresh().ConfigureAwait(false);
     }
@@ -685,7 +727,7 @@ public partial class Companies
                 _requisitionSearch.Status = "";
                 await SessionStorage.SetItemAsync("RequisitionGrid", _requisitionSearch);
                 NavManager.NavigateTo($"{NavManager.BaseUri}requisition", true);
-                
+
                 break;
             }
         }
