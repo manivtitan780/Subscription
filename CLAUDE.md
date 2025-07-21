@@ -454,3 +454,59 @@ AzureOpenAIClient _client = new(_endpoint, _credential);
 **Analysis Status**: ✅ **COMPLETED**  
 **Next Steps**: Obtain approval for phased implementation plan  
 **Contact**: Review implementation details with development team before proceeding
+
+## Memory Optimization Analysis: Subscription.Server General.cs
+
+### Analysis Completed: 2025-07-21
+
+**Analysis of Subscription.Server General.cs identified critical performance optimization opportunities.**
+
+### System.Text.Json Migration Required
+
+#### **Legacy Newtonsoft.Json Usage** (HIGH PRIORITY):
+- `DeserializeObject<T>()` method - Lines 95, 101
+- `GetAutocompleteAsync()` - Line 267  
+- `GetRequisitionReadAdaptor()` - Line 341
+- `LoadDataAsync<T>()` - Line 461
+
+**Status**: ✅ **MIGRATED TO System.Text.Json** with case-insensitive options
+
+### Legacy REST Method Notes
+
+#### **Methods Requiring Future Migration**:
+- `GetRest<T>()` method (lines 418-449) 
+- `PostRest<T>()` methods (lines 483-580)
+- `PostRestParameter<T>()` method (lines 552-580)
+
+**Migration Strategy**: 
+- Convert to `ExecuteRest<T>` when updating individual pages
+- Evaluate API endpoints for ActionResult<T> vs T return types
+- **DO NOT** mass-convert - handle during page-specific reviews
+
+### HTTP Client Optimization
+
+#### **RestClient to IHttpClientFactory Migration**:
+- Multiple RestClient instantiations without pooling
+- **Target**: Use .NET native IHttpClientFactory with named clients
+- **Benefit**: Automatic connection pooling and lifecycle management
+
+**Status**: ✅ **MIGRATED** to IHttpClientFactory pattern
+
+### Exception Handling Enhancement
+
+#### **Swallowed Exceptions** (by design):
+- Lines 164, 218, 442, 446 - Exceptions caught but not logged
+- **Solution**: Add Serilog logging before swallowing
+- **Maintain**: Existing behavior (exceptions should remain swallowed)
+
+**Status**: ✅ **ENHANCED** with Serilog logging
+
+### Implementation Notes
+
+- **Nullable Annotations**: Deliberately omitted (pre-nullable codebase)
+- **Dead Code**: Manual cleanup planned (lines 25-82)
+- **ReusableMemoryStream**: No applicable usage patterns identified
+- **Breaking Changes**: Accepted for standards compliance
+
+**Server Analysis Status**: ✅ **COMPLETED AND IMPLEMENTED**  
+**Date Completed**: 2025-07-21

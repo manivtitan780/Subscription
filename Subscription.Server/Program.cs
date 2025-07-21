@@ -16,6 +16,9 @@
 #region Using
 
 using Microsoft.AspNetCore.ResponseCompression;
+// TODO: Add Serilog imports after package installation
+// using Serilog;
+// using Serilog.Sinks.MSSqlServer;
 
 using Subscription.Server.Components;
 
@@ -72,17 +75,25 @@ _builder.Services.AddSingleton<RedisService>(_ =>
 
 _builder.Services.AddSingleton<ZipCodeService>();
 
+// Note: RestClient singleton removed - will use dynamic host detection in ExecuteRest
+// This allows proper localhost vs server host detection per request
+
+// TODO: Enable Serilog after confirming database connection and package installation
 /*
 Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Error()
             .WriteTo.Console()
             .WriteTo.MSSqlServer(_config.GetConnectionString("DBConnect"),
-                                 new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true},
-                                 columnOptions: columnOptions).CreateLogger();
+                                 new MSSqlServerSinkOptions {TableName = "Logs", AutoCreateSqlTable = true})
+            .CreateLogger();
 
-_builder.Host.UseSerilog();*/
+_builder.Host.UseSerilog();
+*/
 
 WebApplication _app = _builder.Build();
+
+// RestClient will be created dynamically in ExecuteRest using Start.APIHost
+// No DI initialization needed
 
 // Configure the HTTP request pipeline.
 if (!_app.Environment.IsDevelopment())

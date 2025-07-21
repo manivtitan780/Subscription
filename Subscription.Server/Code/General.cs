@@ -13,11 +13,27 @@
 
 #endregion
 
+using Serilog;
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 namespace Subscription.Server.Code;
 
 public class General //(Container container)
 {
     // private Container _container = container;
+    
+    // Dynamic RestClient creation using current Start.APIHost (set by middleware based on request context)
+    // This allows proper localhost vs server detection per request
+
+    // Standardized JsonSerializerOptions for consistent case-insensitive JSON handling across the application
+    internal static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        AllowTrailingCommas = true
+    };
 
     // public General() : this(null)
     // {
@@ -81,8 +97,9 @@ public class General //(Container container)
         }
     }*/
 
+    // Updated to use System.Text.Json with case-insensitive options for better performance
     /// <summary>
-    ///     Deserializes a JSON string to an object of a specified type.
+    ///     Deserializes a JSON string to an object of a specified type using System.Text.Json.
     /// </summary>
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
@@ -92,13 +109,13 @@ public class General //(Container container)
     {
         if (!checkForNullOrEmptyArray)
         {
-            return JsonConvert.DeserializeObject<T>(array?.ToString() ?? "");
+            return JsonSerializer.Deserialize<T>(array?.ToString() ?? "", JsonOptions);
         }
 
         string _stringArray = array?.ToString() ?? "";
         if (_stringArray.NotNullOrWhiteSpace() && _stringArray != "[]")
         {
-            return JsonConvert.DeserializeObject<T>(_stringArray);
+            return JsonSerializer.Deserialize<T>(_stringArray, JsonOptions);
         }
 
         return default;
@@ -161,9 +178,10 @@ public class General //(Container container)
             {
                 await task();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Error(ex, "Error occurred. {ExceptionMessage}", ex.Message);
+                // Log exception for debugging while maintaining existing swallow behavior
+                Log.Error(ex, "Error occurred in ExecuteMethod. {ExceptionMessage}", ex.Message);
             }
             finally
             {
@@ -175,6 +193,7 @@ public class General //(Container container)
     public static async Task<T> ExecuteRest<T>(string endpoint, Dictionary<string, string> parameters = null, object jsonBody = null, bool isPost = true, byte[] fileArray = null, string fileName = "",
                                                string parameterName = "file")
     {
+        // Use current Start.APIHost (set by middleware for localhost detection)
         using RestClient _client = new(Start.APIHost);
         RestRequest _request = new(endpoint, isPost ? Method.Post : Method.Get)
                                {
@@ -215,8 +234,10 @@ public class General //(Container container)
         {
             response = await _client.ExecuteAsync<T>(_request);
         }
-        catch //(Exception ex)
+        catch (Exception ex)
         {
+            // Log exception for debugging while maintaining existing swallow behavior
+            Log.Error(ex, "Error in ExecuteRest for endpoint {Endpoint}. {ExceptionMessage}", endpoint, ex.Message);
             response = null;
         }
 
@@ -262,9 +283,10 @@ public class General //(Container container)
 
             string _response = await ExecuteRest<string>(endpoint, _parameters, null, false);
 
+            // Updated to use System.Text.Json with standardized options
             if (_response.NotNullOrWhiteSpace() && _response != "[]")
             {
-                _dataSource = JsonConvert.DeserializeObject<List<KeyValues>>(_response);
+                _dataSource = JsonSerializer.Deserialize<List<KeyValues>>(_response, JsonOptions);
             }
 
             int _count = _dataSource.Count;
@@ -338,7 +360,15 @@ public class General //(Container container)
             (int _count, string _requisitions, string _companies, string _companyContacts, string _status, int _pageNumber) =
                 await ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, searchModel, false);
 
-            _dataSource = _count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];
+            // Updated to use System.Text.Json with standardized options
+            if (_count > 0)
+            {
+                _dataSource = JsonSerializer.Deserialize<List<Requisition>>(_requisitions, JsonOptions);
+            }
+            else
+            {
+                _dataSource = [];
+            }
             searchModel.Page = _pageNumber;
             //_page = searchModel.Page;
 
@@ -442,8 +472,10 @@ public class General //(Container container)
         {
             return await _client.GetAsync<T>(_request);
         }
-        catch
+        catch (Exception ex)
         {
+            // Log exception for debugging while maintaining existing swallow behavior
+            Log.Error(ex, "Error in GetRest for endpoint {Endpoint}. {ExceptionMessage}", endpoint, ex.Message);
             return default;
         }
     }
@@ -458,7 +490,8 @@ public class General //(Container container)
 
         string response = await ExecuteRest<string>("Admin/GetAdminList", parameters, null, false);
 
-        List<T> result = JsonConvert.DeserializeObject<List<T>>(response);
+        // Updated to use System.Text.Json with standardized options
+        List<T> result = JsonSerializer.Deserialize<List<T>>(response, JsonOptions);
 
         return result;
     }
