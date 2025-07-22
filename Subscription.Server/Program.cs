@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Program.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 16:02
-// Last Updated On:     05-12-2025 20:27
+// Created On:          07-21-2025 21:07
+// Last Updated On:     07-21-2025 21:27
 // *****************************************/
 
 #endregion
@@ -16,10 +16,9 @@
 #region Using
 
 using Microsoft.AspNetCore.ResponseCompression;
-using Serilog;
-// Database sink removed - Server project doesn't access DB directly
 
 using Subscription.Server.Components;
+// Database sink removed - Server project doesn't access DB directly
 
 #endregion
 
@@ -39,8 +38,7 @@ _builder.Services.AddSignalR(e =>
                                  e.EnableDetailedErrors = true;
                              });
 _builder.Services.AddScoped<SfDialogService>();
-// _builder.Services.AddScoped<Container>();
-// _builder.Services.AddScoped<Requisitions.RequisitionAdaptor>();
+
 _builder.Services.AddSyncfusionBlazor();
 _builder.Services.AddResponseCompression(options =>
                                          {
@@ -52,17 +50,7 @@ _builder.Services.AddResponseCompression(options =>
 _builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 _builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 _builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-/*_builder.Services.AddSingleton<OpenAIClient>(sp =>
-                                             {
-                                                 // IConfiguration _configService = sp.GetRequiredService<IConfiguration>();
-                                                 string _apiKey = _config["AzureOpenAI:APIKey"];
-                                                 string _endpoint = _config["AzureOpenAI:Endpoint"];
-                                                 OpenAIClientOptions _options = new()
-                                                                                {
-                                                                                    Endpoint = new Uri(_endpoint ?? "")
-                                                                                };
-                                                 return new(new(_apiKey ?? ""), _options);
-                                             });*/
+
 _builder.Services.AddSingleton<RedisService>(_ =>
                                              {
                                                  string host = _config["Garnet:HostName"];
@@ -74,27 +62,19 @@ _builder.Services.AddSingleton<RedisService>(_ =>
 
 _builder.Services.AddSingleton<ZipCodeService>();
 
-// Note: RestClient singleton removed - will use dynamic host detection in ExecuteRest
-// This allows proper localhost vs server host detection per request
-
 // Enable Serilog for comprehensive exception logging
 
 Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Error()
             .WriteTo.Console()
-            .WriteTo.File(Path.Combine(Directory.GetCurrentDirectory(), "logs", "subscription-server-.log"), 
-                         rollingInterval: RollingInterval.Day,
-                         retainedFileCountLimit: 7,
-                         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.File(Path.Combine(Directory.GetCurrentDirectory(), "logs", "subscription-server-.log"),
+                          rollingInterval: RollingInterval.Day,
+                          retainedFileCountLimit: 7,
+                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
-            // Database logging removed - this project doesn't have direct DB access
-            // All DB logging should be handled by the API project
 _builder.Host.UseSerilog();
 
 WebApplication _app = _builder.Build();
-
-// RestClient will be created dynamically in ExecuteRest using Start.APIHost
-// No DI initialization needed
 
 // Configure the HTTP request pipeline.
 if (!_app.Environment.IsDevelopment())

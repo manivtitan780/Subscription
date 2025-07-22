@@ -55,6 +55,7 @@ global using Subscription.Server.Components.Pages.Controls.Requisitions;
 global using Syncfusion.Blazor;
 global using Syncfusion.Blazor.Buttons;
 global using Syncfusion.Blazor.Cards;
+global using Syncfusion.Blazor.Charts;
 global using Syncfusion.Blazor.Data;
 global using Syncfusion.Blazor.DataForm;
 global using Syncfusion.Blazor.DropDowns;
