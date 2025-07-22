@@ -22,7 +22,7 @@ public partial class CompanyInfoPanel
         set;
     }
 
-    public static string FormatDUNS(string input)
+    private static string FormatDUNS(string input)
     {
         if (input.NullOrWhiteSpace() || input.Length != 9)
         {
@@ -32,7 +32,7 @@ public partial class CompanyInfoPanel
         return $"{input[..2]}-{input.Substring(2, 3)}-{input[5..]}";
     }
 
-    public static string FormatEIN(string input)
+    private static string FormatEIN(string input)
     {
         if (input.NullOrWhiteSpace() || input.Length != 9)
         {

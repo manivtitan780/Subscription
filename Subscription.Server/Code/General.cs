@@ -270,9 +270,9 @@ public class General //(Container container)
 
         try
         {
-            Dictionary<string, string> _parameters = new()
+            Dictionary<string, string> _parameters = new(1)
                                                      {
-                                                         {"filter", dm.Where[0].value.ToString()}
+                                                         ["filter"] = dm.Where[0].value.ToString()
                                                      };
 
             if (methodName.NotNullOrWhiteSpace())
@@ -328,7 +328,7 @@ public class General //(Container container)
         return _claims;
     }
 
-    /// <summary>
+    /*/// <summary>
     ///     Asynchronously retrieves a list of requisitions based on the provided search model and data manager request.
     ///     This method also has the ability to fetch additional company information if required.
     /// </summary>
@@ -347,11 +347,13 @@ public class General //(Container container)
         List<Requisition> _dataSource = [];
 
         /*int _itemCount = searchModel.ItemCount;
-        int _page = searchModel.Page;*/
+        int _page = searchModel.Page;#1#
         try
         {
-            Dictionary<string, string> _parameters = new()
+            Dictionary<string, string> _parameters = new(4)
                                                      {
+                                                         ["getCompanyInformation"] = dm.Params["GetInformation"].ToString(),
+                                                         
                                                          {"getCompanyInformation", dm.Params["GetInformation"].ToString()},
                                                          {"requisitionID", dm.Params["RequisitionID"].ToString()},
                                                          {"thenProceed", thenProceed.ToString()},
@@ -377,7 +379,7 @@ public class General //(Container container)
                 return dm.RequiresCounts ? new DataResult
                                            {
                                                Result = null,
-                                               Count = 0 /*_count*/
+                                               Count = 0 /*_count#1#
                                            } : null;
             }
 
@@ -391,7 +393,7 @@ public class General //(Container container)
                 return dm.RequiresCounts ? new DataResult
                                            {
                                                Result = _dataSource,
-                                               Count = _count /*_count*/
+                                               Count = _count /*_count#1#
                                            } : _dataSource;
             }
 
@@ -405,7 +407,7 @@ public class General //(Container container)
             return dm.RequiresCounts ? new DataResult
                                        {
                                            Result = _dataSource,
-                                           Count = _count /*_count*/
+                                           Count = _count /*_count#1#
                                        } : _dataSource;
         }
         catch (Exception)
@@ -427,7 +429,7 @@ public class General //(Container container)
                                            Count = 1
                                        } : _dataSource;
         }
-    }
+    }*/
 
     /// <summary>
     ///     Sends a REST request to the specified endpoint and returns the response as an object of type T.
@@ -482,10 +484,10 @@ public class General //(Container container)
 
     public static async Task<List<T>> LoadDataAsync<T>(string methodName, string filter)
     {
-        Dictionary<string, string> parameters = new()
+        Dictionary<string, string> parameters = new(2)
                                                 {
-                                                    {"methodName", methodName},
-                                                    {"filter", filter ?? string.Empty}
+                                                    ["methodName"] = methodName,
+                                                    ["filter"] = filter ?? string.Empty
                                                 };
 
         string response = await ExecuteRest<string>("Admin/GetAdminList", parameters, null, false);
@@ -626,13 +628,13 @@ public class General //(Container container)
     public static async Task<List<T>> SaveEntityAndRefreshAsync<TRecord, T>(string apiUrl, string methodName, string parameterName, string cacheName, TRecord recordClone,
                                                                             Action<TRecord> updateOriginalRecord, Func<Task> clearFilterCallback)
     {
-        Dictionary<string, string> parameters = new()
+        Dictionary<string, string> parameters = new(5)
                                                 {
-                                                    {"methodName", methodName},
-                                                    {"parameterName", parameterName},
-                                                    {"containDescription", "false"},
-                                                    {"isString", "false"},
-                                                    {"cacheName", cacheName}
+                                                    ["methodName"] = methodName,
+                                                    ["parameterName"] = parameterName,
+                                                    ["containDescription"] = "false",
+                                                    ["isString"] = "false",
+                                                    ["cacheName"] = cacheName
                                                 };
 
         string response = await ExecuteRest<string>(apiUrl, parameters, recordClone);

@@ -241,7 +241,8 @@ public partial class Companies
 																									//
 																								}
 
-																								Dictionary<string, string> _parameters = new()
+																								// Memory optimization: Pre-allocate Dictionary with capacity hint for 2 parameters
+																								Dictionary<string, string> _parameters = new(2)
 																																		 {
 																																			 {"companyID", _target.ID.ToString()},
 																																			 {"user", "ADMIN"}
@@ -431,7 +432,8 @@ public partial class Companies
 
 	private async Task SaveCompany(EditContext editContext) => await ExecuteMethod(async () =>
 																				   {
-																					   Dictionary<string, string> _parameters = new()
+																					   // Memory optimization: Pre-allocate Dictionary with capacity hint for 1 parameter
+																					   Dictionary<string, string> _parameters = new(1)
 																																{
 																																	{"userID", "ADMIN"}
 																																};
@@ -462,7 +464,8 @@ public partial class Companies
 
 	private async Task SaveLocation(EditContext arg) => await ExecuteMethod(async () =>
 																			{
-																				Dictionary<string, string> _parameters = new()
+																				// Memory optimization: Pre-allocate Dictionary with capacity hint for 1 parameter
+																				Dictionary<string, string> _parameters = new(1)
 																														 {
 																															 {"user", "ADMIN"}
 																														 };

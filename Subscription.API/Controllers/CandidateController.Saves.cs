@@ -332,7 +332,7 @@ public partial class CandidateController
         {
             if (mpc == null)
             {
-                return new()
+                return new(2)
                        {
                            {"MPCList", "[]"},
                            {"FirstMPC", null}
@@ -353,7 +353,7 @@ public partial class CandidateController
             // Memory optimization: Use System.Text.Json for processing
             if (_mpcNotes.NullOrWhiteSpace())
             {
-                return new()
+                return new(2)
                        {
                            {"MPCList", "[]"},
                            {"FirstMPC", mpc}
@@ -363,7 +363,7 @@ public partial class CandidateController
             List<CandidateMPC> mpcList = JsonSerializer.Deserialize<List<CandidateMPC>>(_mpcNotes) ?? [];
             if (mpcList.Count == 0)
             {
-                return new()
+                return new(2)
                        {
                            {"MPCList", "[]"},
                            {"FirstMPC", mpc}
@@ -375,7 +375,7 @@ public partial class CandidateController
             mpc.MPC = firstMPC.MPC;
             mpc.MPCComments = firstMPC.Comment;
 
-            return new()
+            return new(2)
                    {
                        {"MPCList", JsonSerializer.Serialize(sortedList)},
                        {"FirstMPC", mpc}
@@ -384,7 +384,7 @@ public partial class CandidateController
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving MPC. {ExceptionMessage}", ex.Message);
-            return new()
+            return new(2)
                    {
                        {"MPCList", "[]"},
                        {"FirstMPC", mpc}

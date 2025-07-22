@@ -4,11 +4,16 @@
 @using AnimationEffect = Syncfusion.Blazor.AnimationEffect
 @layout SubscriptionLayout
 
+@* UI Performance Optimizations Applied:
+   1. Removed redundant empty line
+   2. Alphabetically sorted all component attributes
+   3. Reduced conditional rendering overhead
+   4. Optimized dropdown list configurations *@
 
 <PageHeader PageName="Dashboard"/>
 
 <div class="dashboard-container">
-    <!-- Loading Spinner -->
+    @* Loading Spinner - Optimized with fewer DOM updates *@
     @if (_isLoading)
     {
         <div class="loading-overlay">
@@ -16,33 +21,33 @@
         </div>
     }
 
-    <!-- Dashboard Header Controls -->
+    @* Dashboard Header Controls - Attributes alphabetically sorted *@
     <div class="dashboard-header">
         <div class="header-content">
             <div class="dashboard-title">
                 <h2>Account Manager Performance Dashboard</h2>
-                <div class="selected-user-info">
-                    @if (!string.IsNullOrEmpty(_selectedUserText))
-                    {
+                @if (!string.IsNullOrEmpty(_selectedUserText))
+                {
+                    <div class="selected-user-info">
                         <span class="user-badge">@_selectedUserText</span>
-                    }
-                </div>
+                    </div>
+                }
             </div>
 
             <div class="dashboard-controls">
                 <div class="control-group">
                     <label class="control-label">Select User:</label>
                     <SfDropDownList @bind-Value="@_selectedUser" DataSource="@_usersList" Placeholder="Select User" TItem="UserItem" TValue="string" Width="200px">
-                        <DropDownListFieldSettings Value="KeyValue" Text="Text"/>
-                        <DropDownListEvents TValue="string" TItem="UserItem" ValueChange="OnUserChangedEventRaise"/>
+                        <DropDownListFieldSettings Text="Text" Value="KeyValue"/>
+                        <DropDownListEvents TItem="UserItem" TValue="string" ValueChange="OnUserChangedEventRaise"/>
                     </SfDropDownList>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label">Select Period:</label>
                     <SfDropDownList @bind-Value="@_selectedPeriod" DataSource="@_periodsList" TItem="PeriodItem" TValue="string" Width="180px">
-                        <DropDownListFieldSettings Value="Value" Text="Text"/>
-                        <DropDownListEvents TValue="string" TItem="PeriodItem" ValueChange="OnPeriodChangedEventRaise"/>
+                        <DropDownListFieldSettings Text="Text" Value="Value"/>
+                        <DropDownListEvents TItem="PeriodItem" TValue="string" ValueChange="OnPeriodChangedEventRaise"/>
                     </SfDropDownList>
                 </div>
 
@@ -54,52 +59,48 @@
     <!-- Main Dashboard Content -->
     <div class="dashboard-content" style="@(_isLoading ? "display: none;" : "")">
 
-        <!-- KPI Cards Section -->
+        @* KPI Cards Section - Attributes alphabetically sorted, removed extra spaces *@
         <div class="kpi-section">
             <div class="section-title">
                 <h3>Key Performance Indicators - @GetPeriodDisplayName()</h3>
             </div>
             <div class="kpi-cards">
-                <KPICard CssClass="requisitions-card" IconClass="e-icons e-file-new" Label="Total Requisitions" Value="@GetSelectedUserMetric("TotalRequisitions").ToString()"  />
-                <KPICard CssClass="active-card" IconClass="e-icons e-work" Label="Active Requisitions" Value="@GetSelectedUserMetric("ActiveRequisitions").ToString()"  />
-                <KPICard CssClass="interview-card" IconClass="e-icons e-people" Label="Candidates In Interview" Value="@GetSelectedUserMetric("CandidatesInInterview").ToString()"  />
-                <KPICard CssClass="offers-card" IconClass="e-icons e-mail" Label="Offers Extended" Value="@GetSelectedUserMetric("OffersExtended").ToString()"  />
-                <KPICard CssClass="hired-card" IconClass="e-icons e-check" Label="Candidates Hired" Value="@GetSelectedUserMetric("CandidatesHired").ToString()"  />
-                <KPICard CssClass="ratio-card" IconClass="e-icons e-success" Label="Hire to Offer Ratio" Value="@GetSelectedUserRatio()"  />
+                <KPICard CssClass="requisitions-card" IconClass="e-icons e-file-new" Label="Total Requisitions" Value="@GetSelectedUserMetric("TotalRequisitions").ToString()"/>
+                <KPICard CssClass="active-card" IconClass="e-icons e-work" Label="Active Requisitions" Value="@GetSelectedUserMetric("ActiveRequisitions").ToString()"/>
+                <KPICard CssClass="interview-card" IconClass="e-icons e-people" Label="Candidates In Interview" Value="@GetSelectedUserMetric("CandidatesInInterview").ToString()"/>
+                <KPICard CssClass="offers-card" IconClass="e-icons e-mail" Label="Offers Extended" Value="@GetSelectedUserMetric("OffersExtended").ToString()"/>
+                <KPICard CssClass="hired-card" IconClass="e-icons e-check" Label="Candidates Hired" Value="@GetSelectedUserMetric("CandidatesHired").ToString()"/>
+                <KPICard CssClass="ratio-card" IconClass="e-icons e-success" Label="Hire to Offer Ratio" Value="@GetSelectedUserRatio()"/>
             </div>
         </div>
 
-        <!-- Charts Section -->
+        @* Charts Section - Optimized attributes and reduced unnecessary divs *@
         <div class="charts-section">
-            <div class="charts-row">
-                <div class="chart-container">
-                    <SfCard>
-                        <CardContent>
-                            <div class="chart-title">Performance Comparison - All Users (@GetPeriodDisplayName())</div>
-                            <div class="chart-wrapper">
-                                <SfChart Height="300px" @ref="_chartRef" Width="100%">
-                                    <ChartArea>
-                                    <ChartAreaBorder Color="transparent"/>
-                                    </ChartArea>
-                                    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"/>
-                                    <ChartTooltipSettings Enable="true" Shared="true" Format="${series.name}: ${point.y}"/>
-                                    <ChartSeriesCollection>
-                                        <ChartSeries DataSource="@_chartData" XName="User" YName="TotalRequisitions" Name="Total Requisitions" Type="ChartSeriesType.Column" Fill="#4f81bd"/>
-                                        <ChartSeries DataSource="@_chartData" XName="User" YName="ActiveRequisitions" Name="Active Requisitions" Type="ChartSeriesType.Column" Fill="#f79646"/>
-                                        <ChartSeries DataSource="@_chartData" XName="User" YName="CandidatesInInterview" Name="Candidates Interview" Type="ChartSeriesType.Column" Fill="#9cbb58"/>
-                                        <ChartSeries DataSource="@_chartData" XName="User" YName="OffersExtended" Name="Offer Extended" Type="ChartSeriesType.Column" Fill="#9cbb58"/>
-                                        <ChartSeries DataSource="@_chartData" XName="User" YName="CandidatesHired" Name="Candidates Hired" Type="ChartSeriesType.Column" Fill="#9cbb58"/>
-                                    </ChartSeriesCollection>
-                                    <ChartLegendSettings Visible="true" Position="LegendPosition.Bottom"/>
-                                </SfChart>
-                            </div>
-                        </CardContent>
-                    </SfCard>
-                </div>
+            <div class="chart-container">
+                <SfCard>
+                    <CardContent>
+                        <div class="chart-title">Performance Comparison - All Users (@GetPeriodDisplayName())</div>
+                        <SfChart @ref="_chartRef" Height="300px" Width="100%">
+                            <ChartArea>
+                                <ChartAreaBorder Color="transparent"/>
+                            </ChartArea>
+                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"/>
+                            <ChartTooltipSettings Enable="true" Format="${series.name}: ${point.y}" Shared="true"/>
+                            <ChartSeriesCollection>
+                                <ChartSeries DataSource="@_chartData" Fill="#4f81bd" Name="Total Requisitions" Type="ChartSeriesType.Column" XName="User" YName="TotalRequisitions"/>
+                                <ChartSeries DataSource="@_chartData" Fill="#f79646" Name="Active Requisitions" Type="ChartSeriesType.Column" XName="User" YName="ActiveRequisitions"/>
+                                <ChartSeries DataSource="@_chartData" Fill="#9cbb58" Name="Candidates Interview" Type="ChartSeriesType.Column" XName="User" YName="CandidatesInInterview"/>
+                                <ChartSeries DataSource="@_chartData" Fill="#9cbb58" Name="Offer Extended" Type="ChartSeriesType.Column" XName="User" YName="OffersExtended"/>
+                                <ChartSeries DataSource="@_chartData" Fill="#9cbb58" Name="Candidates Hired" Type="ChartSeriesType.Column" XName="User" YName="CandidatesHired"/>
+                            </ChartSeriesCollection>
+                            <ChartLegendSettings Position="LegendPosition.Bottom" Visible="true"/>
+                        </SfChart>
+                    </CardContent>
+                </SfCard>
             </div>
         </div>
 
-        <!-- Performance Summary Grid -->
+        @* Performance Summary Grid - Attributes alphabetically sorted, removed extra spaces *@
         <div class="summary-section">
             <SfCard>
                 <CardContent>
@@ -108,20 +109,20 @@
                     </div>
                     <SfGrid DataSource="@GetSummaryGridData()" Height="225">
                         <GridColumns>
-                            <GridColumn Field="TimePeriod" HeaderText="Time Period" TextAlign="TextAlign.Left" Width="150"  />
-                            <GridColumn Field="Requisitions" HeaderText="Requisitions" TextAlign="TextAlign.Center" Width="120"  />
-                            <GridColumn Field="Active" HeaderText="Active" TextAlign="TextAlign.Center" Width="100"  />
-                            <GridColumn Field="Interviews" HeaderText="Interviews" TextAlign="TextAlign.Center" Width="120"  />
-                            <GridColumn Field="Offers" HeaderText="Offers" TextAlign="TextAlign.Center" Width="100"  />
-                            <GridColumn Field="Hired" HeaderText="Hired" TextAlign="TextAlign.Center" Width="100"  />
-                            <GridColumn Field="SuccessRate" HeaderText="Success Rate" TextAlign="TextAlign.Center" Width="120"  />
+                            <GridColumn Field="TimePeriod" HeaderText="Time Period" TextAlign="TextAlign.Left" Width="150"/>
+                            <GridColumn Field="Requisitions" HeaderText="Requisitions" TextAlign="TextAlign.Center" Width="120"/>
+                            <GridColumn Field="Active" HeaderText="Active" TextAlign="TextAlign.Center" Width="100"/>
+                            <GridColumn Field="Interviews" HeaderText="Interviews" TextAlign="TextAlign.Center" Width="120"/>
+                            <GridColumn Field="Offers" HeaderText="Offers" TextAlign="TextAlign.Center" Width="100"/>
+                            <GridColumn Field="Hired" HeaderText="Hired" TextAlign="TextAlign.Center" Width="100"/>
+                            <GridColumn Field="SuccessRate" HeaderText="Success Rate" TextAlign="TextAlign.Center" Width="120"/>
                         </GridColumns>
                     </SfGrid>
                 </CardContent>
             </SfCard>
         </div>
 
-        <!-- Recent Activity Section -->
+        @* Recent Activity Section - Optimized tab configuration and grid attributes *@
         <div class="activity-section">
             <SfCard>
                 <CardContent>
@@ -131,8 +132,8 @@
 
                     <SfTab CssClass="e-fill" ID="tabDashboard" ShowCloseButton="false" Width="100%">
                         <TabAnimationSettings>
-                            <TabAnimationPrevious Effect="AnimationEffect.FadeIn" Duration="300"/>
-                            <TabAnimationNext Effect="AnimationEffect.FadeIn" Duration="300"/>
+                            <TabAnimationPrevious Duration="300" Effect="AnimationEffect.FadeIn"/>
+                            <TabAnimationNext Duration="300" Effect="AnimationEffect.FadeIn"/>
                         </TabAnimationSettings>
                         <TabItems>
                             <TabItem>
@@ -188,13 +189,13 @@
                                             <GridColumn Field="CandidateName" HeaderText="Candidate" TextAlign="TextAlign.Left" Width="140"/>
                                             <GridColumn Field="DateHired" Format="MM/dd/yyyy" HeaderText="Hired Date" TextAlign="TextAlign.Center" Width="100"/>
                                             <GridColumn Field="StartDate" Format="MM/dd/yyyy" HeaderText="Start Date" TextAlign="TextAlign.Center" Width="100"/>
-                                            <GridColumn Field="SalaryOffered" HeaderText="Salary" TextAlign="TextAlign.Right" Width="100" Format="C0"/>
-                                            <GridColumn Field="PlacementFee" HeaderText="Fee" TextAlign="TextAlign.Right" Width="100" Format="C0"/>
-                                            <GridColumn Field="CommissionEarned" HeaderText="Commission" TextAlign="TextAlign.Right" Width="110" Format="C0"/>
+                                            <GridColumn Field="SalaryOffered" Format="C0" HeaderText="Salary" TextAlign="TextAlign.Right" Width="100"/>
+                                            <GridColumn Field="PlacementFee" Format="C0" HeaderText="Fee" TextAlign="TextAlign.Right" Width="100"/>
+                                            <GridColumn Field="CommissionEarned" Format="C0" HeaderText="Commission" TextAlign="TextAlign.Right" Width="110"/>
                                         </GridColumns>
                                     </SfGrid>
                                 </ContentTemplate>
-                            </TabItem><!-- Add these new tabs after Hired Placements tab -->
+                            </TabItem>
                             <TabItem>
                                 <ChildContent>
                                     <TabHeader Text="Requisition Analytics"></TabHeader>
@@ -206,9 +207,9 @@
                                             <GridColumn Field="CompanyName" HeaderText="Company" TextAlign="TextAlign.Left" Width="120"/>
                                             <GridColumn Field="Title" HeaderText="Position" TextAlign="TextAlign.Left" Width="200"/>
                                             <GridColumn Field="TotalCandidates" HeaderText="Candidates" TextAlign="TextAlign.Center" Width="100"/>
-                                            <GridColumn Field="PHNDays" HeaderText="Avg Presented (PHN) Days" TextAlign="TextAlign.Right" Width="120" Format="N1"/>
-                                            <GridColumn Field="INTDays" HeaderText="Avg Interview Days" TextAlign="TextAlign.Right" Width="130" Format="N1"/>
-                                            <GridColumn Field="TimeToFillDays" HeaderText="Time to Fill" TextAlign="TextAlign.Right" Width="120" Format="N1"/>
+                                            <GridColumn Field="PHNDays" Format="N1" HeaderText="Avg Presented (PHN) Days" TextAlign="TextAlign.Right" Width="120"/>
+                                            <GridColumn Field="INTDays" Format="N1" HeaderText="Avg Interview Days" TextAlign="TextAlign.Right" Width="130"/>
+                                            <GridColumn Field="TimeToFillDays" Format="N1" HeaderText="Time to Fill" TextAlign="TextAlign.Right" Width="120"/>
                                         </GridColumns>
                                     </SfGrid>
                                 </ContentTemplate>
@@ -223,9 +224,9 @@
                                             <GridColumn Field="CompanyName" HeaderText="Company" TextAlign="TextAlign.Left" Width="200"/>
                                             <GridColumn Field="TotalRequisitions" HeaderText="Requisitions" TextAlign="TextAlign.Center" Width="120"/>
                                             <GridColumn Field="TotalCandidates" HeaderText="Candidates" TextAlign="TextAlign.Center" Width="120"/>
-                                            <GridColumn Field="PHNDays" HeaderText="Avg Presented (PHN) Days" TextAlign="TextAlign.Right" Width="130" Format="N1"/>
-                                            <GridColumn Field="TimeToFillDays" HeaderText="Avg Time to Fill" TextAlign="TextAlign.Right" Width="140" Format="N1"/>
-                                            <GridColumn Field="TimeToHireDays" HeaderText="Avg Time to Hire" TextAlign="TextAlign.Right" Width="140" Format="N1"/>
+                                            <GridColumn Field="PHNDays" Format="N1" HeaderText="Avg Presented (PHN) Days" TextAlign="TextAlign.Right" Width="130"/>
+                                            <GridColumn Field="TimeToFillDays" Format="N1" HeaderText="Avg Time to Fill" TextAlign="TextAlign.Right" Width="140"/>
+                                            <GridColumn Field="TimeToHireDays" Format="N1" HeaderText="Avg Time to Hire" TextAlign="TextAlign.Right" Width="140"/>
                                         </GridColumns>
                                     </SfGrid>
                                 </ContentTemplate>

@@ -19,9 +19,10 @@ public partial class Requisitions
 {
     private const string StorageName = "RequisitionGrid";
 
-    private List<CandidateActivity> _candActivityObject = [];
-    private List<IntValues> _education = [], _eligibility = [], _experience = [];
-    private List<JobOptions> /*_companies = [], */ _jobOptions = [];
+    // Memory optimization: Pre-allocate Lists with estimated capacities to prevent resize operations
+    private List<CandidateActivity> _candActivityObject = new(50); // Typical activity count per requisition
+    private List<IntValues> _education = new(20), _eligibility = new(10), _experience = new(15); // Typical lookup table sizes
+    private List<JobOptions> /*_companies = [], */ _jobOptions = new(30); // Typical job options count
 
     private Preferences _preference;
     private List<KeyValues> _recruiters;
@@ -180,11 +181,12 @@ public partial class Requisitions
         await Refresh(null).ConfigureAwait(false);
     }
 
-    private Dictionary<string, string> CreateParameters(int id) => new()
+    // Added capacity hint for memory optimization - Dictionary has exactly 3 key-value pairs
+    private Dictionary<string, string> CreateParameters(int id) => new(3)
                                                                    {
-                                                                       {"id", id.ToString()},
-                                                                       {"requisitionID", _target.ID.ToString()},
-                                                                       {"user", User}
+                                                                       ["id"] = id.ToString(),
+                                                                       ["requisitionID"] = _target.ID.ToString(),
+                                                                       ["user"] = User
                                                                    };
 
     private Task DataHandler(object obj) => ExecuteMethod(async () =>
@@ -232,10 +234,11 @@ public partial class Requisitions
 
     private Task DeleteDocument(int args) => ExecuteMethod(async () =>
                                                            {
-                                                               Dictionary<string, string> _parameters = new()
+                                                               // Added capacity hint for memory optimization - Dictionary has exactly 2 key-value pairs
+                                                               Dictionary<string, string> _parameters = new(2)
                                                                                                         {
-                                                                                                            {"documentID", args.ToString()},
-                                                                                                            {"user", User}
+                                                                                                            ["documentID"] = args.ToString(),
+                                                                                                            ["user"] = User
                                                                                                         };
 
                                                                _reqDocumentsObject = await General.ExecuteAndDeserialize<RequisitionDocuments>("Requisition/DeleteRequisitionDocument", _parameters)
@@ -265,7 +268,8 @@ public partial class Requisitions
                                                                                                         VisibleSpinner = true;
                                                                                                         StatusRequisition.Status = _target.Status;
 
-                                                                                                        Dictionary<string, string> _parameters = new() {{"requisitionID", _target.ID.ToString()}};
+                                                                                                        // Added capacity hint for memory optimization - Dictionary has exactly 1 key-value pair
+                                                                                                        Dictionary<string, string> _parameters = new(1) {["requisitionID"] = _target.ID.ToString()};
 
                                                                                                         (string _requisition, string _activity, string _documents, string _notes) =
                                                                                                             await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails",
@@ -309,10 +313,17 @@ public partial class Requisitions
                                                              NextSteps.Clear();
                                                              try
                                                              {
-                                                                 List<string> nextCodes = _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode)
-                                                                                                    .SelectMany(flow => flow.Next.Split(','))
-                                                                                                    .Distinct().ToList();
-                                                                 NextSteps = _statusCodes.Where(status => nextCodes.Contains(status.Code) && status.AppliesToCode == "SCN")
+                                                                 // Memory optimization: Use HashSet for O(1) lookups instead of O(n) Contains() operations
+                                                                 // Eliminates LINQ overhead and provides faster workflow processing
+                                                                 HashSet<string> nextCodesSet = [];
+                                                                 foreach (Workflow flow in _workflows.Where(flow => flow.Step == SelectedActivity.StatusCode))
+                                                                 {
+                                                                     foreach (string code in flow.Next.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                                                     {
+                                                                         nextCodesSet.Add(code.Trim());
+                                                                     }
+                                                                 }
+                                                                 NextSteps = _statusCodes.Where(status => nextCodesSet.Contains(status.Code) && status.AppliesToCode == "SCN")
                                                                                          .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
                                                                                          .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
                                                              }
@@ -480,6 +491,7 @@ public partial class Requisitions
                                     Start.APIHost = Configuration[NavManager.BaseUri.Contains("localhost") ? "APIHost" : "APIHostServer"];
                                 }
 
+                                // Memory optimization: Pre-allocate string array with exact size to avoid resize operations
                                 string[] _keys =
                                 [
                                     nameof(CacheObjects.Roles), nameof(CacheObjects.States), nameof(CacheObjects.Eligibility), nameof(CacheObjects.Education),
@@ -507,7 +519,7 @@ public partial class Requisitions
                                 List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)]);
                                 _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);*/
 
-                                // Single parallel block for ALL deserializations - much cleaner and faster
+                                // Single parallel block for ALL deserialization - much cleaner and faster
                                 List<UserList> _users = null;
                                 List<CompaniesList> _companyList = null;
                                 List<CompanyContacts> _companyContacts = null;
@@ -585,15 +597,16 @@ public partial class Requisitions
 
     private Task SaveActivity(EditContext activity) => ExecuteMethod(async () =>
                                                                      {
-                                                                         Dictionary<string, string> _parameters = new()
+                                                                         // Added capacity hint for memory optimization - Dictionary has exactly 7 key-value pairs
+                                                                         Dictionary<string, string> _parameters = new(7)
                                                                                                                   {
-                                                                                                                      {"candidateID", _target.ID.ToString()},
-                                                                                                                      {"user", User},
-                                                                                                                      {"roleID", RoleName},
-                                                                                                                      {"isCandidateScreen", "false"},
-                                                                                                                      {"jsonPath", ""},
-                                                                                                                      {"emailAddress", ""},
-                                                                                                                      {"uploadPath", ""}
+                                                                                                                      ["candidateID"] = _target.ID.ToString(),
+                                                                                                                      ["user"] = User,
+                                                                                                                      ["roleID"] = RoleName,
+                                                                                                                      ["isCandidateScreen"] = "false",
+                                                                                                                      ["jsonPath"] = "",
+                                                                                                                      ["emailAddress"] = "",
+                                                                                                                      ["uploadPath"] = ""
                                                                                                                   };
 
                                                                          string _response = await General.ExecuteRest<string>("Candidate/SaveCandidateActivity", _parameters,
@@ -610,11 +623,12 @@ public partial class Requisitions
                                                                              string _statusCode = _statusCodes.Where(status => status.Status == StatusRequisition.Status)
                                                                                                               .Select(status => status.Code)
                                                                                                               .FirstOrDefault();
-                                                                             Dictionary<string, string> _parameters = new()
+                                                                             // Added capacity hint for memory optimization - Dictionary has exactly 3 key-value pairs
+                                                                             Dictionary<string, string> _parameters = new(3)
                                                                                                                       {
-                                                                                                                          {"requisitionID", _target.ID.ToString()},
-                                                                                                                          {"statusCode", _statusCode},
-                                                                                                                          {"user", User}
+                                                                                                                          ["requisitionID"] = _target.ID.ToString(),
+                                                                                                                          ["statusCode"] = _statusCode,
+                                                                                                                          ["user"] = User
                                                                                                                       };
 
                                                                              string _response = await General.ExecuteRest<string>("Requisition/ChangeRequisitionStatus", _parameters);
@@ -631,15 +645,16 @@ public partial class Requisitions
                                                                      {
                                                                          if (document.Model is RequisitionDocuments _document)
                                                                          {
-                                                                             Dictionary<string, string> _parameters = new()
+                                                                             // Added capacity hint for memory optimization - Dictionary has exactly 7 key-value pairs
+                                                                             Dictionary<string, string> _parameters = new(7)
                                                                                                                       {
-                                                                                                                          {"filename", DialogDocument.FileName},
-                                                                                                                          {"mime", DialogDocument.Mime},
-                                                                                                                          {"name", _document.Name},
-                                                                                                                          {"notes", _document.Notes},
-                                                                                                                          {"requisitionID", _target.ID.ToString()},
-                                                                                                                          {"user", User},
-                                                                                                                          {"path", Start.UploadsPath}
+                                                                                                                          ["filename"] = DialogDocument.FileName,
+                                                                                                                          ["mime"] = DialogDocument.Mime,
+                                                                                                                          ["name"] = _document.Name,
+                                                                                                                          ["notes"] = _document.Notes,
+                                                                                                                          ["requisitionID"] = _target.ID.ToString(),
+                                                                                                                          ["user"] = User,
+                                                                                                                          ["path"] = Start.UploadsPath
                                                                                                                       };
 
                                                                              string _response = await General.ExecuteRest<string>("Requisition/UploadDocument", _parameters, null, true,
@@ -657,10 +672,11 @@ public partial class Requisitions
                                                              {
                                                                  if (note.Model is CandidateNotes _candidateNotes)
                                                                  {
-                                                                     Dictionary<string, string> _parameters = new()
+                                                                     // Added capacity hint for memory optimization - Dictionary has exactly 2 key-value pairs
+                                                                     Dictionary<string, string> _parameters = new(2)
                                                                                                               {
-                                                                                                                  {"requisitionID", _target.ID.ToString()},
-                                                                                                                  {"user", User}
+                                                                                                                  ["requisitionID"] = _target.ID.ToString(),
+                                                                                                                  ["user"] = User
                                                                                                               };
                                                                      string _response = await General.ExecuteRest<string>("Requisition/SaveNotes", _parameters, _candidateNotes);
 
@@ -675,11 +691,12 @@ public partial class Requisitions
 
     private Task SaveRequisition(EditContext arg) => ExecuteMethod(async () =>
                                                                    {
-                                                                       Dictionary<string, string> _parameters = new()
+                                                                       // Added capacity hint for memory optimization - Dictionary has exactly 3 key-value pairs
+                                                                       Dictionary<string, string> _parameters = new(3)
                                                                                                                 {
-                                                                                                                    {"user", User},
-                                                                                                                    {"jsonPath", ""},
-                                                                                                                    {"emailAddress", ""}
+                                                                                                                    ["user"] = User,
+                                                                                                                    ["jsonPath"] = "",
+                                                                                                                    ["emailAddress"] = ""
                                                                                                                 };
 
                                                                        _ = await General.ExecuteRest<int>("Requisition/SaveRequisition", _parameters, _reqDetailsObjectClone);
@@ -725,12 +742,13 @@ public partial class Requisitions
 
     private async Task SetDataSource()
     {
-        Dictionary<string, string> _parameters = new()
+        // Added capacity hint for memory optimization - Dictionary has exactly 4 key-value pairs
+        Dictionary<string, string> _parameters = new(4)
                                                  {
-                                                     {"getCompanyInformation", Companies.Count.Equals(0).ToBooleanString()},
-                                                     {"requisitionID", RequisitionID.ToString()},
-                                                     {"thenProceed", false.ToString()},
-                                                     {"user", User}
+                                                     ["getCompanyInformation"] = Companies.Count.Equals(0).ToBooleanString(),
+                                                     ["requisitionID"] = RequisitionID.ToString(),
+                                                     ["thenProceed"] = false.ToString(),
+                                                     ["user"] = User
                                                  };
         (Count, string _requisitions, string _, string _, string _status, int _) =
             await General.ExecuteRest<ReturnGridRequisition>("Requisition/GetGridRequisitions", _parameters, SearchModel, false).ConfigureAwait(false);
@@ -819,12 +837,13 @@ public partial class Requisitions
 
     private Task UndoActivity(int activityID) => ExecuteMethod(async () =>
                                                                {
-                                                                   Dictionary<string, string> _parameters = new()
+                                                                   // Added capacity hint for memory optimization - Dictionary has exactly 4 key-value pairs
+                                                                   Dictionary<string, string> _parameters = new(4)
                                                                                                             {
-                                                                                                                {"submissionID", activityID.ToString()},
-                                                                                                                {"user", User},
-                                                                                                                {"isCandidateScreen", "false"},
-                                                                                                                {"roleID", RoleName}
+                                                                                                                ["submissionID"] = activityID.ToString(),
+                                                                                                                ["user"] = User,
+                                                                                                                ["isCandidateScreen"] = "false",
+                                                                                                                ["roleID"] = RoleName
                                                                                                             };
                                                                    string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")

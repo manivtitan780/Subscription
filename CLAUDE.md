@@ -510,3 +510,162 @@ AzureOpenAIClient _client = new(_endpoint, _credential);
 
 **Server Analysis Status**: ✅ **COMPLETED AND IMPLEMENTED**  
 **Date Completed**: 2025-07-21
+
+## Advanced Memory Optimization: Dictionary ObjectPool Pattern
+
+### Implementation Pending: Solution-Wide Dictionary Pooling
+
+**Identified Need**: Multiple components across the solution frequently create `Dictionary<string, string>` instances for API parameters, leading to unnecessary allocations in high-frequency operations.
+
+#### **Current Pattern (Optimized but still allocating)**:
+```csharp
+private Dictionary<string, string> CreateParameters(int id) => new(3)
+{
+    ["id"] = id.ToString(),
+    ["companyID"] = _target.ID.ToString(), 
+    ["user"] = User
+};
+```
+
+#### **Advanced ObjectPool Pattern (Future Implementation)**:
+
+**1. Global Dictionary Pool Service** (Subscription.Model or Extensions):
+```csharp
+public interface IDictionaryPoolService
+{
+    Dictionary<string, string> Get();
+    void Return(Dictionary<string, string> dictionary);
+    Dictionary<string, string> CreateParameters(params (string key, string value)[] parameters);
+}
+
+public class DictionaryPoolService : IDictionaryPoolService
+{
+    private static readonly ObjectPool<Dictionary<string, string>> _dictionaryPool = 
+        new DefaultObjectPoolProvider().Create(new DictionaryPooledObjectPolicy());
+    
+    public Dictionary<string, string> Get() => _dictionaryPool.Get();
+    
+    public void Return(Dictionary<string, string> dictionary)
+    {
+        dictionary.Clear();
+        _dictionaryPool.Return(dictionary);
+    }
+    
+    public Dictionary<string, string> CreateParameters(params (string key, string value)[] parameters)
+    {
+        var dict = Get();
+        foreach (var (key, value) in parameters)
+        {
+            dict[key] = value;
+        }
+        return dict;
+    }
+}
+
+public class DictionaryPooledObjectPolicy : PooledObjectPolicy<Dictionary<string, string>>
+{
+    public override Dictionary<string, string> Create() => new(10); // Common capacity
+    
+    public override bool Return(Dictionary<string, string> obj)
+    {
+        obj.Clear();
+        return obj.Count == 0; // Only return if clear succeeded
+    }
+}
+```
+
+**2. Usage Pattern in Components**:
+```csharp
+[Inject] private IDictionaryPoolService DictionaryPool { get; set; }
+
+private async Task<string> CallApiWithPooledDictionary(int id)
+{
+    var parameters = DictionaryPool.CreateParameters(
+        ("id", id.ToString()),
+        ("companyID", _target.ID.ToString()),
+        ("user", User)
+    );
+    
+    try
+    {
+        return await General.ExecuteRest<string>("Endpoint", parameters);
+    }
+    finally
+    {
+        DictionaryPool.Return(parameters); // Return to pool
+    }
+}
+
+// Or using the simplified helper method:
+private async Task<string> CallApiSimplified(int id)
+{
+    using var pooledDict = new PooledDictionary(DictionaryPool);
+    pooledDict["id"] = id.ToString();
+    pooledDict["companyID"] = _target.ID.ToString();
+    pooledDict["user"] = User;
+    
+    return await General.ExecuteRest<string>("Endpoint", pooledDict.Dictionary);
+    // Automatically returned to pool on dispose
+}
+```
+
+**3. Disposable Wrapper for Automatic Return**:
+```csharp
+public readonly struct PooledDictionary : IDisposable
+{
+    private readonly IDictionaryPoolService _pool;
+    public readonly Dictionary<string, string> Dictionary;
+    
+    public PooledDictionary(IDictionaryPoolService pool)
+    {
+        _pool = pool;
+        Dictionary = pool.Get();
+    }
+    
+    public string this[string key]
+    {
+        get => Dictionary[key];
+        set => Dictionary[key] = value;
+    }
+    
+    public void Dispose() => _pool.Return(Dictionary);
+}
+```
+
+#### **Target Components for Implementation**:
+- **Companies.razor.cs**: `CreateParameters()`, `DetailDataBind()`, `SaveDocument()`
+- **Candidates.razor.cs**: Multiple parameter dictionary creations
+- **Requisitions.razor.cs**: API parameter building
+- **General.cs**: REST API parameter handling
+- **All Controllers**: Request parameter processing
+
+#### **Expected Performance Benefits**:
+- **80-90% reduction** in Dictionary allocations for API calls
+- **Reduced GC pressure** from eliminated temporary Dictionary objects
+- **Better memory locality** with pooled dictionary reuse
+- **Scalability improvement** under high concurrent API call volumes
+
+#### **Implementation Strategy**:
+1. **Phase 1**: Implement `IDictionaryPoolService` in DI container
+2. **Phase 2**: Update high-frequency API call sites (Companies, Candidates)
+3. **Phase 3**: Extend to all components with parameter dictionaries
+4. **Phase 4**: Add monitoring/metrics for pool utilization
+
+#### **Configuration** (appsettings.json):
+```json
+{
+  "ObjectPool": {
+    "Dictionary": {
+      "MaximumRetained": 50,
+      "InitialCapacity": 8
+    }
+  }
+}
+```
+
+**Implementation Priority**: **Medium-High** (implement after current optimization cycle)  
+**Breaking Changes**: **None** (additive service injection)  
+**Testing Focus**: Pool utilization metrics, memory leak detection, concurrent access safety
+
+**Status**: 📝 **DOCUMENTED FOR FUTURE IMPLEMENTATION**  
+**Date Added**: 2025-07-22

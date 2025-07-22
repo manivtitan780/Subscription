@@ -8,13 +8,13 @@
         <PanelDisplayText Label="Company Name" Text="@(Model.Name)"/>
         <PanelDisplayText Label="EIN#" Text="@(FormatEIN(Model.EIN))"/>
         <PanelDisplayText Label="Email Address" Text="@(Model.EmailAddress)"/>
-        <PanelDisplayText Label="Phone" Text="@(Model.Phone.FormatPhoneNumber())"/>
+        <PanelDisplayText Label="Phone" Text="@(Model.Phone.StripAndFormatPhoneNumber())"/>
         <PanelDisplayText Label="Address" MarkupText="@(Address)"/>
         <PanelDisplayText Label="D-U-N-S Number" Text="@(FormatDUNS(Model.DUNS))"/>
         <PanelDisplayText Label="NAICS Code" Text="@(Model.NAICSCode == 0 ? "" : $"[{Model.NAICSCode}] - {Model.NAICS}")"/>
         <PanelDisplayText Label="Status" Text="@(Model.Status ? "Active" : "Inactive")"/>
     </div>
     <div class="rightLayout">
-        <PanelDisplayText Display="PanelDisplay.Vertical" Label="Notes:" MarkupText="@(Model.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
+        <PanelDisplayText Display="PanelDisplay.Vertical" Label="Description:" MarkupText="@(Model.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
     </div>
 </div>

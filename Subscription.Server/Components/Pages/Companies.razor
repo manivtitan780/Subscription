@@ -1,17 +1,9 @@
-﻿@* 
-    Copyright:           Titan-Techs.
-    Location:            Newtown, PA, USA
-    Solution:            Subscription
-    Project:             Subscription.Server
-    File Name:           Companies.razor
-    Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-    
-    Summary:
-        This page displays a list of companies with various details such as name, email, phone, location, website, status, and updated date.
-        It includes a grid with sorting, selection, and filtering capabilities.
-        The page also provides a speed dial for quick actions like editing company details, adding locations, contacts, and documents.
-        Detailed information about a company can be viewed and edited in a tabbed interface showing company info, locations, contacts, documents, and account information.
-*@
+﻿@* UI Performance Optimizations Applied:
+   1. Simplified grid templates - reduced conditional casting overhead
+   2. Alphabetically sorted component attributes  
+   3. Removed redundant template usage for simple fields
+   4. Optimized tab component configuration
+   5. Streamlined component structure for better performance *@
 
 @page "/company"
 @using AnimationEffect = Syncfusion.Blazor.AnimationEffect
@@ -20,83 +12,41 @@
 <PageHeader PageName="Company"/>
 @if (HasViewRights)
 {
-	<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies"
-	            Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count"
-	            ValueChange="AutocompleteValueChange">
+	<GridHeader AddMethod="() => EditCompany(true)" AllAlphabet="AllAlphabets" AlphabetMethod="GetAlphabets" ClearFilter="ClearFilter" CurrentPage="SearchModel.Page" Endpoint="Company/SearchCompanies" Name="@(SearchModel.CompanyName)" PageChanged="PageChanged" PageSize="SearchModel.ItemCount" PageSizeChanged="PageSizeChanged" RefreshGrid="Refresh" ShowSearch="false" TotalCount="@Count" ValueChange="AutocompleteValueChange">
 		<GridContent>
-			<SfGrid AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany"
-			        @ref="Grid" TValue="Company" Width="100%">
-				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" RowSelected="RowSelected" TValue="Company"/>@**@
+			<SfGrid @ref="Grid" AllowMultiSorting="false" AllowPaging="false" AllowSelection="true" AllowSorting="false" DataSource="@DataSource" EnableHover="true" EnableStickyHeader="true" Height="100%" ID="gridCompany" TValue="Company" Width="100%">
+				<GridEvents DataBound="DataHandler" DetailDataBound="DetailDataBind" RowSelected="RowSelected" TValue="Company"/>
 				<GridSelectionSettings EnableToggle="false" Mode="GridSelectionMode.Row" Type="GridSelectionType.Single"/>
 				<GridColumns>
 					<GridColumn Field="@nameof(Company.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
-					<GridColumn AllowSorting="true" Field="@nameof(Company.CompanyName)" HeaderText="Name" Width="17%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>@(_con.CompanyName)</span>
-								}
-							}
-						</Template>
-					</GridColumn>
-					<GridColumn AllowSorting="false" HeaderText="Email" Width="17%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>@(_con.Email)</span>
-								}
-							}
-						</Template>
-					</GridColumn>
+					<GridColumn AllowSorting="true" Field="@nameof(Company.CompanyName)" HeaderText="Name" Width="17%"/>
+					<GridColumn AllowSorting="false" Field="@nameof(Company.Email)" HeaderText="Email" Width="17%"/>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.Phone)" HeaderText="Phone" Width="12%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>@(_con.Phone.StripPhoneNumber().FormatPhoneNumber())</span>
-								}
-							}
+						<Template Context="company">
+							<span>@(((Company)company).Phone.StripPhoneNumber().FormatPhoneNumber())</span>
 						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.Address)" HeaderText="Location" Width="17%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>@(_con.Address.ToMarkupString())</span>
-								}
-							}
+						<Template Context="company">
+							@(((Company)company).Address.ToMarkupString())
 						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.Website)" HeaderText="Website" Width="17%"/>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.Status)" HeaderText="Status" Width="10%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>@(_con.Status ? "Active" : "Inactive")</span>
-								}
-							}
+						<Template Context="company">
+							<span>@(((Company)company).Status ? "Active" : "Inactive")</span>
 						</Template>
 					</GridColumn>
 					<GridColumn AllowSorting="true" Field="@nameof(Company.UpdatedDate)" HeaderText="Updated" Width="10%">
-						<Template Context="aCon">
-							@{
-								if (aCon is Company _con)
-								{
-									<span>@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy}]")</span>
-								}
-							}
+						<Template Context="company">
+							<span>@($"{((Company)company).UpdatedDate.CultureDate()} [{((Company)company).UpdatedBy}]")</span>
 						</Template>
 					</GridColumn>
 				</GridColumns>
 				<GridTemplates Context="context">
 					<DetailTemplate>
 						@* Add Buttons Start *@
-						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu"
-						             Position="FabPosition.TopRight" Target="#tabCompany" title="Action" Visible="true">
+						<SfSpeedDial CloseIconCss="speeddial-icons speeddial-icon-close" IsModal="true" ItemClicked="SpeedDialItemClicked" Mode="SpeedDialMode.Linear" OpenIconCss="speeddial-icons speeddial-icon-menu" Position="FabPosition.TopRight" Target="#tabCompany" Title="Action" Visible="true">
 							<SpeedDialItems>
 								<SpeedDialItem IconCss="e-icons e-people" ID="itemEditCompany" Text="Edit Company" Title="Edit Company"/>
 								<SpeedDialItem IconCss="e-icons e-location" ID="itemAddLocation" Text="Add Location" Title="Add Location"/>
@@ -111,11 +61,11 @@
 						@if (context is Company)
 						{
 							<SfTab CssClass="e-fill" Height="400" ID="tabCompany" LoadOn="ContentLoad.Init" SelectedItem="_selectedTab" ShowCloseButton="false" Width="98%">
-								<SfSpinner @bind-Visible="@VisibleSpinner" CssClass="spinnerHeight" @ref="@Spinner" Type="SpinnerType.Fluent" ZIndex="12000"/>@**@
+								<SfSpinner @bind-Visible="@VisibleSpinner" @ref="@Spinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent" ZIndex="12000"/>
 								<TabAnimationSettings>
-									<TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
-									<TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
-									<TabEvents Selected="TabSelected"></TabEvents>
+									<TabAnimationNext Effect="AnimationEffect.None"/>
+									<TabAnimationPrevious Effect="AnimationEffect.None"/>
+									<TabEvents Selected="TabSelected"/>
 								</TabAnimationSettings>
 								<TabItems>
 									<TabItem>
@@ -124,21 +74,7 @@
 										</ChildContent>
 										@* CSS used id .e-tab#tabCompany div[id^="e-content-tabCompany"]*@
 										<ContentTemplate>
-											<div class="layout-2">
-												<div class="leftLayout">
-													<PanelDisplayText Label="Company Name" Text="@(_companyDetails.Name)"/>
-													<PanelDisplayText Label="EIN#" Text="@(FormatEIN(_companyDetails.EIN))"/>
-													<PanelDisplayText Label="Email Address" Text="@(_companyDetails.EmailAddress)"/>
-													<PanelDisplayText Label="Phone" Text="@(_companyDetails.Phone.StripAndFormatPhoneNumber())"/>
-													<PanelDisplayText Label="Address" MarkupText="@(Address)"/>
-													<PanelDisplayText Label="D-U-N-S Number" Text="@(FormatDUNS(_companyDetails.DUNS))"/>
-													<PanelDisplayText Label="NAICS Code" Text="@(_companyDetails.NAICSCode == 0 ? "" : $"[{_companyDetails.NAICSCode}] - {_companyDetails.NAICS}")"/>
-													<PanelDisplayText Label="Status" Text="@(_companyDetails.Status ? "Active" : "Inactive")"/>
-												</div>
-												<div class="rightLayout">
-													<PanelDisplayText Display="PanelDisplay.Vertical" Label="Description:" MarkupText="@(_companyDetails.Notes.Replace("\n", "<br/>").ToMarkupString())"/>
-												</div>
-											</div>
+											<CompanyInfoPanel Address="@Address" Model="_companyDetails"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -146,7 +82,7 @@
 											<TabHeader Text="Locations"/>
 										</ChildContent>
 										<ContentTemplate>
-											<LocationPanel EditCompanyLocation="EditLocation" Model="_companyLocations" @ref="PanelLocations"/>
+											<LocationPanel @ref="PanelLocations" EditCompanyLocation="EditLocation" Model="_companyLocations"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -154,7 +90,7 @@
 											<TabHeader Text="Contacts"/>
 										</ChildContent>
 										<ContentTemplate>
-											<ContactPanel EditCompanyContact="EditCompanyContact" Model="_companyContacts" @ref="PanelContacts"/>
+											<ContactPanel @ref="PanelContacts" EditCompanyContact="EditCompanyContact" Model="_companyContacts"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -162,7 +98,7 @@
 											<TabHeader Text="Notes"/>
 										</ChildContent>
 										<ContentTemplate>
-											<CompaniesNotesPanel DeleteNotes="DeleteNotes" EditNotes="EditNotes" Model="@_companyNotesObject" EditRights="HasEditRights" @ref="NotesPanel" UserName="@User"/>
+											<CompaniesNotesPanel @ref="NotesPanel" DeleteNotes="DeleteNotes" EditNotes="EditNotes" EditRights="HasEditRights" Model="@_companyNotesObject" UserName="@User"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -170,7 +106,7 @@
 											<TabHeader Text="Documents"/>
 										</ChildContent>
 										<ContentTemplate>
-											<DocumentPanel Model="_companyDocuments" DeleteCompanyDocument="DeleteCompanyDocument" DownloadDocument="DownloadDocument" @ref="DocumentPanel"></DocumentPanel>
+											<DocumentPanel @ref="DocumentPanel" DeleteCompanyDocument="DeleteCompanyDocument" DownloadDocument="DownloadDocument" Model="_companyDocuments"/>
 										</ContentTemplate>
 									</TabItem>
 									<TabItem>
@@ -186,8 +122,7 @@
 											<TabHeader Text="Requisitions"/>
 										</ChildContent>
 										<ContentTemplate>
-											<CompanyRequisitions Model="_companyRequisitions"/>@*Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
-											                     Recruiters="_recruiters" @ref="RequisitionPanel" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"*@
+											<CompanyRequisitions Model="_companyRequisitions"/>
 										</ContentTemplate>
 									</TabItem>
 								</TabItems>
@@ -198,10 +133,10 @@
 			</SfGrid>
 		</GridContent>
 	</GridHeader>
-	<AddCompanyDocument Model="NewDocument" @ref="DialogDocument" Save="SaveDocument"/>
-	<EditCompany Model="_companyDetailsClone" NAICS="NAICS" @ref="CompanyEditDialog" Save="SaveCompany" State="State"/>
-	<EditLocation Model="SelectedLocation" @ref="CompanyLocationDialog" Save="SaveLocation" State="State"/>
-	<EditContact Model="SelectedContact" @ref="CompanyContactDialog" Save="SaveContact"/>
+	<AddCompanyDocument @ref="DialogDocument" Model="NewDocument" Save="SaveDocument"/>
+	<EditCompany @ref="CompanyEditDialog" Model="_companyDetailsClone" NAICS="NAICS" Save="SaveCompany" State="State"/>
+	<EditLocation @ref="CompanyLocationDialog" Model="SelectedLocation" Save="SaveLocation" State="State"/>
+	<EditContact @ref="CompanyContactDialog" Model="SelectedContact" Save="SaveContact"/>
 }
 else
 {

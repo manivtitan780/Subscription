@@ -17,6 +17,10 @@ namespace Subscription.Server.Components.Pages;
 
 public partial class Dash
 {
+    // Memory optimization: Static readonly arrays to eliminate repeated allocations in GetSummaryGridData()
+    private static readonly string[] PeriodNames = ["Last 7 Days", "Month To Date", "Quarter To Date", "Half Year To Date", "Year To Date"];
+    private static readonly string[] PeriodCodes = ["7D", "MTD", "QTD", "HYTD", "YTD"];
+    
     private readonly List<ChartDataPoint> _chartData = [];
     private SfChart _chartRef;
     private List<ConsolidatedMetrics> _consolidatedMetricsData = [];
@@ -106,13 +110,12 @@ public partial class Dash
 
     private List<SummaryGridItem> GetSummaryGridData()
     {
-        List<SummaryGridItem> summaryData = [];
-        string[] periodNames = ["Last 7 Days", "Month To Date", "Quarter To Date", "Half Year To Date", "Year To Date"];
-        string[] periodCodes = ["7D", "MTD", "QTD", "HYTD", "YTD"];
-
-        for (int i = 0; i < periodNames.Length; i++)
+        List<SummaryGridItem> summaryData = new(5); // Pre-size for exactly 5 periods
+        // Use static readonly arrays to eliminate repeated allocations
+        
+        for (int i = 0; i < PeriodNames.Length; i++)
         {
-            ConsolidatedMetrics userPeriodData = _consolidatedMetricsData.FirstOrDefault(m => m.User == _selectedUser && m.Period == periodCodes[i]);
+            ConsolidatedMetrics userPeriodData = _consolidatedMetricsData.FirstOrDefault(m => m.User == _selectedUser && m.Period == PeriodCodes[i]);
 
             int totalCount = userPeriodData?.RequisitionsCreated ?? 0;
             int activeCount = userPeriodData?.ActiveRequisitions ?? 0;
@@ -124,7 +127,7 @@ public partial class Dash
 
             summaryData.Add(new()
                             {
-                                TimePeriod = periodNames[i],
+                                TimePeriod = PeriodNames[i],
                                 Requisitions = totalCount,
                                 Active = activeCount,
                                 Interviews = interviewCount,
@@ -160,10 +163,11 @@ public partial class Dash
 
         try
         {
-            Dictionary<string, string> _parameters = new()
+            // Added capacity hint for memory optimization - Dictionary has exactly 2 key-value pairs
+            Dictionary<string, string> _parameters = new(2)
                                                      {
-                                                         {"roleName", "AD"}, //TODO: Replace with RoleName
-                                                         {"user", _user} //TODO: Replace with User
+                                                         ["roleName"] = "AD", //TODO: Replace with RoleName
+                                                         ["user"] = _user //TODO: Replace with User
                                                      };
 
             _response = await General.ExecuteRest<ReturnDashboard>("Dashboard/GetDashboard", _parameters, null, false);

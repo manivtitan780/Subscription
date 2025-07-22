@@ -129,6 +129,10 @@ body, form, html {
 
 /* #region General Classes */
 
+.upper {
+    text-transform: uppercase;
+}
+
 .appHeader {
     font-size: x-large;
     font-weight: bold;

@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           CandidateController.Helpers.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-16-2025 16:00
-// Last Updated On:     07-16-2025 16:00
+// Created On:          07-16-2025 16:07
+// Last Updated On:     07-22-2025 20:18
 // *****************************************/
 
 #endregion
@@ -16,8 +16,8 @@
 namespace Subscription.API.Controllers;
 
 /// <summary>
-/// Partial class containing helper methods for CandidateController.
-/// Includes database execution helpers, email processing, and utility methods.
+///     Partial class containing helper methods for CandidateController.
+///     Includes database execution helpers, email processing, and utility methods.
 /// </summary>
 public partial class CandidateController
 {
@@ -98,23 +98,43 @@ public partial class CandidateController
     {
         string extension = Path.GetExtension(fileName).ToLowerInvariant();
         return extension switch
-        {
-            ".pdf" => "application/pdf",
-            ".doc" => "application/msword",
-            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            ".xls" => "application/vnd.ms-excel",
-            ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            ".txt" => "text/plain",
-            ".jpg" or ".jpeg" => "image/jpeg",
-            ".png" => "image/png",
-            _ => "application/octet-stream"
-        };
+               {
+                   ".pdf" => "application/pdf",
+                   ".doc" => "application/msword",
+                   ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                   ".xls" => "application/vnd.ms-excel",
+                   ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                   ".txt" => "text/plain",
+                   ".jpg" or ".jpeg" => "image/jpeg",
+                   ".png" => "image/png",
+                   _ => "application/octet-stream"
+               };
+    }
+
+    // Memory optimization: Centralized candidate email processing helper
+    private async Task ProcessCandidateEmailAsync(List<EmailTemplates> templates, CandidateDetails candidateDetails, string stateName, string userName, byte[] attachmentBytes = null,
+                                                  string attachmentName = null, string mimeType = null)
+    {
+        Dictionary<string, string> replacements = new(5)
+                                                  {
+                                                      {"{TODAY}", DateTime.Today.CultureDate()},
+                                                      {"$CANDIDATE_NAME$", $"{candidateDetails.FirstName} {candidateDetails.LastName}"},
+                                                      {"$CANDIDATE_EMAIL$", candidateDetails.Email},
+                                                      {"$USER_NAME$", userName},
+                                                      {"$STATE$", stateName}
+                                                  };
+
+        await ProcessEmailTemplatesAsync(templates, replacements, attachmentBytes, attachmentName, mimeType);
     }
 
     // Memory optimization: Centralized email processing helper to eliminate code duplication
-    private async Task ProcessEmailTemplatesAsync(List<EmailTemplates> templates, Dictionary<string, string> replacements, byte[] attachmentBytes = null, string attachmentName = null, string mimeType = null)
+    private async Task ProcessEmailTemplatesAsync(List<EmailTemplates> templates, Dictionary<string, string> replacements, byte[] attachmentBytes = null, string attachmentName = null,
+                                                  string mimeType = null)
     {
-        if (templates.Count == 0) return;
+        if (templates.Count == 0)
+        {
+            return;
+        }
 
         foreach (EmailTemplates template in templates)
         {
@@ -149,35 +169,21 @@ public partial class CandidateController
         }
     }
 
-    // Memory optimization: Centralized candidate email processing helper
-    private async Task ProcessCandidateEmailAsync(List<EmailTemplates> templates, CandidateDetails candidateDetails, string stateName, string userName, byte[] attachmentBytes = null, string attachmentName = null, string mimeType = null)
-    {
-        Dictionary<string, string> replacements = new()
-        {
-            {"{TODAY}", DateTime.Today.CultureDate()},
-            {"$CANDIDATE_NAME$", $"{candidateDetails.FirstName} {candidateDetails.LastName}"},
-            {"$CANDIDATE_EMAIL$", candidateDetails.Email},
-            {"$USER_NAME$", userName},
-            {"$STATE$", stateName}
-        };
-
-        await ProcessEmailTemplatesAsync(templates, replacements, attachmentBytes, attachmentName, mimeType);
-    }
-
     // Memory optimization: Centralized requisition email processing helper
-    private async Task ProcessRequisitionEmailAsync(List<EmailTemplates> templates, string firstName, string lastName, string reqCode, string reqTitle, string company, string submissionNotes, string submissionStatus, string user, byte[] attachmentBytes = null, string attachmentName = null)
+    private async Task ProcessRequisitionEmailAsync(List<EmailTemplates> templates, string firstName, string lastName, string reqCode, string reqTitle, string company, string submissionNotes,
+                                                    string submissionStatus, string user, byte[] attachmentBytes = null, string attachmentName = null)
     {
-        Dictionary<string, string> replacements = new()
-        {
-            {"{TODAY}", DateTime.Today.CultureDate()},
-            {"$CANDIDATE_NAME$", $"{firstName} {lastName}"},
-            {"$REQ_CODE$", reqCode},
-            {"{RequisitionTitle}", reqTitle},
-            {"{Company}", company},
-            {"$SUBMISSION_NOTES$", submissionNotes},
-            {"$SUBMISSION_STATUS$", submissionStatus},
-            {"$USER_NAME$", user}
-        };
+        Dictionary<string, string> replacements = new(8)
+                                                  {
+                                                      {"{TODAY}", DateTime.Today.CultureDate()},
+                                                      {"$CANDIDATE_NAME$", $"{firstName} {lastName}"},
+                                                      {"$REQ_CODE$", reqCode},
+                                                      {"{RequisitionTitle}", reqTitle},
+                                                      {"{Company}", company},
+                                                      {"$SUBMISSION_NOTES$", submissionNotes},
+                                                      {"$SUBMISSION_STATUS$", submissionStatus},
+                                                      {"$USER_NAME$", user}
+                                                  };
 
         await ProcessEmailTemplatesAsync(templates, replacements, attachmentBytes, attachmentName);
     }

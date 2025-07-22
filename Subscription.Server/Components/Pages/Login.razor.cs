@@ -37,10 +37,11 @@ public partial class Login
 
     private async Task LoginToApplication(EditContext arg)
     {
-        Dictionary<string, string> _parameters = new()
+        // Memory optimization: Pre-allocate Dictionary with capacity hint for better performance
+        Dictionary<string, string> _parameters = new(2)
                                                  {
-                                                     {"userName", LoginModel.UserName},
-                                                     {"password", LoginModel.Password}
+                                                     ["userName"] = LoginModel.UserName,
+                                                     ["password"] = LoginModel.Password
                                                  };
         string _response = await General.ExecuteRest<string>("Login/LoginPage", _parameters);
 

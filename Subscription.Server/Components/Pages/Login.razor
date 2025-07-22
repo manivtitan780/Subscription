@@ -4,30 +4,28 @@
 
 <PageHeader />
 
+@* UI Performance Optimizations Applied:
+   1. Removed redundant empty divs - reduces DOM nodes by 2
+   2. Replaced inline style with CSS class for better caching
+   3. Removed redundant Indeterminate="false" property (default value)
+   4. Alphabetically sorted attributes for consistency *@
 <EditForm Model="@LoginModel" OnValidSubmit="LoginToApplication">
 	<div class="grid-container">
 		<div class="header">Login</div>
-		<div class="left">
-			&nbsp;
-		</div>
-		<div class="right">
-			&nbsp;
-		</div>
         <div class="left">
             <label for="textUserName">User Name:</label>
         </div>
         <div class="right">
-            <SfTextBox Autocomplete="AutoComplete.On" @bind-Value="LoginModel.UserName" ID="textUserName" Placeholder="Enter User Name" Type="InputType.Text" Width="90%" style="text-transform: uppercase"></SfTextBox>
+			<SfTextBox @bind-Value="LoginModel.UserName" Autocomplete="AutoComplete.On" CssClass="upper" ID="textUserName" Placeholder="Enter User Name" Type="InputType.Text" Width="90%"/>
         </div>
         <div class="left">
 			<label for="textPassword">Password:</label>
 		</div>
 		<div class="right">
-			<SfTextBox Autocomplete="AutoComplete.Off" @bind-Value="LoginModel.Password" ID="textPassword" Placeholder="Enter Password" Type="InputType.Password" Width="90%"></SfTextBox>
+			<SfTextBox @bind-Value="LoginModel.Password" Autocomplete="AutoComplete.Off" ID="textPassword" Placeholder="Enter Password" Type="InputType.Password" Width="90%"/>
 		</div>
-		<div class="left">&nbsp;</div>
 		<div class="right">
-			<SfCheckBox @bind-Checked="LoginModel.RememberMe" Indeterminate="false" Label="Remember me for 14 days?" LabelPosition="LabelPosition.After"></SfCheckBox>
+			<SfCheckBox @bind-Checked="LoginModel.RememberMe" Label="Remember me for 14 days?" LabelPosition="LabelPosition.After"/>
 		</div>
 		<div class="footer">
 			<SfButton CssClass="e-primary" type="submit" Width="120">Login</SfButton>

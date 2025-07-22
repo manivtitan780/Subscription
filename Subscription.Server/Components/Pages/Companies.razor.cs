@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-11-2025 19:07
-// Last Updated On:     07-21-2025 19:39
+// Created On:          07-22-2025 18:07
+// Last Updated On:     07-22-2025 19:20
 // *****************************************/
 
 #endregion
@@ -143,11 +143,11 @@ public partial class Companies
                                                     await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                 });
 
-    private Dictionary<string, string> CreateParameters(int id) => new()
+    private Dictionary<string, string> CreateParameters(int id) => new(3)
                                                                    {
-                                                                       {"id", id.ToString()},
-                                                                       {"companyID", _target.ID.ToString()},
-                                                                       {"user", User}
+                                                                       ["id"] = id.ToString(),
+                                                                       ["companyID"] = _target.ID.ToString(),
+                                                                       ["user"] = User
                                                                    };
 
     private Task DataHandler() => ExecuteMethod(async () =>
@@ -170,8 +170,8 @@ public partial class Companies
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
                                                       {
-                                                          Dictionary<string, string> _parameters = CreateParameters(id);
-                                                          string _response = await General.ExecuteRest<string>("Company/DeleteNotes", _parameters);
+                                                          //Dictionary<string, string> _parameters = CreateParameters(id);
+                                                          string _response = await General.ExecuteRest<string>("Company/DeleteNotes", CreateParameters(id));
 
                                                           _companyNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
                                                       });
@@ -190,10 +190,10 @@ public partial class Companies
 
                                                                                                 VisibleSpinner = true;
 
-                                                                                                Dictionary<string, string> _parameters = new()
+                                                                                                Dictionary<string, string> _parameters = new(2)
                                                                                                                                          {
-                                                                                                                                             {"companyID", _target.ID.ToString()},
-                                                                                                                                             {"user", User}
+                                                                                                                                             ["companyID"] = _target.ID.ToString(),
+                                                                                                                                             ["user"] = User
                                                                                                                                          };
                                                                                                 (string _company, string _contacts, string _locations, string _documents, string _requisitions,
                                                                                                  string _notes) =
@@ -210,15 +210,21 @@ public partial class Companies
                                                                                                     _companyNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? [];
                                                                                                     _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? [];
                                                                                                     _companyRequisitions = General.DeserializeObject<List<Requisition>>(_requisitions) ?? [];*/
-                                                                                                    
+
                                                                                                     // Parallel deserialization for faster detail panel loading with thread safety consistency
-                                                                                                    Task[] companyDetailsTasks = [
+                                                                                                    Task[] companyDetailsTasks =
+                                                                                                    [
                                                                                                         Task.Run(() => _companyDetails = General.DeserializeObject<CompanyDetails>(_company)),
-                                                                                                        Task.Run(() => _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? []),
-                                                                                                        Task.Run(() => _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? []),
-                                                                                                        Task.Run(() => _companyNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? []),
-                                                                                                        Task.Run(() => _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? []),
-                                                                                                        Task.Run(() => _companyRequisitions = General.DeserializeObject<List<Requisition>>(_requisitions) ?? [])
+                                                                                                        Task.Run(() => _companyLocations =
+                                                                                                                           General.DeserializeObject<List<CompanyLocations>>(_locations) ?? []),
+                                                                                                        Task.Run(() => _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ??
+                                                                                                                                          []),
+                                                                                                        Task.Run(() => _companyNotesObject =
+                                                                                                                           General.DeserializeObject<List<CandidateNotes>>(_notes) ?? []),
+                                                                                                        Task.Run(() => _companyDocuments =
+                                                                                                                           General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? []),
+                                                                                                        Task.Run(() => _companyRequisitions =
+                                                                                                                           General.DeserializeObject<List<Requisition>>(_requisitions) ?? [])
                                                                                                     ];
                                                                                                     await Task.WhenAll(companyDetailsTasks);
                                                                                                     SetupAddress();
@@ -424,15 +430,16 @@ public partial class Companies
                                     string[] _keys = [nameof(CacheObjects.NAICS), nameof(CacheObjects.States), nameof(CacheObjects.Roles)];
 
                                     Dictionary<string, string> _values = await RedisService.BatchGet(_keys);
-                                    
+
                                     // Parallel deserialization of Redis cache objects for faster initialization
                                     // Original serial implementation (commented for potential revert if needed):
                                     /*NAICS = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.NAICS)]);
                                     State = General.DeserializeObject<List<StateCache>>(_values[nameof(CacheObjects.States)]);
                                     Roles = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.Roles)]);*/
-                                    
+
                                     // Parallel deserialization - executes all 3 cache deserialization concurrently with thread safety
-                                    Task[] cacheDeserializationTasks = [
+                                    Task[] cacheDeserializationTasks =
+                                    [
                                         Task.Run(() => NAICS = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.NAICS)])),
                                         Task.Run(() => State = General.DeserializeObject<List<StateCache>>(_values[nameof(CacheObjects.States)])),
                                         Task.Run(() => Roles = General.DeserializeObject<List<IntValues>>(_values[nameof(CacheObjects.Roles)]))
@@ -521,14 +528,14 @@ public partial class Companies
                                                                      {
                                                                          if (document.Model is CompanyDocuments _document)
                                                                          {
-                                                                             Dictionary<string, string> _parameters = new()
+                                                                             Dictionary<string, string> _parameters = new(6)
                                                                                                                       {
-                                                                                                                          {"filename", DialogDocument.FileName},
-                                                                                                                          {"mime", DialogDocument.Mime},
-                                                                                                                          {"name", _document.DocumentName},
-                                                                                                                          {"notes", _document.Notes},
-                                                                                                                          {"companyID", _target.ID.ToString()},
-                                                                                                                          {"user", User}
+                                                                                                                          ["filename"] = DialogDocument.FileName,
+                                                                                                                          ["mime"] = DialogDocument.Mime,
+                                                                                                                          ["name"] = _document.DocumentName,
+                                                                                                                          ["notes"] = _document.Notes,
+                                                                                                                          ["companyID"] = _target.ID.ToString(),
+                                                                                                                          ["user"] = User
                                                                                                                       };
 
                                                                              string _response = await General.ExecuteRest<string>("Company/UploadDocument", _parameters, null, true,
@@ -581,17 +588,20 @@ public partial class Companies
 
     private void SetupAddress(bool useLocation = false)
     {
-        List<string> _parts = [];
+        // Memory optimization: Use pre-allocated string array instead of List<string> to reduce overhead
+        // Maximum possible parts: Street, City, State, Zip (4 elements)
+        string[] _parts = new string[4];
+        int _partCount = 0;
         if (!useLocation)
         {
             if (_companyDetails.StreetName.NotNullOrWhiteSpace())
             {
-                _parts.Add(_companyDetails.StreetName);
+                _parts[_partCount++] = _companyDetails.StreetName;
             }
 
             if (_companyDetails.City.NotNullOrWhiteSpace())
             {
-                _parts.Add(_companyDetails.City);
+                _parts[_partCount++] = _companyDetails.City;
             }
 
             if (_companyDetails.StateID > 0)
@@ -600,13 +610,13 @@ public partial class Companies
 
                 if (_state is {Text: not null})
                 {
-                    _parts.Add($"<strong>{_state.Text}</strong>");
+                    _parts[_partCount++] = $"<strong>{_state.Text}</strong>";
                 }
             }
 
             if (_companyDetails.ZipCode.NotNullOrWhiteSpace())
             {
-                _parts.Add(_companyDetails.ZipCode);
+                _parts[_partCount++] = _companyDetails.ZipCode;
             }
         }
         else
@@ -616,12 +626,12 @@ public partial class Companies
             {
                 if (_loc.StreetName.NotNullOrWhiteSpace())
                 {
-                    _parts.Add(_loc.StreetName);
+                    _parts[_partCount++] = _loc.StreetName;
                 }
 
                 if (_loc.City.NotNullOrWhiteSpace())
                 {
-                    _parts.Add(_loc.City);
+                    _parts[_partCount++] = _loc.City;
                 }
 
                 if (_loc.StateID > 0)
@@ -630,13 +640,13 @@ public partial class Companies
 
                     if (_state is {Text: not null})
                     {
-                        _parts.Add($"<strong>{_state.Text}</strong>");
+                        _parts[_partCount++] = $"<strong>{_state.Text}</strong>";
                     }
                 }
 
                 if (_loc.ZipCode.NotNullOrWhiteSpace())
                 {
-                    _parts.Add(_loc.ZipCode);
+                    _parts[_partCount++] = _loc.ZipCode;
                 }
             }
             else
@@ -645,18 +655,18 @@ public partial class Companies
             }
         }
 
-        if (_parts.Count > 0)
-        {
-            Address = string.Join(", ", _parts).ToMarkupString();
-        }
+        Address = string.Join(", ", _parts.AsSpan(0, _partCount)).ToMarkupString();
     }
 
     private string SetupTargetAddress(bool useLocation = false)
     {
-        List<string> _parts = [];
+        // Memory optimization: Use pre-allocated string array instead of List<string> to reduce overhead  
+        // Maximum possible parts: City, State, Zip (3 elements)
+        string[] _parts = new string[3];
+        int _partCount = 0;
         if (!useLocation)
         {
-            _parts.Add(_companyDetails.City);
+            _parts[_partCount++] = _companyDetails.City;
 
             if (_companyDetails.StateID > 0)
             {
@@ -664,13 +674,13 @@ public partial class Companies
 
                 if (_state is {Code: not null})
                 {
-                    _parts.Add(_state.Code);
+                    _parts[_partCount++] = _state.Code;
                 }
             }
 
             if (_companyDetails.ZipCode != "")
             {
-                _parts.Add(_companyDetails.ZipCode);
+                _parts[_partCount++] = _companyDetails.ZipCode;
             }
         }
         else
@@ -681,7 +691,7 @@ public partial class Companies
                 return "";
             }
 
-            _parts.Add(_loc.City);
+            _parts[_partCount++] = _loc.City;
 
             if (_loc.StateID > 0)
             {
@@ -689,17 +699,17 @@ public partial class Companies
 
                 if (_state is {Code: not null})
                 {
-                    _parts.Add(_state.Code);
+                    _parts[_partCount++] = _state.Code;
                 }
             }
 
             if (_loc.ZipCode != "")
             {
-                _parts.Add(_loc.ZipCode);
+                _parts[_partCount++] = _loc.ZipCode;
             }
         }
 
-        return _parts.Count > 0 ? string.Join(", ", _parts) : "";
+        return string.Join(", ", _parts.AsSpan(0, _partCount));
     }
 
     private async Task SpeedDialItemClicked(SpeedDialItemEventArgs args)
@@ -759,5 +769,5 @@ public partial class Companies
 
     private void TabSelected(SelectEventArgs args) => _selectedTab = args.SelectedIndex;
 
-    private Dictionary<string, string> UserParameters() => new() {{"user", User}};
+    private Dictionary<string, string> UserParameters() => new(1) {["user"] = User};
 }
