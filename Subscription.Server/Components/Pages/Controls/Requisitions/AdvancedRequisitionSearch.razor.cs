@@ -21,7 +21,7 @@ using Syncfusion.Blazor.Calendars;
 
 namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 
-public partial class AdvancedRequisitionSearch : ComponentBase
+public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
 {
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
@@ -92,8 +92,17 @@ public partial class AdvancedRequisitionSearch : ComponentBase
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new EditContext if Model reference changed
+        if (Context?.Model != Model)
+        {
+            // Dispose previous context event handler to prevent memory leaks
+            if (Context != null)
+            {
+                Context.OnFieldChanged -= Context_OnFieldChanged;
+            }
+            Context = new(Model);
+            Context.OnFieldChanged += Context_OnFieldChanged;
+        }
         base.OnParametersSet();
     }
 
@@ -108,4 +117,15 @@ public partial class AdvancedRequisitionSearch : ComponentBase
     }
 
     public async Task ShowDialog() => await Dialog.ShowAsync();
+
+    /// <summary>
+    /// Memory optimization: Properly dispose event handlers to prevent memory leaks
+    /// </summary>
+    public void Dispose()
+    {
+        if (Context != null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+    }
 }

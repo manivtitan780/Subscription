@@ -132,7 +132,9 @@ public static class General
 
     internal static string ExtractTextFromPdf(byte[] file)
     {
-        using PdfLoadedDocument _document = new(new MemoryStream(file));
+        // Memory optimization: Use RecyclableMemoryStream for PDF processing
+        using var stream = Extensions.Memory.ReusableMemoryStream.Get("pdf-text-extraction", file);
+        using PdfLoadedDocument _document = new(stream);
         StringBuilder _resumeText = new();
         foreach (object page in _document.Pages)
         {
@@ -155,7 +157,9 @@ public static class General
 
     internal static string ExtractTextFromWord(byte[] file)
     {
-        using WordDocument _document = new(new MemoryStream(file), FormatType.Automatic);
+        // Memory optimization: Use RecyclableMemoryStream for Word processing
+        using var stream = Extensions.Memory.ReusableMemoryStream.Get("word-text-extraction", file);
+        using WordDocument _document = new(stream, FormatType.Automatic);
         string _resumeText = _document.GetText();
         _document.Close();
 
@@ -575,7 +579,8 @@ public static class General
     {
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
 
-        await using MemoryStream stream = new(file);
+        // Memory optimization: Use RecyclableMemoryStream for blob uploads
+        await using var stream = Extensions.Memory.ReusableMemoryStream.Get("blob-upload", file);
         await _storage.WriteAsync(blobPath, stream);
     }
 }

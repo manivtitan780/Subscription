@@ -24,7 +24,7 @@ namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 ///     and a cancel event. It also provides a model for the requisition documents and methods for enabling
 ///     and disabling dialog buttons. Additionally, it provides a method for showing the dialog.
 /// </remarks>
-public partial class AddRequisitionDocument
+public partial class AddRequisitionDocument : IDisposable
 {
     private readonly RequisitionDocumentValidator _candidateDocumentValidator = new();
 
@@ -39,7 +39,8 @@ public partial class AddRequisitionDocument
     /// </remarks>
     private SfDataForm AddDocumentForm { get; set; }
 
-    internal MemoryStream AddedDocument { get; set; } = new();
+    // Memory optimization: Use RecyclableMemoryStream to prevent LOH allocations for large files
+    internal RecyclableMemoryStream AddedDocument { get; set; } = RecyclableMemoryStreamManager.Shared.GetStream();
 
     /// <summary>
     ///     Gets or sets the EventCallback triggered when the cancel event occurs in the AddRequisitionDocument component.
@@ -178,8 +179,17 @@ public partial class AddRequisitionDocument
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new EditContext if Model reference changed
+        if (Context?.Model != Model)
+        {
+            // Dispose previous context event handler to prevent memory leaks
+            if (Context != null)
+            {
+                Context.OnFieldChanged -= Context_OnFieldChanged;
+            }
+            Context = new(Model);
+            Context.OnFieldChanged += Context_OnFieldChanged;
+        }
         base.OnParametersSet();
     }
 
@@ -225,12 +235,29 @@ public partial class AddRequisitionDocument
     {
         foreach (UploadFiles _file in file.Files)
         {
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
-            await _str.CopyToAsync(AddedDocument);
+            // Memory optimization: Use using statement for proper stream disposal
+            using (Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024))
+            {
+                // Reset stream position before copying new content
+                AddedDocument.Position = 0;
+                AddedDocument.SetLength(0);
+                await _str.CopyToAsync(AddedDocument);
+            }
             FileName = _file.FileInfo.Name;
             Mime = _file.FileInfo.MimeContentType;
             AddedDocument.Position = 0;
-            _str.Close();
         }
+    }
+
+    /// <summary>
+    /// Memory optimization: Properly dispose RecyclableMemoryStream and unhook event handlers
+    /// </summary>
+    public void Dispose()
+    {
+        if (Context != null)
+        {
+            Context.OnFieldChanged -= Context_OnFieldChanged;
+        }
+        AddedDocument?.Dispose();
     }
 }

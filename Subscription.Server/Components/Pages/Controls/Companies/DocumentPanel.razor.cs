@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           DocumentPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          04-22-2024 15:04
-// Last Updated On:     04-30-2025 20:15
+// Created On:          07-23-2025 15:07
+// Last Updated On:     07-23-2025 15:59
 // *****************************************/
 
 #endregion
@@ -74,6 +74,9 @@ public partial class DocumentPanel
         await Grid.SelectRowAsync(_index);
         await EditCompanyDocument.InvokeAsync(id);
     }
+
+    // Template optimization: Extract formatted update info helper
+    private static string GetFormattedUpdateInfo(CompanyDocuments doc) => $"{doc.UpdatedDate.CultureDate()} [{doc.UpdatedBy}]";
 
     private void RowSelected(RowSelectEventArgs<CompanyDocuments> document)
     {

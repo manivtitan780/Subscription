@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           CompanyRequisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          05-20-2025 15:05
-// Last Updated On:     05-20-2025 18:46
+// Created On:          07-23-2025 15:07
+// Last Updated On:     07-23-2025 16:04
 // *****************************************/
 
 #endregion
@@ -89,4 +89,7 @@ public partial class CompanyRequisitions
             await GridInnerRequisition.SelectRowAsync(0);
         }
     }
+
+    // Template optimization: Extract formatted update info helper
+    private static string GetFormattedUpdateInfo(Requisition req) => $"{req.Updated} [{req.UpdatedBy}]";
 }

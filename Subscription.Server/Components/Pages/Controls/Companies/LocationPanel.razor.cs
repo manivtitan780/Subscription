@@ -144,53 +144,41 @@ public partial class LocationPanel
 
     private MarkupString SetupAddress(CompanyLocations location)
     {
-        string _generateAddress = location.StreetName;
+        // Memory optimization: Use pre-allocated string array instead of string concatenation
+        string[] addressParts = new string[4]; // Street, City, State, Zip
+        int partsCount = 0;
 
-        if (_generateAddress == "")
+        if (location.StreetName.NotNullOrWhiteSpace())
         {
-            _generateAddress = location.City;
+            addressParts[partsCount++] = location.StreetName;
         }
-        else
+
+        if (location.City.NotNullOrWhiteSpace())
         {
-            _generateAddress += location.City == "" ? "" : $"<br/>{location.City}";
+            addressParts[partsCount++] = location.City;
         }
 
         if (location.StateID > 0)
         {
-            if (_generateAddress == "")
+            try
             {
-                _generateAddress = $"<strong>{location.State.Trim()}</strong>";
-            }
-            else
-            {
-                try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                string stateName = location.State?.Trim();
+                if (stateName.NotNullOrWhiteSpace())
                 {
-                    _generateAddress += $", <strong>{location.State.Trim()}</strong>";
-                }
-                catch
-                {
-                    //
+                    addressParts[partsCount++] = $"<strong>{stateName}</strong>";
                 }
             }
-        }
-
-        if (location.ZipCode != "")
-        {
-            if (_generateAddress == "")
+            catch
             {
-                _generateAddress = location.ZipCode;
-            }
-            else
-            {
-                _generateAddress += ", " + location.ZipCode;
+                // Log or ignore random State access failures
             }
         }
 
-        if (_generateAddress != null && _generateAddress.StartsWith(","))
+        if (location.ZipCode.NotNullOrWhiteSpace())
         {
-            _generateAddress = _generateAddress[1..].Trim();
+            addressParts[partsCount++] = location.ZipCode;
         }
 
-        return _generateAddress.ToMarkupString();
+        return string.Join(", ", addressParts.AsSpan(0, partsCount)).ToMarkupString();
     }
 }

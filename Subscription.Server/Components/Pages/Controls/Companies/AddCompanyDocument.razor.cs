@@ -13,13 +13,25 @@
 
 #endregion
 
+#region Using
+
+using Extensions.Memory;
+using Microsoft.IO;
+
+#endregion
+
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
 public partial class AddCompanyDocument : ComponentBase, IDisposable
 {
     private readonly CompanyDocumentValidator _companyDocumentValidator = new();
 
-    internal MemoryStream AddedDocument { get; } = new();
+    // Memory optimization: Use RecyclableMemoryStream for large document uploads (up to 60MB)
+    // to avoid Large Object Heap allocations and reduce GC pressure
+    internal RecyclableMemoryStream AddedDocument { get; private set; }
+
+    // Memory optimization: Track model changes to avoid unnecessary Context recreation
+    private CompanyDocuments _currentModel;
 
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
@@ -65,10 +77,13 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
     /// </remarks>
     public void Dispose()
     {
-        if (Context is not null)
+        /*if (Context is not null)
         {
             Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
+        }*/
+
+        // Memory optimization: Properly dispose RecyclableMemoryStream to return to pool
+        AddedDocument?.Dispose();
 
         GC.SuppressFinalize(this);
     }
@@ -81,15 +96,15 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
         VisibleSpinner = false;
     }
 
-    /// <summary>
+    /*/// <summary>
     ///     Handles the event when a field in the edit context changes.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event arguments.</param>
     /// <remarks>
     ///     This method is invoked when a field in the edit context changes. It validates the changed field.
-    /// </remarks>
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    /// </remarks>*/
+    //private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     /// <summary>
     ///     Handles the event when a file is removed from the upload queue.
@@ -100,16 +115,14 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
     /// <remarks>
     ///     This method is invoked when a file is removed from the upload queue in the document upload dialog.
     /// </remarks>
-    private async Task OnFileRemoved(RemovingEventArgs arg)
+    private void OnFileRemoved(RemovingEventArgs arg)
     {
-        await Task.Yield();
         Model.Files = null;
         Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
     }
 
-    private async Task OnFileSelected(SelectedEventArgs file)
+    private void OnFileSelected(SelectedEventArgs file)
     {
-        await Task.Yield();
         if (Model.Files is null)
         {
             Model.Files = [file.FilesData[0].Name];
@@ -125,15 +138,23 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
 
     /// <summary>
     ///     Initializes the edit context and sets up event handlers for field changes.
+    ///     Memory optimization: Only creates new Context when Model actually changes.
     /// </summary>
     /// <remarks>
     ///     This method is called when the component's parameters are set. It initializes the edit context for the model
-    ///     and sets up event handlers for field changes.
+    ///     and sets up event handlers for field changes only when the model reference changes.
     /// </remarks>
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new Context if Model reference has changed
+        // ReSharper disable once InvertIf
+        if (_currentModel != Model)
+        {
+            _currentModel = Model;
+            Context = new(Model);
+            //Context.OnFieldChanged += Context_OnFieldChanged;
+        }
+        
         base.OnParametersSet();
     }
 
@@ -161,6 +182,10 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
     {
         foreach (UploadFiles _file in file.Files)
         {
+            // Memory optimization: Dispose previous stream and get new RecyclableMemoryStream from pool
+            await AddedDocument.DisposeAsync();
+            AddedDocument = ReusableMemoryStream.Get("company-document-upload");
+            
             Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024); //60MB maximum
             await _str.CopyToAsync(AddedDocument);
             FileName = _file.FileInfo.Name;

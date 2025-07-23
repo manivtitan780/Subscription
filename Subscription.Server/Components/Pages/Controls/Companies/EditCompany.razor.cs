@@ -19,6 +19,9 @@ public partial class EditCompany : IDisposable
 {
     private readonly CompanyDetailsValidator _companyValidator = new();
 
+    // Memory optimization: Track model changes to avoid unnecessary Context recreation
+    private CompanyDetails _currentModel;
+
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
 
@@ -44,11 +47,8 @@ public partial class EditCompany : IDisposable
 
     public void Dispose()
     {
-        if (Context is not null)
-        {
-            Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
-
+        // Memory optimization: No event handlers to unsubscribe from
+        // EditContext handles validation automatically
         GC.SuppressFinalize(this);
     }
 
@@ -60,14 +60,22 @@ public partial class EditCompany : IDisposable
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    // Memory optimization: Removed redundant Context_OnFieldChanged event handler
+    // EditContext already handles field validation automatically
 
     private void DialogOpen(BeforeOpenEventArgs args) => CompanyEditForm.EditContext?.Validate();
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new Context if Model reference has changed
+        // ReSharper disable once InvertIf
+        if (_currentModel != Model)
+        {
+            _currentModel = Model;
+            Context = new(Model);
+            // Memory optimization: No event handler needed - EditContext handles validation automatically
+        }
+        
         base.OnParametersSet();
     }
 

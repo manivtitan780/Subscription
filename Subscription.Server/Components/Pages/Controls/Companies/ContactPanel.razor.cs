@@ -141,55 +141,53 @@ public partial class ContactPanel
         }
     }
 
+    // Memory optimization: Use same pattern as LocationPanel with pre-allocated string array
     private static MarkupString SetupAddress(CompanyContacts contact)
     {
-        string _generateAddress = contact.StreetName;
+        // Memory optimization: Use pre-allocated string array instead of string concatenation
+        string[] addressParts = new string[4]; // Street, City, State, Zip
+        int partsCount = 0;
 
-        if (_generateAddress == "")
+        if (contact.StreetName.NotNullOrWhiteSpace())
         {
-            _generateAddress = contact.City;
+            addressParts[partsCount++] = contact.StreetName;
         }
-        else
+
+        if (contact.City.NotNullOrWhiteSpace())
         {
-            _generateAddress += contact.City == "" ? "" : $"<br/>{contact.City}";
+            addressParts[partsCount++] = contact.City;
         }
 
         if (contact.StateID > 0)
         {
-            if (_generateAddress == "")
+            try
             {
-                _generateAddress = $"<strong>{contact.State.Trim()}</strong>";
-            }
-            else
-            {
-                try //Because sometimes the default values are not getting set. It's so random that it can't be debugged. And it never fails during debugging session.
+                string stateName = contact.State?.Trim();
+                if (stateName.NotNullOrWhiteSpace())
                 {
-                    _generateAddress += $", <strong>{contact.State.Trim()}</strong>";
-                }
-                catch
-                {
-                    //
+                    addressParts[partsCount++] = $"<strong>{stateName}</strong>";
                 }
             }
-        }
-
-        if (contact.ZipCode != "")
-        {
-            if (_generateAddress == "")
+            catch (Exception ex)
             {
-                _generateAddress = contact.ZipCode;
-            }
-            else
-            {
-                _generateAddress += ", " + contact.ZipCode;
+                // Log error for random State access failures - maintaining original behavior
+                Log.Error(ex, "Error accessing State property for contact {ContactId}", contact.ID);
             }
         }
 
-        if (_generateAddress != null && _generateAddress.StartsWith(","))
+        if (contact.ZipCode.NotNullOrWhiteSpace())
         {
-            _generateAddress = _generateAddress[1..].Trim();
+            addressParts[partsCount++] = contact.ZipCode;
         }
 
-        return _generateAddress.ToMarkupString();
+        return string.Join("<br/>", addressParts.AsSpan(0, partsCount)).ToMarkupString();
     }
+
+    // Template string optimization: Extract formatted name helper
+    private static string GetFormattedName(CompanyContacts contact) =>
+        $"{contact.FirstName} {contact.LastName}";
+
+    // Template string optimization: Extract formatted update info helper
+    private static string GetFormattedUpdateInfo(CompanyContacts contact) =>
+        $"{contact.UpdatedDate.CultureDate()} [{contact.UpdatedBy}]";
 }

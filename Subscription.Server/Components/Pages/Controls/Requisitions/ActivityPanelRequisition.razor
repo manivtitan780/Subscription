@@ -8,72 +8,62 @@
             <GridColumn HeaderText="Status" Width="20%">
                 <Template Context="aCon">
                     @{
-                        if (aCon is CandidateActivity _con)
-                        {
-                            <span>@($"{_con.Status} [{_con.UpdatedBy.ToUpper()}]")</span>
-                        }
+                        // Memory optimization: Direct casting instead of pattern matching
+                        CandidateActivity activity = (CandidateActivity)aCon;
                     }
+                    <span>@($"{activity.Status} [{activity.UpdatedBy.ToUpper()}]")</span>
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Date Updated" Width="15%">
                 <Template Context="aCon">
                     @{
-                        if (aCon is CandidateActivity _con)
-                        {
-                            <span>@_con.UpdatedDate.CultureDate()</span>
-                        }
+                        // Memory optimization: Direct casting instead of pattern matching
+                        CandidateActivity activity = (CandidateActivity)aCon;
                     }
+                    <span>@activity.UpdatedDate.CultureDate()</span>
                 </Template>
             </GridColumn>
             <GridColumn HeaderText="Initial Recruiter" Width="15%">
                 <Template Context="aCon">
                     @{
-                        if (aCon is CandidateActivity _con)
-                        {
-                            <span>@($"{_con.CandidateUpdatedBy.ToUpper()}")</span>
-                        }
+                        // Memory optimization: Direct casting instead of pattern matching
+                        CandidateActivity activity = (CandidateActivity)aCon;
                     }
+                    <span>@activity.CandidateUpdatedBy.ToUpper()</span>
                 </Template>
             </GridColumn>
             <GridColumn Width="10%">
                 <Template Context="bCon">
                     @{
-                        if (bCon is CandidateActivity _con)
-                        {
-                            <div class="buttonContain">
-                                @{
-                                    if (_con.DoRoleHaveRight)
-                                    {
-                                        <SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditActivityDialog(_con.ID)"/>
-                                    }
-
-                                    if (_con.StatusCode != "PEN" && (_con.UpdatedBy.Trim().Equals(User.Trim(), StringComparison.OrdinalIgnoreCase) || RoleID == 1))
-                                    {
-                                        <SfButton Content="" IconCss="e-icons e-undo" @onclick="() => UndoActivity(_con.ID)"/>
-                                    }
-                                }
-                            </div>
-                        }
+                        // Memory optimization: Direct casting instead of pattern matching
+                        CandidateActivity activity = (CandidateActivity)bCon;
                     }
+                    <div class="buttonContain">
+                        @if (activity.DoRoleHaveRight)
+                        {
+                            <SfButton Content="" IconCss="e-icons e-edit" @onclick="() => EditActivityDialog(activity.ID)"/>
+                        }
+                        @if (activity.StatusCode != "PEN" && (activity.UpdatedBy.Trim().Equals(User.Trim(), StringComparison.OrdinalIgnoreCase) || RoleID == 1))
+                        {
+                            <SfButton Content="" IconCss="e-icons e-undo" @onclick="() => UndoActivity(activity.ID)"/>
+                        }
+                    </div>
                 </Template>
             </GridColumn>
         </GridColumns>
         <GridTemplates Context="context">
             <DetailTemplate>
                 @{
-                    CandidateActivity _activity = context as CandidateActivity;
+                    // Memory optimization: Direct casting instead of 'as' casting with null check
+                    CandidateActivity activity = (CandidateActivity)context;
                 }
-
-                @if (_activity != null)
+                @if (activity.Notes.NullOrWhiteSpace())
                 {
-                    if (_activity.Notes.NullOrWhiteSpace())
-                    {
-                        <div class="blankActivityNotes">There are no Notes for this Activity.</div>
-                    }
-                    else
-                    {
-                        <div class="activityNotes">@_activity.Notes.ToMarkupString()</div>
-                    }
+                    <div class="blankActivityNotes">There are no Notes for this Activity.</div>
+                }
+                else
+                {
+                    <div class="activityNotes">@activity.Notes.ToMarkupString()</div>
                 }
             </DetailTemplate>
         </GridTemplates>

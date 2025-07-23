@@ -1,10 +1,23 @@
-using Microsoft.AspNetCore.Components;
+#region Header
+
+// /*****************************************
+// Copyright:           Titan-Techs.
+// Location:            Newtown, PA, USA
+// Solution:            Subscription
+// Project:             Subscription.Server
+// File Name:           CompaniesNotesPanel.razor.cs
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-23-2025 15:07
+// Last Updated On:     07-23-2025 15:59
+// *****************************************/
+
+#endregion
 
 namespace Subscription.Server.Components.Pages.Controls.Companies;
 
 public partial class CompaniesNotesPanel : ComponentBase
 {
-   private int _selectedID;
+    private int _selectedID;
 
 	/// <summary>
 	///     Gets or sets the event callback that is triggered when a note entry is to be deleted.
@@ -157,6 +170,12 @@ public partial class CompaniesNotesPanel : ComponentBase
         await GridNotes.SelectRowAsync(_index);
         await EditNotes.InvokeAsync(id);
     }
+
+    // Template optimization: Extract formatted update info helper
+    private static string GetFormattedUpdateInfo(CandidateNotes note) => $"{note.UpdatedDate.ToString("d", new CultureInfo("en-us"))} [{note.UpdatedBy}]";
+
+    // Template optimization: Extract notes title helper
+    private static string GetNotesTitle(CandidateNotes note) => note.Notes.Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine);
 
 	/// <summary>
 	///     Handles the row selection event in the note details grid.

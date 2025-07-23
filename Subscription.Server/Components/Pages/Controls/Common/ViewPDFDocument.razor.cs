@@ -15,6 +15,7 @@
 
 #region Using
 
+using Extensions.Memory;
 using ToolbarItem = Syncfusion.Blazor.SfPdfViewer.ToolbarItem;
 using WFormatType = Syncfusion.DocIO.FormatType;
 using WordDocument = Syncfusion.DocIO.DLS.WordDocument;
@@ -151,13 +152,15 @@ public partial class ViewPDFDocument
     ///     then reads the document file based on the entity type and entity ID, and converts it to a base64 string.
     ///     If the document is not a PDF, it is converted to a PDF. The base64 string is then loaded into the PDF viewer.
     ///     Finally, the loading spinner is hidden, and the component state is updated.
+    ///     
+    ///     Memory optimizations: Uses ReusableMemoryStream and ArrayPool-based Base64 conversion to avoid LOH allocations.
     /// </summary>
     /// <returns>A Task representing the asynchronous operation.</returns>
     private async Task OpenDialog()
     {
         await Spinner.ShowAsync();
         await Task.Yield();
-        string _base64String = "";
+        
         string _entity = EntityType switch
                          {
                              EntityType.Candidate => "Candidate",
@@ -169,39 +172,40 @@ public partial class ViewPDFDocument
                          };
 
         //Connect to the Azure Blob Storage
-        IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
+        using IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
 
         //Create the Path to the File in Azure Blob Storage
         string _blobPath = $"{Start.AzureBlobContainer}/{_entity}/{EntityID}/{InternalFileName}";
 
         //Read the file into a Bytes Array
         byte[] _memBytes = await _storage.ReadBytesAsync(_blobPath);
+        
+        string _dataUri;
         if (DocumentLocation.EndsWith(".pdf"))
         {
-            _base64String = Convert.ToBase64String(_memBytes);
+            // Memory optimization: Use ArrayPool-based Base64 conversion to avoid LOH allocation
+            _dataUri = Base64Helper.CreatePdfDataUri(_memBytes);
         }
         else
         {
-            PdfDocument _pdfDocument = new();
-            using (MemoryStream _mem = new(_memBytes))
+            // Memory optimization: Use RecyclableMemoryStream with tagging for monitoring
+            using var _inputStream = ReusableMemoryStream.Get("pdf-input", _memBytes);
+            using var _outputStream = ReusableMemoryStream.Get("pdf-output");
+            
+            using (var _doc = new WordDocument(_inputStream, GetWFormatType()))
+            using (var _pdfDocument = new DocIORenderer().ConvertToPDF(_doc))
             {
-                WordDocument _doc = new(_mem, GetWFormatType());
-                _pdfDocument = new DocIORenderer().ConvertToPDF(_doc);
-                _doc.Close();
+                _pdfDocument.Save(_outputStream);
+                _outputStream.Position = 0;
+                
+                // Memory optimization: Use ArrayPool-based Base64 conversion to avoid LOH allocation
+                _dataUri = Base64Helper.CreatePdfDataUri(_outputStream);
             }
-
-            using MemoryStream _outputStream = new();
-            _pdfDocument.Save(_outputStream);
-            _outputStream.Position = 0;
-            _base64String = Convert.ToBase64String(_outputStream.ToArray());
-            _pdfDocument.Close();
-            _outputStream.Close();
-            _pdfDocument.Dispose();
         }
 
-        _memBytes = null;
-        DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : DocumentLocation + ".pdf";
-        await PdfViewer.LoadAsync("data:application/pdf;base64," + _base64String);
+        // Memory optimization: Remove manual nulling - let GC handle disposal
+        DownloadFileName = DocumentLocation.EndsWith(".pdf") ? DocumentLocation : $"{DocumentLocation}.pdf";
+        await PdfViewer.LoadAsync(_dataUri);
         await Spinner.HideAsync();
         StateHasChanged();
     }

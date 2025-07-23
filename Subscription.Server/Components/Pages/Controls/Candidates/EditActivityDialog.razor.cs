@@ -268,8 +268,17 @@ public partial class EditActivityDialog : IDisposable
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new EditContext if Model reference changed
+        if (Context?.Model != Model)
+        {
+            // Dispose previous context event handler to prevent memory leaks
+            if (Context != null)
+            {
+                Context.OnFieldChanged -= Context_OnFieldChanged;
+            }
+            Context = new(Model);
+            Context.OnFieldChanged += Context_OnFieldChanged;
+        }
         base.OnParametersSet();
     }
 

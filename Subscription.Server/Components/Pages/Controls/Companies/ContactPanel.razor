@@ -1,87 +1,57 @@
 ﻿<div class="companyPanel">
     <div>
         <SfGrid AllowPaging="false" DataSource="@Model" EnableHover="true" ID="gridCompanyTab" @ref="Grid" RowHeight="70" SelectedRowIndex="0" TValue="CompanyContacts" Width="100%">
-            <GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single" />
-            <GridEvents RowSelected="RowSelected" TValue="CompanyContacts" />
+            <GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
+            <GridEvents RowSelected="RowSelected" TValue="CompanyContacts"/>
             <GridColumns>
                 <GridColumn Field="@nameof(CompanyContacts.FirstName)" HeaderText="Name" Width="15%">
-                    <Template Context="bCon">
-                        @{
-                            if (bCon is CompanyContacts _con)
-                            {
-                                <span>@(_con.FirstName + " " + _con.LastName)</span>
-                            }
-                        }
+                    <Template Context="context">
+                        <span>@GetFormattedName((CompanyContacts)context)</span>
                     </Template>
                 </GridColumn>
-                <GridColumn Field="@nameof(CompanyContacts.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" />
+                <GridColumn Field="@nameof(CompanyContacts.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false"/>
                 <GridColumn Field="@nameof(CompanyContacts.StreetName)" HeaderText="Address" Width="18%">
-                    <Template Context="bCon">
-                        @{
-                            if (bCon is CompanyContacts _con)
-                            {
-                                <span>@(SetupAddress(_con))</span>
-                            }
-                        }
+                    <Template Context="context">
+                        <span>@(SetupAddress((CompanyContacts)context))</span>
                     </Template>
                 </GridColumn>
-                <GridColumn Field="@nameof(CompanyContacts.EmailAddress)" HeaderText="Email" Width="15%" />
+                <GridColumn Field="@nameof(CompanyContacts.EmailAddress)" HeaderText="Email" Width="15%"/>
                 <GridColumn Field="@nameof(CompanyContacts.Phone)" HeaderText="Phone" Width="12%/">
-                    <Template Context="bCon">
-                        @{
-                            if (bCon is CompanyContacts _con)
-                            {
-                                <span>@(_con.Phone.FormatPhoneNumber())</span>
-                            }
-                        }
+                    <Template Context="context">
+                        <span>@(((CompanyContacts)context).Phone.FormatPhoneNumber())</span>
                     </Template>
                 </GridColumn>
                 <GridColumn Field="@nameof(CompanyContacts.Title)" HeaderText="Title" Width="20%/">
-                    <Template Context="bCon">
-                        @{
-                            if (bCon is CompanyContacts _con)
-                            {
-                                <span>@(_con.Title)</span>
-                            }
-                        }
+                    <Template Context="context">
+                        <span>@(((CompanyContacts)context).Title)</span>
                     </Template>
                 </GridColumn>
                 <GridColumn Field="@nameof(CompanyContacts.UpdatedBy)" HeaderText="Updated By" Width="10%">
-                    <Template Context="bCon">
-                        @{
-                            if (bCon is CompanyContacts _con)
-                            {
-                                <span>@($"{_con.UpdatedDate.CultureDate()} [{_con.UpdatedBy}]")</span>
-                            }
-                        }
+                    <Template Context="context">
+                        <span>@GetFormattedUpdateInfo((CompanyContacts)context)</span>
                     </Template>
                 </GridColumn>
                 <GridColumn Width="10%">
-                    <Template Context="bCon">
-                        @{
-                            if (bCon is CompanyContacts _con)
-                            {
-                                <div class="buttonContain">
-                                    <SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditCompanyContactDialog(_con.ID)" />
-                                    <SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteCompanyContactMethod(_con.ID)" />
-                                </div>
-                            }
-                        }
+                    <Template Context="context">
+                        <div class="buttonContain">
+                            <SfButton Content="" title="Edit" IconCss="e-icons e-edit" @onclick="() => EditCompanyContactDialog(((CompanyContacts)context).ID)"/>
+                            <SfButton Content="" title="Disable" IconCss="e-icons e-delete" @onclick="() => DeleteCompanyContactMethod(((CompanyContacts)context).ID)"/>
+                        </div>
                     </Template>
                 </GridColumn>
             </GridColumns>
             <GridTemplates Context="context">
                 <DetailTemplate>
-                    @if (context is CompanyContacts _con)
+                    @{
+                        CompanyContacts contact = (CompanyContacts)context;
+                    }
+                    @if (contact.Notes.NullOrWhiteSpace())
                     {
-                        if (_con.Notes.NullOrWhiteSpace())
-                        {
-                            <div class="gridNotes blankGridNotes">There are no Notes for this Contact.</div>
-                        }
-                        else
-                        {
-                            <div class="gridNotes textGridNotes">@_con.Notes.Replace("\n", "<br/>").ToMarkupString()</div>
-                        }
+                        <div class="gridNotes blankGridNotes">There are no Notes for this Contact.</div>
+                    }
+                    else
+                    {
+                        <div class="gridNotes textGridNotes">@contact.Notes.Replace("\n", "<br/>").ToMarkupString()</div>
                     }
                 </DetailTemplate>
             </GridTemplates>

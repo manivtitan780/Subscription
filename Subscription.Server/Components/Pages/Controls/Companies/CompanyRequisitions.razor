@@ -8,63 +8,51 @@
 		<GridColumns>
 			<GridColumn Field="@nameof(Requisition.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false" Width="0"/>
 			<GridColumn AllowSorting="true" HeaderText="Code" Width="13%">
-				<Template Context="aCon">
+				<Template Context="context">
 					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Code</span>
-						}
+						Requisition req = (Requisition)context;
 					}
+					<span style="color: @req.PriorityColor">@req.Code</span>
 				</Template>
 			</GridColumn>
 			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Title)" HeaderText="Title" Width="36%">
-				<Template Context="aCon">
+				<Template Context="context">
 					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Title</span>
-						}
+						Requisition req = (Requisition)context;
 					}
+					<span style="color: @req.PriorityColor">@req.Title</span>
 				</Template>
 			</GridColumn>
 			<GridColumn AllowSorting="false" Field="@nameof(Requisition.JobOptions)" HeaderText="Type" Width="24%">
-				<Template Context="aCon">
+				<Template Context="context">
 					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.JobOptions</span>
-						}
+						Requisition req = (Requisition)context;
 					}
+					<span style="color: @req.PriorityColor">@req.JobOptions</span>
 				</Template>
 			</GridColumn>
 			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Updated)" HeaderText="Updated" Width="13%">
-				<Template Context="aCon">
+				<Template Context="context">
 					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@($"{_con.Updated} [{_con.UpdatedBy}]")</span>
-						}
+						Requisition req = (Requisition)context;
 					}
+					<span style="color: @req.PriorityColor">@GetFormattedUpdateInfo(req)</span>
 				</Template>
 			</GridColumn>
 			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Due)" HeaderText="Due By" Width="10%">
-				<Template Context="aCon">
+				<Template Context="context">
 					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Due</span>
-						}
+						Requisition req = (Requisition)context;
 					}
+					<span style="color: @req.PriorityColor">@req.Due</span>
 				</Template>
 			</GridColumn>
 			<GridColumn AllowSorting="true" Field="@nameof(Requisition.Status)" HeaderText="Status" Width="13%">
-				<Template Context="aCon">
+				<Template Context="context">
 					@{
-						if (aCon is Requisition _con)
-						{
-							<span style="color: @(_con.PriorityColor)">@_con.Status</span>
-						}
+						Requisition req = (Requisition)context;
 					}
+					<span style="color: @req.PriorityColor">@req.Status</span>
 				</Template>
 			</GridColumn>
 		</GridColumns>

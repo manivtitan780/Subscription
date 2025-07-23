@@ -538,8 +538,10 @@ public partial class Companies
                                                                                                                           ["user"] = User
                                                                                                                       };
 
+                                                                             // Memory optimization: Use GetBuffer().AsSpan() to avoid additional array copy for large documents  
+                                                                             byte[] documentBytes = DialogDocument.AddedDocument.GetBuffer().AsSpan(0, (int)DialogDocument.AddedDocument.Length).ToArray();
                                                                              string _response = await General.ExecuteRest<string>("Company/UploadDocument", _parameters, null, true,
-                                                                                                                                  DialogDocument.AddedDocument.ToStreamByteArray(),
+                                                                                                                                  documentBytes,
                                                                                                                                   DialogDocument.FileName);
 
                                                                              _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_response);

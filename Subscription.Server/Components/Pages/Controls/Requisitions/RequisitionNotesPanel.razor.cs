@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           RequisitionNotesPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          06-12-2025 20:06
-// Last Updated On:     06-12-2025 20:57
+// Created On:          07-23-2025 21:07
+// Last Updated On:     07-23-2025 21:11
 // *****************************************/
 
 #endregion
@@ -170,6 +170,22 @@ public partial class RequisitionNotesPanel : ComponentBase
         await GridNotes.SelectRowAsync(_index);
         await EditNotes.InvokeAsync(id);
     }
+
+	/// <summary>
+	///     Memory optimization: Efficiently processes notes text for tooltip display.
+	///     Replaces HTML break tags with newlines for clean text display.
+	/// </summary>
+	/// <param name="notes">The notes text containing HTML break tags</param>
+	/// <returns>Clean text with newlines instead of HTML breaks</returns>
+	private static string GetCleanNotesText(string notes) => string.IsNullOrEmpty(notes) ? "" : notes.Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine);
+
+	/// <summary>
+	///     Memory optimization: Formats the update information using existing CultureDate extension method.
+	///     Leverages the application's consistent date formatting pattern.
+	/// </summary>
+	/// <param name="note">The candidate note containing update information</param>
+	/// <returns>Formatted string with date and user information</returns>
+	private static string GetFormattedUpdateInfo(CandidateNotes note) => $"{note.UpdatedDate.CultureDate()} [{note.UpdatedBy}]";
 
 	/// <summary>
 	///     Handles the row selection event in the note details grid.

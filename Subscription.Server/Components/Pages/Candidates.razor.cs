@@ -1379,8 +1379,8 @@ public sealed partial class Candidates : IDisposable
         }
 
         // Use ArraySegment to avoid LINQ allocation and process only populated elements
-        string line1 = addressCount > 0 ? string.Join(", ", addressParts.AsSpan(0, addressCount)) : "";
-        string line2 = locationCount > 0 ? string.Join(", ", locationParts.AsSpan(0, locationCount)) : "";
+        string line1 = string.Join(", ", addressParts.AsSpan(0, addressCount));
+        string line2 = string.Join(", ", locationParts.AsSpan(0, locationCount));
 
         // Optimized address HTML building - avoids LINQ allocation from previous Where() usage
         if (line1.NotNullOrWhiteSpace() && line2.NotNullOrWhiteSpace())

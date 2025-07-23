@@ -13,37 +13,34 @@
 					<GridColumn Width="10%">
 						<Template Context="bCon">
 							@{
-								if (bCon is RequisitionDocuments _con)
-								{
-									<div class="buttonContain">
-										<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(_con.Location)"/>
-										@if (EditRights && _con.RequisitionOwner == User)
-										{
-											<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(_con.ID)"/>
-											<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteDocumentMethod(_con.ID)"/>
-										}
-									</div>
-								}
+								// Memory optimization: Direct casting instead of pattern matching
+								RequisitionDocuments doc = (RequisitionDocuments)bCon;
 							}
+							<div class="buttonContain">
+								<SfButton Content="" IconCss="e-icons e-open-link" @onclick="() => ViewDocumentDialog(doc.Location)"/>
+								@if (EditRights && doc.RequisitionOwner == User)
+								{
+									<SfButton Content="" IconCss="e-icons e-download" @onclick="() => DownloadDocumentDialog(doc.ID)"/>
+									<SfButton Content="" IconCss="e-icons e-delete" @onclick="() => DeleteDocumentMethod(doc.ID)"/>
+								}
+							</div>
 						</Template>
 					</GridColumn>
 				</GridColumns>
 				<GridTemplates Context="context">
 					<DetailTemplate>
 						@{
-							RequisitionDocuments _document = context as RequisitionDocuments;
+							// Memory optimization: Direct casting instead of 'as' casting with null check
+							RequisitionDocuments document = (RequisitionDocuments)context;
 						}
 
-						@if (_document != null)
+						@if (document.Notes.NullOrWhiteSpace())
 						{
-							if (_document.Notes.NullOrWhiteSpace())
-							{
-								<div class="blankActivityNotes">There are no Notes for this Document.</div>
-							}
-							else
-							{
-								<div class="activityNotes">@_document.Notes</div>
-							}
+							<div class="blankActivityNotes">There are no Notes for this Document.</div>
+						}
+						else
+						{
+							<div class="activityNotes">@document.Notes</div>
 						}
 					</DetailTemplate>
 				</GridTemplates>

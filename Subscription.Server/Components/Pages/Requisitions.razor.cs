@@ -395,44 +395,8 @@ public partial class Requisitions
                                                                               await Task.WhenAll(SaveStorage(), SetDataSource()).ConfigureAwait(false);
                                                                           });
 
-    private string GetDurationCode(string durationCode)
-    {
-        return durationCode.ToLower() switch
-               {
-                   "m" => "months",
-                   "w" => "weeks",
-                   "d" => "days",
-                   _ => "years"
-               };
-    }
-
-    private string GetLocation()
-    {
-        // string _location = "";
-        if (_reqDetailsObject == null)
-        {
-            return "";
-        }
-
-        List<string> _parts = [];
-        if (_reqDetailsObject.City.NotNullOrWhiteSpace())
-        {
-            _parts.Add(_reqDetailsObject.City);
-        }
-
-        if (_reqDetailsObject.StateID.ToInt32() != 0)
-        {
-            StateCache _state = _states.FirstOrDefault(s => s.KeyValue == _reqDetailsObject.StateID.ToInt32());
-            _parts.Add(_state.Code);
-        }
-
-        if (_reqDetailsObject.ZipCode.NotNullOrWhiteSpace())
-        {
-            _parts.Add(_reqDetailsObject.ZipCode);
-        }
-
-        return string.Join(", ", _parts);
-    }
+    // Memory optimization: GetDurationCode and GetLocation methods moved to RequisitionInfoPanel component
+    // This reduces code duplication and improves component encapsulation
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

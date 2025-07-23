@@ -48,6 +48,7 @@ public partial class Download
                        };
         string _blobPath = $"{Start.AzureBlobContainer}/{_type}/{_decodedStringArray[1]}/{_decodedStringArray[0]}";
         byte[] _fileBytes = await General.ReadFromBlob(_blobPath);
-        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", _decodedStringArray[2], Convert.ToBase64String(_fileBytes));
+        // Memory optimization: Use ArrayPool-based Base64 conversion for file downloads
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", _decodedStringArray[2], Extensions.Memory.Base64Helper.ConvertToBase64Efficiently(_fileBytes));
     }
 }

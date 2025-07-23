@@ -416,7 +416,8 @@ public static partial class Extensions
     public static string ToBase64String(this string s)
     {
         byte[] _bytes = Encoding.UTF8.GetBytes(s);
-        return Convert.ToBase64String(_bytes);
+        // Memory optimization: Use ArrayPool-based Base64 conversion
+        return Memory.Base64Helper.ConvertToBase64Efficiently(_bytes);
     }
 
     /// <summary>

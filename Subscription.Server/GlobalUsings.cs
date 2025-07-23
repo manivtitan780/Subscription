@@ -15,6 +15,7 @@
 
 #region Using
 
+global using System.Globalization;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.IO.Compression;
 global using System.Security.Claims;
@@ -22,6 +23,7 @@ global using System.Text.RegularExpressions;
 global using Blazored.LocalStorage;
 global using Blazored.SessionStorage;
 global using Extensions;
+global using Extensions.Memory;
 global using FluentStorage;
 global using FluentStorage.Azure.Blobs;
 global using FluentStorage.Blobs;

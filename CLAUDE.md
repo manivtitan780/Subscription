@@ -319,6 +319,30 @@ private string GetApiHost()
 **Documentation Updated**: 2025-07-12
 **Status**: Awaiting API/Server project review completion
 
+## Pending Implementation: User Rights System
+
+### Overview
+User Rights implementation is missing in the ContactPanel component and needs to be implemented later. This follows the pattern used in other panels where Edit/Delete buttons are conditionally shown based on user permissions.
+
+### Current State
+- **ContactPanel.razor**: Edit and Delete buttons are always visible (lines 37-38)
+- **Missing**: User rights checking for button visibility
+- **Pattern**: Should follow same implementation as other Company panels (CompanyInfoPanel, LocationPanel)
+
+### Required Implementation
+- Add user rights checking to Edit button visibility
+- Add user rights checking to Delete button visibility  
+- Follow existing pattern from other optimized panels
+- Integrate with existing user permission system
+
+### Implementation Notes
+- **Priority**: Medium (functional but security/UX improvement)
+- **Pattern**: Follow CompanyInfoPanel/LocationPanel user rights implementation
+- **Testing**: Verify with different user permission levels
+
+**Documentation Updated**: 2025-07-23
+**Status**: Noted for future implementation during user rights review
+
 ## Memory Optimization Analysis: Stream and ObjectPool Opportunities
 
 ### Analysis Completed: 2025-07-21

@@ -112,47 +112,7 @@
 										<TabHeader Text="Requisition Info"/>
 									</ChildContent>
 									<ContentTemplate>
-										<div class="layout-2">
-											<div class="leftLayout">
-												<PanelDisplayText Label="Company Name" Text="@(_reqDetailsObject.CompanyName)"/>
-												<PanelDisplayText Label="Contact Name" Text="@(_reqDetailsObject.ContactName)"/>
-												<PanelDisplayText Label="Job Title" Text="@(_reqDetailsObject.PositionTitle)"/>
-												<PanelDisplayText Label="No. of Positions" Text="@(_reqDetailsObject.Positions.ToString())"/>
-												<PanelDisplayText Label="Project Location" Text="@GetLocation()"/>
-												<PanelDisplayText Label="Duration" Text="@(_reqDetailsObject.Duration + " " + GetDurationCode(_reqDetailsObject.DurationCode))"/>
-												<PanelDisplayText Label="Expected Start Date" Text="@(_reqDetailsObject.ExpectedStart.CultureDate())"/>
-												<PanelDisplayText Label="Due Date" Text="@(_reqDetailsObject.DueDate.CultureDate())"/>
-												<PanelDisplayText Label="Expected Rate" Text="@($"{_reqDetailsObject.ExpRateLow.CultureCurrency()} - {_reqDetailsObject.ExpRateHigh.CultureCurrency()}")"/>
-												<PanelDisplayText Label="Salary Expected" Text="@($"{_reqDetailsObject.SalaryLow.CultureCurrency()} - {_reqDetailsObject.SalaryHigh.CultureCurrency()}")"/>
-												<PanelDisplayText Label="Load Expected" Text="@($"{_reqDetailsObject.ExpLoadLow.CultureCurrency()} - {_reqDetailsObject.ExpLoadHigh.CultureCurrency()}")"/>
-												<PanelDisplayText Label="Placement Fee" Text="@(_reqDetailsObject.PlacementFee.CulturePercentage())"/>
-												<PanelDisplayText Label="Status" Text="@(_reqDetailsObject.Status)"/>
-											</div>
-											<div class="leftLayout">
-												<PanelDisplayText Label="Assigned Recruiter(s)" Text="@(_reqDetailsObject.AssignedTo)"/>
-												<PanelDisplayText Label="Priority" Text="@(_reqDetailsObject.Priority)"/>
-												<PanelDisplayText Label="Job Options" Text="@(_reqDetailsObject.JobOptions)"/>
-												<PanelDisplayText Label="Experience" Text="@(_reqDetailsObject.Experience)"/>
-												<PanelDisplayText Label="Report To" Text="@(_reqDetailsObject.ReportTo)"/>
-												<PanelDisplayText Label="Education" Text="@(_reqDetailsObject.Education)"/>
-												<PanelDisplayText Label="Eligibility" Text="@(_reqDetailsObject.Eligibility)"/>
-												<PanelDisplayText Label="Expenses Paid?" Text="@_reqDetailsObject.ExpensesPaid.ToBooleanString("Yes", "No")"/>
-												<PanelDisplayText Label="Security Clearance?" Text="@_reqDetailsObject.SecurityClearance.ToBooleanString("Yes", "No")"/>
-												<PanelDisplayText Label="OFCCP?" Text="@_reqDetailsObject.OFCCP.ToBooleanString("Yes", "No")"/>
-												<PanelDisplayText Label="Benefits?" Text="@_reqDetailsObject.Benefits.ToBooleanString("Yes", "No")"/>
-												<PanelDisplayText Label="Benefits Notes" MarkupText="@_reqDetailsObject.BenefitNotes.ToMarkupString()"/>
-											</div>
-											<div class="rightLayout" style="display:flex; flex-direction:column;">
-												<div style="font-weight: bold; height: 23px;">Description:</div>
-												<div style="    overflow-y: auto; flex: 1;">
-													@_reqDetailsObject.Description.ToMarkupString()
-												</div>
-												<div style="font-weight: bold; height: 23px; margin-top: 15px;">Skills:</div>
-												<div style="flex: 1; overflow-y: auto;">
-													@_reqDetailSkills
-												</div>
-											</div>
-										</div>
+										<RequisitionInfoPanel Model="@_reqDetailsObject" Skills="@_reqDetailSkills" States="@_states"/>
 									</ContentTemplate>
 								</TabItem>
 								<TabItem>
@@ -177,7 +137,7 @@
 										<TabHeader Text="Activity"/>
 									</ChildContent>
 									<ContentTemplate>
-										<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"/>
+											<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"/>
 									</ContentTemplate>
 								</TabItem>
 							</TabItems>
