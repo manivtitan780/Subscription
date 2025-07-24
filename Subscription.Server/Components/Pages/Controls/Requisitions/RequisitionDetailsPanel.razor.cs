@@ -402,7 +402,7 @@ public partial class RequisitionDetailsPanel
         Model.ContactID = CompanyContactsFiltered.Any() ? CompanyContactsFiltered.First().ID : 0;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    /*private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();*/
 
     /// <summary>
     ///     Asynchronously opens the dialog of the requisition details panel.
@@ -450,10 +450,10 @@ public partial class RequisitionDetailsPanel
 
             Context = EditRequisitionForm.EditContext;
             Context?.Validate();
-            if (Context != null)
+            /*if (Context != null)
             {
                 Context.OnFieldChanged += Context_OnFieldChanged;
-            }
+            }*/
 
             FieldIdentifier _fieldIdentifier = new(Model, nameof(Model.Description));
             IEnumerable<string> _errorMessages = Context?.GetValidationMessages(_fieldIdentifier);
@@ -594,7 +594,7 @@ public partial class RequisitionDetailsPanel
     /// </returns>
     public Task HideDialog() => Dialog.HideAsync();
 
-    /// <summary>
+    /*/// <summary>
     ///     Handles the change of job options in the requisition details panel.
     /// </summary>
     /// <param name="jobOption">The new job option selected by the user. It contains the key-value pair of the job option.</param>
@@ -608,7 +608,7 @@ public partial class RequisitionDetailsPanel
         {
             Model.JobOptions = jobOption.ItemData.KeyValue;
         }
-    }
+    }*/
 
     private void JobOptionChanged(ChangeEventArgs<string, JobOptions> option)
     {
@@ -661,7 +661,7 @@ public partial class RequisitionDetailsPanel
     protected override void OnParametersSet()
     {
         Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        //Context.OnFieldChanged += Context_OnFieldChanged;
         base.OnParametersSet();
     }
 
@@ -703,7 +703,7 @@ public partial class RequisitionDetailsPanel
     }
     */
 
-    /// <summary>
+    /*/// <summary>
     ///     Handles the change of the Zip code in the RequisitionDetailsPanel.
     /// </summary>
     /// <param name="arg">The ChangeEventArgs containing the new Zip code and associated KeyValues.</param>
@@ -724,11 +724,13 @@ public partial class RequisitionDetailsPanel
             //using RestClient _client = new(Start.ApiHost);
             //RestRequest _request = new("Redis/GetKey");
             //_request.AddQueryParameter("key", "Zips");
-            Dictionary<string, string> _params = new()
+            // Memory optimization: Dictionary with exact capacity (1 key-value pair)
+            Dictionary<string, string> _params = new(1)
                                                  {
                                                      {"key", "Zips"}
                                                  };
-            string _returnValue = await General.GetRest<string>("Redis/GetKey", _params); //_client.ExecuteGetAsync<string>(_request);
+            // API migration: Use ExecuteRest instead of legacy GetRest for consistency
+            string _returnValue = await General.ExecuteRest<string>("Redis/GetKey", _params);
             //RestResponse<string> _returnValue = await _client.ExecuteGetAsync<string>(_request);
 
             List<Zip> _zips = null;
@@ -744,19 +746,22 @@ public partial class RequisitionDetailsPanel
 
             if (_zips is {Count: > 0})
             {
-                foreach (Zip _zip in _zips.Where(zip => zip.ZipCode == arg.Value))
+                // Performance optimization: Use FirstOrDefault for single zip lookup (44k records, occasional usage)
+                // Eliminates LINQ Where() overhead and stops after first match
+                Zip _matchedZip = _zips.FirstOrDefault(zip => zip.ZipCode == arg.Value);
+                if (_matchedZip != null)
                 {
-                    Model.City = _zip.City;
-                    Model.StateID = _zip.StateID;
+                    Model.City = _matchedZip.City;
+                    Model.StateID = _matchedZip.StateID;
                     Context?.NotifyFieldChanged(Context.Field(nameof(Model.City)));
                 }
             }
 
             _zipChanging = false;
         }
-    }
+    }*/
 
-    /// <summary>
+    /*/// <summary>
     ///     The ZipDropDownAdaptor class is a DataAdaptor used for handling ZIP code data in the RequisitionDetailsPanel.
     /// </summary>
     /// <remarks>
@@ -793,5 +798,5 @@ public partial class RequisitionDetailsPanel
             _reading = false;
             return _returnValue;
         }
-    }
+    }*/
 }

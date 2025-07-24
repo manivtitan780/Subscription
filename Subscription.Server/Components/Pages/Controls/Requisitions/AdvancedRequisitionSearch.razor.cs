@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           AdvancedRequisitionSearch.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          04-12-2025 20:04
-// Last Updated On:     04-14-2025 19:04
+// Created On:          07-24-2025 19:07
+// Last Updated On:     07-24-2025 19:59
 // *****************************************/
 
 #endregion
@@ -56,13 +56,19 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
 
     private SfDataForm SearchForm { get; set; }
 
-    private List<KeyValues> ShowRequisitions { get; } = [];
-
     [Parameter]
-    //public List<KeyValues> StatusDropDown { get; set; }
     public List<string> StatusDropDown { get; set; }
 
     private bool VisibleSpinner { get; set; }
+
+    /// <summary>
+    ///     Memory optimization: Clean disposal pattern
+    /// </summary>
+    public void Dispose()
+    {
+        // No event handlers to dispose after optimization
+        GC.SuppressFinalize(this);
+    }
 
     private async Task CancelSearchDialog(MouseEventArgs args)
     {
@@ -72,22 +78,28 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    // Removed: Unnecessary Context_OnFieldChanged event handler - validation handled by form validation
 
     private void CreatedOnSelect(ChangedEventArgs<DateTime> date)
     {
         DateTime _date = date.Value;
+        // Performance optimization: Calculate AddMonths(36) only once
+        DateTime _maxDate = _date.AddMonths(36);
+
         CreatedEndMin = _date;
-        CreatedEndMax = _date.AddMonths(36);
-        Model.CreatedOnEnd = _date.AddMonths(36);
+        CreatedEndMax = _maxDate;
+        Model.CreatedOnEnd = _maxDate;
     }
 
     private void DueOnSelect(ChangedEventArgs<DateTime> date)
     {
         DateTime _date = date.Value;
+        // Performance optimization: Calculate AddMonths(36) only once
+        DateTime _maxDate = _date.AddMonths(36);
+
         DueEndMin = _date;
-        DueEndMax = _date.AddMonths(36);
-        Model.DueEnd = _date.AddMonths(36);
+        DueEndMax = _maxDate;
+        Model.DueEnd = _maxDate;
     }
 
     protected override void OnParametersSet()
@@ -95,19 +107,14 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
         // Memory optimization: Only create new EditContext if Model reference changed
         if (Context?.Model != Model)
         {
-            // Dispose previous context event handler to prevent memory leaks
-            if (Context != null)
-            {
-                Context.OnFieldChanged -= Context_OnFieldChanged;
-            }
             Context = new(Model);
-            Context.OnFieldChanged += Context_OnFieldChanged;
         }
+
         base.OnParametersSet();
     }
 
     private void OpenDialog() => Context.Validate();
-    
+
     private async Task SearchCandidateDialog(EditContext context)
     {
         VisibleSpinner = true;
@@ -117,15 +124,4 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
     }
 
     public async Task ShowDialog() => await Dialog.ShowAsync();
-
-    /// <summary>
-    /// Memory optimization: Properly dispose event handlers to prevent memory leaks
-    /// </summary>
-    public void Dispose()
-    {
-        if (Context != null)
-        {
-            Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
-    }
 }

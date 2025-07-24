@@ -15,7 +15,7 @@
 
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
-public partial class EditNotesDialog
+public partial class EditNotesDialog : IDisposable
 {
     private readonly CandidateNotesValidator _candidateNotesValidator = new();
 
@@ -37,25 +37,28 @@ public partial class EditNotesDialog
     [Parameter]
     public EventCallback<EditContext> Save { get; set; }
 
-    private SfSpinner Spinner { get; set; }
-
     [Parameter]
     public string Title { get; set; }
 
+    private bool VisibleSpinner { get; set; }
+
     private async Task CancelNotesDialog(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    // Removed: Unnecessary Context_OnFieldChanged event handler - validation handled by form validation
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new EditContext if Model reference changed
+        if (Context?.Model != Model)
+        {
+            Context = new(Model);
+        }
         base.OnParametersSet();
     }
 
@@ -63,11 +66,20 @@ public partial class EditNotesDialog
 
     private async Task SaveNotesDialog(EditContext editContext)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     public async Task ShowDialog() => await Dialog.ShowAsync();
+
+    /// <summary>
+    /// Memory optimization: Clean disposal pattern
+    /// </summary>
+    public void Dispose()
+    {
+        // No event handlers to dispose after optimization
+        GC.SuppressFinalize(this);
+    }
 }

@@ -53,7 +53,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.InterviewDetails)">
 						<Template>
-							<TextArea ID="textInterviewDetails" MaxLength="2000" Placeholder="Interview Details" Readonly="@(!IsShow)"></TextArea>
+							<TextArea @bind-Value="Model.InterviewDetails" ID="textInterviewDetails" MaxLength="2000" Placeholder="Interview Details" Readonly="@(!IsShow)"></TextArea>
 						</Template>
 					</FormItem>
 				</FormGroup>

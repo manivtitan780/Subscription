@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           AddRequisitionDocument.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-24-2025 19:02
-// Last Updated On:     05-15-2025 18:56
+// Created On:          07-24-2025 19:07
+// Last Updated On:     07-24-2025 19:41
 // *****************************************/
 
 #endregion
@@ -40,7 +40,7 @@ public partial class AddRequisitionDocument : IDisposable
     private SfDataForm AddDocumentForm { get; set; }
 
     // Memory optimization: Use RecyclableMemoryStream to prevent LOH allocations for large files
-    internal RecyclableMemoryStream AddedDocument { get; set; } = RecyclableMemoryStreamManager.Shared.GetStream();
+    internal RecyclableMemoryStream AddedDocument { get; set; } // = RecyclableMemoryStreamManager.Shared.GetStream();
 
     /// <summary>
     ///     Gets or sets the EventCallback triggered when the cancel event occurs in the AddRequisitionDocument component.
@@ -118,6 +118,15 @@ public partial class AddRequisitionDocument : IDisposable
     private bool VisibleSpinner { get; set; }
 
     /// <summary>
+    ///     Memory optimization: Properly dispose RecyclableMemoryStream
+    /// </summary>
+    public void Dispose()
+    {
+        AddedDocument?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
     ///     Asynchronously cancels the document dialog operation.
     /// </summary>
     /// <param name="args">The mouse event arguments associated with the cancel action.</param>
@@ -133,7 +142,7 @@ public partial class AddRequisitionDocument : IDisposable
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    // Removed: Unnecessary Context_OnFieldChanged event handler - validation handled by form validation
 
     /// <summary>
     ///     Asynchronously handles the event when a file is removed from the upload control.
@@ -182,14 +191,9 @@ public partial class AddRequisitionDocument : IDisposable
         // Memory optimization: Only create new EditContext if Model reference changed
         if (Context?.Model != Model)
         {
-            // Dispose previous context event handler to prevent memory leaks
-            if (Context != null)
-            {
-                Context.OnFieldChanged -= Context_OnFieldChanged;
-            }
             Context = new(Model);
-            Context.OnFieldChanged += Context_OnFieldChanged;
         }
+
         base.OnParametersSet();
     }
 
@@ -235,29 +239,27 @@ public partial class AddRequisitionDocument : IDisposable
     {
         foreach (UploadFiles _file in file.Files)
         {
-            // Memory optimization: Use using statement for proper stream disposal
-            using (Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024))
+            // Memory optimization: Reuse existing ReusableMemoryStream instead of creating new instances
+            if (AddedDocument == null)
             {
-                // Reset stream position before copying new content
+                AddedDocument = ReusableMemoryStream.Get("requisition-document-upload");
+            }
+            else
+            {
+                // Reset stream for reuse - more efficient than disposing and recreating
                 AddedDocument.Position = 0;
                 AddedDocument.SetLength(0);
+            }
+
+            // Performance optimization: Use proper using statement for stream disposal
+            await using (Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024)) //60MB maximum
+            {
                 await _str.CopyToAsync(AddedDocument);
             }
+
             FileName = _file.FileInfo.Name;
             Mime = _file.FileInfo.MimeContentType;
             AddedDocument.Position = 0;
         }
-    }
-
-    /// <summary>
-    /// Memory optimization: Properly dispose RecyclableMemoryStream and unhook event handlers
-    /// </summary>
-    public void Dispose()
-    {
-        if (Context != null)
-        {
-            Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
-        AddedDocument?.Dispose();
     }
 }

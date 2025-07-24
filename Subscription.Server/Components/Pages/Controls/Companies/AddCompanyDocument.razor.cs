@@ -16,7 +16,6 @@
 #region Using
 
 using Extensions.Memory;
-using Microsoft.IO;
 
 #endregion
 
@@ -185,13 +184,15 @@ public partial class AddCompanyDocument : ComponentBase, IDisposable
             // Memory optimization: Dispose previous stream and get new RecyclableMemoryStream from pool
             await AddedDocument.DisposeAsync();
             AddedDocument = ReusableMemoryStream.Get("company-document-upload");
-            
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024); //60MB maximum
-            await _str.CopyToAsync(AddedDocument);
+
+            await using (Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024)) //60MB maximum
+            {
+                await _str.CopyToAsync(AddedDocument);
+            }
+
             FileName = _file.FileInfo.Name;
             Mime = _file.FileInfo.MimeContentType;
             AddedDocument.Position = 0;
-            _str.Close();
         }
     }
 }

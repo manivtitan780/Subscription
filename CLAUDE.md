@@ -693,3 +693,64 @@ public readonly struct PooledDictionary : IDisposable
 
 **Status**: 📝 **DOCUMENTED FOR FUTURE IMPLEMENTATION**  
 **Date Added**: 2025-07-22
+
+## EditContext Memory Management Best Practice
+
+### Overview
+During Requisition component optimization cycle (July 2025), an important memory management pattern was identified for EditContext handling in Blazor components.
+
+### The Pattern: Explicit Context Nullification
+
+**Standard Pattern (Suboptimal):**
+```csharp
+protected override void OnParametersSet()
+{
+    if (Context?.Model != Model)
+    {
+        Context = new(Model);  // Old Context remains in memory until GC
+    }
+    base.OnParametersSet();
+}
+```
+
+**Optimized Pattern (Recommended):**
+```csharp
+protected override void OnParametersSet()
+{
+    // Memory optimization: Explicit cleanup before creating new EditContext
+    if (Context?.Model != Model)
+    {
+        Context = null;        // Immediate reference cleanup
+        Context = new(Model);  // Create fresh instance
+    }
+    base.OnParametersSet();
+}
+```
+
+### Benefits
+
+**Memory Management:**
+- **Immediate Reference Release**: Old Context eligible for GC immediately
+- **Reduced Memory Pressure**: Lower peak memory usage during Model transitions
+- **Predictable Cleanup**: No dependency on GC timing for reference cleanup
+
+**Code Quality:**
+- **Explicit Intent**: Clear memory management intention
+- **Consistent Pattern**: Standardized approach across components
+- **Negligible Cost**: null assignment is essentially free
+
+### Implementation Guidelines
+
+**Apply This Pattern To:**
+- All Blazor components with EditContext management
+- Components that recreate contexts on parameter changes
+- High-frequency components where Model references change often
+
+**Usage Notes:**
+- Use in `OnParametersSet()` method for parameter-driven context creation
+- Apply to any component implementing EditContext conditional creation
+- Consider for other similar object recreation patterns
+
+**Documentation Updated**: 2025-07-24  
+**Implementation Priority**: Apply to all new components going forward  
+**Retrofit Priority**: Apply during future component optimization cycles

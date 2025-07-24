@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           ChangeRequisitionStatus.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          06-02-2025 19:06
-// Last Updated On:     06-02-2025 20:02
+// Created On:          07-24-2025 20:07
+// Last Updated On:     07-24-2025 20:07
 // *****************************************/
 
 #endregion
@@ -38,6 +38,17 @@ public partial class ChangeRequisitionStatus : ComponentBase, IDisposable
     [Parameter]
     public bool VisibleSpinner { get; set; }
 
+    // Removed: Unnecessary Context_OnFieldChanged event handler - validation handled by form validation
+
+    /// <summary>
+    ///     Memory optimization: Clean disposal pattern
+    /// </summary>
+    public void Dispose()
+    {
+        // No event handlers to dispose after optimization
+        GC.SuppressFinalize(this);
+    }
+
     private async Task CancelDialog(MouseEventArgs args)
     {
         VisibleSpinner = true;
@@ -46,31 +57,14 @@ public partial class ChangeRequisitionStatus : ComponentBase, IDisposable
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context?.Validate();
-
-    public void Dispose()
-    {
-        if (Context is not null)
-        {
-            Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
-
-        GC.SuppressFinalize(this);
-    }
-
     protected override void OnParametersSet()
     {
         // Memory optimization: Only create new EditContext if Model reference changed
         if (Context?.Model != Model)
         {
-            // Dispose previous context event handler to prevent memory leaks
-            if (Context != null)
-            {
-                Context.OnFieldChanged -= Context_OnFieldChanged;
-            }
             Context = new(Model);
-            Context.OnFieldChanged += Context_OnFieldChanged;
         }
+
         base.OnParametersSet();
     }
 

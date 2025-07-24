@@ -199,13 +199,12 @@ public partial class EditActivityDialog : IDisposable
 
     private bool VisibleSpinner { get; set; }
 
+    /// <summary>
+    /// Memory optimization: Clean disposal pattern
+    /// </summary>
     public void Dispose()
     {
-        if (Context is not null)
-        {
-            Context.OnFieldChanged -= Context_OnFieldChanged;
-        }
-
+        // No event handlers to dispose after optimization
         GC.SuppressFinalize(this);
     }
 
@@ -245,7 +244,7 @@ public partial class EditActivityDialog : IDisposable
         }
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context?.Validate();
+    // Removed: Unnecessary Context_OnFieldChanged event handler - validation handled by form validation
 
     /// <summary>
     ///     Asynchronously initializes the dialog after all parameters have been set.
@@ -271,13 +270,7 @@ public partial class EditActivityDialog : IDisposable
         // Memory optimization: Only create new EditContext if Model reference changed
         if (Context?.Model != Model)
         {
-            // Dispose previous context event handler to prevent memory leaks
-            if (Context != null)
-            {
-                Context.OnFieldChanged -= Context_OnFieldChanged;
-            }
             Context = new(Model);
-            Context.OnFieldChanged += Context_OnFieldChanged;
         }
         base.OnParametersSet();
     }
