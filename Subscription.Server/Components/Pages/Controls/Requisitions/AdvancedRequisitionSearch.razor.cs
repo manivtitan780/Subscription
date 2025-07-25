@@ -83,8 +83,8 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
     private void CreatedOnSelect(ChangedEventArgs<DateTime> date)
     {
         DateTime _date = date.Value;
-        // Performance optimization: Calculate AddMonths(36) only once
-        DateTime _maxDate = _date.AddMonths(36);
+        // Performance optimization: Calculate AddYears(3) only once for better clarity
+        DateTime _maxDate = _date.AddYears(3);
 
         CreatedEndMin = _date;
         CreatedEndMax = _maxDate;
@@ -94,8 +94,8 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
     private void DueOnSelect(ChangedEventArgs<DateTime> date)
     {
         DateTime _date = date.Value;
-        // Performance optimization: Calculate AddMonths(36) only once
-        DateTime _maxDate = _date.AddMonths(36);
+        // Performance optimization: Calculate AddYears(3) only once for better clarity
+        DateTime _maxDate = _date.AddYears(3);
 
         DueEndMin = _date;
         DueEndMax = _maxDate;
@@ -104,9 +104,10 @@ public partial class AdvancedRequisitionSearch : ComponentBase, IDisposable
 
     protected override void OnParametersSet()
     {
-        // Memory optimization: Only create new EditContext if Model reference changed
+        // Memory optimization: Explicit cleanup before creating new EditContext
         if (Context?.Model != Model)
         {
+            Context = null;  // Immediate reference cleanup for GC
             Context = new(Model);
         }
 

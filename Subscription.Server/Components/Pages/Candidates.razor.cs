@@ -53,7 +53,7 @@ public sealed partial class Candidates : IDisposable
     private List<StateCache> _states = [];
     private List<StatusCode> _statusCodes = [];
 
-    private readonly StringBuilder _stringBuilder = new();
+    // Removed: StringBuilder _stringBuilder - replaced with Span<char> in SetJobOption() for memory optimization
 
     //private readonly Stopwatch _stopwatch = new();
     private readonly SubmitCandidateRequisition _submitCandidateModel = new();
@@ -240,7 +240,7 @@ public sealed partial class Candidates : IDisposable
             _disposed = true;
         }
 
-        //GC.SuppressFinalize();
+        GC.SuppressFinalize(this);
     }
 
     private async Task AddCandidate(MouseEventArgs arg)
@@ -761,7 +761,6 @@ public sealed partial class Candidates : IDisposable
 
     private Task GridPageChanging(GridPageChangingEventArgs page) => ExecuteMethod(async () =>
                                                                                    {
-                                                                                       await Task.Delay(2000);
                                                                                        if (page.CurrentPageSize != SearchModel.ItemCount)
                                                                                        {
                                                                                            SearchModel.ItemCount = page.CurrentPageSize;
@@ -1275,11 +1274,15 @@ public sealed partial class Candidates : IDisposable
 
     private void SetJobOption()
     {
-        _stringBuilder.Clear(); // Reuse same instance
-
+        // Memory optimization: Replace StringBuilder with Span<char> for small string operations (7-8 iterations, <500 chars)
+        // This eliminates StringBuilder allocation overhead for known small operations
         if (_jobOptionsDict?.Count > 0 && !string.IsNullOrWhiteSpace(_candDetailsObject.JobOptions))
         {
             string[] keys = _candDetailsObject.JobOptions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            
+            // Stack-allocated buffer for known maximum length (~500 chars for 7-8 job options)
+            Span<char> buffer = stackalloc char[500];
+            int position = 0;
 
             foreach (string key in keys)
             {
@@ -1288,15 +1291,19 @@ public sealed partial class Candidates : IDisposable
                     continue;
                 }
 
-                if (_stringBuilder.Length > 0)
+                // Add separator if not first item
+                if (position > 0)
                 {
-                    _stringBuilder.Append(", ");
+                    ", ".AsSpan().CopyTo(buffer[position..]);
+                    position += 2;
                 }
 
-                _stringBuilder.Append(text);
+                // Copy text to buffer
+                text.AsSpan().CopyTo(buffer[position..]);
+                position += text.Length;
             }
 
-            CandidateJobOptions = _stringBuilder.ToString().ToMarkupString();
+            CandidateJobOptions = new string(buffer[..position]).ToMarkupString();
         }
         else
         {

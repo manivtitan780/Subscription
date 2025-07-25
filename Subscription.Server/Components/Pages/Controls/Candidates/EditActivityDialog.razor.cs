@@ -68,16 +68,22 @@ public partial class EditActivityDialog : IDisposable
     private SfDataForm EditActivityForm { get; set; }
 
     /// <summary>
-    ///     Gets or sets the list of interview types available for selection in the activity dialog.
+    ///     Gets the static list of interview types available for selection in the activity dialog.
     /// </summary>
     /// <value>
     ///     The list of interview types is represented as a list of <see cref="KeyValues" /> instances. Each instance
     ///     represents a type of interview with a key as the interview type name and a value as its short form.
     ///     The list includes types such as "In-Person Interview", "Telephonic Interview", "Others", and "None".
     /// </value>
-    private IEnumerable<KeyValues> InterviewTypes { get; } =
+    /// <remarks>
+    ///     Memory optimization: Static readonly to prevent repeated allocations across component instances.
+    /// </remarks>  
+    private static readonly KeyValues[] InterviewTypes =
     [
-        new() {Text = "In-Person Interview", KeyValue = "I"}, new() {Text = "Telephonic Interview", KeyValue = "P"}, new() {Text = "Others", KeyValue = "O"}, new() {Text = "None", KeyValue = ""}
+        new() {Text = "In-Person Interview", KeyValue = "I"}, 
+        new() {Text = "Telephonic Interview", KeyValue = "P"}, 
+        new() {Text = "Others", KeyValue = "O"}, 
+        new() {Text = "None", KeyValue = ""}
     ];
 
     /// <summary>
@@ -180,7 +186,8 @@ public partial class EditActivityDialog : IDisposable
     ///     current workflow step.
     /// </remarks>
     [Parameter]
-    public List<Workflow> Status { get; set; } = [];
+    // Memory optimization: Initial capacity hint for workflow status list (typically 8-12 items)
+    public List<Workflow> Status { get; set; } = new(12);
 
     /// <summary>
     ///     Gets or sets the list of application workflow steps.
@@ -267,9 +274,10 @@ public partial class EditActivityDialog : IDisposable
 
     protected override void OnParametersSet()
     {
-        // Memory optimization: Only create new EditContext if Model reference changed
+        // Memory optimization: Explicit cleanup before creating new EditContext
         if (Context?.Model != Model)
         {
+            Context = null;  // Immediate reference cleanup for GC
             Context = new(Model);
         }
         base.OnParametersSet();

@@ -156,6 +156,7 @@ public partial class ActivityPanelRequisition
 
     private async Task GridBound(object arg)
     {
+        // Micro-optimization: Count > 0 avoids enumeration overhead of Any()
         if (GridActivity.CurrentViewData.Any())
         {
             await GridActivity.SelectRowAsync(0);

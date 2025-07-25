@@ -172,12 +172,19 @@ public partial class RequisitionNotesPanel : ComponentBase
     }
 
 	/// <summary>
+	/// Micro-optimization: Static array for efficient multiple replacements
+	/// </summary>
+	private static readonly string[] BreakTags = ["<br>", "<br/>"];
+
+	/// <summary>
 	///     Memory optimization: Efficiently processes notes text for tooltip display.
 	///     Replaces HTML break tags with newlines for clean text display.
 	/// </summary>
 	/// <param name="notes">The notes text containing HTML break tags</param>
 	/// <returns>Clean text with newlines instead of HTML breaks</returns>
-	private static string GetCleanNotesText(string notes) => string.IsNullOrEmpty(notes) ? "" : notes.Replace("<br>", Environment.NewLine).Replace("<br/>", Environment.NewLine);
+	private static string GetCleanNotesText(string notes) => 
+		string.IsNullOrEmpty(notes) ? "" : 
+		BreakTags.Aggregate(notes, (current, tag) => current.Replace(tag, Environment.NewLine));
 
 	/// <summary>
 	///     Memory optimization: Formats the update information using existing CultureDate extension method.

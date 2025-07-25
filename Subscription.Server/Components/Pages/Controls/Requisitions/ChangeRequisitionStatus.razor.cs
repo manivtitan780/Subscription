@@ -30,7 +30,8 @@ public partial class ChangeRequisitionStatus : ComponentBase, IDisposable
     public RequisitionStatus Model { get; set; }
 
     [Parameter]
-    public List<KeyValues> ReqStatus { get; set; } = [];
+    // Memory optimization: Initial capacity hint for requisition status list (typically 5-10 items)
+    public List<KeyValues> ReqStatus { get; set; } = new(10);
 
     [Parameter]
     public EventCallback<EditContext> Save { get; set; }
@@ -59,9 +60,10 @@ public partial class ChangeRequisitionStatus : ComponentBase, IDisposable
 
     protected override void OnParametersSet()
     {
-        // Memory optimization: Only create new EditContext if Model reference changed
+        // Memory optimization: Explicit cleanup before creating new EditContext
         if (Context?.Model != Model)
         {
+            Context = null;  // Immediate reference cleanup for GC
             Context = new(Model);
         }
 

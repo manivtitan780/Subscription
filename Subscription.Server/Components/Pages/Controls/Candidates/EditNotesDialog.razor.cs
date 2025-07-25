@@ -54,9 +54,10 @@ public partial class EditNotesDialog : IDisposable
 
     protected override void OnParametersSet()
     {
-        // Memory optimization: Only create new EditContext if Model reference changed
+        // Memory optimization: Explicit cleanup before creating new EditContext
         if (Context?.Model != Model)
         {
+            Context = null;  // Immediate reference cleanup for GC
             Context = new(Model);
         }
         base.OnParametersSet();

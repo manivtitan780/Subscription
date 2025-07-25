@@ -47,17 +47,19 @@ public partial class RequisitionInfoPanel
     /// </summary>
     /// <param name="durationCode">The duration code (m, w, y, etc.)</param>
     /// <returns>Full duration text (months, weeks, years, etc.)</returns>
-    private static string GetDurationCode(string durationCode)
+    /// <summary>
+    /// Micro-optimization: Static dictionary for O(1) lookup, eliminates ToLower() allocation
+    /// </summary>
+    private static readonly Dictionary<string, string> DurationMappings = new(4, StringComparer.OrdinalIgnoreCase)
     {
-        return durationCode.ToLower() switch
-        {
-            "m" => "months",
-            "w" => "weeks", 
-            "y" => "years",
-            "d" => "days",
-            _ => durationCode
-        };
-    }
+        ["m"] = "months",
+        ["w"] = "weeks",
+        ["y"] = "years",
+        ["d"] = "days"
+    };
+
+    private static string GetDurationCode(string durationCode) => 
+        DurationMappings.TryGetValue(durationCode, out string mapped) ? mapped : durationCode;
 
     /// <summary>
     ///     Formats the project location from city, state, and zip code.

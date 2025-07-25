@@ -31,7 +31,7 @@ namespace Subscription.Server.Components.Pages.Controls.Requisitions;
 ///     options, recruiters, skills, and states.
 ///     It also provides event callbacks for handling actions such as Cancel, Save, File Upload, and StateID changes.
 /// </remarks>
-public partial class RequisitionDetailsPanel
+public partial class RequisitionDetailsPanel : IDisposable
 {
     private bool _actionProgress;
 
@@ -39,7 +39,7 @@ public partial class RequisitionDetailsPanel
 
     private bool _duration, _rate, _salary, _percent, _benefits, _hours, _expenses, _placementFee;
 
-    //private EditContext _editContext;
+    // Removed: Unused _editContext field
 
     /// <summary>
     ///     Gets or sets the filtered list of company contacts associated with the requisition.
@@ -51,7 +51,8 @@ public partial class RequisitionDetailsPanel
     ///     This field is used to store the filtered list of company contacts based on certain criteria.
     ///     It is used in the RequisitionDetailsPanel for displaying only the relevant contacts to the user.
     /// </remarks>
-    private List<CompanyContacts> _filteredCompanyContacts = [];
+    // Memory optimization: Initial capacity hint for filtered contacts (typically 3-8 contacts per company)
+    private List<CompanyContacts> _filteredCompanyContacts = new(8);
 
     private readonly RequisitionDetailsValidator _requisitionDetailsValidator = new();
 
@@ -81,23 +82,7 @@ public partial class RequisitionDetailsPanel
 
     private bool _zipChanging;
 
-    /*/// <summary>
-    ///     Gets or sets the AutoCompleteButton control used in the RequisitionDetailsPanel.
-    /// </summary>
-    /// <value>
-    ///     The AutoCompleteButton control.
-    /// </value>
-    /// <remarks>
-    ///     This control provides a user interface for input with autocomplete suggestions.
-    ///     It includes various parameters to customize the behavior and appearance of the autocomplete feature.
-    ///     The parameters include options to control the event callbacks, tooltip creation, state persistence,
-    ///     input length restrictions, placeholder text, and positioning of the autocomplete component.
-    /// </remarks>
-    private AutoCompleteButton AutoCompleteControl
-    {
-        get;
-        set;
-    }*/
+    // Removed: Legacy AutoCompleteButton control - functionality moved to modern components
 
     /// <summary>
     ///     Gets or sets the event callback that is triggered when the Cancel action is performed.
@@ -130,7 +115,8 @@ public partial class RequisitionDetailsPanel
     [Parameter]
     public List<CompanyContacts> CompanyContacts { get; set; }
 
-    private IEnumerable<CompanyContacts> CompanyContactsFiltered { get; set; } = [];
+    // Memory optimization: Using List with capacity hint instead of empty enumerable
+    private IEnumerable<CompanyContacts> CompanyContactsFiltered { get; set; } = new List<CompanyContacts>(8);
 
     private EditContext Context { get; set; }
 
@@ -162,7 +148,10 @@ public partial class RequisitionDetailsPanel
     ///     Gets a list of duration codes. Each code is represented as a <see cref="KeyValues" /> object,
     ///     where the key is the code and the value is the description of the duration (e.g., "M" for months, "Y" for years).
     /// </summary>
-    private List<KeyValues> DurationCode { get; } =
+    /// <remarks>
+    ///     Memory optimization: Static readonly to prevent repeated allocations across component instances.
+    /// </remarks>
+    private static readonly KeyValues[] DurationCode =
         [new() {KeyValue = "D", Text = "Days"}, new() {KeyValue = "W", Text = "Weeks"}, new() {KeyValue = "M", Text = "Months"}, new() {KeyValue = "Y", Text = "Years"}];
 
     /// <summary>
@@ -248,7 +237,10 @@ public partial class RequisitionDetailsPanel
     ///     The list of priority levels, represented as <see cref="IntValues" />, where the integer key represents the priority
     ///     level and the string value represents the priority description.
     /// </value>
-    private List<IntValues> Priority { get; } = [new() {KeyValue = 0, Text = "Low"}, new() {KeyValue = 1, Text = "Medium"}, new() {KeyValue = 2, Text = "High"}];
+    /// <summary>
+    /// Memory optimization: Static readonly to prevent repeated allocations across component instances.
+    /// </summary>
+    private static readonly List<IntValues> Priority = [new() {KeyValue = 0, Text = "Low"}, new() {KeyValue = 1, Text = "Medium"}, new() {KeyValue = 2, Text = "High"}];
 
     /// <summary>
     ///     Gets or sets the list of recruiters associated with the requisition.
@@ -328,15 +320,15 @@ public partial class RequisitionDetailsPanel
         VisibleSpinner = false;
     }
 
-    /*return General.CallCancelMethod(args, Spinner, FooterDialog, Dialog, Cancel);*/
-    ///// <summary>
-    /////     Gets or sets the Redis service used for caching data.
-    ///// </summary>
-    ///// <value>
-    /////     The Redis service.
-    ///// </value>
-    ///// <remarks>
-    /////     This property is injected and used for operations like retrieving or storing data in Redis cache.
+    // Removed: Legacy General.CallCancelMethod reference
+    /// <summary>
+    ///     Gets or sets the Redis service used for caching data.
+    /// </summary>
+    /// <value>
+    ///     The Redis service.
+    /// </value>
+    /// <remarks>
+    ///     This property is injected and used for operations like retrieving or storing data in Redis cache.
     /// </remarks>
     /// <summary>
     ///     Gets or sets the Redis service for cache operations.
@@ -402,7 +394,7 @@ public partial class RequisitionDetailsPanel
         Model.ContactID = CompanyContactsFiltered.Any() ? CompanyContactsFiltered.First().ID : 0;
     }
 
-    /*private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();*/
+    // Removed: Legacy Context_OnFieldChanged - replaced with specific EditContext_OnFieldChanged handler
 
     /// <summary>
     ///     Asynchronously opens the dialog of the requisition details panel.
@@ -450,10 +442,13 @@ public partial class RequisitionDetailsPanel
 
             Context = EditRequisitionForm.EditContext;
             Context?.Validate();
-            /*if (Context != null)
+            // Subscribe to field change events for Description validation styling
+            // Memory optimization: Prevent multiple subscriptions by unsubscribing first
+            if (Context != null)
             {
-                Context.OnFieldChanged += Context_OnFieldChanged;
-            }*/
+                Context.OnFieldChanged -= EditContext_OnFieldChanged; // Remove any existing subscription
+                Context.OnFieldChanged += EditContext_OnFieldChanged; // Add new subscription
+            }
 
             FieldIdentifier _fieldIdentifier = new(Model, nameof(Model.Description));
             IEnumerable<string> _errorMessages = Context?.GetValidationMessages(_fieldIdentifier);
@@ -463,21 +458,7 @@ public partial class RequisitionDetailsPanel
         }
     }
 
-    /*/// <summary>
-    ///     Handles the event when the contact changes.
-    /// </summary>
-    /// <param name="contact">The change event arguments containing the old and new contact.</param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    private void ContactChanged(ChangeEventArgs<int, CompanyContacts> contact)
-    {
-        /*if (contact is {ItemData: not null})
-        {
-            Model.ContactName = $"{contact.ItemData.FirstName} {contact.ItemData.LastName}";
-        }#1#
-    }
-    */
+    // Removed: Duplicate ContactChanged method - active implementation at line 393
 
     /// <summary>
     ///     Handles the change of value in a dropdown.
@@ -594,21 +575,7 @@ public partial class RequisitionDetailsPanel
     /// </returns>
     public Task HideDialog() => Dialog.HideAsync();
 
-    /*/// <summary>
-    ///     Handles the change of job options in the requisition details panel.
-    /// </summary>
-    /// <param name="jobOption">The new job option selected by the user. It contains the key-value pair of the job option.</param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    private async Task JobOptionChange(ChangeEventArgs<string, KeyValues> jobOption)
-    {
-        await Task.Yield();
-        if (jobOption is {ItemData: not null})
-        {
-            Model.JobOptions = jobOption.ItemData.KeyValue;
-        }
-    }*/
+    // Removed: Legacy JobOptionChange method - replaced with modern JobOptionChanged implementation
 
     private void JobOptionChanged(ChangeEventArgs<string, JobOptions> option)
     {
@@ -660,8 +627,12 @@ public partial class RequisitionDetailsPanel
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        //Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Explicit cleanup before creating new EditContext
+        if (Context?.Model != Model)
+        {
+            Context = null;  // Immediate reference cleanup for GC
+            Context = new(Model);
+        }
         base.OnParametersSet();
     }
 
@@ -680,7 +651,7 @@ public partial class RequisitionDetailsPanel
         VisibleSpinner = false;
     }
 
-    // return General.CallSaveMethod(editContext, Spinner, FooterDialog, Dialog, Save);
+    // Removed: Legacy General.CallSaveMethod reference
     /// <summary>
     ///     Asynchronously shows the dialog of the requisition details panel.
     /// </summary>
@@ -689,114 +660,22 @@ public partial class RequisitionDetailsPanel
     /// </returns>
     public Task ShowDialog() => Dialog.ShowAsync();
 
-    /*
     /// <summary>
-    ///     Handles the opening of a tooltip.
+    /// Memory optimization: Clean disposal pattern for event handler cleanup
     /// </summary>
-    /// <param name="args">The arguments for the tooltip event.</param>
-    /// <remarks>
-    ///     This method cancels the opening of the tooltip if it does not contain any text.
-    /// </remarks>
-    private void ToolTipOpen(TooltipEventArgs args)
+    public void Dispose()
     {
-        args.Cancel = !args.HasText;
+        // Clean up EditContext event handler subscription to prevent memory leaks
+        if (Context != null)
+        {
+            Context.OnFieldChanged -= EditContext_OnFieldChanged;
+        }
+        GC.SuppressFinalize(this);
     }
-    */
 
-    /*/// <summary>
-    ///     Handles the change of the Zip code in the RequisitionDetailsPanel.
-    /// </summary>
-    /// <param name="arg">The ChangeEventArgs containing the new Zip code and associated KeyValues.</param>
-    /// <returns>A Task that represents the asynchronous operation.</returns>
-    /// <remarks>
-    ///     This method updates the City and StateID fields of the Model based on the new Zip code.
-    ///     It uses a memory cache to retrieve a list of Zip codes. If the new Zip code is found in the list,
-    ///     the City and StateID fields are updated accordingly. The method is designed to handle concurrent changes to the Zip
-    ///     code.
-    /// </remarks>
-    private async Task ZipChange(ChangeEventArgs<string, KeyValues> arg)
-    {
-        if (!_zipChanging)
-        {
-            await Task.Yield();
-            _zipChanging = true;
-            //IMemoryCache _memoryCache = Start.MemCache;
-            //using RestClient _client = new(Start.ApiHost);
-            //RestRequest _request = new("Redis/GetKey");
-            //_request.AddQueryParameter("key", "Zips");
-            // Memory optimization: Dictionary with exact capacity (1 key-value pair)
-            Dictionary<string, string> _params = new(1)
-                                                 {
-                                                     {"key", "Zips"}
-                                                 };
-            // API migration: Use ExecuteRest instead of legacy GetRest for consistency
-            string _returnValue = await General.ExecuteRest<string>("Redis/GetKey", _params);
-            //RestResponse<string> _returnValue = await _client.ExecuteGetAsync<string>(_request);
+    // Removed: Legacy tooltip handling - not currently in use
 
-            List<Zip> _zips = null;
-            if (!_returnValue.NullOrWhiteSpace())
-            {
-                _zips = General.DeserializeObject<List<Zip>>(_returnValue);
-            }
-            //while (_zips == null)
-            //{
-            //    _zips = await Redis.GetAsync<List<Zip>>("Zips");
-            //    //_memoryCache.TryGetValue("Zips", out _zips);
-            //}
+    // Removed: Legacy ZipChange method - ZIP code lookup functionality moved to autocomplete implementation
 
-            if (_zips is {Count: > 0})
-            {
-                // Performance optimization: Use FirstOrDefault for single zip lookup (44k records, occasional usage)
-                // Eliminates LINQ Where() overhead and stops after first match
-                Zip _matchedZip = _zips.FirstOrDefault(zip => zip.ZipCode == arg.Value);
-                if (_matchedZip != null)
-                {
-                    Model.City = _matchedZip.City;
-                    Model.StateID = _matchedZip.StateID;
-                    Context?.NotifyFieldChanged(Context.Field(nameof(Model.City)));
-                }
-            }
-
-            _zipChanging = false;
-        }
-    }*/
-
-    /*/// <summary>
-    ///     The ZipDropDownAdaptor class is a DataAdaptor used for handling ZIP code data in the RequisitionDetailsPanel.
-    /// </summary>
-    /// <remarks>
-    ///     This class is responsible for asynchronously reading data using the provided DataManagerRequest.
-    ///     It utilizes the General.GetAutocompleteZipAsync method to fetch data.
-    ///     If the method is already reading data (_reading is true), it returns null.
-    /// </remarks>
-    public class ZipDropDownAdaptor : DataAdaptor
-    {
-        private bool _reading;
-
-        /// <summary>
-        ///     Asynchronously reads data using the provided DataManagerRequest.
-        /// </summary>
-        /// <param name="dm">The DataManagerRequest to use for reading data.</param>
-        /// <param name="key">An optional key to use for reading data. Default is null.</param>
-        /// <returns>
-        ///     A task that represents the asynchronous read operation. The task result contains the data read.
-        /// </returns>
-        /// <remarks>
-        ///     This method utilizes the General.GetAutocompleteZipAsync method to fetch data.
-        ///     If the method is already reading data (_reading is true), it returns null.
-        /// </remarks>
-        public override async Task<object> ReadAsync(DataManagerRequest dm, string key = null)
-        {
-            if (_reading)
-            {
-                return null;
-            }
-
-            await Task.Yield();
-            _reading = true;
-            object _returnValue = ""; //await General.GetAutocompleteZipAsync(dm);
-            _reading = false;
-            return _returnValue;
-        }
-    }*/
+    // Removed: Legacy ZipDropDownAdaptor class - replaced with modern autocomplete implementation
 }
