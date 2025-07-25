@@ -8,7 +8,7 @@
 // File Name:           DownloadsPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-05-2025 20:02
-// Last Updated On:     05-10-2025 19:19
+// Last Updated On:     07-25-2025 19:13
 // *****************************************/
 
 #endregion
@@ -27,8 +27,9 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class DownloadsPanel
 {
+    private static readonly string[] AllowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
     private int _candidateID, _selectedID;
-    private string _internalFileName = "", _documentName = "", _documentLocation = "";
+    private string _internalFileName, _documentName, _documentLocation;
 
     private bool _showResume;
 
@@ -159,20 +160,20 @@ public partial class DownloadsPanel
     /// <summary>
     ///     Handles the event when a row is selected in the panel.
     /// </summary>
-    /// <param name="companyDocument">
+    /// <param name="candidateDocument">
     ///     The <see cref="RowSelectEventArgs{CandidateDocument}" /> instance containing the event data.
     ///     This includes the selected document associated with the selected row.
     /// </param>
     /// <remarks>
     ///     When a row is selected, this method updates the `SelectedRow` property with the document associated with the
     ///     selected row.
-    ///     If no row is selected (i.e., `companyDocument` is null), the `SelectedRow` property is not updated.
+    ///     If no row is selected (i.e., `candidateDocument` is null), the `SelectedRow` property is not updated.
     /// </remarks>
-    private void RowSelected(RowSelectEventArgs<CandidateDocument> companyDocument)
+    private void RowSelected(RowSelectEventArgs<CandidateDocument> candidateDocument)
     {
-        if (companyDocument != null)
+        if (candidateDocument != null)
         {
-            SelectedRow = companyDocument.Data;
+            SelectedRow = candidateDocument.Data;
         }
     }
 
@@ -194,8 +195,7 @@ public partial class DownloadsPanel
     {
         _showResume = true;
         string _fileExtension = Path.GetExtension(documentLocation);
-        string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
-        if (_allowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
+        if (AllowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             _candidateID = candidateID;
             _documentName = documentName;
@@ -222,8 +222,7 @@ public partial class DownloadsPanel
         VisibleSpinner = true;
 
         string _fileExtension = Path.GetExtension(fileName);
-        string[] _allowedExtensions = [".pdf", ".doc", ".docx", ".rtf"];
-        if (_allowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
+        if (AllowedExtensions.Contains(_fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             await DocumentViewPDF.ShowDialog();
         }

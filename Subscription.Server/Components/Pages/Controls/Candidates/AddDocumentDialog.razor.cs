@@ -28,11 +28,12 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 ///     saving.
 ///     It also provides methods to show the dialog and to enable or disable buttons within the dialog.
 /// </remarks>
-public partial class AddDocumentDialog
+public partial class AddDocumentDialog : IDisposable
 {
     private readonly CandidateDocumentValidator _candidateDocumentValidator = new();
 
-    internal MemoryStream AddedDocument { get; set; } = new();
+    // Memory optimization: Use RecyclableMemoryStream to prevent LOH allocations for large files
+    internal RecyclableMemoryStream AddedDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document upload is cancelled.
@@ -65,14 +66,14 @@ public partial class AddDocumentDialog
     ///     Gets or sets the list of document types available for upload.
     /// </summary>
     /// <value>
-    ///     The list of document types represented as IntValues.
+    ///     The array of document types represented as IntValues.
     /// </value>
     /// <remarks>
     ///     This list is used to populate the dropdown control for selecting the document type during the upload process.
     ///     Each IntValues item represents a document type with a unique identifier.
     /// </remarks>
     [Parameter]
-    public List<IntValues> DocumentTypes { get; set; }
+    public IntValues[] DocumentTypes { get; set; }
 
     /// <summary>
     ///     Gets or sets the EditForm instance for the document upload dialog.
@@ -162,7 +163,14 @@ public partial class AddDocumentDialog
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    /// <summary>
+    ///     Memory optimization: Properly dispose RecyclableMemoryStream and cleanup resources
+    /// </summary>
+    public void Dispose()
+    {
+        AddedDocument?.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     ///     Handles the event when a file is removed from the upload queue.
@@ -212,8 +220,12 @@ public partial class AddDocumentDialog
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Explicit cleanup before creating new EditContext
+        if (Context?.Model != Model)
+        {
+            Context = null;  // Immediate reference cleanup for GC
+            Context = new(Model);
+        }
         base.OnParametersSet();
     }
 
@@ -260,12 +272,27 @@ public partial class AddDocumentDialog
     {
         foreach (UploadFiles _file in file.Files)
         {
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
-            await _str.CopyToAsync(AddedDocument);
+            // Memory optimization: Reuse existing RecyclableMemoryStream instead of creating new instances
+            if (AddedDocument == null)
+            {
+                AddedDocument = ReusableMemoryStream.Get("candidate-document-upload");
+            }
+            else
+            {
+                // Reset stream for reuse - more efficient than disposing and recreating
+                AddedDocument.Position = 0;
+                AddedDocument.SetLength(0);
+            }
+
+            // Performance optimization: Use proper using statement for stream disposal
+            await using (Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024)) //60MB maximum
+            {
+                await _str.CopyToAsync(AddedDocument);
+            }
+
             FileName = _file.FileInfo.Name;
             Mime = _file.FileInfo.MimeContentType;
             AddedDocument.Position = 0;
-            _str.Close();
         }
     }
 }

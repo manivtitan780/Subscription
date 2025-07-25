@@ -94,7 +94,7 @@ public partial class ActivityPanel
     ///     Gets or sets the RoleID associated with the logged-in user.
     /// </summary>
     /// <value>
-    ///     String value containing the	RoleID associated with the logged-in user.
+    ///     Integer value containing the RoleID associated with the logged-in user.
     /// </value>
     /// <remarks>
     ///     This property is used to check the role of the user and to determine the rights for the activity.
@@ -198,14 +198,13 @@ public partial class ActivityPanel
     }
 
     /// <summary>
-    ///     Gets or sets the event callback that is invoked when an activity is undone.
+    ///     Asynchronously undoes a candidate activity after user confirmation.
     /// </summary>
-    /// <value>
-    ///     The event callback for undoing an activity.
-    /// </value>
+    /// <param name="activityID">The ID of the activity to be undone.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     /// <remarks>
-    ///     This callback is invoked with the ID of the activity to be undone.
-    ///     It is used when the user wants to revert the changes made to a candidate's activity.
+    ///     This method shows a confirmation dialog before undoing the activity.
+    ///     The undo operation is irreversible once confirmed.
     /// </remarks>
     private async Task UndoActivity(int activityID)
     {
@@ -217,15 +216,4 @@ public partial class ActivityPanel
             await UndoCandidateActivity.InvokeAsync(activityID);
         }
     }
-
-    /*
-    private async Task DetailExpanded(DetailsExpandedEventArgs<CandidateActivity> activity)
-    {
-        /*if (activity != null)
-        {
-            await GridActivity.SelectRowAsync(activity.RowIndex - 1);
-            SelectedRow = activity.Data;
-        }#1#
-    }
-*/
 }

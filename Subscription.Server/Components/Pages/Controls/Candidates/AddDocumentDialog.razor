@@ -40,6 +40,7 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.DocumentTypeID)">
 						<Template>
+							<!-- Memory optimization: Updated to use IntValues[] array instead of List<IntValues> -->
 							<DropDown @bind-Value="Model.DocumentTypeID" Model="DocumentTypes" ID="dropDocumentTypes" Placeholder="Document Type" Text="Text"
 							          TItem="IntValues" TValue="int" Key="KeyValue"/>
 						</Template>

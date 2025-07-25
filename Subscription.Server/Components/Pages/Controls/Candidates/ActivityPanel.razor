@@ -10,7 +10,8 @@
 					@{
 						if (aCon is CandidateActivity _con)
 						{
-							<span>@($"{_con.Status} [{_con.UpdatedBy.ToUpper()}]")</span>
+							<!-- Performance optimization: Using CSS text-transform instead of ToUpper() -->
+							<span>@_con.Status [<span class="upper">@_con.UpdatedBy</span>]</span>
 						}
 					}
 				</Template>
@@ -30,7 +31,8 @@
 					@{
 						if (aCon is CandidateActivity _con)
 						{
-							<span>@($"{_con.CandidateUpdatedBy.ToUpper()}")</span>
+							<!-- Performance optimization: Using CSS text-transform instead of ToUpper() -->
+							<span class="upper">@_con.CandidateUpdatedBy</span>
 						}
 					}
 				</Template>

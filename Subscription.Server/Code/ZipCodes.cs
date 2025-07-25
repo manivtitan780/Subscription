@@ -17,7 +17,8 @@ namespace Subscription.Server.Code;
 
 public class ZipCodeService(IMemoryCache cache, RedisService redisService)
 {
-    public Task<List<KeyValues>> GetZipCodes() => cache.GetOrCreateAsync("ZipCodes", async entry =>
+    // Memory optimization: Return KeyValues[] array instead of List<KeyValues> for better performance
+    public Task<KeyValues[]> GetZipCodes() => cache.GetOrCreateAsync("ZipCodes", async entry =>
                                                                                      {
                                                                                          entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(60);
 
@@ -33,6 +34,6 @@ public class ZipCodeService(IMemoryCache cache, RedisService redisService)
                                                                                          return _zips.Select(zip => new KeyValues
                                                                                                                     {
                                                                                                                         KeyValue = zip.ZipCode, Text = zip.ZipCode
-                                                                                                                    }).ToList();
+                                                                                                                    }).ToArray();
                                                                                      });
 }

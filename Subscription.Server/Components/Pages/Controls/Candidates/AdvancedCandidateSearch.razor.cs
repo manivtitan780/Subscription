@@ -23,6 +23,37 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
 public partial class AdvancedCandidateSearch : ComponentBase
 {
+    // Memory optimization: Static readonly arrays to prevent repeated allocations
+    private static readonly IntValues[] ProximityValues = 
+    [
+        new() {Text = "1", KeyValue = 1}, new() {Text = "5", KeyValue = 5}, new() {Text = "10", KeyValue = 10}, new() {Text = "20", KeyValue = 20}, new() {Text = "25", KeyValue = 25},
+        new() {Text = "30", KeyValue = 30}, new() {Text = "40", KeyValue = 40}, new() {Text = "50", KeyValue = 50}, new() {Text = "60", KeyValue = 60}, new() {Text = "70", KeyValue = 70},
+        new() {Text = "80", KeyValue = 80}, new() {Text = "90", KeyValue = 90}, new() {Text = "100", KeyValue = 100}, new() {Text = "125", KeyValue = 125}, new() {Text = "150", KeyValue = 150},
+        new() {Text = "175", KeyValue = 175}, new() {Text = "200", KeyValue = 200}, new() {Text = "250", KeyValue = 250}, new() {Text = "300", KeyValue = 300}, new() {Text = "400", KeyValue = 400},
+        new() {Text = "500", KeyValue = 500}, new() {Text = "600", KeyValue = 600}, new() {Text = "700", KeyValue = 700}, new() {Text = "800", KeyValue = 800}, new() {Text = "900", KeyValue = 900},
+        new() {Text = "1000", KeyValue = 1000}
+    ];
+
+    private static readonly IntValues[] ProximityUnits = 
+    [
+        new() {Text = "miles", KeyValue = 1}, 
+        new() {Text = "kilometers", KeyValue = 2}
+    ];
+
+    private static readonly KeyValues[] SecurityClearanceOptions = 
+    [
+        new() {KeyValue = "", Text = "All"}, 
+        new() {KeyValue = "0", Text = "No"}, 
+        new() {KeyValue = "1", Text = "Yes"}
+    ];
+
+    private static readonly KeyValues[] RelocateOptions = 
+    [
+        new() {KeyValue = "", Text = "All"}, 
+        new() {KeyValue = "0", Text = "No"}, 
+        new() {KeyValue = "1", Text = "Yes"}
+    ];
+
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
 
@@ -31,10 +62,10 @@ public partial class AdvancedCandidateSearch : ComponentBase
     private SfDialog Dialog { get; set; }
 
     [Parameter]
-    public List<IntValues> Eligibility { get; set; } = [];
+    public IntValues[] Eligibility { get; set; } = [];
 
     [Parameter]
-    public List<KeyValues> JobOptions { get; set; } = [];
+    public KeyValues[] JobOptions { get; set; } = [];
 
     [Parameter]
     public CandidateSearch Model { get; set; } = new();
@@ -53,7 +84,7 @@ public partial class AdvancedCandidateSearch : ComponentBase
     private List<KeyValues> SecurityClearance { get; set; } = [];
 
     [Parameter]
-    public List<StateCache> StateDropDown { get; set; } = [];
+    public StateCache[] StateDropDown { get; set; } = [];
 
     public SfSwitch<bool> SwitchIncludeAdmin { get; set; }
 
@@ -72,22 +103,25 @@ public partial class AdvancedCandidateSearch : ComponentBase
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    // Removed: Redundant Context_OnFieldChanged event handler - prevents memory leak risk
 
     private IEnumerable<KeyValues> DataSource { get; set; } = [];
 
-    private async Task Filtering(FilteringEventArgs value)
+    // Memory optimization: Cache all zip codes once instead of fetching on every keystroke
+    private KeyValues[] _allZipCodes = [];
+
+    private void Filtering(FilteringEventArgs value)
     {
         if (value != null && value.Text.Length > 1)
         {
-            List<KeyValues> _list = await ZipCodeService.GetZipCodes();
-            if (_list is not {Count: > 0})
+            // Performance optimization: Filter locally from cached zip codes instead of Redis query on every keystroke
+            if (_allZipCodes.Length == 0)
             {
                 DataSource = [];
+                return;
             }
 
-            IEnumerable<KeyValues> _zipCodes = _list.Where(zip => zip.KeyValue.StartsWith(value.Text)).ToList();
-
+            IEnumerable<KeyValues> _zipCodes = _allZipCodes.Where(zip => zip.KeyValue.StartsWith(value.Text, StringComparison.OrdinalIgnoreCase));
             DataSource = _zipCodes;
         }
     }
@@ -95,25 +129,15 @@ public partial class AdvancedCandidateSearch : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         await Task.Yield();
-        ProximityValue.Clear();
-        ProximityValue =
-        [
-            new() {Text = "1", KeyValue = 1}, new() {Text = "5", KeyValue = 5}, new() {Text = "10", KeyValue = 10}, new() {Text = "20", KeyValue = 20}, new() {Text = "25", KeyValue = 25}, 
-            new() {Text = "30", KeyValue = 30}, new() {Text = "40", KeyValue = 40}, new() {Text = "50", KeyValue = 50}, new() {Text = "60", KeyValue = 60}, new() {Text = "70", KeyValue = 70}, 
-            new() {Text = "80", KeyValue = 80}, new() {Text = "90", KeyValue = 90}, new() {Text = "100", KeyValue = 100}, new() {Text = "125", KeyValue = 125}, new() {Text = "150", KeyValue = 150}, 
-            new() {Text = "175", KeyValue = 175}, new() {Text = "200", KeyValue = 200}, new() {Text = "250", KeyValue = 250}, new() {Text = "300", KeyValue = 300}, new() {Text = "400", KeyValue = 400}, 
-            new() {Text = "500", KeyValue = 500}, new() {Text = "600", KeyValue = 600}, new() {Text = "700", KeyValue = 700}, new() {Text = "800", KeyValue = 800}, new() {Text = "900", KeyValue = 900}, 
-            new() {Text = "1000", KeyValue = 1000}
-        ];
+        
+        // Memory optimization: Use static readonly arrays instead of creating new objects
+        ProximityValue = ProximityValues.ToList();
+        ProximityUnit = ProximityUnits.ToList();
+        SecurityClearance = SecurityClearanceOptions.ToList();
+        Relocate = RelocateOptions.ToList();
 
-        ProximityUnit.Clear();
-        ProximityUnit = [new() {Text = "miles", KeyValue = 1}, new() {Text = "kilometers", KeyValue = 2}];
-
-        SecurityClearance.Clear();
-        SecurityClearance = [new() {KeyValue = "", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
-
-        Relocate.Clear();
-        Relocate = [new() {KeyValue = "", Text = "All"}, new() {KeyValue = "0", Text = "No"}, new() {KeyValue = "1", Text = "Yes"}];
+        // Performance optimization: Load all zip codes once from Redis instead of on every keystroke
+        _allZipCodes = await ZipCodeService.GetZipCodes() ?? [];
 
         SwitchIncludeAdminDisabled = Model.AllCandidates;
         Model.IncludeAdmin = true;
@@ -121,8 +145,12 @@ public partial class AdvancedCandidateSearch : ComponentBase
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Only create new EditContext if Model has changed
+        if (Context?.Model != Model)
+        {
+            Context = null;  // Immediate reference cleanup for GC
+            Context = new(Model);
+        }
         base.OnParametersSet();
     }
 

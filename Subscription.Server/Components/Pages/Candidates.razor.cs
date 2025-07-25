@@ -41,10 +41,12 @@ public sealed partial class Candidates : IDisposable
 
     private DotNetObjectReference<Candidates> _dotNetReference;
 
-    private List<IntValues> _eligibility = [], _experience = [], _documentTypes = [];
+    private List<IntValues> _experience = [];
+    private IntValues[] _documentTypes = [], _eligibility = [];
     //private bool _formattedExists, _originalExists;
 
-    private List<KeyValues> _jobOptions = [], _taxTerms = [], _communication = [];
+    private List<KeyValues> _taxTerms = [], _communication = [];
+    private KeyValues[] _jobOptions = [];
     private Dictionary<string, string> _jobOptionsDict;
 
     // Memory optimization: Pre-allocate reusable Dictionary with capacity hint for typical 3-4 parameters (id, candidateID, user, plus extras)
@@ -53,7 +55,7 @@ public sealed partial class Candidates : IDisposable
     private int _selectedTab;
 
     private readonly SemaphoreSlim _semaphoreMainPage = new(1, 1);
-    private List<StateCache> _states = [];
+    private StateCache[] _states = [];
     private List<StatusCode> _statusCodes = [];
 
     // Removed: StringBuilder _stringBuilder - replaced with Span<char> in SetJobOption() for memory optimization
@@ -666,7 +668,8 @@ public sealed partial class Candidates : IDisposable
 
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
 
-    private Task FormattedClick(MouseEventArgs arg) => GetResumeOnClick("Formatted");
+    // Memory optimization: Removed unused MouseEventArgs parameter
+    private Task FormattedClick() => GetResumeOnClick("Formatted");
 
     private async Task GetAlphabets(char alphabet) => await ExecuteMethod(async () =>
                                                                           {
@@ -750,11 +753,13 @@ public sealed partial class Candidates : IDisposable
                                                                               DocumentDetails _response = General.DeserializeObject<DocumentDetails>(_restResponse);
                                                                               try
                                                                               {
-                                                                                  await PanelDownload.ShowResume(_response.DocumentLocation, _target.ID, "Original Resume", _response.InternalFileName);
+                                                                                  // Bug fix: Dynamic resume title based on resumeType parameter
+                                                                                  await PanelDownload.ShowResume(_response.DocumentLocation, _target.ID, $"{resumeType} Resume", _response.InternalFileName);
                                                                               }
                                                                               catch (Exception ex)
                                                                               {
-                                                                                  Console.WriteLine(ex.Message);
+                                                                                  // Enhanced logging: Using Serilog instead of Console.WriteLine with context
+                                                                                  Log.Error(ex, "Error showing {ResumeType} resume for candidate {CandidateID}", resumeType, _target.ID);
                                                                               }
                                                                           }
                                                                       });
@@ -882,15 +887,15 @@ public sealed partial class Candidates : IDisposable
                                 // Parallel deserialization with proper thread safety for consistent pattern across codebase
                                 Task[] cacheDeserializationTasks =
                                 [
-                                    Task.Run(() => _states = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)])),
-                                    Task.Run(() => _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)])),
+                                    Task.Run(() => _states = General.DeserializeObject<StateCache[]>(_cacheValues[nameof(CacheObjects.States)])),
+                                    Task.Run(() => _eligibility = General.DeserializeObject<IntValues[]>(_cacheValues[nameof(CacheObjects.Eligibility)])),
                                     Task.Run(() => _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)])),
                                     Task.Run(() => _taxTerms = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.TaxTerms)])),
-                                    Task.Run(() => _jobOptions = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.JobOptions)])),
+                                    Task.Run(() => _jobOptions = General.DeserializeObject<KeyValues[]>(_cacheValues[nameof(CacheObjects.JobOptions)])),
                                     Task.Run(() => _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)])),
                                     Task.Run(() => _workflow = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)])),
                                     Task.Run(() => _communication = General.DeserializeObject<List<KeyValues>>(_cacheValues[nameof(CacheObjects.Communications)])),
-                                    Task.Run(() => _documentTypes = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.DocumentTypes)]))
+                                    Task.Run(() => _documentTypes = General.DeserializeObject<IntValues[]>(_cacheValues[nameof(CacheObjects.DocumentTypes)]))
                                 ];
                                 await Task.WhenAll(cacheDeserializationTasks);
                                 InitializeJobOptionsDictionary();
@@ -899,7 +904,8 @@ public sealed partial class Candidates : IDisposable
         await base.OnInitializedAsync();
     }
 
-    private Task OriginalClick(MouseEventArgs arg) => GetResumeOnClick("Original");
+    // Memory optimization: Removed unused MouseEventArgs parameter
+    private Task OriginalClick() => GetResumeOnClick("Original");
 
     private async Task PageChanging(PageChangedEventArgs page)
     {
@@ -1262,7 +1268,7 @@ public sealed partial class Candidates : IDisposable
 
     private void SetEligibility()
     {
-        if (_eligibility is {Count: > 0})
+        if (_eligibility.Length > 0)
         {
             CandidateEligibility = _candDetailsObject.EligibilityID > 0
                                        ? _eligibility.FirstOrDefault(eligibility => eligibility.KeyValue == _candDetailsObject.EligibilityID)!.Text.ToMarkupString()

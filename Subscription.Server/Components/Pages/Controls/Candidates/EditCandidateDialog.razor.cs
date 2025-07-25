@@ -199,7 +199,7 @@ public partial class EditCandidateDialog
     ///     state.
     /// </remarks>
     [Parameter]
-    public List<StateCache> States { get; set; }
+    public StateCache[] States { get; set; }
 
     /// <summary>
     ///     Gets or sets the collection of tax terms associated with the candidate.
