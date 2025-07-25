@@ -85,7 +85,7 @@ public partial class NotesPanel
 	///     The Syncfusion Blazor Grid component that displays the candidate's notes.
 	/// </value>
 	/// <remarks>
-	///     The GridExperience property is a Syncfusion Blazor Grid component that displays a list of a candidate's
+	///     The GridNotes property is a Syncfusion Blazor Grid component that displays a list of a candidate's
 	///     notes.
 	///     Each row in the grid represents a note entry of the candidate.
 	///     The grid provides functionalities such as sorting, filtering, and paging.

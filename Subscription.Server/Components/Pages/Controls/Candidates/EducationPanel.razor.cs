@@ -8,7 +8,7 @@
 // File Name:           EducationPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          02-05-2025 20:02
-// Last Updated On:     07-25-2025 15:43
+// Last Updated On:     07-25-2025 16:39
 // *****************************************/
 
 #endregion
@@ -102,11 +102,7 @@ public partial class EducationPanel
 	///     A list of CandidateEducation objects.
 	/// </value>
 	[Parameter]
-    public CandidateEducation[] Model //List<CandidateEducation> 
-    {
-        get;
-        set;
-    }
+    public CandidateEducation[] Model { get; set; }
 
 	/// <summary>
 	///     Gets or sets the height of a row in the grid.

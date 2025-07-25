@@ -13,7 +13,7 @@
 		<GridSelectionSettings EnableToggle="false" Mode="SelectionMode.Row" Type="SelectionType.Single"/>
 		<GridEvents RowSelected="RowSelected" TValue="CandidateExperience"/>
 		<GridColumns>
-			<GridColumn Field="@nameof(CandidateExperience.Employer)" HeaderText="Degree" Width="20%"/>
+			<GridColumn Field="@nameof(CandidateExperience.Employer)" HeaderText="Employer" Width="20%"/>
 			<GridColumn Field="@nameof(CandidateExperience.ID)" HeaderText="ID" IsPrimaryKey="true" Visible="false"/>
 			<GridColumn HeaderText="Duration" Width="12%">
 				<Template Context="aCon">
@@ -44,4 +44,3 @@
 		</GridColumns>
 	</SfGrid>
 </div>
-@* <ConfirmDialog Delete="() => DeleteExperience.InvokeAsync(_selectedID)" Entity="Experience" Height="160px" @ref="DialogConfirm" Width="385px"></ConfirmDialog> *@

@@ -26,7 +26,7 @@
 					}
 				</Template>
 			</GridColumn>
-			<GridColumn Field="@nameof(CandidateEducation.Year)" HeaderText="Year" Width="20%/"></GridColumn>
+			<GridColumn Field="@nameof(CandidateEducation.Year)" HeaderText="Year" Width="20%"/>
 			<GridColumn Field="@nameof(CandidateEducation.UpdatedBy)" HeaderText="Updated By" Width="20%"/>
 			<GridColumn Width="10%">
 				<Template Context="bCon">
@@ -44,4 +44,3 @@
 		</GridColumns>
 	</SfGrid>
 </div>
-@* <ConfirmDialog Delete="() => DeleteEducation.InvokeAsync(_selectedID)" Entity="Education" Height="160px" @ref="DialogConfirm" Width="378px"/>$1$ #1# *@
