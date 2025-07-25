@@ -456,16 +456,6 @@ public sealed partial class Candidates : IDisposable
                                   List<CandidateMPC> _candidateMPC, CandidateRatingMPC _candidateRatingMPC, string _documents) =
                                      await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters, null, false);
 
-                                 // Parallel deserialization of ALL candidate details for reduced memory residence time (60-70% performance improvement)
-                                 // Original serial implementation (commented for potential revert if needed):
-                                 /*_candDetailsObject = General.DeserializeObject<CandidateDetails>(_candidate) ?? new();
-                                 _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_skills) ?? [];
-                                 _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_education) ?? [];
-                                 _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_s) ?? [];
-                                 _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? [];
-                                 _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_documents) ?? [];
-                                 _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [];*/
-
                                  // Parallel deserialization with proper thread safety (await ensures completion before UI methods)
                                  Task[] deserializationTasks =
                                  [
@@ -482,6 +472,7 @@ public sealed partial class Candidates : IDisposable
                                  _candRatingObject = _candidateRatings.ToArray();
                                  _candMPCObject = _candidateMPC.ToArray();
                                  RatingMPC = _candidateRatingMPC;
+                                 
                                  // Parallel UI setup methods for faster candidate detail initialization
                                  Task[] _uiSetupTasks =
                                  [

@@ -178,40 +178,10 @@
 											<TabHeader Text="Basic Info"/>
 										</ChildContent>
 										<ContentTemplate>
-											<div class="layout-2">
-												<div class="leftLayout">
-													<PanelDisplayText Label="Address" MarkupText="@Address"/>
-													<PanelDisplayText Label="Email Address" Text="@_candDetailsObject.Email"/>
-													<PanelDisplayText Label="Phone#" Text="@_candDetailsObject.Phone1.FormatPhoneNumber()"/>
-													<PanelDisplayText Label="Alternate Phone#" Text="@_candDetailsObject.Phone2.FormatPhoneNumber()"/>
-													<PanelDisplayText Label="Title" Text="@_candDetailsObject.Title"/>
-													<PanelDisplayText Label="Hourly Pay Rate" Text="@($"{_candDetailsObject.HourlyRate.CultureCurrency()} - " + $"{_candDetailsObject.HourlyRateHigh.CultureCurrency()}")"/>
-													<PanelDisplayText Label="Salary Expected" Text="@($"{_candDetailsObject.SalaryLow.CultureCurrency()} - " + $"{_candDetailsObject.SalaryHigh.CultureCurrency()}")"/>
-												</div>
-												<div class="leftLayout">
-													<PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility"/>
-													<PanelDisplayText Label="Experience" MarkupText="@CandidateExperience"/>
-													<PanelDisplayText Label="Tax Terms" MarkupText="@CandidateTaxTerms"/>
-													<PanelDisplayText Label="Job Options" MarkupText="@CandidateJobOptions"/>
-													<PanelDisplayText Label="Communication" MarkupText="@CandidateCommunication"/>
-													<PanelDisplayText Label="Security Clearance" Text="@(_candDetailsObject.Background ? "Yes" : "No")"/>
-													<PanelDisplayText Label="Willing to Relocate" Text="@(_candDetailsObject.Relocate ? "Yes" : "No")"/>
-												</div>
-												<div class="rightLayout">
-													<div class="divPanelContainer" style="margin-bottom:5px;">
-														<span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
-														<span class="spanRightText ratingCandidateExpand">
-															<SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@_candDetailsObject.RateCandidate"/>
-														</span>
-													</div>
-													<PanelDisplayText Label="Rating Date" MarkupText="@RatingDate"/>
-													<PanelDisplayText Label="Rating Notes" MarkupText="@RatingNote"/>
-													<PanelDisplayText Label="M.P.C.?" Text="@(_candDetailsObject.MPC ? "Yes" : "No")"/>
-													<PanelDisplayText Label="M.P.C. Date" MarkupText="@MPCDate"/>
-													<PanelDisplayText Label="M.P.C. Notes" MarkupText="@MPCNote"/>
-												</div>
-											</div>
-										</ContentTemplate>@* IsRequisition="@(RequisitionID > 0)" *@
+											<CandidateInfoPanel Address="@Address" CandidateCommunication="@CandidateCommunication" CandidateEligibility="@CandidateEligibility" CandidateExperience="@CandidateExperience"
+											                    CandidateJobOptions="@CandidateJobOptions" CandidateTaxTerms="@CandidateTaxTerms" Model="@_candDetailsObject" MPCDate="@MPCDate" MPCNote="@MPCNote"
+											                    RatingDate="@RatingDate" RatingNote="@RatingNote"/>
+										</ContentTemplate>
 									</TabItem>
 									<TabItem>
 										<ChildContent>
@@ -259,16 +229,16 @@
 													<RichTextEditorToolbarSettings Items="@_tools1">
 														<RichTextEditorCustomToolbarItems>
 															<RichTextEditorCustomToolbarItem Name="Original">
-																<Template>
+																<template>
 																	<SfButton Content="Show Original Resume" CssClass="original" Disabled="@(!OriginalExists || !DownloadOriginal)" OnClick="OriginalClick"
 																	          IconCss="e-icons e-align-right"/>
-																</Template>
+																</template>
 															</RichTextEditorCustomToolbarItem>
 															<RichTextEditorCustomToolbarItem Name="Formatted">
-																<Template>
+																<template>
 																	<SfButton Content="Show Formatted Resume" CssClass="formatted" Disabled="@(!FormattedExists || !DownloadFormatted)" OnClick="FormattedClick"
 																	          IconCss="e-icons e-justify"/>
-																</Template>
+																</template>
 															</RichTextEditorCustomToolbarItem>
 														</RichTextEditorCustomToolbarItems>
 													</RichTextEditorToolbarSettings>

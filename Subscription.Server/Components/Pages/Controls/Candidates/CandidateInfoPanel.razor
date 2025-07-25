@@ -1,0 +1,49 @@
+@*
+    Copyright:           Titan-Techs.
+    Location:            Newtown, PA, USA
+    Solution:            Subscription
+    Project:             Subscription.Server
+    File Name:           CandidateInfoPanel.razor
+    Created By:          Claude Code (Anthropic)
+    Created On:          07-25-2025
+    Last Updated On:     07-25-2025
+    
+    Summary:
+        Component for displaying candidate basic information in a structured layout.
+        Extracted from Candidates.razor DetailTemplate Tab 1 for better modularity and reusability.
+        Follows the established patterns from RequisitionInfoPanel and CompanyInfoPanel.
+*@
+
+<div class="layout-2">
+    <div class="leftLayout">
+        <PanelDisplayText Label="Address" MarkupText="@Address"/>
+        <PanelDisplayText Label="Email Address" Text="@Model.Email"/>
+        <PanelDisplayText Label="Phone#" Text="@Model.Phone1.FormatPhoneNumber()"/>
+        <PanelDisplayText Label="Alternate Phone#" Text="@Model.Phone2.FormatPhoneNumber()"/>
+        <PanelDisplayText Label="Title" Text="@Model.Title"/>
+        <PanelDisplayText Label="Hourly Pay Rate" Text="@($"{Model.HourlyRate.CultureCurrency()} - " + $"{Model.HourlyRateHigh.CultureCurrency()}")"/>
+        <PanelDisplayText Label="Salary Expected" Text="@($"{Model.SalaryLow.CultureCurrency()} - " + $"{Model.SalaryHigh.CultureCurrency()}")"/>
+    </div>
+    <div class="leftLayout">
+        <PanelDisplayText Label="Authorization" MarkupText="@CandidateEligibility"/>
+        <PanelDisplayText Label="Experience" MarkupText="@CandidateExperience"/>
+        <PanelDisplayText Label="Tax Terms" MarkupText="@CandidateTaxTerms"/>
+        <PanelDisplayText Label="Job Options" MarkupText="@CandidateJobOptions"/>
+        <PanelDisplayText Label="Communication" MarkupText="@CandidateCommunication"/>
+        <PanelDisplayText Label="Security Clearance" Text="@(Model.Background ? "Yes" : "No")"/>
+        <PanelDisplayText Label="Willing to Relocate" Text="@(Model.Relocate ? "Yes" : "No")"/>
+    </div>
+    <div class="rightLayout">
+        <div class="divPanelContainer" style="margin-bottom:5px;">
+            <span class="spanLeftLabel" style="line-height:32px;">Rating:</span>
+            <span class="spanRightText ratingCandidateExpand">
+                <SfRating CssClass="ratingBasicInfoCandidate" ItemsCount="5" ReadOnly="true" Value="@Model.RateCandidate"/>
+            </span>
+        </div>
+        <PanelDisplayText Label="Rating Date" MarkupText="@RatingDate"/>
+        <PanelDisplayText Label="Rating Notes" MarkupText="@RatingNote"/>
+        <PanelDisplayText Label="M.P.C.?" Text="@(Model.MPC ? "Yes" : "No")"/>
+        <PanelDisplayText Label="M.P.C. Date" MarkupText="@MPCDate"/>
+        <PanelDisplayText Label="M.P.C. Notes" MarkupText="@MPCNote"/>
+    </div>
+</div>
