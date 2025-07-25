@@ -97,7 +97,7 @@ public partial class DownloadsPanel
     ///     The list of <see cref="CandidateDocument" /> objects representing the documents associated with a candidate.
     /// </value>
     [Parameter]
-    public List<CandidateDocument> Model { get; set; }
+    public CandidateDocument[] Model { get; set; } //List<CandidateDocument> 
 
     /// <summary>
     ///     Gets or sets the height of each row in the panel.

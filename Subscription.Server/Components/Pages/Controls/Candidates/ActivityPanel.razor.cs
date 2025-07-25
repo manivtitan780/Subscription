@@ -87,7 +87,8 @@ public partial class ActivityPanel
     ///     of the <see cref="CandidateActivity" /> class.
     /// </remarks>
     [Parameter]
-    public List<CandidateActivity> Model { get; set; }
+    // Memory optimization: Changed from List<CandidateActivity> to CandidateActivity[] for better cache locality
+    public CandidateActivity[] Model { get; set; }
 
     /// <summary>
     ///     Gets or sets the RoleID associated with the logged-in user.

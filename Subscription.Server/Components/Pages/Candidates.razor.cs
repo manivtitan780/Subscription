@@ -24,15 +24,18 @@ namespace Subscription.Server.Components.Pages;
 public sealed partial class Candidates : IDisposable
 {
     private const string StorageName = "CandidatesGrid";
-    private List<CandidateActivity> _candActivityObject = [];
+    // Memory optimization Phase 2: Convert medium collections to arrays for better cache locality
+    private CandidateActivity[] _candActivityObject = [];
     private CandidateDetails _candDetailsObject = new(), _candDetailsObjectClone = new();
-    private List<CandidateDocument> _candDocumentsObject = [];
-    private List<CandidateEducation> _candEducationObject = [];
-    private List<CandidateExperience> _candExperienceObject = [];
-    private List<CandidateNotes> _candidateNotesObject = [];
-    private List<CandidateMPC> _candMPCObject = [];
-    private List<CandidateRating> _candRatingObject = [];
-    private List<CandidateSkills> _candSkillsObject = [];
+    // Memory optimization: Convert small collections to arrays for better cache locality and reduced overhead
+    private CandidateDocument[] _candDocumentsObject = [];
+    private CandidateEducation[] _candEducationObject = [];
+    // Memory optimization Phase 3: Final collections converted to arrays
+    private CandidateExperience[] _candExperienceObject = [];
+    private CandidateNotes[] _candidateNotesObject = [];
+    private CandidateMPC[] _candMPCObject = [];        // Read-only collection, perfect for arrays
+    private CandidateRating[] _candRatingObject = [];   // Read-only collection, perfect for arrays
+    private CandidateSkills[] _candSkillsObject = [];
 
     private bool _disposed;
 
@@ -318,14 +321,15 @@ public sealed partial class Candidates : IDisposable
 
     private void ClearAllCollections()
     {
-        _candActivityObject?.Clear();
-        _candDocumentsObject?.Clear();
-        _candEducationObject?.Clear();
-        _candExperienceObject?.Clear();
-        _candidateNotesObject?.Clear();
-        _candMPCObject?.Clear();
-        _candRatingObject?.Clear();
-        _candSkillsObject?.Clear();
+        // Memory optimization: Set ALL array references to null for immediate GC eligibility during disposal
+        _candActivityObject = null;
+        _candDocumentsObject = null;
+        _candEducationObject = null;
+        _candSkillsObject = null;
+        _candExperienceObject = null;
+        _candidateNotesObject = null;
+        _candMPCObject = null;        // Read-only collection converted to array
+        _candRatingObject = null;     // Read-only collection converted to array
         DataSource?.Clear();
     }
 
@@ -385,7 +389,8 @@ public sealed partial class Candidates : IDisposable
 
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
 
-                                                              _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response, false);
+                                                              // Array deserialization: Converting to CandidateDocument[] for memory optimization
+                                                              _candDocumentsObject = General.DeserializeObject<CandidateDocument[]>(_response, false) ?? [];
                                                           });
 
     private Task DeleteEducation(int id) => ExecuteMethod(async () =>
@@ -393,7 +398,8 @@ public sealed partial class Candidates : IDisposable
                                                               //Dictionary<string, string> _parameters = CreateParameters(id);
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", CreateParameters(id));
 
-                                                              _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response, false);
+                                                              // Array deserialization: Converting to CandidateEducation[] for memory optimization
+                                                              _candEducationObject = General.DeserializeObject<CandidateEducation[]>(_response, false) ?? [];
                                                           });
 
     private Task DeleteExperience(int id) => ExecuteMethod(async () =>
@@ -401,7 +407,8 @@ public sealed partial class Candidates : IDisposable
                                                                //Dictionary<string, string> _parameters = CreateParameters(id);
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", CreateParameters(id));
 
-                                                               _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response, false);
+                                                               // Array deserialization: Converting to CandidateExperience[] for memory optimization
+                                                               _candExperienceObject = General.DeserializeObject<CandidateExperience[]>(_response, false) ?? [];
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -409,7 +416,8 @@ public sealed partial class Candidates : IDisposable
                                                           //Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteNotes", CreateParameters(id));
 
-                                                          _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response, false);
+                                                          // Array deserialization: Converting to CandidateNotes[] for memory optimization
+                                                          _candidateNotesObject = General.DeserializeObject<CandidateNotes[]>(_response, false) ?? [];
                                                       });
 
     private Task DeleteSkill(int id) => ExecuteMethod(async () =>
@@ -417,7 +425,8 @@ public sealed partial class Candidates : IDisposable
                                                           //Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", CreateParameters(id));
 
-                                                          _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response, false);
+                                                          // Array deserialization: Converting to CandidateSkills[] for memory optimization
+                                                          _candSkillsObject = General.DeserializeObject<CandidateSkills[]>(_response, false) ?? [];
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
@@ -461,17 +470,17 @@ public sealed partial class Candidates : IDisposable
                                  Task[] deserializationTasks =
                                  [
                                      Task.Run(() => _candDetailsObject = General.DeserializeObject<CandidateDetails>(_candidate) ?? new()),
-                                     Task.Run(() => _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_skills) ?? []),
-                                     Task.Run(() => _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_education) ?? []),
-                                     Task.Run(() => _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_s) ?? []),
-                                     Task.Run(() => _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? []),
-                                     Task.Run(() => _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_documents) ?? []),
-                                     Task.Run(() => _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? [])
+                                     Task.Run(() => _candSkillsObject = General.DeserializeObject<CandidateSkills[]>(_skills) ?? []),
+                                     Task.Run(() => _candEducationObject = General.DeserializeObject<CandidateEducation[]>(_education) ?? []),
+                                     Task.Run(() => _candExperienceObject = General.DeserializeObject<CandidateExperience[]>(_s) ?? []),
+                                     Task.Run(() => _candidateNotesObject = General.DeserializeObject<CandidateNotes[]>(_notes) ?? []),
+                                     Task.Run(() => _candDocumentsObject = General.DeserializeObject<CandidateDocument[]>(_documents) ?? []),
+                                     Task.Run(() => _candActivityObject = General.DeserializeObject<CandidateActivity[]>(_activity) ?? [])
                                  ];
                                  await Task.WhenAll(deserializationTasks);
 
-                                 _candRatingObject = _candidateRatings;
-                                 _candMPCObject = _candidateMPC;
+                                 _candRatingObject = _candidateRatings.ToArray();
+                                 _candMPCObject = _candidateMPC.ToArray();
                                  RatingMPC = _candidateRatingMPC;
                                  // Parallel UI setup methods for faster candidate detail initialization
                                  Task[] _uiSetupTasks =
@@ -481,7 +490,7 @@ public sealed partial class Candidates : IDisposable
                                  ];
                                  await Task.WhenAll(_uiSetupTasks);
 
-                                 _selectedTab = _candActivityObject is {Count: > 0} ? 7 : 0;
+                                 _selectedTab = _candActivityObject is {Length: > 0} ? 7 : 0;
                                  FormattedExists = _target.FormattedResume;
                                  OriginalExists = _target.OriginalResume;
 
@@ -942,7 +951,8 @@ public sealed partial class Candidates : IDisposable
 
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                             // Array deserialization: Converting to CandidateActivity[] for memory optimization
+                                                                             _candActivityObject = General.DeserializeObject<CandidateActivity[]>(_response) ?? [];
                                                                          }
                                                                      });
 
@@ -1004,7 +1014,8 @@ public sealed partial class Candidates : IDisposable
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
-                                                                                 _candDocumentsObject = General.DeserializeObject<List<CandidateDocument>>(_response);
+                                                                                 // Array deserialization: Converting to CandidateDocument[] for memory optimization
+                                                                                 _candDocumentsObject = General.DeserializeObject<CandidateDocument[]>(_response) ?? [];
                                                                              }
                                                                          }
                                                                      });
@@ -1024,7 +1035,8 @@ public sealed partial class Candidates : IDisposable
 
                                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                                {
-                                                                                   _candEducationObject = General.DeserializeObject<List<CandidateEducation>>(_response);
+                                                                                   // Array deserialization: Converting to CandidateEducation[] for memory optimization
+                                                                                   _candEducationObject = General.DeserializeObject<CandidateEducation[]>(_response) ?? [];
                                                                                }
                                                                            }
                                                                        });
@@ -1046,7 +1058,8 @@ public sealed partial class Candidates : IDisposable
                                                                                      return;
                                                                                  }
 
-                                                                                 _candExperienceObject = General.DeserializeObject<List<CandidateExperience>>(_response);
+                                                                                 // Array deserialization: Converting to CandidateExperience[] for memory optimization
+                                                                                 _candExperienceObject = General.DeserializeObject<CandidateExperience[]>(_response) ?? [];
                                                                              }
                                                                          });
 
@@ -1063,7 +1076,8 @@ public sealed partial class Candidates : IDisposable
 
                                                                            if (_response != null)
                                                                            {
-                                                                               _candMPCObject = General.DeserializeObject<List<CandidateMPC>>(_response["MPCList"]);
+                                                                               // Array deserialization: Converting to CandidateMPC[] for memory optimization (read-only data)
+                                                                               _candMPCObject = General.DeserializeObject<CandidateMPC[]>(_response["MPCList"]) ?? [];
                                                                                // Fixed: Replaced Newtonsoft.Json with System.Text.Json for 60-70% memory reduction
                                                                                // Original Newtonsoft.Json usage (commented for potential revert if needed):
                                                                                /*RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstMPC"]?.ToString() ?? "");*/
@@ -1096,7 +1110,8 @@ public sealed partial class Candidates : IDisposable
                                                                          return;
                                                                      }
 
-                                                                     _candidateNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                                     // Array deserialization: Converting to CandidateNotes[] for memory optimization
+                                                                     _candidateNotesObject = General.DeserializeObject<CandidateNotes[]>(_response) ?? [];
                                                                  }
                                                              });
 
@@ -1113,7 +1128,8 @@ public sealed partial class Candidates : IDisposable
 
                                                                               if (_response != null)
                                                                               {
-                                                                                  _candRatingObject = General.DeserializeObject<List<CandidateRating>>(_response["RatingList"]);
+                                                                                  // Array deserialization: Converting to CandidateRating[] for memory optimization (read-only data)
+                                                                                  _candRatingObject = General.DeserializeObject<CandidateRating[]>(_response["RatingList"]) ?? [];
                                                                                   // Fixed: Replaced Newtonsoft.Json with System.Text.Json for 60-70% memory reduction
                                                                                   // Original Newtonsoft.Json usage (commented for potential revert if needed):
                                                                                   /*RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? "");*/
@@ -1173,7 +1189,8 @@ public sealed partial class Candidates : IDisposable
                                                                            return;
                                                                        }
 
-                                                                       _candSkillsObject = General.DeserializeObject<List<CandidateSkills>>(_response);
+                                                                       // Array deserialization: Converting to CandidateSkills[] for memory optimization
+                                                                       _candSkillsObject = General.DeserializeObject<CandidateSkills[]>(_response) ?? [];
                                                                    }
                                                                });
 
@@ -1485,7 +1502,8 @@ public sealed partial class Candidates : IDisposable
 
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
-                                                                       _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                       // Array deserialization: Converting to CandidateActivity[] for memory optimization
+                                                                       _candActivityObject = General.DeserializeObject<CandidateActivity[]>(_response) ?? [];
                                                                    }
                                                                });
 

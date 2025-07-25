@@ -157,7 +157,8 @@ public partial class SkillPanel
 	///     class.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateSkills> ModelSkill
+    // Memory optimization: Changed from List<CandidateSkills> to CandidateSkills[] for better cache locality
+    public CandidateSkills[] ModelSkill
     {
         get;
         set;

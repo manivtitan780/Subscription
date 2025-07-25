@@ -92,7 +92,7 @@ public partial class MPCCandidateDialog : IDisposable
 	///     are reflected in the grid and vice versa. Each record in the list represents a row in the grid.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateMPC> MPCGrid { get; set; }
+    public CandidateMPC[] MPCGrid { get; set; } //List<CandidateMPC>
 
 	/// <summary>
 	///     Gets or sets the height of the rows in the Most Placeable Candidate (MPC) grid.

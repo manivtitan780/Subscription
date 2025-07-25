@@ -82,7 +82,7 @@ public partial class RatingCandidateDialog
 	///     are reflected in the grid and vice versa. Each record in the list represents a row in the grid.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateRating> RatingGrid { get; set; }
+    public CandidateRating[] RatingGrid { get; set; } //List<CandidateRating>
 
 	/// <summary>
 	///     Gets or sets the height of the rows in the Most Placeable Candidate (MPC) grid.

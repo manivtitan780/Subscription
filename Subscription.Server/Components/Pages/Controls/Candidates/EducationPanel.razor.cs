@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           EducationPanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          11-30-2024 19:11
-// Last Updated On:     01-12-2025 20:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     07-25-2025 15:43
 // *****************************************/
 
 #endregion
@@ -41,11 +41,7 @@ public partial class EducationPanel
 	///     The event callback for deleting an education detail.
 	/// </value>
 	[Parameter]
-    public EventCallback<int> DeleteEducation
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DeleteEducation { get; set; }
 
 	/// <summary>
 	///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -62,11 +58,7 @@ public partial class EducationPanel
 	///     confirm actions before proceeding.
 	/// </remarks>
 	[Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
 	/// <summary>
 	///     Gets or sets the event callback that triggers when an education detail is to be edited.
@@ -75,11 +67,7 @@ public partial class EducationPanel
 	///     The event callback for editing an education detail.
 	/// </value>
 	[Parameter]
-    public EventCallback<int> EditEducation
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> EditEducation { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the user has the rights to edit the education details.
@@ -88,11 +76,7 @@ public partial class EducationPanel
 	///     true if the user has the rights to edit; otherwise, false. The default value is true.
 	/// </value>
 	[Parameter]
-    public bool EditRights
-    {
-        get;
-        set;
-    } = true;
+    public bool EditRights { get; set; } = true;
 
 	/// <summary>
 	///     Gets or sets the grid that displays the education details of a candidate.
@@ -100,11 +84,7 @@ public partial class EducationPanel
 	/// <value>
 	///     The grid displaying the education details of a candidate.
 	/// </value>
-	private SfGrid<CandidateEducation> GridEducation
-    {
-        get;
-        set;
-    }
+	private SfGrid<CandidateEducation> GridEducation { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current operation is a requisition.
@@ -113,11 +93,7 @@ public partial class EducationPanel
 	///     true if the current operation is a requisition; otherwise, false. The default value is false.
 	/// </value>
 	[Parameter]
-    public bool IsRequisition
-    {
-        get;
-        set;
-    }
+    public bool IsRequisition { get; set; }
 
 	/// <summary>
 	///     Gets or sets a list of CandidateEducation objects representing the education details of a candidate.
@@ -126,7 +102,7 @@ public partial class EducationPanel
 	///     A list of CandidateEducation objects.
 	/// </value>
 	[Parameter]
-    public List<CandidateEducation> Model
+    public CandidateEducation[] Model //List<CandidateEducation> 
     {
         get;
         set;
@@ -139,11 +115,7 @@ public partial class EducationPanel
 	///     The height of a row in the grid. The default value is 38.
 	/// </value>
 	[Parameter]
-    public int RowHeight
-    {
-        get;
-        set;
-    } = 42;
+    public int RowHeight { get; set; } = 42;
 
 	/// <summary>
 	///     Gets the selected row in the grid. This property is of type <see cref="Subscription.Model.CandidateEducation" />.
@@ -155,11 +127,7 @@ public partial class EducationPanel
 	///     This property is set internally when a row is selected in the grid. It is used to hold the education details of the
 	///     selected candidate.
 	/// </remarks>
-	internal CandidateEducation SelectedRow
-    {
-        get;
-        private set;
-    }
+	internal CandidateEducation SelectedRow { get; private set; }
 
 	/// <summary>
 	///     Gets or sets the logged-in Username.
@@ -168,11 +136,7 @@ public partial class EducationPanel
 	///     The currently logged-in Username.
 	/// </value>
 	[Parameter]
-    public string UserName
-    {
-        get;
-        set;
-    }
+    public string UserName { get; set; }
 
 	/// <summary>
 	///     Asynchronously deletes the education detail of a candidate.

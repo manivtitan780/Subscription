@@ -119,7 +119,7 @@ public partial class NotesPanel
 	///     Each entry includes details about a particular note of the candidate.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateNotes> Model { get; set; }
+    public CandidateNotes[] Model { get; set; } //List<CandidateNotes>
 
 	/// <summary>
 	///     Gets or sets the height of each row in the grid displaying the note entries.

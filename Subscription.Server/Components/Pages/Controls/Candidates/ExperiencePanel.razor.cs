@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           ExperiencePanel.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          12-02-2024 20:12
-// Last Updated On:     12-02-2024 21:12
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          02-05-2025 20:02
+// Last Updated On:     07-25-2025 15:59
 // *****************************************/
 
 #endregion
@@ -40,11 +40,7 @@ public partial class ExperiencePanel
 	///     The event callback that takes an integer parameter representing the ID of the experience entry to be deleted.
 	/// </value>
 	[Parameter]
-    public EventCallback<int> DeleteExperience
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> DeleteExperience { get; set; }
 
 	/// <summary>
 	///     Gets or sets the dialog service used for displaying confirmation dialogs.
@@ -61,11 +57,7 @@ public partial class ExperiencePanel
 	///     confirm actions before proceeding.
 	/// </remarks>
 	[Inject]
-    private SfDialogService DialogService
-    {
-        get;
-        set;
-    }
+    private SfDialogService DialogService { get; set; }
 
 	/// <summary>
 	///     Gets or sets the event callback that is triggered when an experience entry is to be edited.
@@ -74,11 +66,7 @@ public partial class ExperiencePanel
 	///     The event callback that takes an integer parameter representing the ID of the experience entry to be edited.
 	/// </value>
 	[Parameter]
-    public EventCallback<int> EditExperience
-    {
-        get;
-        set;
-    }
+    public EventCallback<int> EditExperience { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current user has rights to edit the experience entries.
@@ -92,11 +80,7 @@ public partial class ExperiencePanel
 	///     true, meaning that, by default, users have the rights to edit the entries.
 	/// </remarks>
 	[Parameter]
-    public bool EditRights
-    {
-        get;
-        set;
-    } = true;
+    public bool EditRights { get; set; } = true;
 
 	/// <summary>
 	///     Gets or sets the Syncfusion Blazor Grid component that displays the list of a candidate's experiences.
@@ -111,11 +95,7 @@ public partial class ExperiencePanel
 	///     The grid provides functionalities such as sorting, filtering, and paging.
 	///     The grid is bound to the Model property, which provides the data source for the grid.
 	/// </remarks>
-	private SfGrid<CandidateExperience> GridExperience
-    {
-        get;
-        set;
-    }
+	private SfGrid<CandidateExperience> GridExperience { get; set; }
 
 	/// <summary>
 	///     Gets or sets a value indicating whether the current context is a requisition.
@@ -129,11 +109,7 @@ public partial class ExperiencePanel
 	///     false, meaning that, by default, the context is not a requisition.
 	/// </remarks>
 	[Parameter]
-    public bool IsRequisition
-    {
-        get;
-        set;
-    }
+    public bool IsRequisition { get; set; }
 
 	/// <summary>
 	///     Gets or sets the model for the experience entries.
@@ -147,11 +123,7 @@ public partial class ExperiencePanel
 	///     Each entry includes details about a particular experience of the candidate.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateExperience> Model
-    {
-        get;
-        set;
-    }
+    public CandidateExperience[] Model { get; set; } //List<CandidateExperience>
 
 	/// <summary>
 	///     Gets or sets the height of each row in the grid displaying the experience entries.
@@ -166,11 +138,7 @@ public partial class ExperiencePanel
 	///     information in each row.
 	/// </remarks>
 	[Parameter]
-    public int RowHeight
-    {
-        get;
-        set;
-    } = 42;
+    public int RowHeight { get; set; } = 42;
 
 	/// <summary>
 	///     Gets or sets the currently selected row in the grid.
@@ -184,11 +152,7 @@ public partial class ExperiencePanel
 	///     This property is updated whenever a row is selected in the grid, and it is used to perform operations on the
 	///     selected experience entry, such as editing or deleting the entry.
 	/// </remarks>
-	internal CandidateExperience SelectedRow
-    {
-        get;
-        private set;
-    }
+	internal CandidateExperience SelectedRow { get; private set; }
 
 	/// <summary>
 	///     Gets or sets the logged-in Username.
@@ -197,11 +161,7 @@ public partial class ExperiencePanel
 	///     The currently logged-in Username.
 	/// </value>
 	[Parameter]
-    public string UserName
-    {
-        get;
-        set;
-    }
+    public string UserName { get; set; }
 
 	/// <summary>
 	///     Asynchronously deletes the experience detail of a candidate.
@@ -217,10 +177,10 @@ public partial class ExperiencePanel
         _selectedID = id;
         int _index = await GridExperience.GetRowIndexByPrimaryKeyAsync(id);
         await GridExperience.SelectRowAsync(_index);
-		if (await DialogService.ConfirmAsync(null, "Delete Experience", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Experience</i>?")))
-		{
-			await DeleteExperience.InvokeAsync(_selectedID);
-		}
+        if (await DialogService.ConfirmAsync(null, "Delete Experience", General.DialogOptions("Are you sure you want to <strong>delete</strong> this <i>Candidate Experience</i>?")))
+        {
+            await DeleteExperience.InvokeAsync(_selectedID);
+        }
     }
 
 	/// <summary>
