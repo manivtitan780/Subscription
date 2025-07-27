@@ -29,9 +29,21 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 ///     controlled programmatically. The dialog also includes validation for the text box, ensuring that the entered notes
 ///     are between 5 and 1000 characters long.
 /// </explain>
-public partial class SubmitCandidate
+public partial class SubmitCandidate : IDisposable
 {
     private readonly SubmitCandidateRequisitionValidator _submitCandidateRequisitionValidator = new();
+
+    // Memory optimization: Reuse single Dictionary to avoid allocation pressure during API calls
+    private readonly Dictionary<string, string> _apiParameters = new(2) { ["candidateID"] = "", ["requisitionID"] = "" };
+
+    /// <summary>
+    /// Memory optimization: Clean disposal pattern
+    /// </summary>
+    public void Dispose()
+    {
+        // No event handlers to dispose after optimization
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     ///     Gets or sets the cancel event callback that is invoked when the user clicks the cancel button in the
@@ -122,14 +134,18 @@ public partial class SubmitCandidate
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+    // Removed: Unnecessary Context_OnFieldChanged event handler - validation handled by form validation
 
     private async Task GenerateSummary()
     {
         Content = "Generating…";
         Disabled = true;
-        Dictionary<string, string> _parameters = new() {{"candidateID", Model.CandidateID.ToString()}, {"requisitionID", Model.RequisitionID.ToString()}};
-        string _response = await General.ExecuteRest<string>("Candidate/GenerateSummary", _parameters, null, false);
+        
+        // Memory optimization: Reuse existing Dictionary instead of creating new one
+        _apiParameters["candidateID"] = Model.CandidateID.ToString();
+        _apiParameters["requisitionID"] = Model.RequisitionID.ToString();
+        
+        string _response = await General.ExecuteRest<string>("Candidate/GenerateSummary", _apiParameters, null, false);
         if (_response.NotNullOrWhiteSpace())
         {
             Model.Text = _response;
@@ -142,8 +158,12 @@ public partial class SubmitCandidate
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Explicit cleanup before creating new EditContext
+        if (Context?.Model != Model)
+        {
+            Context = null;  // Immediate reference cleanup for GC
+            Context = new(Model);
+        }
         base.OnParametersSet();
     }
 

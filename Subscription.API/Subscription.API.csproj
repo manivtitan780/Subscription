@@ -10,6 +10,9 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <!--<PublishAot>true</PublishAot>-->
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <!--<PublishTrimmed>true</PublishTrimmed>-->
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -27,7 +30,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.7" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.0" />
         <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.7">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

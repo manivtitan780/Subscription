@@ -33,7 +33,7 @@ public partial class RequisitionController
     {
         if (candidateNote == null)
         {
-            return Ok("[]");
+            return NotFound("[]");
         }
 
         return await ExecuteQueryAsync("SaveNote", command =>

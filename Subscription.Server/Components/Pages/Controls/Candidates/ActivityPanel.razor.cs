@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           ActivityPanel.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-03-2025 20:03
-// Last Updated On:     05-19-2025 15:50
+// Created On:          07-25-2025 19:07
+// Last Updated On:     07-27-2025 15:57
 // *****************************************/
 
 #endregion
@@ -127,6 +127,9 @@ public partial class ActivityPanel
     /// </remarks>
     internal CandidateActivity SelectedRow { get; private set; }
 
+    [Parameter]
+    public EventCallback<int> TimelineActivity { get; set; }
+
     /// <summary>
     ///     Gets or sets the event callback that is invoked when an activity is undone.
     /// </summary>
@@ -197,6 +200,8 @@ public partial class ActivityPanel
         }
     }
 
+    private async Task ShowTimeline(int requisitionID) => await TimelineActivity.InvokeAsync(requisitionID);
+
     /// <summary>
     ///     Asynchronously undoes a candidate activity after user confirmation.
     /// </summary>
@@ -210,8 +215,7 @@ public partial class ActivityPanel
     {
         int _index = await GridActivity.GetRowIndexByPrimaryKeyAsync(activityID);
         await GridActivity.SelectRowAsync(_index);
-        if (await DialogService.ConfirmAsync(null, "Undo Candidate Activity?",
-                                             General.DialogOptions("Are you sure you want to <strong>undo</strong> this Candidate Activity?<br/><br/>Note: This action is irreversible.")))
+        if (await DialogService.ConfirmAsync(null, "Undo Candidate Activity?", General.DialogOptions("Are you sure you want to <strong>undo</strong> this Candidate Activity?<br/><br/>Note: This action is irreversible.")))
         {
             await UndoCandidateActivity.InvokeAsync(activityID);
         }

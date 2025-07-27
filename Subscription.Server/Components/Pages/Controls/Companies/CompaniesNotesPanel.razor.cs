@@ -94,7 +94,7 @@ public partial class CompaniesNotesPanel : ComponentBase
 	///     Each entry includes details about a particular note of the candidate.
 	/// </remarks>
 	[Parameter]
-    public List<CandidateNotes> Model { get; set; }
+	public CandidateNotes[] Model { get; set; } = [];
 
 	/// <summary>
 	///     Gets or sets the height of each row in the grid displaying the note entries.

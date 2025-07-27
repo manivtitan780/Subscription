@@ -1,0 +1,86 @@
+@*
+<summary>
+    Represents the dialog for displaying submission timeline for candidates and requisitions.
+</summary>
+<remarks>
+    This component displays a modal dialog that shows chronological submission activities using Syncfusion Timeline.
+    It includes submission status progression, notes, and interview details when applicable.
+</remarks>
+*@
+<SfDialog CssClass="dialogPopup dialogTimeline" CloseOnEscape="true" Header="Submission Timeline" Height="400px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="800px">
+    <ChildContent>
+        <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
+        <DialogPositionData X="center" Y="center"/>
+        <DialogAnimationSettings Duration="500" Effect="DialogEffect.FadeZoom"/>
+        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+            @if (Model is {Length: > 0})
+            {
+                <SfTimeline CssClass="custom-timeline">
+                    <ChildContent>
+                        <TimelineItems>
+                            @foreach (SubmissionTimeline _item in Model.OrderByDescending(x => x.CreatedDate))
+                            {
+                                <TimelineItem CssClass="timeline-item">
+                                    <Content>
+                                        <div class="timeline-content">
+                                            <div class="timeline-details">
+                                                <div class="timeline-creator">
+                                                    Created By:
+                                                    <strong>@_item.CreatedBy</strong>
+                                                </div>
+
+                                                @if (!string.IsNullOrEmpty(_item.Notes))
+                                                {
+                                                    <div class="timeline-notes">
+                                                        <strong>Notes:</strong> @_item.Notes
+                                                    </div>
+                                                }
+
+                                                @if (_item.IsInterview)
+                                                {
+                                                    <div class="timeline-interview">
+                                                        @if (_item.InterviewDateTime.HasValue)
+                                                        {
+                                                            <div class="interview-time">
+                                                                <strong>Interview Time:</strong> @_item.FormattedInterviewDate
+                                                            </div>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(_item.PhoneNumber))
+                                                        {
+                                                            <div class="interview-phone">
+                                                                <strong>Phone:</strong> @_item.PhoneNumber
+                                                            </div>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(_item.InterviewDetails))
+                                                        {
+                                                            <div class="interview-details">
+                                                                <strong>Interview Details:</strong> @_item.InterviewDetails
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </Content>
+                                    <OppositeContent>
+                                        <div class="requisition-name">
+                                            @_item.FormattedDate
+                                        </div>
+                                        <div class="timeline-status">
+                                            <span class="status-badge">@_item.Status - @_item.StatusName</span>
+                                        </div>
+                                    </OppositeContent>
+                                </TimelineItem>
+                            }
+                        </TimelineItems>
+                    </ChildContent>
+                </SfTimeline>
+            }
+            else
+            {
+                <div class="no-data">
+                    <p>No submission timeline data available.</p>
+                </div>
+            }
+    </ChildContent>
+</SfDialog>

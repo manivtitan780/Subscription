@@ -7,15 +7,13 @@
 // Project:             Subscription.Server
 // File Name:           Candidates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-22-2025 15:07
-// Last Updated On:     07-22-2025 16:01
+// Created On:          07-25-2025 19:07
+// Last Updated On:     07-27-2025 16:01
 // *****************************************/
 
 #endregion
 
 #region Using
-
-using System.Text;
 
 #endregion
 
@@ -24,28 +22,30 @@ namespace Subscription.Server.Components.Pages;
 public sealed partial class Candidates : IDisposable
 {
     private const string StorageName = "CandidatesGrid";
+
     // Memory optimization Phase 2: Convert medium collections to arrays for better cache locality
     private CandidateActivity[] _candActivityObject = [];
+
     private CandidateDetails _candDetailsObject = new(), _candDetailsObjectClone = new();
+
     // Memory optimization: Convert small collections to arrays for better cache locality and reduced overhead
     private CandidateDocument[] _candDocumentsObject = [];
+
     private CandidateEducation[] _candEducationObject = [];
+
     // Memory optimization Phase 3: Final collections converted to arrays
     private CandidateExperience[] _candExperienceObject = [];
     private CandidateNotes[] _candidateNotesObject = [];
-    private CandidateMPC[] _candMPCObject = [];        // Read-only collection, perfect for arrays
-    private CandidateRating[] _candRatingObject = [];   // Read-only collection, perfect for arrays
+    private CandidateMPC[] _candMPCObject = [];       // Read-only collection, perfect for arrays
+    private CandidateRating[] _candRatingObject = []; // Read-only collection, perfect for arrays
     private CandidateSkills[] _candSkillsObject = [];
 
     private bool _disposed;
+    private IntValues[] _documentTypes = [], _eligibility = [];
 
     private DotNetObjectReference<Candidates> _dotNetReference;
 
     private List<IntValues> _experience = [];
-    private IntValues[] _documentTypes = [], _eligibility = [];
-    //private bool _formattedExists, _originalExists;
-
-    private List<KeyValues> _taxTerms = [], _communication = [];
     private KeyValues[] _jobOptions = [];
     private Dictionary<string, string> _jobOptionsDict;
 
@@ -64,6 +64,10 @@ public sealed partial class Candidates : IDisposable
     private readonly SubmitCandidateRequisition _submitCandidateModel = new();
 
     private Candidate _target;
+    //private bool _formattedExists, _originalExists;
+
+    private List<KeyValues> _taxTerms = [], _communication = [];
+    private SubmissionTimeline[] _timelineActivityObject = [], _timelineObject = [];
 
     private readonly List<ToolbarItemModel> _tools1 =
     [
@@ -222,6 +226,8 @@ public sealed partial class Candidates : IDisposable
 
     private SubmitCandidate SubmitDialog { get; set; }
 
+    private TimelineDialog TimelineDialog { get; set; }
+
     private UploadCandidate UploadCandidateDialog { get; set; }
 
     private string User { get; set; }
@@ -330,8 +336,8 @@ public sealed partial class Candidates : IDisposable
         _candSkillsObject = null;
         _candExperienceObject = null;
         _candidateNotesObject = null;
-        _candMPCObject = null;        // Read-only collection converted to array
-        _candRatingObject = null;     // Read-only collection converted to array
+        _candMPCObject = null;    // Read-only collection converted to array
+        _candRatingObject = null; // Read-only collection converted to array
         DataSource?.Clear();
     }
 
@@ -347,28 +353,24 @@ public sealed partial class Candidates : IDisposable
         await Refresh().ConfigureAwait(false);
     }
 
-    private Dictionary<string, string> CreateParameters(int id)
-    {
-        return new(3)
-               {
-                   ["id"] = id.ToString(),
-                   ["candidateID"] = _target.ID.ToString(),
-                   ["user"] = User
-               };
-        /*_reusableParameters.Clear();
+    private Dictionary<string, string> CreateParameters(int id) => new(3)
+                                                                   {
+                                                                       ["id"] = id.ToString(),
+                                                                       ["candidateID"] = _target.ID.ToString(),
+                                                                       ["user"] = User
+                                                                   };
+
+    /*_reusableParameters.Clear();
         _reusableParameters["id"] = id.ToString();
         _reusableParameters["candidateID"] = _target.ID.ToString();
         _reusableParameters["user"] = User;
         return _reusableParameters;*/
-
-        /*return new()
+    /*return new()
                {
                    {"id", id.ToString()},
                    {"candidateID", _target.ID.ToString()},
                    {"user", User}
                };*/
-    }
-
     private Task DataHandler() => ExecuteMethod(async () =>
                                                 {
                                                     _dotNetReference = DotNetObjectReference.Create(this); // create dotnet ref
@@ -455,7 +457,7 @@ public sealed partial class Candidates : IDisposable
                                                                               ["roleID"] = "RS"
                                                                           };
                                  (string _candidate, string _notes, string _skills, string _education, string _s, string _activity, List<CandidateRating> _candidateRatings,
-                                  List<CandidateMPC> _candidateMPC, CandidateRatingMPC _candidateRatingMPC, string _documents) =
+                                  List<CandidateMPC> _candidateMPC, CandidateRatingMPC _candidateRatingMPC, string _documents, string _timelineCandidate) =
                                      await General.ExecuteRest<ReturnCandidateDetails>("Candidate/GetCandidateDetails", _parameters, null, false);
 
                                  // Parallel deserialization with proper thread safety (await ensures completion before UI methods)
@@ -467,14 +469,15 @@ public sealed partial class Candidates : IDisposable
                                      Task.Run(() => _candExperienceObject = General.DeserializeObject<CandidateExperience[]>(_s) ?? []),
                                      Task.Run(() => _candidateNotesObject = General.DeserializeObject<CandidateNotes[]>(_notes) ?? []),
                                      Task.Run(() => _candDocumentsObject = General.DeserializeObject<CandidateDocument[]>(_documents) ?? []),
-                                     Task.Run(() => _candActivityObject = General.DeserializeObject<CandidateActivity[]>(_activity) ?? [])
+                                     Task.Run(() => _candActivityObject = General.DeserializeObject<CandidateActivity[]>(_activity) ?? []),
+                                     Task.Run(() => _timelineActivityObject = General.DeserializeObject<SubmissionTimeline[]>(_timelineCandidate) ?? [])
                                  ];
                                  await Task.WhenAll(deserializationTasks);
 
                                  _candRatingObject = _candidateRatings.ToArray();
                                  _candMPCObject = _candidateMPC.ToArray();
                                  RatingMPC = _candidateRatingMPC;
-                                 
+
                                  // Parallel UI setup methods for faster candidate detail initialization
                                  Task[] _uiSetupTasks =
                                  [
@@ -487,7 +490,6 @@ public sealed partial class Candidates : IDisposable
                                  FormattedExists = _target.FormattedResume;
                                  OriginalExists = _target.OriginalResume;
 
-                                 // await Task.Delay(100);
                                  VisibleSpinner = false;
                              });
     }
@@ -637,7 +639,6 @@ public sealed partial class Candidates : IDisposable
                                                             SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
                                                         }
 
-                                                        //EditConNotes = new(SelectedNotes!);
                                                         VisibleSpinner = false;
                                                         await CandidateNotesDialog.ShowDialog();
                                                     });
@@ -1155,7 +1156,7 @@ public sealed partial class Candidates : IDisposable
                                                                                                                       ["candidateID"] = _target.ID.ToString(),
                                                                                                                       ["user"] = User,
                                                                                                                       ["type"] = ResumeType,
-                                                                                                                      ["updateTextResume"] = _resume.UpdateTextResume.ToString(),
+                                                                                                                      ["updateTextResume"] = _resume.UpdateTextResume.ToString()
                                                                                                                   };
 
                                                                          string _response = await General.ExecuteRest<string>("Candidate/UpdateResume", _parameters, null, true,
@@ -1293,7 +1294,7 @@ public sealed partial class Candidates : IDisposable
         if (_jobOptionsDict?.Count > 0 && !string.IsNullOrWhiteSpace(_candDetailsObject.JobOptions))
         {
             string[] keys = _candDetailsObject.JobOptions.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            
+
             // Stack-allocated buffer for known maximum length (~500 chars for 7-8 job options)
             Span<char> buffer = stackalloc char[500];
             int position = 0;
@@ -1508,5 +1509,11 @@ public sealed partial class Candidates : IDisposable
     {
         ResumeType = isOriginal ? "Original" : "Formatted";
         await ResumeUpdate.ShowDialog().ConfigureAwait(false);
+    }
+
+    private async Task TimeLine(int requisitionID)
+    {
+        _timelineObject = _timelineActivityObject.Where(x => x.RequisitionId == requisitionID).ToArray();
+        await TimelineDialog.ShowDialog();
     }
 }

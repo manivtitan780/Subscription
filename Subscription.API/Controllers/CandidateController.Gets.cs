@@ -8,7 +8,7 @@
 // File Name:           CandidateController.Gets.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          07-16-2025 19:07
-// Last Updated On:     07-17-2025 16:23
+// Last Updated On:     07-27-2025 18:41
 // *****************************************/
 
 #endregion
@@ -114,66 +114,69 @@ public partial class CandidateController
                                                                      // Result Set 7: Managers
                                                                      await reader.NextResultAsync();
 
-                                                                     //Result Set 8: Documents
+                                                                     //Result Set 8: Submissions Timelines
                                                                      await reader.NextResultAsync();
-                                                                     string documents = "[]";
+                                                                     string _timeline = "[]";
                                                                      if (await reader.ReadAsync())
                                                                      {
-                                                                         documents = reader.NString(0, "[]");
+                                                                         _timeline = reader.NString(0, "[]");
                                                                      }
 
-                                                                      // Process Rating and MPC data using System.Text.Json consistently
-                                                                     List<CandidateRating> ratingList = [];
-                                                                     List<CandidateMPC> mpcList = [];
-                                                                     CandidateRatingMPC ratingMPC = new();
-
-                                                                     if (_candRating.NotNullOrWhiteSpace() || _candMPC.NotNullOrWhiteSpace())
+                                                                     //Result Set 9: Documents
+                                                                     await reader.NextResultAsync();
+                                                                     string _documents = "[]";
+                                                                     if (await reader.ReadAsync())
                                                                      {
-                                                                         try
-                                                                         {
-                                                                             // Memory optimization: Deserialize MPC data using System.Text.Json if available
-                                                                             if (_candMPC.NotNullOrWhiteSpace())
-                                                                             {
-                                                                                 List<CandidateMPC> allMPC = JsonSerializer.Deserialize<List<CandidateMPC>>(_candMPC) ?? [];
-                                                                                 mpcList = allMPC.OrderByDescending(x => x.DateTime).ToList();
-                                                                             }
-
-                                                                             // Memory optimization: Deserialize Rating data using System.Text.Json if available
-                                                                             if (_candRating.NotNullOrWhiteSpace())
-                                                                             {
-                                                                                 List<CandidateRating> allRating = JsonSerializer.Deserialize<List<CandidateRating>>(_candRating) ?? [];
-                                                                                 ratingList = allRating.OrderByDescending(x => x.DateTime).ToList();
-                                                                             }
-
-                                                                             // Set the latest Rating/MPC for the combined object with null safety
-                                                                             CandidateMPC latestMPC = mpcList.FirstOrDefault();
-                                                                             CandidateRating latestRating = ratingList.FirstOrDefault();
-
-                                                                             ratingMPC = new()
-                                                                                         {
-                                                                                             ID = candidateID,
-                                                                                             Rating = latestRating.Rating,
-                                                                                             RatingComments = latestRating.Comment ?? "",
-                                                                                             MPC = latestMPC.MPC,
-                                                                                             MPCComments = latestMPC.Comment ?? ""
-                                                                                         };
-                                                                         }
-                                                                         catch (Exception ex)
-                                                                         {
-                                                                             Log.Error(ex, "Error processing rating/MPC data for candidate {CandidateID}", candidateID);
-                                                                         }
+                                                                         _documents = reader.NString(0, "[]");
                                                                      }
 
-                                                                     return new ReturnCandidateDetails(candidateDetails,
-                                                                                                       notes,
-                                                                                                       skills,
-                                                                                                       education,
-                                                                                                       experience,
-                                                                                                       activity,
-                                                                                                       ratingList,
-                                                                                                       mpcList,
-                                                                                                       ratingMPC,
-                                                                                                       documents);
+                                                                     // Process Rating and MPC data using System.Text.Json consistently
+                                                                     List<CandidateRating> _ratingList = [];
+                                                                     List<CandidateMPC> _mpcList = [];
+                                                                     CandidateRatingMPC _ratingMPC = new();
+
+                                                                     if (!_candRating.NotNullOrWhiteSpace() && !_candMPC.NotNullOrWhiteSpace())
+                                                                     {
+                                                                         return new(candidateDetails, notes, skills, education, experience,
+                                                                                    activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
+                                                                     }
+
+                                                                     try
+                                                                     {
+                                                                         // Memory optimization: Deserialize MPC data using System.Text.Json if available
+                                                                         if (_candMPC.NotNullOrWhiteSpace())
+                                                                         {
+                                                                             List<CandidateMPC> _allMPC = JsonSerializer.Deserialize<List<CandidateMPC>>(_candMPC) ?? [];
+                                                                             _mpcList = _allMPC.OrderByDescending(x => x.DateTime).ToList();
+                                                                         }
+
+                                                                         // Memory optimization: Deserialize Rating data using System.Text.Json if available
+                                                                         if (_candRating.NotNullOrWhiteSpace())
+                                                                         {
+                                                                             List<CandidateRating> _allRating = JsonSerializer.Deserialize<List<CandidateRating>>(_candRating) ?? [];
+                                                                             _ratingList = _allRating.OrderByDescending(x => x.DateTime).ToList();
+                                                                         }
+
+                                                                         // Set the latest Rating/MPC for the combined object with null safety
+                                                                         CandidateMPC _latestMPC = _mpcList.FirstOrDefault();
+                                                                         CandidateRating _latestRating = _ratingList.FirstOrDefault();
+
+                                                                         _ratingMPC = new()
+                                                                                     {
+                                                                                         ID = candidateID,
+                                                                                         Rating = _latestRating.Rating,
+                                                                                         RatingComments = _latestRating.Comment ?? "",
+                                                                                         MPC = _latestMPC.MPC,
+                                                                                         MPCComments = _latestMPC.Comment ?? ""
+                                                                                     };
+                                                                     }
+                                                                     catch (Exception ex)
+                                                                     {
+                                                                         Log.Error(ex, "Error processing rating/MPC data for candidate {CandidateID}", candidateID);
+                                                                     }
+
+                                                                     return new ReturnCandidateDetails(candidateDetails, notes, skills, education, experience,
+                                                                                                       activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
                                                                  }, "GetCandidateDetails", "Error getting candidate details.");
     }
 

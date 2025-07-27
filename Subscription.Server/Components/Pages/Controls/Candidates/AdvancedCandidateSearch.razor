@@ -66,13 +66,13 @@
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CityName)" CssClass="@(!Model.CityZip ? "e-hidden" : "")">
 						<Template>
-							<DropDown @bind-Value="Model.Proximity" Enabled="@(Model.CityZip)" Model="@ProximityValue" ID="dropProximity" Key="KeyValue" Placeholder="Proximity" Text="Text" TItem="IntValues"
+							<DropDown @bind-Value="Model.Proximity" Enabled="@(Model.CityZip)" Model="@ProximityValues" ID="dropProximity" Key="KeyValue" Placeholder="Proximity" Text="Text" TItem="IntValues"
 							          TValue="int"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.CityName)" CssClass="@(!Model.CityZip ? "e-hidden" : "")">
 						<Template>
-							<DropDown @bind-Value="Model.ProximityUnit" Enabled="@(Model.CityZip)" ID="dropProximityUnit" Key="KeyValue" Model="@ProximityUnit" Placeholder="Units" Text="Text" TItem="IntValues"
+							<DropDown @bind-Value="Model.ProximityUnit" Enabled="@(Model.CityZip)" ID="dropProximityUnit" Key="KeyValue" Model="@ProximityUnits" Placeholder="Units" Text="Text" TItem="IntValues"
 									  TValue="byte"  />
 						</Template>
 					</FormItem>
@@ -100,12 +100,12 @@
 				<FormGroup ColumnCount="2" ColumnSpacing="10px" CssClass="formGroup" ID="groupRelocateSecurity" LabelText="Relocate and Security">
 					<FormItem ColumnSpan="1" Field="@nameof(Model.Relocate)">
 						<Template>
-							<DropDown @bind-Value="Model.Relocate" Model="Relocate" ID="dropRelocate" Placeholder="Relocate" Text="Text" TItem="KeyValues" TValue="string" Key="KeyValue"/>
+							<DropDown @bind-Value="Model.Relocate" Model="@RelocateOptions" ID="dropRelocate" Placeholder="Relocate" Text="Text" TItem="KeyValues" TValue="string" Key="KeyValue"/>
 						</Template>
 					</FormItem>
 					<FormItem ColumnSpan="1" Field="@nameof(Model.SecurityClearance)">
 						<Template>
-							<DropDown @bind-Value="Model.SecurityClearance" Model="SecurityClearance" ID="dropSecurityClearance" Placeholder="Security Clearance" Text="Text" TItem="KeyValues"
+							<DropDown @bind-Value="Model.SecurityClearance" Model="@SecurityClearanceOptions" ID="dropSecurityClearance" Placeholder="Security Clearance" Text="Text" TItem="KeyValues"
 							          TValue="string" Key="KeyValue"/>
 						</Template>
 					</FormItem>

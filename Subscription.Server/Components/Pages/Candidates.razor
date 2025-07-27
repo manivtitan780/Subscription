@@ -260,7 +260,8 @@
 											<TabHeader Text="Candidate Activity"/>
 										</ChildContent>
 										<ContentTemplate>
-											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"/>
+											<ActivityPanel EditActivity="EditActivity" IsRequisition="@(RequisitionID > 0)" Model="@_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"
+														   TimelineActivity="TimeLine"/>
 											@*TODO: Activity Panel Rights to be set*@
 										</ContentTemplate>
 									</TabItem>
@@ -279,13 +280,14 @@
 	                     TaxTerms="_taxTerms" @ref="CandidateDialog"/>
 	<EditEducationDialog Model="SelectedEducation" @ref="CandidateEducationDialog" Save="SaveEducation"/>
 	<EditExperienceDialog Model="SelectedExperience" @ref="CandidateExperienceDialog" Save="SaveExperience"/>
-	<EditNotesDialog Model="SelectedNotes" @ref="CandidateNotesDialog" Save="SaveNote" Title="Candidate" Entity="Candidate"/>
+	<EditNotesDialog Entity="Candidate" Model="SelectedNotes" @ref="CandidateNotesDialog" Save="SaveNote" Title="Candidate"  />
 	<EditSkillDialog Model="SelectedSkill" @ref="CandidateSkillDialog" Save="SaveSkill"/>
 	<MPCCandidateDialog MPCGrid="_candMPCObject" Save="SaveMPC" @ref="MPCDialog" Model="RatingMPC"/>
 	<RatingCandidateDialog RatingGrid="_candRatingObject" Save="SaveRating" @ref="RatingDialog" Model="RatingMPC"/>
 	<SubmitCandidate Model="@_submitCandidateModel" @ref="SubmitDialog" Save="SaveSubmitCandidate"/>
 	<UpdateResume ResumeType="@ResumeType" Model="NewResume" @ref="ResumeUpdate" Save="SaveResume"/>
 	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" User="@User"/>
+	<TimelineDialog Model="@_timelineObject" @ref="TimelineDialog"/>
 }
 else
 {

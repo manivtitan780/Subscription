@@ -137,6 +137,7 @@
 	<EditCompany @ref="CompanyEditDialog" Model="_companyDetailsClone" NAICS="NAICS" Save="SaveCompany" State="State"/>
 	<EditLocation @ref="CompanyLocationDialog" Model="SelectedLocation" Save="SaveLocation" State="State"/>
 	<EditContact @ref="CompanyContactDialog" Model="SelectedContact" Save="SaveContact"/>
+	<EditNotesDialog Entity="Company" Model="SelectedNotes" @ref="CompanyNotesDialog" Save="SaveNote" Title="Company"  />
 }
 else
 {

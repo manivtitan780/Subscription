@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           AdvancedCandidateSearch.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          04-14-2025 20:04
-// Last Updated On:     04-17-2025 19:57
+// Created On:          07-26-2025 15:07
+// Last Updated On:     07-26-2025 15:42
 // *****************************************/
 
 #endregion
@@ -24,7 +24,7 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 public partial class AdvancedCandidateSearch : ComponentBase
 {
     // Memory optimization: Static readonly arrays to prevent repeated allocations
-    private static readonly IntValues[] ProximityValues = 
+    private static readonly IntValues[] ProximityValues =
     [
         new() {Text = "1", KeyValue = 1}, new() {Text = "5", KeyValue = 5}, new() {Text = "10", KeyValue = 10}, new() {Text = "20", KeyValue = 20}, new() {Text = "25", KeyValue = 25},
         new() {Text = "30", KeyValue = 30}, new() {Text = "40", KeyValue = 40}, new() {Text = "50", KeyValue = 50}, new() {Text = "60", KeyValue = 60}, new() {Text = "70", KeyValue = 70},
@@ -34,30 +34,34 @@ public partial class AdvancedCandidateSearch : ComponentBase
         new() {Text = "1000", KeyValue = 1000}
     ];
 
-    private static readonly IntValues[] ProximityUnits = 
+    private static readonly IntValues[] ProximityUnits =
     [
-        new() {Text = "miles", KeyValue = 1}, 
+        new() {Text = "miles", KeyValue = 1},
         new() {Text = "kilometers", KeyValue = 2}
     ];
 
-    private static readonly KeyValues[] SecurityClearanceOptions = 
+    private static readonly KeyValues[] SecurityClearanceOptions =
     [
-        new() {KeyValue = "", Text = "All"}, 
-        new() {KeyValue = "0", Text = "No"}, 
+        new() {KeyValue = "", Text = "All"},
+        new() {KeyValue = "0", Text = "No"},
         new() {KeyValue = "1", Text = "Yes"}
     ];
 
-    private static readonly KeyValues[] RelocateOptions = 
+    private static readonly KeyValues[] RelocateOptions =
     [
-        new() {KeyValue = "", Text = "All"}, 
-        new() {KeyValue = "0", Text = "No"}, 
+        new() {KeyValue = "", Text = "All"},
+        new() {KeyValue = "0", Text = "No"},
         new() {KeyValue = "1", Text = "Yes"}
     ];
+
+    private KeyValues[] _allZipCodes = [];
 
     [Parameter]
     public EventCallback<MouseEventArgs> Cancel { get; set; }
 
     private EditContext Context { get; set; }
+
+    private IEnumerable<KeyValues> DataSource { get; set; } = [];
 
     private SfDialog Dialog { get; set; }
 
@@ -70,18 +74,18 @@ public partial class AdvancedCandidateSearch : ComponentBase
     [Parameter]
     public CandidateSearch Model { get; set; } = new();
 
-    private List<IntValues> ProximityUnit { get; set; } = [];
+    /*private List<IntValues> ProximityUnit { get; set; } = [];
 
     private List<IntValues> ProximityValue { get; set; } = [];
 
-    private List<KeyValues> Relocate { get; set; } = [];
+    private List<KeyValues> Relocate { get; set; } = [];*/
 
     [Parameter]
     public EventCallback<EditContext> Search { get; set; }
 
     private SfDataForm SearchForm { get; set; }
 
-    private List<KeyValues> SecurityClearance { get; set; } = [];
+    /*private List<KeyValues> SecurityClearance { get; set; } = [];*/
 
     [Parameter]
     public StateCache[] StateDropDown { get; set; } = [];
@@ -103,40 +107,47 @@ public partial class AdvancedCandidateSearch : ComponentBase
         VisibleSpinner = false;
     }
 
-    // Removed: Redundant Context_OnFieldChanged event handler - prevents memory leak risk
-
-    private IEnumerable<KeyValues> DataSource { get; set; } = [];
-
-    // Memory optimization: Cache all zip codes once instead of fetching on every keystroke
-    private KeyValues[] _allZipCodes = [];
-
     private void Filtering(FilteringEventArgs value)
     {
-        if (value != null && value.Text.Length > 1)
+        if (value == null || value.Text.Length <= 1)
         {
-            // Performance optimization: Filter locally from cached zip codes instead of Redis query on every keystroke
-            if (_allZipCodes.Length == 0)
+            return;
+        }
+
+        if (_allZipCodes.Length == 0)
+        {
+            DataSource = [];
+            return;
+        }
+
+        List<KeyValues> filteredResults = new(20); // Pre-allocate for max expected results
+
+        // ReSharper disable once ForCanBeConvertedToForeach
+        for (int i = 0; i < _allZipCodes.Length; i++)
+        {
+            if (!_allZipCodes[i].KeyValue.StartsWith(value.Text))
             {
-                DataSource = [];
-                return;
+                continue;
             }
 
-            IEnumerable<KeyValues> _zipCodes = _allZipCodes.Where(zip => zip.KeyValue.StartsWith(value.Text, StringComparison.OrdinalIgnoreCase));
-            DataSource = _zipCodes;
+            filteredResults.Add(_allZipCodes[i]);
+
+            if (filteredResults.Count >= 20)
+            {
+                break;
+            }
         }
+
+        DataSource = filteredResults;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Yield();
-        
-        // Memory optimization: Use static readonly arrays instead of creating new objects
-        ProximityValue = ProximityValues.ToList();
+        /*ProximityValue = ProximityValues.ToList();
         ProximityUnit = ProximityUnits.ToList();
         SecurityClearance = SecurityClearanceOptions.ToList();
-        Relocate = RelocateOptions.ToList();
+        Relocate = RelocateOptions.ToList();*/
 
-        // Performance optimization: Load all zip codes once from Redis instead of on every keystroke
         _allZipCodes = await ZipCodeService.GetZipCodes() ?? [];
 
         SwitchIncludeAdminDisabled = Model.AllCandidates;
@@ -148,9 +159,10 @@ public partial class AdvancedCandidateSearch : ComponentBase
         // Memory optimization: Only create new EditContext if Model has changed
         if (Context?.Model != Model)
         {
-            Context = null;  // Immediate reference cleanup for GC
+            Context = null; // Immediate reference cleanup for GC
             Context = new(Model);
         }
+
         base.OnParametersSet();
     }
 

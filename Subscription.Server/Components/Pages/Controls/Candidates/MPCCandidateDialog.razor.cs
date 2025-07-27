@@ -30,11 +30,6 @@ public partial class MPCCandidateDialog : IDisposable
 
 	public void Dispose()
 	{
-		if (Context is not null)
-		{
-			Context.OnFieldChanged -= Context_OnFieldChanged;
-		}
-
 		GC.SuppressFinalize(this);
 	}
 
@@ -117,14 +112,7 @@ public partial class MPCCandidateDialog : IDisposable
 	[Parameter]
     public EventCallback<EditContext> Save { get; set; }
 
-	/// <summary>
-	///     Gets or sets the instance of the Syncfusion spinner control used in the dialog.
-	/// </summary>
-	/// <remarks>
-	///     This spinner control is displayed when the dialog is performing an operation such as saving or canceling.
-	///     The visibility of the spinner is controlled programmatically based on the state of the operation.
-	/// </remarks>
-	private SfSpinner Spinner { get; set; }
+	private bool VisibleSpinner { get; set; }
 
 	/// <summary>
 	///     Asynchronously cancels the operation of editing a candidate's MPC record..
@@ -138,18 +126,20 @@ public partial class MPCCandidateDialog : IDisposable
 	/// <returns>A task that represents the asynchronous operation.</returns>
 	private async Task CancelMPCDialog(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
-
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     protected override void OnParametersSet()
     {
-        Context = new(Model ?? new());
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Explicit cleanup before creating new EditContext
+        if (Context?.Model != Model)
+        {
+            Context = null;  // Immediate reference cleanup for GC
+            Context = new(Model ?? new());
+        }
         base.OnParametersSet();
     }
 
@@ -175,10 +165,10 @@ public partial class MPCCandidateDialog : IDisposable
 	/// </remarks>
 	private async Task SaveMPCDialog(EditContext editContext)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
 	/// <summary>

@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           EditExperienceDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          12-03-2024 15:12
-// Last Updated On:     12-03-2024 15:12
+// Last Updated On:     07-26-2025 15:29
 // *****************************************/
 
 #endregion
@@ -26,19 +26,7 @@ public partial class EditExperienceDialog
 {
     private readonly CandidateExperienceValidator _candidateExperienceValidator = new();
 
-    private readonly Dictionary<string, object> _textBoxAttributes = new()
-                                                                     {
-                                                                         {"MaxLength", "100"},
-                                                                         {"MinLength", "1"}
-                                                                     };
-
-    private readonly Dictionary<string, object> _textBoxAttributesBig = new()
-                                                                        {
-                                                                            {"MaxLength", "1000"},
-                                                                            {"MinLength", "1"}
-                                                                        };
-
-	/// <summary>
+    /// <summary>
 	///     Gets or sets the event callback that is invoked when the cancel action is triggered in the dialog.
 	/// </summary>
 	/// <remarks>
@@ -46,11 +34,7 @@ public partial class EditExperienceDialog
 	///     It is invoked when the user clicks on the cancel button in the dialog.
 	/// </remarks>
 	[Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
 	/// <summary>
 	///     Gets or sets the edit context used for validating the form in the EditExperienceDialog.
@@ -59,11 +43,7 @@ public partial class EditExperienceDialog
 	///     This context is used to manage the state of the form and perform validation when fields are changed.
 	///     It is initialized with the candidate's experience model and is validated when the dialog is opened.
 	/// </remarks>
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+	private EditContext Context { get; set; }
 
 	/// <summary>
 	///     Gets or sets the instance of the Syncfusion Blazor Dialog component used in the EditExperienceDialog.
@@ -72,11 +52,7 @@ public partial class EditExperienceDialog
 	///     This dialog is used to display and edit the experience details of a candidate.
 	///     It is shown or hidden using the ShowDialog and CallCancelMethod methods respectively.
 	/// </remarks>
-	private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+	private SfDialog Dialog { get; set; }
 
 	/// <summary>
 	///     Gets or sets the form used for editing a candidate's experience.
@@ -85,11 +61,7 @@ public partial class EditExperienceDialog
 	///     This form is used within the EditExperienceDialog to capture the details of a candidate's experience.
 	///     It includes fields for the employer, description, location, title, and start and end dates of the experience.
 	/// </remarks>
-	private SfDataForm EditExperienceForm
-    {
-        get;
-        set;
-    }
+	private SfDataForm EditExperienceForm { get; set; }
 
 	/// <summary>
 	///     Gets or sets the candidate's experience that is being edited in the dialog.
@@ -102,11 +74,7 @@ public partial class EditExperienceDialog
 	///     are reflected in the form and vice versa.
 	/// </remarks>
 	[Parameter]
-    public CandidateExperience Model
-    {
-        get;
-        set;
-    }
+    public CandidateExperience Model { get; set; }
 
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the save action is triggered in the dialog.
@@ -116,24 +84,9 @@ public partial class EditExperienceDialog
 	///     It is invoked when the user clicks on the save button in the dialog.
 	/// </remarks>
 	[Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
-	/// <summary>
-	///     Gets or sets the instance of the Syncfusion spinner control used in the dialog.
-	/// </summary>
-	/// <remarks>
-	///     This spinner control is displayed when the dialog is performing an operation such as saving or canceling.
-	///     The visibility of the spinner is controlled programmatically based on the state of the operation.
-	/// </remarks>
-	private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+    private bool VisibleSpinner { get; set; }
 
 	/// <summary>
 	///     Asynchronously cancels the operation of editing a candidate's experience.
@@ -147,18 +100,19 @@ public partial class EditExperienceDialog
 	/// <returns>A task that represents the asynchronous operation.</returns>
 	private async Task CancelExperienceDialog(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
-
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+		if (Context?.Model != Model)
+		{
+			Context = null; // Immediate reference cleanup for GC
+			Context = new(Model);
+		}
         base.OnParametersSet();
     }
 
@@ -184,10 +138,10 @@ public partial class EditExperienceDialog
 	/// </remarks>
 	private async Task SaveExperienceDialog(EditContext editContext)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
 	/// <summary>

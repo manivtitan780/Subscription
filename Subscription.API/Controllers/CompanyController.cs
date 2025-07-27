@@ -48,6 +48,25 @@ public partial class CompanyController : ControllerBase
     }
 
     [HttpPost]
+    public async Task<ActionResult<string>> SaveNotes(CandidateNotes candidateNote, int companyID, string user)
+    {
+        if (candidateNote == null)
+        {
+            return NotFound("No Note information is found");
+        }
+
+        return await ExecuteScalarAsync("SaveNote", command =>
+                                                   {
+                                                       command.Int("Id", candidateNote.ID);
+                                                       command.Int("CandidateID", companyID);
+                                                       command.Varchar("Note", -1, candidateNote.Notes);
+                                                       command.Bit("IsPrimary", false);
+                                                       command.Varchar("EntityType", 5, "CLI");
+                                                       command.Varchar("User", 10, user);
+                                                   }, "SaveNotes", "Error saving company notes.");
+    }
+
+    [HttpPost]
     public async Task<ActionResult<string>> DeleteCompanyDocument([FromQuery] int documentID, [FromQuery] string user)
     {
         //TODO: make sure you delete the associated document from Azure filesystem too.

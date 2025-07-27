@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           Companies.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-22-2025 18:07
-// Last Updated On:     07-22-2025 19:20
+// Created On:          07-23-2025 20:07
+// Last Updated On:     07-26-2025 19:01
 // *****************************************/
 
 #endregion
@@ -25,7 +25,7 @@ public partial class Companies
     private CompanyDetails _companyDetails = new(), _companyDetailsClone = new();
     private List<CompanyDocuments> _companyDocuments = []; /**/
     private List<CompanyLocations> _companyLocations = [];
-    private List<CandidateNotes> _companyNotesObject = [];
+    private CandidateNotes[] _companyNotesObject = [];
     private List<Requisition> _companyRequisitions = [];
 
     private int _selectedRowIndex = -1;
@@ -41,6 +41,8 @@ public partial class Companies
     private EditCompany CompanyEditDialog { get; set; }
 
     private EditLocation CompanyLocationDialog { get; set; }
+
+    private EditNotesDialog CompanyNotesDialog { get; set; }
 
     [Inject]
     private IConfiguration Configuration { get; set; }
@@ -102,6 +104,8 @@ public partial class Companies
     private CompanyDocuments SelectedDownload { get; set; }
 
     private CompanyLocations SelectedLocation { get; set; } = new();
+
+    private CandidateNotes SelectedNotes { get; set; } = new();
 
     [Inject]
     private ISessionStorageService SessionStorage { get; set; }
@@ -173,7 +177,7 @@ public partial class Companies
                                                           //Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Company/DeleteNotes", CreateParameters(id));
 
-                                                          _companyNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                          _companyNotesObject = General.DeserializeObject<CandidateNotes[]>(_response);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
@@ -196,9 +200,7 @@ public partial class Companies
                                                                                                                                              ["user"] = User
                                                                                                                                          };
                                                                                                 (string _company, string _contacts, string _locations, string _documents, string _requisitions,
-                                                                                                 string _notes) =
-                                                                                                    await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null,
-                                                                                                                                                    false);
+                                                                                                 string _notes) = await General.ExecuteRest<ReturnCompanyDetails>("Company/GetCompanyDetails", _parameters, null, false);
 
                                                                                                 try
                                                                                                 {
@@ -215,16 +217,11 @@ public partial class Companies
                                                                                                     Task[] companyDetailsTasks =
                                                                                                     [
                                                                                                         Task.Run(() => _companyDetails = General.DeserializeObject<CompanyDetails>(_company)),
-                                                                                                        Task.Run(() => _companyLocations =
-                                                                                                                           General.DeserializeObject<List<CompanyLocations>>(_locations) ?? []),
-                                                                                                        Task.Run(() => _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ??
-                                                                                                                                          []),
-                                                                                                        Task.Run(() => _companyNotesObject =
-                                                                                                                           General.DeserializeObject<List<CandidateNotes>>(_notes) ?? []),
-                                                                                                        Task.Run(() => _companyDocuments =
-                                                                                                                           General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? []),
-                                                                                                        Task.Run(() => _companyRequisitions =
-                                                                                                                           General.DeserializeObject<List<Requisition>>(_requisitions) ?? [])
+                                                                                                        Task.Run(() => _companyLocations = General.DeserializeObject<List<CompanyLocations>>(_locations) ?? []),
+                                                                                                        Task.Run(() => _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_contacts) ?? []),
+                                                                                                        Task.Run(() => _companyNotesObject = General.DeserializeObject<CandidateNotes[]>(_notes) ?? []),
+                                                                                                        Task.Run(() => _companyDocuments = General.DeserializeObject<List<CompanyDocuments>>(_documents) ?? []),
+                                                                                                        Task.Run(() => _companyRequisitions = General.DeserializeObject<List<Requisition>>(_requisitions) ?? [])
                                                                                                     ];
                                                                                                     await Task.WhenAll(companyDetailsTasks);
                                                                                                     SetupAddress();
@@ -332,21 +329,22 @@ public partial class Companies
                                                         VisibleSpinner = true;
                                                         if (id == 0)
                                                         {
-                                                            /*if (SelectedNotes == null)
+                                                            if (SelectedNotes == null)
                                                             {
                                                                 SelectedNotes = new();
                                                             }
                                                             else
                                                             {
                                                                 SelectedNotes.Clear();
-                                                            }*/
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();
                                                         }
 
-                                                        /*SelectedNotes = NotesPanel.SelectedRow != null ? NotesPanel.SelectedRow.Copy() : new();*/
-                                                        //EditConNotes = new(SelectedNotes!);
                                                         VisibleSpinner = false;
-                                                        await Task.Yield();
-                                                        //await CompaniesNotesDialog.ShowDialog().ConfigureAwait(false);
+                                                        await CompanyNotesDialog.ShowDialog();
                                                     });
 
     private Task ExecuteMethod(Func<Task> task) => General.ExecuteMethod(_semaphoreMainPage, task);
@@ -539,7 +537,8 @@ public partial class Companies
                                                                                                                       };
 
                                                                              // Memory optimization: Use GetBuffer().AsSpan() to avoid additional array copy for large documents  
-                                                                             byte[] documentBytes = DialogDocument.AddedDocument.GetBuffer().AsSpan(0, (int)DialogDocument.AddedDocument.Length).ToArray();
+                                                                             byte[] documentBytes = DialogDocument.AddedDocument.GetBuffer().AsSpan(0, (int)DialogDocument.AddedDocument.Length)
+                                                                                                                  .ToArray();
                                                                              string _response = await General.ExecuteRest<string>("Company/UploadDocument", _parameters, null, true,
                                                                                                                                   documentBytes,
                                                                                                                                   DialogDocument.FileName);
@@ -569,6 +568,28 @@ public partial class Companies
                                                                  else
                                                                  {
                                                                      await SetDataSource().ConfigureAwait(false);
+                                                                 }
+                                                             });
+
+    private Task SaveNote(EditContext note) => ExecuteMethod(async () =>
+                                                             {
+                                                                 if (note.Model is CandidateNotes _candidateNotes)
+                                                                 {
+                                                                     // Added capacity hint for memory optimization - Dictionary has exactly 2 key-value pairs
+                                                                     Dictionary<string, string> _parameters = new(2)
+                                                                                                              {
+                                                                                                                  ["companyID"] = _target.ID.ToString(),
+                                                                                                                  ["user"] = User
+                                                                                                              };
+                                                                     string _response = await General.ExecuteRest<string>("Company/SaveNotes", _parameters, _candidateNotes);
+
+                                                                     if (_response.NullOrWhiteSpace() || _response == "[]")
+                                                                     {
+                                                                         return;
+                                                                     }
+
+                                                                     // Array deserialization: Converting to CandidateNotes[] for memory optimization
+                                                                     _companyNotesObject = General.DeserializeObject<CandidateNotes[]>(_response) ?? [];
                                                                  }
                                                              });
 

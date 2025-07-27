@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Model
 // File Name:           ReturnCandidateDetails.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
-// Created On:          01-08-2025 15:01
-// Last Updated On:     01-08-2025 15:01
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-11-2025 19:07
+// Last Updated On:     07-27-2025 18:40
 // *****************************************/
 
 #endregion
@@ -25,4 +25,5 @@ public record struct ReturnCandidateDetails(
     List<CandidateRating> Rating,
     List<CandidateMPC> MPC,
     CandidateRatingMPC RatingMPC,
-    string Documents);
+    string Documents,
+    string TimeLine);

@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           EditEducationDialog.razor.cs
-// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          12-02-2024 14:12
-// Last Updated On:     12-03-2024 15:12
+// Last Updated On:     07-26-2025 15:27
 // *****************************************/
 
 #endregion
@@ -38,17 +38,9 @@ public partial class EditEducationDialog
 	///     The cancel action is usually triggered by a user interaction, such as clicking a cancel button.
 	/// </remarks>
 	[Parameter]
-    public EventCallback<MouseEventArgs> Cancel
-    {
-        get;
-        set;
-    }
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
-    private EditContext Context
-    {
-        get;
-        set;
-    }
+    private EditContext Context { get; set; }
 
 	/// <summary>
 	///     Gets or sets the dialog control of the component.
@@ -61,11 +53,7 @@ public partial class EditEducationDialog
 	///     This property is used to control the visibility and the content of the dialog.
 	///     It is bound to the SfDialog component in the Razor markup.
 	/// </remarks>
-	private SfDialog Dialog
-    {
-        get;
-        set;
-    }
+	private SfDialog Dialog { get; set; }
 
 	/// <summary>
 	///     Gets or sets the EditForm instance used for editing the education details of a candidate.
@@ -78,11 +66,7 @@ public partial class EditEducationDialog
 	///     a candidate.
 	///     It is also used to perform form validation when the dialog is opened.
 	/// </remarks>
-	private SfDataForm EditEducationForm
-    {
-        get;
-        set;
-    }
+	private SfDataForm EditEducationForm { get; set; }
 
 	/// <summary>
 	///     Gets or sets the JavaScript runtime instance for the component.
@@ -95,11 +79,7 @@ public partial class EditEducationDialog
 	///     the 'onCreate' JavaScript function.
 	/// </remarks>
 	[Inject]
-    private IJSRuntime JsRuntime
-    {
-        get;
-        set;
-    }
+    private IJSRuntime JsRuntime { get; set; }
 
 	/// <summary>
 	///     Gets or sets the model representing the education details of a candidate.
@@ -112,11 +92,7 @@ public partial class EditEducationDialog
 	///     It is used to get the current education details of the candidate and to set the updated education details.
 	/// </remarks>
 	[Parameter]
-    public CandidateEducation Model
-    {
-        get;
-        set;
-    } = new();
+    public CandidateEducation Model { get; set; } = new();
 
 	/// <summary>
 	///     Gets or sets the event callback that is invoked when the save action is triggered in the dialog.
@@ -127,28 +103,9 @@ public partial class EditEducationDialog
 	///     The save action is usually triggered by a user interaction, such as clicking a save button.
 	/// </remarks>
 	[Parameter]
-    public EventCallback<EditContext> Save
-    {
-        get;
-        set;
-    }
+    public EventCallback<EditContext> Save { get; set; }
 
-	/// <summary>
-	///     Gets or sets the spinner control of the dialog.
-	/// </summary>
-	/// <value>
-	///     The spinner of type <see cref="SfSpinner" /> which provides a visual indication when an operation is being
-	///     performed.
-	/// </value>
-	/// <remarks>
-	///     This property is used to show a spinner while the save or cancel operation is being processed.
-	///     It is bound to the SfSpinner component in the Razor markup.
-	/// </remarks>
-	private SfSpinner Spinner
-    {
-        get;
-        set;
-    }
+	private bool VisibleSpinner { get; set; }
 
 	/// <summary>
 	///     Asynchronously cancels the education dialog operation.
@@ -162,18 +119,19 @@ public partial class EditEducationDialog
 	/// </remarks>
 	private async Task CancelEducationDialog(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
-
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+		if (Context?.Model != Model)
+		{
+			Context = null; // Immediate reference cleanup for GC
+			Context = new(Model);
+		}
         base.OnParametersSet();
     }
 
@@ -198,10 +156,10 @@ public partial class EditEducationDialog
 	/// <returns>A task that represents the asynchronous operation.</returns>
 	private async Task SaveEducationDialog(EditContext editContext)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
 	/// <summary>

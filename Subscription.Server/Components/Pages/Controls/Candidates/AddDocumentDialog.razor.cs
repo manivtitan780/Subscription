@@ -182,9 +182,8 @@ public partial class AddDocumentDialog : IDisposable
     ///     This method is invoked when a file is removed from the upload queue in the document upload dialog.
     ///     It clears the list of files in the model and notifies the edit context about the change.
     /// </remarks>
-    private async Task OnFileRemoved(RemovingEventArgs arg)
+    private void OnFileRemoved(RemovingEventArgs arg)
     {
-        await Task.Yield();
         Model.Files = null;
         Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
     }
@@ -202,9 +201,8 @@ public partial class AddDocumentDialog : IDisposable
     ///     This method is invoked when a file is selected in the document upload dialog.
     ///     It updates the model's file list with the name of the selected file and notifies the edit context of the change.
     /// </remarks>
-    private async Task OnFileSelected(SelectedEventArgs file)
+    private void OnFileSelected(SelectedEventArgs file)
     {
-        await Task.Yield();
         if (Model.Files is null)
         {
             Model.Files = [file.FilesData[0].Name];

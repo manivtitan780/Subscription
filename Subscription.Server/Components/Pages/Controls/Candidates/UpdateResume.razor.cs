@@ -15,11 +15,12 @@
 
 namespace Subscription.Server.Components.Pages.Controls.Candidates;
 
-public partial class UpdateResume : ComponentBase
+public partial class UpdateResume : ComponentBase, IDisposable
 {
     private readonly CandidateResumeValidator _candidateResumeValidator = new();
 
-    internal MemoryStream AddedDocument { get; set; } = new();
+    // Memory optimization: Use RecyclableMemoryStream to prevent LOH allocations for large files
+    internal RecyclableMemoryStream AddedDocument { get; set; }
 
     /// <summary>
     ///     Gets or sets the event callback that is invoked when the document upload is cancelled.
@@ -110,6 +111,15 @@ public partial class UpdateResume : ComponentBase
     public string ResumeType { get; set; }
 
     /// <summary>
+    ///     Memory optimization: Properly dispose RecyclableMemoryStream and cleanup resources
+    /// </summary>
+    public void Dispose()
+    {
+        AddedDocument?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
     ///     Asynchronously executes the cancellation process for the document dialog.
     /// </summary>
     /// <param name="args">The mouse event arguments associated with the cancel action.</param>
@@ -127,8 +137,6 @@ public partial class UpdateResume : ComponentBase
         VisibleSpinner = false;
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
-
     /// <summary>
     ///     Handles the event when a file is removed from the upload queue.
     /// </summary>
@@ -139,9 +147,8 @@ public partial class UpdateResume : ComponentBase
     ///     This method is invoked when a file is removed from the upload queue in the document upload dialog.
     ///     It clears the list of files in the model and notifies the edit context about the change.
     /// </remarks>
-    private async Task OnFileRemoved(RemovingEventArgs arg)
+    private void OnFileRemoved(RemovingEventArgs arg)
     {
-        await Task.Yield();
         Model.Files = null;
         Context.NotifyFieldChanged(Context.Field(nameof(Model.Files)));
     }
@@ -159,9 +166,8 @@ public partial class UpdateResume : ComponentBase
     ///     This method is invoked when a file is selected in the document upload dialog.
     ///     It updates the model's file list with the name of the selected file and notifies the edit context of the change.
     /// </remarks>
-    private async Task OnFileSelected(SelectedEventArgs file)
+    private void OnFileSelected(SelectedEventArgs file)
     {
-        await Task.Yield();
         if (Model.Files is null)
         {
             Model.Files = [file.FilesData[0].Name];
@@ -177,8 +183,12 @@ public partial class UpdateResume : ComponentBase
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        // Memory optimization: Explicit cleanup before creating new EditContext
+        if (Context?.Model != Model)
+        {
+            Context = null;  // Immediate reference cleanup for GC
+            Context = new(Model);
+        }
         base.OnParametersSet();
     }
 
@@ -225,12 +235,27 @@ public partial class UpdateResume : ComponentBase
     {
         foreach (UploadFiles _file in file.Files)
         {
-            Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024);
-            await _str.CopyToAsync(AddedDocument);
+            // Memory optimization: Reuse existing RecyclableMemoryStream instead of creating new instances
+            if (AddedDocument == null)
+            {
+                AddedDocument = ReusableMemoryStream.Get("resume-upload");
+            }
+            else
+            {
+                // Reset stream for reuse - more efficient than disposing and recreating
+                AddedDocument.Position = 0;
+                AddedDocument.SetLength(0);
+            }
+
+            // Performance optimization: Use proper using statement for stream disposal
+            await using (Stream _str = _file.File.OpenReadStream(60 * 1024 * 1024)) //60MB maximum
+            {
+                await _str.CopyToAsync(AddedDocument);
+            }
+
             FileName = _file.FileInfo.Name;
             Mime = _file.FileInfo.MimeContentType;
             AddedDocument.Position = 0;
-            _str.Close();
         }
     }
 }

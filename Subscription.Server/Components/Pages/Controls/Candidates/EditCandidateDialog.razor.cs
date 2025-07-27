@@ -7,15 +7,13 @@
 // Project:             Subscription.Server
 // File Name:           EditCandidateDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     05-06-2025 20:06
+// Created On:          07-26-2025 15:07
+// Last Updated On:     07-26-2025 15:20
 // *****************************************/
 
 #endregion
 
 #region Using
-
-using System.Text.Json;
 
 #endregion
 
@@ -32,10 +30,6 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class EditCandidateDialog
 {
-    private readonly CandidateDetailsValidator _candidateDetailsValidator = new();
-
-    private string _existingValue = "";
-
     /// <summary>
     ///     A list of toolbar items for the rich text editor in the candidate edit dialog.
     /// </summary>
@@ -50,7 +44,7 @@ public partial class EditCandidateDialog
     ///     This list includes commands for text formatting such as bold, italic, underline, strikethrough, lower case, upper
     ///     case, superscript, subscript, and clear format. It also includes commands for undo and redo actions.
     /// </remarks>
-    private readonly List<ToolbarItemModel> _tools =
+    private static readonly List<ToolbarItemModel> Tools =
     [
         new() {Command = ToolbarCommand.Bold},
         new() {Command = ToolbarCommand.Italic},
@@ -66,6 +60,13 @@ public partial class EditCandidateDialog
         new() {Command = ToolbarCommand.Undo},
         new() {Command = ToolbarCommand.Redo} /*new ToolbarItemModel() {Name = "Tokens",  TooltipText = "Insert Token"}*/
     ];
+
+    private readonly CandidateDetailsValidator _candidateDetailsValidator = new();
+
+    private string _existingValue = "";
+
+    // Memory optimization: Reuse single Dictionary to avoid allocation pressure during zip checks
+    private readonly Dictionary<string, string> _zipParameters = new(1) {["zip"] = ""};
 
     /// <summary>
     ///     Gets or sets the event to be triggered when the cancel action is performed in the dialog.
@@ -139,7 +140,7 @@ public partial class EditCandidateDialog
     [Parameter]
     public IEnumerable<IntValues> Experience { get; set; }
 
-    private List<string> FieldTokens { get; set; } = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+    //private List<string> FieldTokens { get; set; } = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 
     private SfButton GenerateButton { get; set; }
 
@@ -176,17 +177,9 @@ public partial class EditCandidateDialog
     [Parameter]
     public EventCallback<EditContext> Save { get; set; }
 
-    /// <summary>
-    ///     Gets or sets the instance of the Syncfusion spinner control used in the dialog.
-    /// </summary>
-    /// <value>
-    ///     The instance of the Syncfusion spinner control.
-    /// </value>
-    /// <remarks>
-    ///     The spinner is used to indicate a loading state while the dialog is performing operations like saving changes or
-    ///     cancelling the edit operation.
-    /// </remarks>
-    private SfSpinner Spinner { get; set; }
+    //private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
+
+    private bool ShowGenerateButton { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the list of states associated with the candidate.
@@ -213,6 +206,8 @@ public partial class EditCandidateDialog
     [Parameter]
     public IEnumerable<KeyValues> TaxTerms { get; set; }
 
+    private bool VisibleSpinner { get; set; }
+
     /// <summary>
     ///     Cancels the candidate editing operation and closes the dialog.
     /// </summary>
@@ -224,10 +219,10 @@ public partial class EditCandidateDialog
     /// </remarks>
     private async Task CancelDialog(MouseEventArgs args)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Cancel.InvokeAsync(args);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
     private async Task CheckZip(MaskBlurEventArgs args)
@@ -237,12 +232,10 @@ public partial class EditCandidateDialog
             return;
         }
 
-        Dictionary<string, string> _parameters = new()
-                                                 {
-                                                     {"zip", args.Value}
-                                                 };
+        // Memory optimization: Reuse existing Dictionary instead of creating new one
+        _zipParameters["zip"] = args.Value;
 
-        string _response = await General.ExecuteRest<string>("Admin/CheckZip", _parameters, null, false);
+        string _response = await General.ExecuteRest<string>("Admin/CheckZip", _zipParameters, null, false);
 
         if (_response.NotNullOrWhiteSpace() && _response != "[]")
         {
@@ -254,9 +247,6 @@ public partial class EditCandidateDialog
         }
     }
 
-    private void Context_OnFieldChanged(object sender, FieldChangedEventArgs e) => Context.Validate();
-
-    private bool ShowGenerateButton { get; set; } = true;
     /// <summary>
     ///     Opens the dialog for editing candidate details.
     /// </summary>
@@ -269,6 +259,7 @@ public partial class EditCandidateDialog
         {
             ShowGenerateButton = false;
         }
+
         EditCandidateForm.EditContext?.Validate();
     }
 
@@ -278,6 +269,7 @@ public partial class EditCandidateDialog
         {
             return;
         }
+
         if (Model.TextResume.NullOrWhiteSpace())
         {
             await DialogService.AlertAsync("Please enter the resume text before generating the summary.", "Text Resume required.");
@@ -285,7 +277,7 @@ public partial class EditCandidateDialog
         }
 
         Content = "Generating…";
-        RestClient client = new(Start.AzureOpenAIEndpoint);
+        using RestClient client = new(Start.AzureOpenAIEndpoint);
         RestRequest request = new("", Method.Post);
         request.AddHeader("Content-Type", "application/json");
         request.AddHeader("api-key", Start.AzureOpenAIKey);
@@ -333,8 +325,12 @@ public partial class EditCandidateDialog
 
     protected override void OnParametersSet()
     {
-        Context = new(Model);
-        Context.OnFieldChanged += Context_OnFieldChanged;
+        if (Context?.Model != Model)
+        {
+            Context = null; // Immediate reference cleanup for GC
+            Context = new(Model);
+        }
+
         base.OnParametersSet();
     }
 
@@ -356,16 +352,13 @@ public partial class EditCandidateDialog
     /// </remarks>
     private async Task SaveCandidateDialog(EditContext editContext)
     {
-        await General.DisplaySpinner(Spinner);
+        VisibleSpinner = true;
         await Save.InvokeAsync(editContext);
         await Dialog.HideAsync();
-        await General.DisplaySpinner(Spinner, false);
+        VisibleSpinner = false;
     }
 
-    private void SaveValue(MaskFocusEventArgs args)
-    {
-        _existingValue = args.Value;
-    }
+    private void SaveValue(MaskFocusEventArgs args) => _existingValue = args.Value;
 
     /// <summary>
     ///     Displays the dialog for editing candidate details.

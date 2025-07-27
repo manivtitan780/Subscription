@@ -5,17 +5,17 @@
 // Location:            Newtown, PA, USA
 // Solution:            Subscription
 // Project:             Subscription.Server
-// File Name:           EditRequisitionNotesDialog.razor.cs
+// File Name:           EditCompanyNotesDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          06-13-2025 19:06
-// Last Updated On:     07-26-2025 16:07
+// Created On:          07-26-2025 16:07
+// Last Updated On:     07-26-2025 19:27
 // *****************************************/
 
 #endregion
 
-namespace Subscription.Server.Components.Pages.Controls.Requisitions;
+namespace Subscription.Server.Components.Pages.Controls.Companies;
 
-public partial class EditRequisitionNotesDialog : ComponentBase
+public partial class EditCompanyNotesDialog : ComponentBase, IDisposable
 {
     private readonly CandidateNotesValidator _candidateNotesValidator = new();
 
@@ -29,7 +29,7 @@ public partial class EditRequisitionNotesDialog : ComponentBase
     private SfDataForm EditNotesForm { get; set; }
 
     [Parameter]
-    public string Entity { get; set; } = "Requisition";
+    public string Entity { get; set; } = "Company";
 
     [Parameter]
     public CandidateNotes Model { get; set; } = new();
@@ -42,6 +42,12 @@ public partial class EditRequisitionNotesDialog : ComponentBase
 
     private bool VisibleSpinner { get; set; }
 
+    public void Dispose()
+    {
+        // No event handlers to dispose after optimization
+        GC.SuppressFinalize(this);
+    }
+
     private async Task CancelNotesDialog(MouseEventArgs args)
     {
         VisibleSpinner = true;
@@ -50,15 +56,15 @@ public partial class EditRequisitionNotesDialog : ComponentBase
         VisibleSpinner = false;
     }
 
-
     protected override void OnParametersSet()
     {
         // Memory optimization: Explicit cleanup before creating new EditContext
         if (Context?.Model != Model)
         {
-            Context = null;  // Immediate reference cleanup for GC
+            Context = null; // Immediate reference cleanup for GC
             Context = new(Model);
         }
+
         base.OnParametersSet();
     }
 

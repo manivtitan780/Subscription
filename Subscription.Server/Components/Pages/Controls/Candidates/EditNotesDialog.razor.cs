@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           EditNotesDialog.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          12-04-2024 20:12
-// Last Updated On:     06-13-2025 19:48
+// Created On:          07-24-2025 20:07
+// Last Updated On:     07-26-2025 19:27
 // *****************************************/
 
 #endregion
@@ -42,6 +42,15 @@ public partial class EditNotesDialog : IDisposable
 
     private bool VisibleSpinner { get; set; }
 
+    /// <summary>
+    ///     Memory optimization: Clean disposal pattern
+    /// </summary>
+    public void Dispose()
+    {
+        // No event handlers to dispose after optimization
+        GC.SuppressFinalize(this);
+    }
+
     private async Task CancelNotesDialog(MouseEventArgs args)
     {
         VisibleSpinner = true;
@@ -57,9 +66,11 @@ public partial class EditNotesDialog : IDisposable
         // Memory optimization: Explicit cleanup before creating new EditContext
         if (Context?.Model != Model)
         {
-            Context = null;  // Immediate reference cleanup for GC
+            Context = null; // Immediate reference cleanup for GC
             Context = new(Model);
         }
+        
+
         base.OnParametersSet();
     }
 
@@ -74,13 +85,4 @@ public partial class EditNotesDialog : IDisposable
     }
 
     public async Task ShowDialog() => await Dialog.ShowAsync();
-
-    /// <summary>
-    /// Memory optimization: Clean disposal pattern
-    /// </summary>
-    public void Dispose()
-    {
-        // No event handlers to dispose after optimization
-        GC.SuppressFinalize(this);
-    }
 }
