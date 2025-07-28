@@ -13,6 +13,8 @@
 
 #endregion
 
+using System.Text;
+
 namespace Subscription.API.Controllers;
 
 /// <summary>
@@ -136,23 +138,26 @@ public partial class CandidateController
             return;
         }
 
+        // Pre-calculate the total length of all replacement values for capacity calculation.
+        int totalReplacementLength = replacements.Values.Sum(v => v?.Length ?? 0);
+
         foreach (EmailTemplates template in templates)
         {
-            // Apply replacements to template
-            string subject = template.Subject;
-            string body = template.Template;
+            // Initialize StringBuilder with a calculated capacity to avoid reallocations.
+            StringBuilder subjectBuilder = new(template.Subject, template.Subject.Length + totalReplacementLength);
+            StringBuilder bodyBuilder = new(template.Template, template.Template.Length + totalReplacementLength);
 
             foreach (KeyValuePair<string, string> replacement in replacements)
             {
-                subject = subject.Replace(replacement.Key, replacement.Value);
-                body = body.Replace(replacement.Key, replacement.Value);
+                subjectBuilder.Replace(replacement.Key, replacement.Value);
+                bodyBuilder.Replace(replacement.Key, replacement.Value);
             }
 
             // Memory optimization: Use injected SmtpClient instead of creating new instances
             using MailMessage mailMessage = new();
             mailMessage.From = new("jolly@hire-titan.com", "Mani Bhai");
-            mailMessage.Subject = subject;
-            mailMessage.Body = body;
+            mailMessage.Subject = subjectBuilder.ToString();
+            mailMessage.Body = bodyBuilder.ToString();
             mailMessage.IsBodyHtml = true;
 
             mailMessage.To.Add("manivenkit@gmail.com"); // TODO: After testing, update with actual recipients

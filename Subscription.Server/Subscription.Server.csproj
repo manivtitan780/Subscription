@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <JsonSerializerIsSourceGenerated>true</JsonSerializerIsSourceGenerated>
         <UserSecretsId>a46b8d81-ea73-47ed-9a5e-50fe3dc31541</UserSecretsId>
         <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
         <LangVersion>13</LangVersion>

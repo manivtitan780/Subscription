@@ -11,6 +11,8 @@
 // *****************************************/
 #endregion
 
+using System.Text;
+
 namespace Subscription.API.Controllers;
 
 public partial class RequisitionController
@@ -18,30 +20,23 @@ public partial class RequisitionController
     [HttpPost]
     public async Task<ActionResult<string>> DeleteRequisitionDocument(int documentID, string user)
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await _connection.OpenAsync();
-        try
-        {
-            string _documents = "[]";
-            await using SqlCommand _command = new("DeleteRequisitionDocuments", _connection);
-            _command.CommandType = CommandType.StoredProcedure;
-            _command.Int("RequisitionDocId", documentID);
-            _command.Varchar("User", 10, user);
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-            _reader.NextResult();
-            if (_reader.Read())
+        return await ExecuteReaderAsync("DeleteRequisitionDocuments", 
+            command =>
             {
-                _documents = _reader.NString(0);
-            }
-
-            return Ok(_documents);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error in DeleteRequisitionDocument {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
+                command.Int("RequisitionDocId", documentID);
+                command.Varchar("User", 10, user);
+            },
+            async reader =>
+            {
+                await reader.NextResultAsync(); // Skip the first result set
+                if (await reader.ReadAsync())
+                {
+                    return reader.NString(0);
+                }
+                return "[]";
+            },
+            "DeleteRequisitionDocument", 
+            "An unexpected error occurred while deleting the requisition document.");
     }
 
 }

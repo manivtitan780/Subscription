@@ -7,8 +7,8 @@
 // Project:             Subscription.Server
 // File Name:           ActivityPanelRequisition.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          03-08-2025 20:03
-// Last Updated On:     05-19-2025 15:48
+// Created On:          07-24-2025 21:07
+// Last Updated On:     07-27-2025 20:57
 // *****************************************/
 
 #endregion
@@ -125,6 +125,9 @@ public partial class ActivityPanelRequisition
     /// </remarks>
     public CandidateActivity SelectedRow { get; private set; }
 
+    [Parameter]
+    public EventCallback<int> TimelineActivity { get; set; }
+
     /// <summary>
     ///     Gets or sets the EventCallback for undoing a candidate activity.
     /// </summary>
@@ -178,6 +181,8 @@ public partial class ActivityPanelRequisition
             SelectedRow = activity.Data;
         }
     }
+
+    private async Task ShowTimeline(int requisitionID) => await TimelineActivity.InvokeAsync(requisitionID);
 
     /// <summary>
     ///     Asynchronously undoes a specified activity.

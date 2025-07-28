@@ -19,86 +19,64 @@ public partial class RequisitionController
     public async Task<ActionResult<ReturnGridRequisition>> GetGridRequisitions([FromBody] RequisitionSearch reqSearch, bool getCompanyInformation = false, int requisitionID = 0,
                                                                                bool thenProceed = false, string user = "")
     {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new("GetRequisitions", _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-        _command.Int("Count", reqSearch.ItemCount);
-        _command.Int("Page", reqSearch.Page);
-        _command.Int("SortRow", reqSearch.SortField);
-        _command.TinyInt("SortOrder", reqSearch.SortDirection);
-        _command.Varchar("Code", 15, reqSearch.Code);
-        _command.Varchar("Title", 2000, reqSearch.Title);
-        _command.Varchar("Company", 2000, reqSearch.Company);
-        _command.Varchar("Option", 30, reqSearch.Option);
-        _command.Varchar("Status", 1000, reqSearch.Status);
-        _command.Varchar("CreatedBy", 10, reqSearch.CreatedBy);
-        _command.DateTime("CreatedOn", reqSearch.CreatedOn);
-        _command.DateTime("CreatedOnEnd", reqSearch.CreatedOnEnd);
-        _command.DateTime("Due", reqSearch.Due);
-        _command.DateTime("DueEnd", reqSearch.DueEnd);
-        _command.Bit("Recruiter", reqSearch.Recruiter);
-        _command.Bit("GetCompanyInformation", getCompanyInformation);
-        _command.Varchar("User", 10, reqSearch.User);
-        _command.Int("OptionalRequisitionID", requisitionID);
-        _command.Bit("ThenProceed", thenProceed);
-        _command.Varchar("LoggedUser", 10, user);
-
-        try
+        if (reqSearch == null)
         {
-            string _requisitions = "[]", _statusCount = "[]";
-            await _connection.OpenAsync();
-            await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
-
-            await _reader.ReadAsync();
-            int _page = 0;
+            return BadRequest("Search criteria cannot be null.");
+        }
+        return await ExecuteReaderAsync("GetRequisitions", command =>
+        {
+            command.Int("Count", reqSearch.ItemCount);
+            command.Int("Page", reqSearch.Page);
+            command.Int("SortRow", reqSearch.SortField);
+            command.TinyInt("SortOrder", reqSearch.SortDirection);
+            command.Varchar("Code", 15, reqSearch.Code);
+            command.Varchar("Title", 2000, reqSearch.Title);
+            command.Varchar("Company", 2000, reqSearch.Company);
+            command.Varchar("Option", 30, reqSearch.Option);
+            command.Varchar("Status", 1000, reqSearch.Status);
+            command.Varchar("CreatedBy", 10, reqSearch.CreatedBy);
+            command.DateTime("CreatedOn", reqSearch.CreatedOn);
+            command.DateTime("CreatedOnEnd", reqSearch.CreatedOnEnd);
+            command.DateTime("Due", reqSearch.Due);
+            command.DateTime("DueEnd", reqSearch.DueEnd);
+            command.Bit("Recruiter", reqSearch.Recruiter);
+            command.Bit("GetCompanyInformation", getCompanyInformation);
+            command.Varchar("User", 10, reqSearch.User);
+            command.Int("OptionalRequisitionID", requisitionID);
+            command.Bit("ThenProceed", thenProceed);
+            command.Varchar("LoggedUser", 10, user);
+        }, async reader =>
+        {
             if (requisitionID > 0 && !thenProceed)
             {
-                _page = _reader.GetInt32(0);
-
-                return new ReturnGridRequisition {Page = _page};
+                await reader.ReadAsync();
+                return new ReturnGridRequisition { Page = reader.GetInt32(0) };
             }
 
-            int _count = _reader.NInt32(0);
+            await reader.ReadAsync();
+            int _count = reader.NInt32(0);
 
-            await _reader.NextResultAsync();
+            await reader.NextResultAsync();
+            string _requisitions = await reader.ReadAsync() ? reader.NString(0) : "[]";
 
-            if (await _reader.ReadAsync())
-            {
-                _requisitions = _reader.NString(0);
-            }
-
-            await _reader.NextResultAsync();
+            await reader.NextResultAsync();
+            string _statusCount = "[]";
             if (getCompanyInformation)
             {
-                if (await _reader.ReadAsync())
-                {
-                    _statusCount = _reader.NString(0);
-                }
+                _statusCount = await reader.ReadAsync() ? reader.NString(0) : "[]";
             }
 
-            await _reader.NextResultAsync();
-            _page = reqSearch.Page;
-            
-            if (await _reader.ReadAsync())
+            await reader.NextResultAsync();
+            int _page = await reader.ReadAsync() ? reader.GetInt32(0) : reqSearch.Page;
+
+            return new ReturnGridRequisition
             {
-                _page = _reader.GetInt32(0);
-            }
-
-            return Ok(new
-                      {
-                          Count = _count,
-                          Requisitions = _requisitions,
-                          Companies = "[]",
-                          CompanyContacts = "[]",
-                          Status = _statusCount,
-                          Page = _page
-                      });
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Error in GetGridRequisitions {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
+                Count = _count,
+                Requisitions = _requisitions,
+                Status = _statusCount,
+                Page = _page
+            };
+        }, "GetGridRequisitions", "An error occurred while fetching requisitions.");
     }
 
 
@@ -107,7 +85,7 @@ public partial class RequisitionController
     {
         if (requisitionID == 0)
         {
-            return StatusCode(500, "Requisition ID is not provided.");
+            return BadRequest("Requisition ID is not provided.");
         }
 
         return await ExecuteReaderAsync("GetRequisitionDetails", command =>
@@ -130,8 +108,16 @@ public partial class RequisitionController
                                                                         {
                                                                             activity = reader.NString(0, "[]");
                                                                         }
+                                                                        
+                                                                        // Result Set 3: Timeline
+                                                                        await reader.NextResultAsync();
+                                                                        string _timeline = "[]";
+                                                                        if (await reader.ReadAsync())
+                                                                        {
+                                                                            _timeline = reader.NString(0, "[]");
+                                                                        }
 
-                                                                        // Result Set 3: Documents
+                                                                        // Result Set 4: Documents
                                                                         await reader.NextResultAsync();
                                                                         string documents = "[]";
                                                                         if (await reader.ReadAsync())
@@ -139,7 +125,7 @@ public partial class RequisitionController
                                                                             documents = reader.NString(0, "[]");
                                                                         }
 
-                                                                        // Result Set 4: Notes
+                                                                        // Result Set 5: Notes
                                                                         await reader.NextResultAsync();
                                                                         string notes = "[]";
                                                                         if (await reader.ReadAsync())
@@ -152,7 +138,8 @@ public partial class RequisitionController
                                                                                    Activity = activity,
                                                                                    Documents = documents,
                                                                                    Requisition = requisitionDetail,
-                                                                                   Notes = notes
+                                                                                   Notes = notes,
+                                                                                   Timeline = _timeline
                                                                                };
                                                                     }, "GetRequisitionDetails", "Error fetching requisition details.");
     }

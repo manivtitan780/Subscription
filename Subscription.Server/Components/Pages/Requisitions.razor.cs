@@ -7,11 +7,13 @@
 // Project:             Subscription.Server
 // File Name:           Requisitions.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-22-2025 15:07
-// Last Updated On:     07-22-2025 15:31
+// Created On:          07-23-2025 20:07
+// Last Updated On:     07-27-2025 20:59
 // *****************************************/
 
 #endregion
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Subscription.Server.Components.Pages;
 
@@ -20,9 +22,9 @@ public partial class Requisitions
     private const string StorageName = "RequisitionGrid";
 
     // Memory optimization: Pre-allocate Lists with estimated capacities to prevent resize operations
-    private List<CandidateActivity> _candActivityObject = new(50); // Typical activity count per requisition
+    private List<CandidateActivity> _candActivityObject = new(50);                               // Typical activity count per requisition
     private List<IntValues> _education = new(20), _eligibility = new(10), _experience = new(15); // Typical lookup table sizes
-    private List<JobOptions> /*_companies = [], */ _jobOptions = new(30); // Typical job options count
+    private List<JobOptions> /*_companies = [], */ _jobOptions = new(30);                        // Typical job options count
 
     private Preferences _preference;
     private List<KeyValues> _recruiters;
@@ -42,6 +44,7 @@ public partial class Requisitions
     // private List<KeyValues> _statusSearch = [];
 
     private Requisition _target;
+    private SubmissionTimeline[] _timelineObject = [], _timelineActivityObject = [];
 
     private List<Workflow> _workflows;
 
@@ -124,6 +127,8 @@ public partial class Requisitions
     private RequisitionStatus StatusRequisition { get; } = new();
 
     public List<KeyValues> StatusRequisitionList { get; set; } = [];
+
+    private TimelineDialog TimelineDialog { get; set; }
 
     private string Title { get; set; } = "Edit";
 
@@ -224,7 +229,7 @@ public partial class Requisitions
                                                                       byte[] _value = await SessionStorage.GetItemAsync<byte[]>("StatusList");
                                                                       if (_value != null)
                                                                       {
-                                                                          StatusList = General.DeserializeObject<List<KeyValues>>(_value.DecompressGZip());
+                                                                          StatusList = JsonSerializer.Deserialize(_value.DecompressGZip(), JsonContext.Default.ListKeyValues);
                                                                       }
                                                                   }
                                                               }
@@ -250,7 +255,8 @@ public partial class Requisitions
                                                           Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Requisition/DeleteNotes", _parameters);
 
-                                                          _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                          // _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                          _reqNotesObject = JsonSerializer.Deserialize(_response, JsonContext.Default.ListCandidateNotes);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Requisition> requisition) => ExecuteMethod(async () =>
@@ -271,7 +277,7 @@ public partial class Requisitions
                                                                                                         // Added capacity hint for memory optimization - Dictionary has exactly 1 key-value pair
                                                                                                         Dictionary<string, string> _parameters = new(1) {["requisitionID"] = _target.ID.ToString()};
 
-                                                                                                        (string _requisition, string _activity, string _documents, string _notes) =
+                                                                                                        (string _requisition, string _activity, string _documents, string _notes, string _timelineCandidate) =
                                                                                                             await General.ExecuteRest<ReturnRequisitionDetails>("Requisition/GetRequisitionDetails",
                                                                                                                                                                 _parameters, null, false);
 
@@ -283,11 +289,24 @@ public partial class Requisitions
                                                                                                         _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [];*/
 
                                                                                                         // Parallel deserialization for faster requisition detail panel loading with thread safety
-                                                                                                        Task[] requisitionDetailsTasks = [
-                                                                                                            Task.Run(() => _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition)),
-                                                                                                            Task.Run(() => _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? []),
-                                                                                                            Task.Run(() => _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? []),
-                                                                                                            Task.Run(() => _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? [])
+                                                                                                        //Task[] requisitionDetailsTasks =
+                                                                                                        //[
+                                                                                                        /*Task.Run(() => _reqDetailsObject = General.DeserializeObject<RequisitionDetails>(_requisition)),
+                                                                                                        Task.Run(() => _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_activity) ?? []),
+                                                                                                        Task.Run(() => _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_notes) ?? []),
+                                                                                                        Task.Run(() => _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_documents) ?? []),
+                                                                                                        Task.Run(() => _timelineActivityObject = General.DeserializeObject<SubmissionTimeline[]>(_timelineCandidate) ?? [])*/
+                                                                                                        //];
+                                                                                                        Task[] requisitionDetailsTasks =
+                                                                                                        [
+                                                                                                            Task.Run(() => _reqDetailsObject = JsonSerializer.Deserialize(_requisition, JsonContext.Default.RequisitionDetails)),
+                                                                                                            Task.Run(() => _candActivityObject = JsonSerializer.Deserialize(_activity, JsonContext.Default.ListCandidateActivity) ??
+                                                                                                                                                 []),
+                                                                                                            Task.Run(() => _reqNotesObject = JsonSerializer.Deserialize(_notes, JsonContext.Default.ListCandidateNotes) ?? []),
+                                                                                                            Task.Run(() => _reqDocumentsObject =
+                                                                                                                               JsonSerializer.Deserialize(_documents, JsonContext.Default.ListRequisitionDocuments) ?? []),
+                                                                                                            Task.Run(() => _timelineActivityObject =
+                                                                                                                               JsonSerializer.Deserialize(_timelineCandidate, JsonContext.Default.SubmissionTimelineArray) ?? [])
                                                                                                         ];
                                                                                                         await Task.WhenAll(requisitionDetailsTasks);
                                                                                                         SetSkills();
@@ -323,6 +342,7 @@ public partial class Requisitions
                                                                          nextCodesSet.Add(code.Trim());
                                                                      }
                                                                  }
+
                                                                  NextSteps = _statusCodes.Where(status => nextCodesSet.Contains(status.Code) && status.AppliesToCode == "SCN")
                                                                                          .Select(status => new KeyValues {Text = status.Status, KeyValue = status.Code})
                                                                                          .Prepend(new() {Text = "No Change", KeyValue = "0"}).ToList();
@@ -429,25 +449,19 @@ public partial class Requisitions
         await ExecuteMethod(async () =>
                             {
                                 // Get user claims
-                                IEnumerable<Claim> _claims = await General.GetClaimsToken(LocalStorage, SessionStorage);
+                                Claim[] _claims = (await General.GetClaimsToken(LocalStorage, SessionStorage)).ToArray();
 
-                                if (_claims == null)
                                 {
-                                    NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
-                                }
-                                else
-                                {
-                                    Claim[] _enumerable = _claims as Claim[] ?? _claims.ToArray();
-                                    User = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
-                                    RoleName = _enumerable.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
+                                    User = _claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value.ToUpperInvariant();
+                                    RoleName = _claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value.ToUpperInvariant();
                                     if (User.NullOrWhiteSpace())
                                     {
                                         NavManager.NavigateTo($"{NavManager.BaseUri}login", true);
                                     }
 
                                     // Set user permissions
-                                    HasViewRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "ViewRequisitions");
-                                    HasEditRights = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditCompany");
+                                    HasViewRights = _claims.Any(claim => claim.Type == "Permission" && claim.Value == "ViewRequisitions");
+                                    HasEditRights = _claims.Any(claim => claim.Type == "Permission" && claim.Value == "CreateOrEditCompany");
                                 }
 
                                 if (Start.APIHost.NullOrWhiteSpace())
@@ -466,29 +480,12 @@ public partial class Requisitions
 
                                 Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
 
-                                //_roles = General.DeserializeObject<List<Role>>(_cacheValues[CacheObjects.Roles.ToString()]); //await Redis.GetAsync<List<Role>>("Roles");
-
-                                // Parallel deserialization of ALL cache objects for maximum performance (simplified approach)
-                                // Original serial implementation (commented for potential revert if needed):
-                                /*_states = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)]);
-                                _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
-                                _education = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Education)]);
-                                _experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
-                                _jobOptions = General.DeserializeObject<List<JobOptions>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
-                                List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
-                                Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Skills)]);
-                                _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
-                                _preference = General.DeserializeObject<Preferences>(_cacheValues[nameof(CacheObjects.Preferences)]);
-                                List<CompaniesList> _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);
-                                List<CompanyContacts> _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)]);
-                                _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);*/
-
-                                // Single parallel block for ALL deserialization - much cleaner and faster
                                 List<UserList> _users = null;
                                 List<CompaniesList> _companyList = null;
                                 List<CompanyContacts> _companyContacts = null;
 
-                                Task[] cacheDeserializationTasks = [
+                                /*Task[] cacheDeserializationTasks =
+                                [
                                     Task.Run(() => _states = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)])),
                                     Task.Run(() => _eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)])),
                                     Task.Run(() => _education = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Education)])),
@@ -501,6 +498,21 @@ public partial class Requisitions
                                     Task.Run(() => _companyList = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)])),
                                     Task.Run(() => _companyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)])),
                                     Task.Run(() => _workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]))
+                                ];*/
+                                Task[] cacheDeserializationTasks =
+                                [
+                                    Task.Run(() => _states = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.States)], JsonContext.Default.ListStateCache) ?? []),
+                                    Task.Run(() => _eligibility = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Eligibility)], JsonContext.Default.ListIntValues) ?? []),
+                                    Task.Run(() => _education = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Education)], JsonContext.Default.ListIntValues) ?? []),
+                                    Task.Run(() => _experience = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Experience)], JsonContext.Default.ListIntValues) ?? []),
+                                    Task.Run(() => _jobOptions = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.JobOptions)], JsonContext.Default.ListJobOptions) ?? []),
+                                    Task.Run(() => _users = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Users)], JsonContext.Default.ListUserList) ?? []),
+                                    Task.Run(() => Skills = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Skills)], JsonContext.Default.ListIntValues) ?? []),
+                                    Task.Run(() => _statusCodes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.StatusCodes)], JsonContext.Default.ListStatusCode) ?? []),
+                                    Task.Run(() => _preference = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Preferences)], JsonContext.Default.Preferences) ?? new()),
+                                    Task.Run(() => _companyList = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Companies)], JsonContext.Default.ListCompaniesList) ?? []),
+                                    Task.Run(() => _companyContacts = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.CompanyContacts)], JsonContext.Default.ListCompanyContacts) ?? []),
+                                    Task.Run(() => _workflows = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Workflow)], JsonContext.Default.ListWorkflow) ?? [])
                                 ];
                                 await Task.WhenAll(cacheDeserializationTasks);
 
@@ -578,7 +590,8 @@ public partial class Requisitions
 
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
-                                                                             _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                             //_candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                             _candActivityObject = JsonSerializer.Deserialize(_response, JsonContext.Default.ListCandidateActivity);
                                                                          }
                                                                      });
 
@@ -627,7 +640,8 @@ public partial class Requisitions
 
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
-                                                                                 _reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
+                                                                                 //_reqDocumentsObject = General.DeserializeObject<List<RequisitionDocuments>>(_response);
+                                                                                 _reqDocumentsObject = JsonSerializer.Deserialize(_response, JsonContext.Default.ListRequisitionDocuments);
                                                                              }
                                                                          }
                                                                      });
@@ -649,7 +663,8 @@ public partial class Requisitions
                                                                          return;
                                                                      }
 
-                                                                     _reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                                     //_reqNotesObject = General.DeserializeObject<List<CandidateNotes>>(_response);
+                                                                     _reqNotesObject = JsonSerializer.Deserialize(_response, JsonContext.Default.ListCandidateNotes);
                                                                  }
                                                              });
 
@@ -719,7 +734,8 @@ public partial class Requisitions
         // Fixed: Replaced Newtonsoft.Json with System.Text.Json for 2-3x performance improvement
         // Original Newtonsoft.Json usage (commented for potential revert if needed):
         /*DataSource = Count > 0 ? JsonConvert.DeserializeObject<List<Requisition>>(_requisitions) : [];*/
-        DataSource = Count > 0 ? General.DeserializeObject<List<Requisition>>(_requisitions) : [];
+        //DataSource = Count > 0 ? General.DeserializeObject<List<Requisition>>(_requisitions) : [];
+        DataSource = Count > 0 ? JsonSerializer.Deserialize(_requisitions, JsonContext.Default.ListRequisition) : [];
 
         if (_status.NotNullOrWhiteSpace() && _status != "[]")
         {
@@ -799,6 +815,12 @@ public partial class Requisitions
 
     private void TabSelected(SelectEventArgs tab) => _selectedTab = tab.SelectedIndex;
 
+    private async Task TimeLine(int requisitionID)
+    {
+        _timelineObject = _timelineActivityObject.Where(x => x.CandidateId == requisitionID).ToArray();
+        await TimelineDialog.ShowDialog();
+    }
+
     private Task UndoActivity(int activityID) => ExecuteMethod(async () =>
                                                                {
                                                                    // Added capacity hint for memory optimization - Dictionary has exactly 4 key-value pairs
@@ -812,7 +834,8 @@ public partial class Requisitions
                                                                    string _response = await General.ExecuteRest<string>("Candidate/UndoCandidateActivity", _parameters);
                                                                    if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                    {
-                                                                       _candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                       //_candActivityObject = General.DeserializeObject<List<CandidateActivity>>(_response);
+                                                                       _candActivityObject = JsonSerializer.Deserialize(_response, JsonContext.Default.ListCandidateActivity);
                                                                    }
                                                                });
 }

@@ -6,9 +6,9 @@
 // Solution:            Subscription
 // Project:             Subscription.Server
 // File Name:           TimelineDialog.razor.cs
-// Created By:          Claude Code
-// Created On:          07-26-2025 19:45
-// Last Updated On:     07-26-2025 19:45
+// Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
+// Created On:          07-26-2025 20:07
+// Last Updated On:     07-28-2025 15:31
 // *****************************************/
 
 #endregion
@@ -24,6 +24,12 @@ namespace Subscription.Server.Components.Pages.Controls.Candidates;
 /// </remarks>
 public partial class TimelineDialog : ComponentBase, IDisposable
 {
+    /// <summary>
+    ///     Gets or sets the event callback triggered when the dialog is cancelled or closed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> Cancel { get; set; }
+
     /// <summary>
     ///     Gets or sets the dialog reference for the timeline popup.
     /// </summary>
@@ -41,12 +47,6 @@ public partial class TimelineDialog : ComponentBase, IDisposable
     /// </remarks>
     [Parameter]
     public SubmissionTimeline[] Model { get; set; } = [];
-
-    /// <summary>
-    ///     Gets or sets the event callback triggered when the dialog is cancelled or closed.
-    /// </summary>
-    [Parameter]
-    public EventCallback<MouseEventArgs> Cancel { get; set; }
 
     /// <summary>
     ///     Gets or sets the visibility state of the loading spinner.
@@ -74,6 +74,8 @@ public partial class TimelineDialog : ComponentBase, IDisposable
         await Dialog.HideAsync();
         VisibleSpinner = false;
     }
+
+    private async Task DismissDialog() => await Dialog.HideAsync();
 
     /// <summary>
     ///     Handles the dialog open event and performs any initialization.

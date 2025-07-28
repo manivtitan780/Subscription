@@ -137,7 +137,7 @@
 										<TabHeader Text="Activity"/>
 									</ChildContent>
 									<ContentTemplate>
-										<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User"/>
+										<ActivityPanelRequisition EditActivity="EditActivity" Model="_candActivityObject" @ref="ActivityPanel" RoleID="@RoleID" UndoCandidateActivity="UndoActivity" User="@User" TimelineActivity="TimeLine" />
 									</ContentTemplate>
 								</TabItem>
 							</TabItems>
@@ -155,6 +155,7 @@
 	<RequisitionDetailsPanel Companies="Companies" CompanyContacts="CompanyContacts" Education="_education" Eligibility="_eligibility" Experience="_experience" JobOptions="_jobOptions"
 	                         Model="_reqDetailsObjectClone" Recruiters="_recruiters" @ref="DetailsRequisition" Save="SaveRequisition" Skills="Skills" States="_states" Title="@Title"/>
 	<UploadCandidate @ref="UploadCandidateDialog" Close="CloseUploadCandidate" RequisitionID="@(_target?.ID ?? 0)" ShowSubmissions="true" User="@User"/>
+	<TimelineDialog Model="@_timelineObject" @ref="TimelineDialog"/>
 }
 else
 {

@@ -64,6 +64,8 @@ _builder.Services.AddScoped(_ =>
                                 return client;
                             });
 
+_builder.Services.AddSingleton<CacheInitializerService>();
+
 /*GraphSenderOptions _graphOptions = new()
                                    {
                                        Secret = _config["Email:Secret"],
@@ -135,9 +137,8 @@ _app.Use(async (context, next) =>
                  Start.EmailClientID = _config["Email:ClientID"];
                  Start.TenantID = _config["Email:TenantID"];
 
-                 // Modified to use DI-provided RedisService singleton instead of creating new instances
-                RedisService redisService = _app.Services.GetRequiredService<RedisService>();
-                await General.SetCache(redisService);
+                 CacheInitializerService cacheInitializer = _app.Services.GetRequiredService<CacheInitializerService>();
+                 await cacheInitializer.InitializeCacheAsync(Start.ConnectionString);
                  _isSet = true;
              }
 

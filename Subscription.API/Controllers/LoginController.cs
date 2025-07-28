@@ -8,7 +8,7 @@
 // File Name:           LoginController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          07-15-2025 19:07
-// Last Updated On:     07-15-2025 19:56
+// Last Updated On:     07-28-2025 15:51
 // *****************************************/
 
 #endregion
@@ -24,6 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
 using Role = Subscription.Model.Role;
+using Subscription.Model;
 
 #endregion
 
@@ -35,6 +36,7 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
     // Static caching for roles to avoid repeated JSON deserialization
     private static List<Role> _cachedRoles;
     private static readonly SemaphoreSlim CacheUpdateSemaphore = new(1, 1);
+    private static readonly JwtSecurityTokenHandler TokenHandler = new();
 
     // Static caching for JWT key bytes to avoid repeated UTF8 encoding
     private static byte[] _cachedKeyBytes;
@@ -63,7 +65,7 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
         SigningCredentials _credentials = new(_key, SecurityAlgorithms.HmacSha256);
 
         JwtSecurityToken token = new(configuration["JWTIssuer"], configuration["JWTAudience"], _claims, expires: DateTime.UtcNow.AddDays(14), signingCredentials: _credentials);
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return TokenHandler.WriteToken(token);
     }
 
     private async Task<List<Role>> GetCachedRolesAsync()
@@ -82,10 +84,16 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
             }
 
             RedisValue _roles = await redisService.GetAsync("Roles");
+            if (!_roles.HasValue)
+            {
+                _cachedRoles = [];
+                return _cachedRoles;
+            }
+
             string _roleString = _roles.ToString();
 
             // Optimized: Using System.Text.Json instead of Newtonsoft.Json for better performance
-            _cachedRoles = JsonSerializer.Deserialize<List<Role>>(_roleString) ?? [];
+            _cachedRoles = JsonSerializer.Deserialize<List<Role>>(_roleString, JsonContext.Default.ListRole) ?? [];
             return _cachedRoles;
         }
         finally
@@ -127,25 +135,86 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
 
                 int _roleID = (byte)_reader["Role"];
 
-                // Optimized: Using cached roles instead of repeated JSON deserialization
                 List<Role> _rolesList = await GetCachedRolesAsync();
-                Role _userRole = _rolesList.FirstOrDefault(role => role.ID == _roleID)!;
+                Role _userRole = _rolesList.FirstOrDefault(role => role.ID == _roleID);
 
-                // Optimized: Using LINQ to build permissions list efficiently
-                List<string> _permissions = new[]
-                                            {
-                                                (nameof(_userRole.CreateOrEditCompany), _userRole.CreateOrEditCompany), (nameof(_userRole.CreateOrEditCandidate), _userRole.CreateOrEditCandidate),
-                                                (nameof(_userRole.ViewAllCompanies), _userRole.ViewAllCompanies), (nameof(_userRole.ViewMyCompanyProfile), _userRole.ViewMyCompanyProfile),
-                                                (nameof(_userRole.EditMyCompanyProfile), _userRole.EditMyCompanyProfile),
-                                                (nameof(_userRole.CreateOrEditRequisitions), _userRole.CreateOrEditRequisitions),
-                                                (nameof(_userRole.ViewOnlyMyCandidates), _userRole.ViewOnlyMyCandidates), (nameof(_userRole.ViewAllCandidates), _userRole.ViewAllCandidates),
-                                                (nameof(_userRole.ViewRequisitions), _userRole.ViewRequisitions), (nameof(_userRole.EditRequisitions), _userRole.EditRequisitions),
-                                                (nameof(_userRole.ManageSubmittedCandidates), _userRole.ManageSubmittedCandidates), (nameof(_userRole.DownloadOriginal), _userRole.DownloadOriginal),
-                                                (nameof(_userRole.DownloadFormatted), _userRole.DownloadFormatted), (nameof(_userRole.AdminScreens), _userRole.AdminScreens)
-                                            }
-                                           .Where(permission => permission.Item2)
-                                           .Select(permission => permission.Item1)
-                                           .ToList();
+                if (_userRole == null)
+                {
+                    Log.Error($"Role with ID {_roleID} not found in cache for user {userName}.");
+                    return StatusCode(500, "User role configuration error.");
+                }
+
+                // More efficient permission list construction
+                List<string> _permissions = [];
+                if (_userRole.CreateOrEditCompany)
+                {
+                    _permissions.Add(nameof(_userRole.CreateOrEditCompany));
+                }
+
+                if (_userRole.CreateOrEditCandidate)
+                {
+                    _permissions.Add(nameof(_userRole.CreateOrEditCandidate));
+                }
+
+                if (_userRole.ViewAllCompanies)
+                {
+                    _permissions.Add(nameof(_userRole.ViewAllCompanies));
+                }
+
+                if (_userRole.ViewMyCompanyProfile)
+                {
+                    _permissions.Add(nameof(_userRole.ViewMyCompanyProfile));
+                }
+
+                if (_userRole.EditMyCompanyProfile)
+                {
+                    _permissions.Add(nameof(_userRole.EditMyCompanyProfile));
+                }
+
+                if (_userRole.CreateOrEditRequisitions)
+                {
+                    _permissions.Add(nameof(_userRole.CreateOrEditRequisitions));
+                }
+
+                if (_userRole.ViewOnlyMyCandidates)
+                {
+                    _permissions.Add(nameof(_userRole.ViewOnlyMyCandidates));
+                }
+
+                if (_userRole.ViewAllCandidates)
+                {
+                    _permissions.Add(nameof(_userRole.ViewAllCandidates));
+                }
+
+                if (_userRole.ViewRequisitions)
+                {
+                    _permissions.Add(nameof(_userRole.ViewRequisitions));
+                }
+
+                if (_userRole.EditRequisitions)
+                {
+                    _permissions.Add(nameof(_userRole.EditRequisitions));
+                }
+
+                if (_userRole.ManageSubmittedCandidates)
+                {
+                    _permissions.Add(nameof(_userRole.ManageSubmittedCandidates));
+                }
+
+                if (_userRole.DownloadOriginal)
+                {
+                    _permissions.Add(nameof(_userRole.DownloadOriginal));
+                }
+
+                if (_userRole.DownloadFormatted)
+                {
+                    _permissions.Add(nameof(_userRole.DownloadFormatted));
+                }
+
+                if (_userRole.AdminScreens)
+                {
+                    _permissions.Add(nameof(_userRole.AdminScreens));
+                }
 
                 return Ok(GenerateToken(userName, _permissions, _userRole.RoleName));
             }
@@ -153,11 +222,7 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
         catch (Exception ex)
         {
             Log.Error(ex, "Error logging in. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
+            return StatusCode(500, "An unexpected error occurred during login.");
         }
 
         return BadRequest("Invalid Credentials");

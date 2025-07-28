@@ -7,9 +7,15 @@
 // Project:             Subscription.Server
 // File Name:           Templates.razor.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          05-03-2025 16:05
-// Last Updated On:     05-03-2025 19:59
+// Created On:          07-11-2025 19:07
+// Last Updated On:     07-28-2025 19:47
 // *****************************************/
+
+#endregion
+
+#region Using
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 #endregion
 
@@ -43,6 +49,8 @@ public partial class Templates : ComponentBase
 
     private string TemplateAuto { get; set; }
 
+    private TemplateDialog TemplateDialog { get; set; }
+
     private AppTemplate TemplateRecord { get; set; } = new();
 
     private AppTemplate TemplateRecordClone { get; set; } = new();
@@ -52,8 +60,6 @@ public partial class Templates : ComponentBase
     private string User { get; set; }
 
     private bool VisibleSpinner { get; set; }
-
-    private TemplateDialog TemplateDialog { get; set; }
 
     private async Task DataBound(object arg)
     {
@@ -180,9 +186,31 @@ public partial class Templates : ComponentBase
 
     private Task SaveTemplate() => ExecuteMethod(async () =>
                                                  {
-                                                     DataSource = await General.SaveEntityAndRefreshAsync<AppTemplate, AppTemplate>("Admin/SaveTemplate", "Admin_SaveTemplate", "Template",
-                                                                                                                                    nameof(CacheObjects.Templates), TemplateRecordClone,
-                                                                                                                                    record => TemplateRecord = record.Copy(), RefreshGrid); //()
+                                                     Dictionary<string, string> parameters = new(5)
+                                                                                             {
+                                                                                                 ["methodName"] = "Admin_SaveTemplate",
+                                                                                                 ["parameterName"] = "Template",
+                                                                                                 ["containDescription"] = "false",
+                                                                                                 ["isString"] = "false",
+                                                                                                 ["cacheName"] = nameof(CacheObjects.Templates)
+                                                                                             };
+
+                                                     string response = await General.ExecuteRest<string>("Admin/SaveTemplate", parameters, TemplateRecordClone);
+
+                                                     if (TemplateRecordClone is not null)
+                                                     {
+                                                         TemplateRecord = TemplateRecordClone.Copy(); // e.g., assign to main record
+                                                     }
+
+                                                     if (response.NotNullOrWhiteSpace() && response != "[]")
+                                                     {
+                                                         DataSource = JsonSerializer.Deserialize(response, JsonContext.Default.ListAppTemplate) ?? [];
+                                                     }
+                                                     else
+                                                     {
+                                                         DataSource = [];
+                                                     }
+
                                                      await RefreshGrid();
                                                  });
 
@@ -222,7 +250,7 @@ public partial class Templates : ComponentBase
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  await FilterSet("");
-                                                                                 DataSource = General.DeserializeObject<List<AppTemplate>>(_response);
+                                                                                 DataSource = JsonSerializer.Deserialize(_response, JsonContext.Default.ListAppTemplate) ?? [];
                                                                              }
                                                                          }
                                                                      });

@@ -21,9 +21,6 @@ public class DashboardController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<ReturnDashboard>> GetDashboard(string roleName, string user)
     {
-        /*Stopwatch _stopwatch = Stopwatch.StartNew();
-        _stopwatch.Reset();
-        _stopwatch.Start();*/
         await using SqlConnection _connection = new(Start.ConnectionString);
         string _procedureName = roleName switch
                                 {
@@ -44,54 +41,19 @@ public class DashboardController : ControllerBase
             await _connection.OpenAsync();
             await using SqlDataReader _reader = await _command.ExecuteReaderAsync();
 
-            string _users = "[]", _consolidatedMetrics = "[]", _recentActivity = "[]", _placements = "[]", _requisitionTimingAnalytics = "[]", _companyTimingAnalytics = "[]";
-            // Optimized: Using if instead of while since exactly 1 row is returned
-            if (await _reader.ReadAsync())
-            {
-                _users = _reader.NString(0);
-            }
-
+            string _users = await ReadNextResultAsync(_reader);
             await _reader.NextResultAsync();
-
-            // Optimized: Using if instead of while since exactly 1 row is returned
-            if (await _reader.ReadAsync())
-            {
-                _consolidatedMetrics = _reader.NString(0);
-            }
-
+            string _consolidatedMetrics = await ReadNextResultAsync(_reader);
             await _reader.NextResultAsync();
-            // Optimized: Using if instead of while since exactly 1 row is returned
-            if (await _reader.ReadAsync())
-            {
-                _recentActivity = _reader.NString(0);
-            }
-
+            string _recentActivity = await ReadNextResultAsync(_reader);
             await _reader.NextResultAsync();
-            // Optimized: Using if instead of while since exactly 1 row is returned
-            if (await _reader.ReadAsync())
-            {
-                _placements = _reader.NString(0);
-            }
-
+            string _placements = await ReadNextResultAsync(_reader);
             await _reader.NextResultAsync();
-            // Optimized: Using if instead of while since exactly 1 row is returned
-            if (await _reader.ReadAsync())
-            {
-                _requisitionTimingAnalytics = _reader.NString(0);
-            }
-
+            string _requisitionTimingAnalytics = await ReadNextResultAsync(_reader);
             await _reader.NextResultAsync();
-            // Optimized: Using if instead of while since exactly 1 row is returned
-            if (await _reader.ReadAsync())
-            {
-                _companyTimingAnalytics = _reader.NString(0);
-            }
+            string _companyTimingAnalytics = await ReadNextResultAsync(_reader);
 
             // Removed: _reader.CloseAsync() is unnecessary with await using pattern
-
-            /*_stopwatch.Stop();
-            await System.IO.File.AppendAllTextAsync(@"C:\Logs\ZipLog.txt", $"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");
-            //await File.WriteAllTextAsync(@"C:\Logs\ZipLog.txt", $"Elapsed time: {_stopwatch.ElapsedMilliseconds} ms\n");*/
 
             return Ok(new ReturnDashboard
                       {
@@ -102,15 +64,20 @@ public class DashboardController : ControllerBase
                           RequisitionTimingAnalytics = _requisitionTimingAnalytics,
                           CompanyTimingAnalytics = _companyTimingAnalytics
                       });
+
+            async Task<string> ReadNextResultAsync(SqlDataReader reader)
+            {
+                if (await reader.ReadAsync())
+                {
+                    return reader.NString(0);
+                }
+                return "[]";
+            }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error fetching dashboard data. {ExceptionMessage}", ex.Message);
-            return StatusCode(500, ex.Message);
-        }
-        finally
-        {
-            await _connection.CloseAsync();
+            return StatusCode(500, "An error occurred while fetching dashboard data.");
         }
     }
 }

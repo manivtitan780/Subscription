@@ -10,9 +10,9 @@
 <SfDialog CssClass="dialogPopup dialogTimeline" CloseOnEscape="true" Header="Submission Timeline" Height="400px" IsModal="true" MinHeight="400px" @ref="Dialog" Target="#divTarget" Visible="false" Width="800px">
     <ChildContent>
         <SfSpinner @bind-Visible="VisibleSpinner" CssClass="spinnerHeight" Type="SpinnerType.Fluent2" ZIndex="12000"/>
-        <DialogPositionData X="center" Y="center"/>
-        <DialogAnimationSettings Duration="500" Effect="DialogEffect.FadeZoom"/>
-        <DialogEvents OnOpen="OpenDialog"></DialogEvents>
+        <DialogPositionData X="center" Y="center" />
+        <DialogAnimationSettings Duration="500" Effect="DialogEffect.FadeZoom" />
+        <DialogEvents OnOpen="OpenDialog" OnOverlayModalClick="DismissDialog"/>
             @if (Model is {Length: > 0})
             {
                 <SfTimeline CssClass="custom-timeline">

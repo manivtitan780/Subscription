@@ -174,7 +174,7 @@ public partial class CandidateController
     {
         if (candidateDetailsResume?.CandidateDetails == null || candidateDetailsResume.ParsedCandidate == null)
         {
-            return NotFound(-1);
+            return BadRequest("Candidate details and parsed resume cannot be null.");
         }
 
         string _internalFileName = Guid.NewGuid().ToString("N");
@@ -326,17 +326,17 @@ public partial class CandidateController
     }
 
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveMPC(CandidateRatingMPC mpc, string user)
+    public async Task<ActionResult<Dictionary<string, object>>> SaveMPC(CandidateRatingMPC mpc, string user)
     {
         try
         {
             if (mpc == null)
             {
-                return new(2)
+                return Ok(new Dictionary<string, object>(2)
                        {
                            {"MPCList", "[]"},
                            {"FirstMPC", null}
-                       };
+                       });
             }
 
             // Memory optimization: Use existing ExecuteScalarAsync helper instead of direct SQL management
@@ -353,21 +353,21 @@ public partial class CandidateController
             // Memory optimization: Use System.Text.Json for processing
             if (_mpcNotes.NullOrWhiteSpace())
             {
-                return new(2)
+                return Ok(new Dictionary<string, object>(2)
                        {
                            {"MPCList", "[]"},
                            {"FirstMPC", mpc}
-                       };
+                       });
             }
 
-            List<CandidateMPC> mpcList = JsonSerializer.Deserialize<List<CandidateMPC>>(_mpcNotes) ?? [];
+            List<CandidateMPC> mpcList = JsonSerializer.Deserialize<List<CandidateMPC>>(_mpcNotes, JsonContext.Default.ListCandidateMPC) ?? [];
             if (mpcList.Count == 0)
             {
-                return new(2)
+                return Ok(new Dictionary<string, object>(2)
                        {
                            {"MPCList", "[]"},
                            {"FirstMPC", mpc}
-                       };
+                       });
             }
 
             List<CandidateMPC> sortedList = mpcList.OrderByDescending(x => x.DateTime).ToList();
@@ -375,20 +375,16 @@ public partial class CandidateController
             mpc.MPC = firstMPC.MPC;
             mpc.MPCComments = firstMPC.Comment;
 
-            return new(2)
+            return Ok(new Dictionary<string, object>(2)
                    {
                        {"MPCList", JsonSerializer.Serialize(sortedList)},
                        {"FirstMPC", mpc}
-                   };
+                   });
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving MPC. {ExceptionMessage}", ex.Message);
-            return new(2)
-                   {
-                       {"MPCList", "[]"},
-                       {"FirstMPC", mpc}
-                   };
+            return StatusCode(500, "An unexpected error occurred while saving MPC data.");
         }
     }
 
@@ -412,17 +408,17 @@ public partial class CandidateController
     }
 
     [HttpPost]
-    public async Task<Dictionary<string, object>> SaveRating(CandidateRatingMPC rating, string user)
+    public async Task<ActionResult<Dictionary<string, object>>> SaveRating(CandidateRatingMPC rating, string user)
     {
         try
         {
             if (rating == null)
             {
-                return new()
+                return Ok(new Dictionary<string, object>
                        {
                            {"RatingList", "[]"},
                            {"FirstRating", null}
-                       };
+                       });
             }
 
             // Memory optimization: Use existing ExecuteScalarAsync helper instead of direct SQL management
@@ -439,21 +435,21 @@ public partial class CandidateController
             // Memory optimization: Use System.Text.Json for processing
             if (_ratingNotes.NullOrWhiteSpace())
             {
-                return new()
+                return Ok(new Dictionary<string, object>
                        {
                            {"RatingList", "[]"},
                            {"FirstRating", rating}
-                       };
+                       });
             }
 
-            List<CandidateRating> ratingList = JsonSerializer.Deserialize<List<CandidateRating>>(_ratingNotes) ?? [];
+            List<CandidateRating> ratingList = JsonSerializer.Deserialize<List<CandidateRating>>(_ratingNotes, JsonContext.Default.ListCandidateRating) ?? [];
             if (ratingList.Count == 0)
             {
-                return new()
+                return Ok(new Dictionary<string, object>
                        {
                            {"RatingList", "[]"},
                            {"FirstRating", rating}
-                       };
+                       });
             }
 
             List<CandidateRating> sortedList = ratingList.OrderByDescending(x => x.DateTime).ToList();
@@ -461,20 +457,16 @@ public partial class CandidateController
             rating.Rating = firstRating.Rating;
             rating.RatingComments = firstRating.Comment;
 
-            return new()
+            return Ok(new Dictionary<string, object>
                    {
                        {"RatingList", JsonSerializer.Serialize(sortedList)},
                        {"FirstRating", rating}
-                   };
+                   });
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Error saving rating. {ExceptionMessage}", ex.Message);
-            return new()
-                   {
-                       {"RatingList", "[]"},
-                       {"FirstRating", rating}
-                   };
+            return StatusCode(500, "An unexpected error occurred while saving rating data.");
         }
     }
 

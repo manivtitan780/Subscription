@@ -60,12 +60,6 @@ public partial class Login
                 await SessionStorage.SetItemAsync("PageState", _response);
             }
 
-            //JwtSecurityTokenHandler handler = new();
-            //JwtSecurityToken jwtToken = handler.ReadJwtToken(_response);
-            //IEnumerable<Claim> claim = jwtToken.Claims;
-            //string userName = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-            //bool hasPermission = jwtToken.Claims.Any(c => c.Type == "Permission" && c.Value == "ViewAllCompanies");
-
             NavigationManager.NavigateTo($"{NavigationManager.BaseUri}company");
         }
     }

@@ -8,7 +8,7 @@
 // File Name:           CandidateController.Gets.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
 // Created On:          07-16-2025 19:07
-// Last Updated On:     07-27-2025 18:41
+// Last Updated On:     07-28-2025 19:15
 // *****************************************/
 
 #endregion
@@ -146,15 +146,13 @@ public partial class CandidateController
                                                                          // Memory optimization: Deserialize MPC data using System.Text.Json if available
                                                                          if (_candMPC.NotNullOrWhiteSpace())
                                                                          {
-                                                                             List<CandidateMPC> _allMPC = JsonSerializer.Deserialize<List<CandidateMPC>>(_candMPC) ?? [];
-                                                                             _mpcList = _allMPC.OrderByDescending(x => x.DateTime).ToList();
+                                                                             _mpcList = (JsonSerializer.Deserialize(_candMPC, JsonContext.Default.ListCandidateMPC) ?? []).OrderByDescending(x => x.DateTime).ToList();
                                                                          }
 
                                                                          // Memory optimization: Deserialize Rating data using System.Text.Json if available
                                                                          if (_candRating.NotNullOrWhiteSpace())
                                                                          {
-                                                                             List<CandidateRating> _allRating = JsonSerializer.Deserialize<List<CandidateRating>>(_candRating) ?? [];
-                                                                             _ratingList = _allRating.OrderByDescending(x => x.DateTime).ToList();
+                                                                             _ratingList = (JsonSerializer.Deserialize(_candRating, JsonContext.Default.ListCandidateRating) ?? []).OrderByDescending(x => x.DateTime).ToList();
                                                                          }
 
                                                                          // Set the latest Rating/MPC for the combined object with null safety
@@ -162,27 +160,31 @@ public partial class CandidateController
                                                                          CandidateRating _latestRating = _ratingList.FirstOrDefault();
 
                                                                          _ratingMPC = new()
-                                                                                     {
-                                                                                         ID = candidateID,
-                                                                                         Rating = _latestRating.Rating,
-                                                                                         RatingComments = _latestRating.Comment ?? "",
-                                                                                         MPC = _latestMPC.MPC,
-                                                                                         MPCComments = _latestMPC.Comment ?? ""
-                                                                                     };
+                                                                                      {
+                                                                                          ID = candidateID,
+                                                                                          Rating = _latestRating.Rating,
+                                                                                          RatingComments = _latestRating.Comment ?? "",
+                                                                                          MPC = _latestMPC.MPC,
+                                                                                          MPCComments = _latestMPC.Comment ?? ""
+                                                                                      };
                                                                      }
                                                                      catch (Exception ex)
                                                                      {
                                                                          Log.Error(ex, "Error processing rating/MPC data for candidate {CandidateID}", candidateID);
                                                                      }
 
-                                                                     return new ReturnCandidateDetails(candidateDetails, notes, skills, education, experience,
-                                                                                                       activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
+                                                                     return new ReturnCandidateDetails(candidateDetails, notes, skills, education, experience, activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
                                                                  }, "GetCandidateDetails", "Error getting candidate details.");
     }
 
     [HttpGet]
-    public async Task<ActionResult<ReturnGrid>> GetGridCandidates([FromBody] CandidateSearch searchModel = null)
+    public async Task<ActionResult<ReturnGrid>> GetGridCandidates([FromBody] CandidateSearch searchModel)
     {
+        if (searchModel == null)
+        {
+            return BadRequest("Search model cannot be null.");
+        }
+
         return await ExecuteReaderAsync("GetCandidates", command =>
                                                          {
                                                              command.Int("RecordsPerPage", searchModel!.ItemCount);

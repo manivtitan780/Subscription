@@ -22,8 +22,8 @@ public record struct ReturnCandidateDetails(
     string Education,
     string Experience,
     string Activity,
-    List<CandidateRating> Rating,
-    List<CandidateMPC> MPC,
+    IEnumerable<CandidateRating> Rating,
+    IEnumerable<CandidateMPC> MPC,
     CandidateRatingMPC RatingMPC,
     string Documents,
     string TimeLine);

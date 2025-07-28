@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           AdminController.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-15-2025 15:07
-// Last Updated On:     07-15-2025 15:51
+// Created On:          07-15-2025 16:07
+// Last Updated On:     07-28-2025 15:40
 // *****************************************/
 
 #endregion
@@ -20,6 +20,88 @@ public class AdminController(RedisService redisService) : ControllerBase
 {
     // Adding constant for ADMIN user to reduce string allocations and improve performance
     private const string AdminUser = "ADMIN";
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckJobCode(string code, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckJobCode", command =>
+                                                                  {
+                                                                      command.Varchar("Code", 10, code);
+                                                                      command.Int("ID", id);
+                                                                  });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckJobOption(string option, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckJobOption", command =>
+                                                                    {
+                                                                        command.Varchar("Option", 50, option);
+                                                                        command.Int("ID", id);
+                                                                    });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckRole(string roleName, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckRole", command =>
+                                                               {
+                                                                   command.Varchar("RoleName", 10, roleName);
+                                                                   command.Int("ID", id);
+                                                               });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckRoleID(int roleId, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckRoleID", command =>
+                                                                 {
+                                                                     command.Int("RoleID", roleId);
+                                                                     command.Int("ID", id);
+                                                                 });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckState(string stateName, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckState", command =>
+                                                                {
+                                                                    command.Varchar("StateName", 50, stateName);
+                                                                    command.Int("ID", id);
+                                                                });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckStateCode(string code, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckStateCode", command =>
+                                                                    {
+                                                                        command.Varchar("Code", 2, code);
+                                                                        command.Int("ID", id);
+                                                                    });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckTaxTermCode(string code, int id = 0)
+    {
+        return await ExecuteValidationAsync("Admin_CheckTaxTermCode", command =>
+                                                                      {
+                                                                          command.Varchar("Code", 10, code);
+                                                                          command.Int("ID", id);
+                                                                      });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<bool>> CheckText(string text, int id = 0, string entity = "", string code = "")
+    {
+        return await ExecuteValidationAsync("Admin_CheckText", command =>
+                                                               {
+                                                                   command.Varchar("Text", 100, text);
+                                                                   command.Int("ID", id);
+                                                                   command.Varchar("Entity", 50, entity);
+                                                                   command.Varchar("Code", 10, code);
+                                                               });
+    }
 
     [HttpGet]
     public async Task<ActionResult<string>> CheckZip(string zip = "00000")
@@ -46,12 +128,33 @@ public class AdminController(RedisService redisService) : ControllerBase
             Log.Error(ex, "Error executing {logContext} query. {ExceptionMessage}", logContext, ex.Message);
             return StatusCode(500, errorMessage);
         }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
 
         return Ok(_result);
+    }
+
+    // Adding validation endpoints for future validation infrastructure
+    private async Task<ActionResult<bool>> ExecuteValidationAsync(string procedureName, Action<SqlCommand> parameterBinder)
+    {
+        await using SqlConnection _connection = new(Start.ConnectionString);
+        await using SqlCommand _command = new(procedureName, _connection);
+        _command.CommandType = CommandType.StoredProcedure;
+
+        parameterBinder(_command);
+
+        try
+        {
+            await _connection.OpenAsync();
+            object result = await _command.ExecuteScalarAsync();
+            // Correctly checks for DBNull and converts the result to a boolean.
+            // The logic is inverted because a validation success (true) means the item does NOT exist.
+            bool exists = result != null && result != DBNull.Value && Convert.ToBoolean(result);
+            return Ok(!exists);
+        }
+        catch (SqlException ex)
+        {
+            Log.Error(ex, "Error executing validation query {ProcedureName}", procedureName);
+            return StatusCode(500, "Validation check failed");
+        }
     }
 
     [HttpGet]
@@ -136,7 +239,8 @@ public class AdminController(RedisService redisService) : ControllerBase
                 _cacheValue = _reader.NString(0, "[]");
             }
 
-            if (_cacheValue.NotNullOrWhiteSpace() && _cacheValue != "[]" && cacheName.NotNullOrWhiteSpace())
+            // Update Redis cache only if a valid cache name and non-empty, non-default JSON value are present.
+            if (cacheName.NotNullOrWhiteSpace() && _cacheValue.Length > 2) // A simple check for "[]"
             {
                 await redisService.CreateAsync(cacheName, _cacheValue);
             }
@@ -145,10 +249,6 @@ public class AdminController(RedisService redisService) : ControllerBase
         {
             Log.Error(ex, "Error saving {LogContext}. {ExceptionMessage}", logContext, ex.Message);
             return StatusCode(500, $"Error saving {logContext}.");
-        }
-        finally
-        {
-            await _con.CloseAsync();
         }
 
         return Ok(_returnCode);
@@ -285,110 +385,6 @@ public class AdminController(RedisService redisService) : ControllerBase
                                                                command.Bit("AnyStage", entity.AnyStage);
                                                                command.Varchar("User", 10, AdminUser);
                                                            }, cacheName, workflow, "Workflow");
-    }
-
-    // Adding validation endpoints for future validation infrastructure
-    private async Task<ActionResult<bool>> ExecuteValidationAsync(string procedureName, Action<SqlCommand> parameterBinder)
-    {
-        await using SqlConnection _connection = new(Start.ConnectionString);
-        await using SqlCommand _command = new(procedureName, _connection);
-        _command.CommandType = CommandType.StoredProcedure;
-
-        parameterBinder(_command);
-
-        try
-        {
-            await _connection.OpenAsync();
-            var result = await _command.ExecuteScalarAsync();
-            return Ok(result is bool exists && !exists);
-        }
-        catch (SqlException ex)
-        {
-            Log.Error(ex, "Error executing validation query {ProcedureName}", procedureName);
-            return StatusCode(500, "Validation check failed");
-        }
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckText(string text, int id = 0, string entity = "", string code = "")
-    {
-        return await ExecuteValidationAsync("Admin_CheckText", command =>
-        {
-            command.Varchar("Text", 100, text);
-            command.Int("ID", id);
-            command.Varchar("Entity", 50, entity);
-            command.Varchar("Code", 10, code);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckTaxTermCode(string code, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckTaxTermCode", command =>
-        {
-            command.Varchar("Code", 10, code);
-            command.Int("ID", id);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckJobCode(string code, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckJobCode", command =>
-        {
-            command.Varchar("Code", 10, code);
-            command.Int("ID", id);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckJobOption(string option, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckJobOption", command =>
-        {
-            command.Varchar("Option", 50, option);
-            command.Int("ID", id);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckRoleID(int roleId, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckRoleID", command =>
-        {
-            command.Int("RoleID", roleId);
-            command.Int("ID", id);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckRole(string roleName, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckRole", command =>
-        {
-            command.Varchar("RoleName", 10, roleName);
-            command.Int("ID", id);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckStateCode(string code, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckStateCode", command =>
-        {
-            command.Varchar("Code", 2, code);
-            command.Int("ID", id);
-        });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<bool>> CheckState(string stateName, int id = 0)
-    {
-        return await ExecuteValidationAsync("Admin_CheckState", command =>
-        {
-            command.Varchar("StateName", 50, stateName);
-            command.Int("ID", id);
-        });
     }
 
     [HttpPost]

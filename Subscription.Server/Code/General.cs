@@ -7,33 +7,59 @@
 // Project:             Subscription.Server
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          02-06-2025 19:02
-// Last Updated On:     05-03-2025 19:32
+// Created On:          07-22-2025 21:07
+// Last Updated On:     07-28-2025 19:32
 // *****************************************/
 
 #endregion
 
-using Serilog;
+#region Using
 
 using JsonSerializer = System.Text.Json.JsonSerializer;
+
+#endregion
 
 namespace Subscription.Server.Code;
 
 public class General //(Container container)
 {
     // private Container _container = container;
-    
+
     // Dynamic RestClient creation using current Start.APIHost (set by middleware based on request context)
     // This allows proper localhost vs server detection per request
 
     // Standardized JsonSerializerOptions for consistent case-insensitive JSON handling across the application
     internal static readonly JsonSerializerOptions JsonOptions = new()
+                                                                 {
+                                                                     PropertyNameCaseInsensitive = true,
+                                                                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                                                                     ReadCommentHandling = JsonCommentHandling.Skip,
+                                                                     AllowTrailingCommas = true
+                                                                 };
+
+    // Updated to use System.Text.Json with case-insensitive options for better performance
+    /// <summary>
+    ///     Deserializes a JSON string to an object of a specified type using System.Text.Json.
+    /// </summary>
+    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
+    /// <param name="array">The JSON string representing the object to be deserialized.</param>
+    /// <param name="checkForNullOrEmptyArray">Should check if array converted to string is null/empty/whitespace or an empty json array.</param>
+    /// <returns>The deserialized object of type T.</returns>
+    internal static T DeserializeObject<T>(object array, bool checkForNullOrEmptyArray = true)
     {
-        PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-        AllowTrailingCommas = true
-    };
+        if (!checkForNullOrEmptyArray)
+        {
+            return JsonSerializer.Deserialize<T>(array?.ToString() ?? "", JsonOptions);
+        }
+
+        string _stringArray = array?.ToString() ?? "";
+        if (_stringArray.NotNullOrWhiteSpace() && _stringArray != "[]")
+        {
+            return JsonSerializer.Deserialize<T>(_stringArray, JsonOptions);
+        }
+
+        return default;
+    }
 
     // public General() : this(null)
     // {
@@ -98,28 +124,6 @@ public class General //(Container container)
     }*/
 
     // Updated to use System.Text.Json with case-insensitive options for better performance
-    /// <summary>
-    ///     Deserializes a JSON string to an object of a specified type using System.Text.Json.
-    /// </summary>
-    /// <typeparam name="T">The type of object to deserialize to.</typeparam>
-    /// <param name="array">The JSON string representing the object to be deserialized.</param>
-    /// <param name="checkForNullOrEmptyArray">Should check if array converted to string is null/empty/whitespace or an empty json array.</param>
-    /// <returns>The deserialized object of type T.</returns>
-    internal static T DeserializeObject<T>(object array, bool checkForNullOrEmptyArray = true)
-    {
-        if (!checkForNullOrEmptyArray)
-        {
-            return JsonSerializer.Deserialize<T>(array?.ToString() ?? "", JsonOptions);
-        }
-
-        string _stringArray = array?.ToString() ?? "";
-        if (_stringArray.NotNullOrWhiteSpace() && _stringArray != "[]")
-        {
-            return JsonSerializer.Deserialize<T>(_stringArray, JsonOptions);
-        }
-
-        return default;
-    }
 
     /// <summary>
     ///     Creates and returns a DialogOptions object with the specified content text.
@@ -159,6 +163,18 @@ public class General //(Container container)
         {
             //
         }
+    }
+
+    public static async Task<List<T>> ExecuteAndDeserialize<T>(string endpoint, Dictionary<string, string> parameters)
+    {
+        string _response = await ExecuteRest<string>(endpoint, parameters);
+
+        if (_response.NotNullOrWhiteSpace() && _response != "[]")
+        {
+            return DeserializeObject<List<T>>(_response);
+        }
+
+        return [];
     }
 
     /// <summary>
@@ -244,18 +260,6 @@ public class General //(Container container)
         return response!.IsSuccessful ? response.Data : default;
     }
 
-    public static async Task<List<T>> ExecuteAndDeserialize<T>(string endpoint, Dictionary<string, string> parameters)
-    {
-        string _response = await ExecuteRest<string>(endpoint, parameters);
-
-        if (_response.NotNullOrWhiteSpace() && _response != "[]")
-        {
-            return DeserializeObject<List<T>>(_response);
-        }
-
-        return [];
-    }
-
     internal static async Task<object> GetAutocompleteAsync(string endpoint, DataManagerRequest dm, string methodName = "", string paramName = "")
     {
         List<KeyValues> _dataSource = [];
@@ -286,7 +290,7 @@ public class General //(Container container)
             // Updated to use System.Text.Json with standardized options
             if (_response.NotNullOrWhiteSpace() && _response != "[]")
             {
-                _dataSource = JsonSerializer.Deserialize<List<KeyValues>>(_response, JsonOptions);
+                _dataSource = JsonSerializer.Deserialize(_response, JsonContext.Default.ListKeyValues);
             }
 
             int _count = _dataSource.Count;
@@ -323,9 +327,8 @@ public class General //(Container container)
         _response = _response?.Replace("\"", "");
         JwtSecurityTokenHandler handler = new();
         JwtSecurityToken jwtToken = handler.ReadJwtToken(_response);
-        IEnumerable<Claim> _claims = jwtToken.Claims.ToList();
-
-        return _claims;
+        return jwtToken.Claims;
+        //return _claims;
     }
 
     /*/// <summary>
@@ -353,7 +356,7 @@ public class General //(Container container)
             Dictionary<string, string> _parameters = new(4)
                                                      {
                                                          ["getCompanyInformation"] = dm.Params["GetInformation"].ToString(),
-                                                         
+
                                                          {"getCompanyInformation", dm.Params["GetInformation"].ToString()},
                                                          {"requisitionID", dm.Params["RequisitionID"].ToString()},
                                                          {"thenProceed", thenProceed.ToString()},
@@ -493,7 +496,7 @@ public class General //(Container container)
         string response = await ExecuteRest<string>("Admin/GetAdminList", parameters, null, false);
 
         // Updated to use System.Text.Json with standardized options
-        List<T> result = JsonSerializer.Deserialize<List<T>>(response, JsonOptions);
+        List<T> result = DeserializeObject<List<T>>(response);
 
         return result;
     }
@@ -516,8 +519,7 @@ public class General //(Container container)
     ///     All key-value pairs in the parameters dictionary are added as query parameters to the request.
     /// </remarks>
     internal static Task<Dictionary<string, object>> PostRest(string endpoint, Dictionary<string, string> parameters, object jsonBody = null, byte[] fileArray = null, string fileName = "",
-                                                              string parameterName = "file") =>
-        PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
+                                                              string parameterName = "file") => PostRest<Dictionary<string, object>>(endpoint, parameters, jsonBody, fileArray, fileName, parameterName);
 
     /// <summary>
     ///     Sends a POST request to the specified endpoint with the provided parameters and JSON body.
@@ -625,31 +627,5 @@ public class General //(Container container)
         return _memBytes;
     }
 
-    public static async Task<List<T>> SaveEntityAndRefreshAsync<TRecord, T>(string apiUrl, string methodName, string parameterName, string cacheName, TRecord recordClone,
-                                                                            Action<TRecord> updateOriginalRecord, Func<Task> clearFilterCallback)
-    {
-        Dictionary<string, string> parameters = new(5)
-                                                {
-                                                    ["methodName"] = methodName,
-                                                    ["parameterName"] = parameterName,
-                                                    ["containDescription"] = "false",
-                                                    ["isString"] = "false",
-                                                    ["cacheName"] = cacheName
-                                                };
-
-        string response = await ExecuteRest<string>(apiUrl, parameters, recordClone);
-
-        if (recordClone is not null)
-        {
-            updateOriginalRecord(recordClone); // e.g., assign to main record
-        }
-
-        if (response.NullOrWhiteSpace() || response == "[]")
-        {
-            return [];
-        }
-
-        await clearFilterCallback.Invoke();
-        return DeserializeObject<List<T>>(response);
-    }
+    
 }

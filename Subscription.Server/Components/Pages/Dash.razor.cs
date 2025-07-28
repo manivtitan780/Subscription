@@ -13,6 +13,9 @@
 
 #endregion
 
+using Subscription.Model;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 namespace Subscription.Server.Components.Pages;
 
 public partial class Dash
@@ -173,7 +176,7 @@ public partial class Dash
             _response = await General.ExecuteRest<ReturnDashboard>("Dashboard/GetDashboard", _parameters, null, false);
 
             // Parse Users
-            List<Dictionary<string, string>> users = General.DeserializeObject<List<Dictionary<string, string>>>(_response.Users);
+            List<Dictionary<string, string>> users = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(_response.Users, JsonContext.Default.ListDictionaryStringString) ?? [];
             _usersList = users.Select(u => new UserItem {KeyValue = u["KeyValue"], Text = u["Text"]}).ToList();
 
             // Deserialize all data into strongly typed objects - Parallelized for performance (60-70% execution time reduction)
@@ -186,11 +189,11 @@ public partial class Dash
             
             // Parallel deserialization with proper thread safety for consistency across codebase
             Task[] dashboardDeserializationTasks = [
-                Task.Run(() => _consolidatedMetricsData = General.DeserializeObject<List<ConsolidatedMetrics>>(_response.ConsolidatedMetrics) ?? []),
-                Task.Run(() => _recentActivityData = General.DeserializeObject<List<RecentActivityItem>>(_response.RecentActivity) ?? []),
-                Task.Run(() => _hiredPlacementsData = General.DeserializeObject<List<HiredPlacement>>(_response.Placements) ?? []),
-                Task.Run(() => _requisitionTimingData = General.DeserializeObject<List<RequisitionTimingAnalytics>>(_response.RequisitionTimingAnalytics) ?? []),
-                Task.Run(() => _companyTimingData = General.DeserializeObject<List<CompanyTimingAnalytics>>(_response.CompanyTimingAnalytics) ?? [])
+                Task.Run(() => _consolidatedMetricsData = JsonSerializer.Deserialize<List<ConsolidatedMetrics>>(_response.ConsolidatedMetrics, JsonContext.Default.ListConsolidatedMetrics) ?? []),
+                Task.Run(() => _recentActivityData = JsonSerializer.Deserialize<List<RecentActivityItem>>(_response.RecentActivity, JsonContext.Default.ListRecentActivityItem) ?? []),
+                Task.Run(() => _hiredPlacementsData = JsonSerializer.Deserialize<List<HiredPlacement>>(_response.Placements, JsonContext.Default.ListHiredPlacement) ?? []),
+                Task.Run(() => _requisitionTimingData = JsonSerializer.Deserialize<List<RequisitionTimingAnalytics>>(_response.RequisitionTimingAnalytics, JsonContext.Default.ListRequisitionTimingAnalytics) ?? []),
+                Task.Run(() => _companyTimingData = JsonSerializer.Deserialize<List<CompanyTimingAnalytics>>(_response.CompanyTimingAnalytics, JsonContext.Default.ListCompanyTimingAnalytics) ?? [])
             ];
             await Task.WhenAll(dashboardDeserializationTasks);
             
