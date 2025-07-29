@@ -10,9 +10,9 @@
     </PropertyGroup>
 
     <PropertyGroup>
-<!--        <PublishAot>true</PublishAot>-->
-<!--        <PublishReadyToRun>true</PublishReadyToRun>-->
-<!--        <PublishTrimmed>true</PublishTrimmed>-->
+        <!--<PublishAot>true</PublishAot>-->
+        <!--<PublishReadyToRun>true</PublishReadyToRun>-->
+        <!--<PublishTrimmed>true</PublishTrimmed>-->
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>disable</Nullable>
         <JsonSerializerIsSourceGenerated>true</JsonSerializerIsSourceGenerated>

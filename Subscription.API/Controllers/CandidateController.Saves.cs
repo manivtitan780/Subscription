@@ -360,7 +360,7 @@ public partial class CandidateController
                        });
             }
 
-            List<CandidateMPC> mpcList = JsonSerializer.Deserialize<List<CandidateMPC>>(_mpcNotes, JsonContext.Default.ListCandidateMPC) ?? [];
+            List<CandidateMPC> mpcList = JsonSerializer.Deserialize(_mpcNotes, JsonContext.Default.ListCandidateMPC) ?? [];
             if (mpcList.Count == 0)
             {
                 return Ok(new Dictionary<string, object>(2)
@@ -442,7 +442,7 @@ public partial class CandidateController
                        });
             }
 
-            List<CandidateRating> ratingList = JsonSerializer.Deserialize<List<CandidateRating>>(_ratingNotes, JsonContext.Default.ListCandidateRating) ?? [];
+            List<CandidateRating> ratingList = JsonSerializer.Deserialize(_ratingNotes, JsonContext.Default.ListCandidateRating) ?? [];
             if (ratingList.Count == 0)
             {
                 return Ok(new Dictionary<string, object>
