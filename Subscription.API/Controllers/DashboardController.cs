@@ -67,11 +67,7 @@ public class DashboardController : ControllerBase
 
             async Task<string> ReadNextResultAsync(SqlDataReader reader)
             {
-                if (await reader.ReadAsync())
-                {
-                    return reader.NString(0);
-                }
-                return "[]";
+                return await reader.ReadAsync() ? reader.NString(0) : "[]";
             }
         }
         catch (Exception ex)

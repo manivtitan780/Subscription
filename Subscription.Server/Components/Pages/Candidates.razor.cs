@@ -396,8 +396,8 @@ public partial class Candidates : IDisposable
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteCandidateDocument", _parameters);
 
                                                               // Array deserialization: Converting to CandidateDocument[] for memory optimization
-                                                              //_candDocumentsObject = JsonSerializer.Deserialize<CandidateDocument[]>(_response, JsonContext.Default.CandidateDocumentArray) ?? [];
-                                                              _candDocumentsObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateDocumentArray) ?? [];
+                                                              //_candDocumentsObject = JsonSerializer.Deserialize<CandidateDocument[]>(_response, JsonContext.CaseInsensitive.CandidateDocumentArray) ?? [];
+                                                              _candDocumentsObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateDocumentArray) ?? [];
                                                           });
 
     private Task DeleteEducation(int id) => ExecuteMethod(async () =>
@@ -406,7 +406,7 @@ public partial class Candidates : IDisposable
                                                               string _response = await General.ExecuteRest<string>("Candidate/DeleteEducation", CreateParameters(id));
 
                                                               // Array deserialization: Converting to CandidateEducation[] for memory optimization
-                                                              _candEducationObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateEducationArray) ?? [];
+                                                              _candEducationObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateEducationArray) ?? [];
                                                           });
 
     private Task DeleteExperience(int id) => ExecuteMethod(async () =>
@@ -415,7 +415,7 @@ public partial class Candidates : IDisposable
                                                                string _response = await General.ExecuteRest<string>("Candidate/DeleteExperience", CreateParameters(id));
 
                                                                // Array deserialization: Converting to CandidateExperience[] for memory optimization
-                                                               _candExperienceObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateExperienceArray) ?? [];
+                                                               _candExperienceObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateExperienceArray) ?? [];
                                                            });
 
     private Task DeleteNotes(int id) => ExecuteMethod(async () =>
@@ -424,7 +424,7 @@ public partial class Candidates : IDisposable
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteNotes", CreateParameters(id));
 
                                                           // Array deserialization: Converting to CandidateNotes[] for memory optimization
-                                                          _candidateNotesObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateNotesArray) ?? [];
+                                                          _candidateNotesObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateNotesArray) ?? [];
                                                       });
 
     private Task DeleteSkill(int id) => ExecuteMethod(async () =>
@@ -433,7 +433,7 @@ public partial class Candidates : IDisposable
                                                           string _response = await General.ExecuteRest<string>("Candidate/DeleteSkill", CreateParameters(id));
 
                                                           // Array deserialization: Converting to CandidateSkills[] for memory optimization
-                                                          _candSkillsObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateSkillsArray) ?? [];
+                                                          _candSkillsObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateSkillsArray) ?? [];
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Candidate> candidate)
@@ -466,14 +466,14 @@ public partial class Candidates : IDisposable
                                  // Parallel deserialization with proper thread safety (await ensures completion before UI methods)
                                  Task[] deserializationTasks =
                                  [
-                                     Task.Run(() => _candDetailsObject = JsonSerializer.Deserialize(_candidate, JsonContext.Default.CandidateDetails) ?? new()),
-                                     Task.Run(() => _candSkillsObject = JsonSerializer.Deserialize(_skills, JsonContext.Default.CandidateSkillsArray) ?? []),
-                                     Task.Run(() => _candEducationObject = JsonSerializer.Deserialize(_education, JsonContext.Default.CandidateEducationArray) ?? []),
-                                     Task.Run(() => _candExperienceObject = JsonSerializer.Deserialize(_s, JsonContext.Default.CandidateExperienceArray) ?? []),
-                                     Task.Run(() => _candidateNotesObject = JsonSerializer.Deserialize(_notes, JsonContext.Default.CandidateNotesArray) ?? []),
-                                     Task.Run(() => _candDocumentsObject = JsonSerializer.Deserialize(_documents, JsonContext.Default.CandidateDocumentArray) ?? []),
-                                     Task.Run(() => _candActivityObject = JsonSerializer.Deserialize(_activity, JsonContext.Default.CandidateActivityArray) ?? []),
-                                     Task.Run(() => _timelineActivityObject = JsonSerializer.Deserialize(_timelineCandidate, JsonContext.Default.SubmissionTimelineArray) ?? [])
+                                     Task.Run(() => _candDetailsObject = JsonSerializer.Deserialize(_candidate, JsonContext.CaseInsensitive.CandidateDetails) ?? new()),
+                                     Task.Run(() => _candSkillsObject = JsonSerializer.Deserialize(_skills, JsonContext.CaseInsensitive.CandidateSkillsArray) ?? []),
+                                     Task.Run(() => _candEducationObject = JsonSerializer.Deserialize(_education, JsonContext.CaseInsensitive.CandidateEducationArray) ?? []),
+                                     Task.Run(() => _candExperienceObject = JsonSerializer.Deserialize(_s, JsonContext.CaseInsensitive.CandidateExperienceArray) ?? []),
+                                     Task.Run(() => _candidateNotesObject = JsonSerializer.Deserialize(_notes, JsonContext.CaseInsensitive.CandidateNotesArray) ?? []),
+                                     Task.Run(() => _candDocumentsObject = JsonSerializer.Deserialize(_documents, JsonContext.CaseInsensitive.CandidateDocumentArray) ?? []),
+                                     Task.Run(() => _candActivityObject = JsonSerializer.Deserialize(_activity, JsonContext.CaseInsensitive.CandidateActivityArray) ?? []),
+                                     Task.Run(() => _timelineActivityObject = JsonSerializer.Deserialize(_timelineCandidate, JsonContext.CaseInsensitive.SubmissionTimelineArray) ?? [])
                                  ];
                                  await Task.WhenAll(deserializationTasks);
 
@@ -754,7 +754,7 @@ public partial class Candidates : IDisposable
 
                                                                           if (_restResponse != null && _restResponse != "[]")
                                                                           {
-                                                                              DocumentDetails _response = JsonSerializer.Deserialize(_restResponse, JsonContext.Default.DocumentDetails);
+                                                                              DocumentDetails _response = JsonSerializer.Deserialize(_restResponse, JsonContext.CaseInsensitive.DocumentDetails);
                                                                               try
                                                                               {
                                                                                   // Bug fix: Dynamic resume title based on resumeType parameter
@@ -798,7 +798,7 @@ public partial class Candidates : IDisposable
                 if (await SessionStorage.ContainKeyAsync(StorageName))
                 {
                     //SearchModel = await SessionStorage.GetItemAsync<CandidateSearch>(StorageName).ConfigureAwait(false);
-                    SearchModel = JsonSerializer.Deserialize(await SessionStorage.GetItemAsStringAsync(StorageName), JsonContext.Default.CandidateSearch) ?? new();
+                    SearchModel = JsonSerializer.Deserialize(await SessionStorage.GetItemAsStringAsync(StorageName), JsonContext.CaseInsensitive.CandidateSearch) ?? new();
                 }
                 else
                 {
@@ -884,15 +884,15 @@ public partial class Candidates : IDisposable
                                 // Parallel deserialization with proper thread safety for consistent pattern across codebase
                                 Task[] cacheDeserializationTasks =
                                 [
-                                    Task.Run(() => _states = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.States)], JsonContext.Default.StateCacheArray) ?? []),
-                                    Task.Run(() => _eligibility = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Eligibility)], JsonContext.Default.IntValuesArray) ?? []),
-                                    Task.Run(() => _experience = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Experience)], JsonContext.Default.ListIntValues) ?? []),
-                                    Task.Run(() => _taxTerms = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.TaxTerms)], JsonContext.Default.ListKeyValues) ?? []),
-                                    Task.Run(() => _jobOptions = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.JobOptions)], JsonContext.Default.KeyValuesArray) ?? []),
-                                    Task.Run(() => _statusCodes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.StatusCodes)], JsonContext.Default.ListStatusCode) ?? []),
-                                    Task.Run(() => _workflow = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Workflow)], JsonContext.Default.ListWorkflow) ?? []),
-                                    Task.Run(() => _communication = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Communications)], JsonContext.Default.ListKeyValues) ?? []),
-                                    Task.Run(() => _documentTypes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.DocumentTypes)], JsonContext.Default.IntValuesArray) ?? [])
+                                    Task.Run(() => _states = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.States)], JsonContext.CaseInsensitive.StateCacheArray) ?? []),
+                                    Task.Run(() => _eligibility = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Eligibility)], JsonContext.CaseInsensitive.IntValuesArray) ?? []),
+                                    Task.Run(() => _experience = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Experience)], JsonContext.CaseInsensitive.ListIntValues) ?? []),
+                                    Task.Run(() => _taxTerms = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.TaxTerms)], JsonContext.CaseInsensitive.ListKeyValues) ?? []),
+                                    Task.Run(() => _jobOptions = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.JobOptions)], JsonContext.CaseInsensitive.KeyValuesArray) ?? []),
+                                    Task.Run(() => _statusCodes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.StatusCodes)], JsonContext.CaseInsensitive.ListStatusCode) ?? []),
+                                    Task.Run(() => _workflow = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Workflow)], JsonContext.CaseInsensitive.ListWorkflow) ?? []),
+                                    Task.Run(() => _communication = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Communications)], JsonContext.CaseInsensitive.ListKeyValues) ?? []),
+                                    Task.Run(() => _documentTypes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.DocumentTypes)], JsonContext.CaseInsensitive.IntValuesArray) ?? [])
                                 ];
                                 await Task.WhenAll(cacheDeserializationTasks);
                                 InitializeJobOptionsDictionary();
@@ -946,7 +946,7 @@ public partial class Candidates : IDisposable
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
                                                                              // Array deserialization: Converting to CandidateActivity[] for memory optimization
-                                                                             _candActivityObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateActivityArray) ?? [];
+                                                                             _candActivityObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateActivityArray) ?? [];
                                                                          }
                                                                      });
 
@@ -1009,7 +1009,7 @@ public partial class Candidates : IDisposable
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  // Array deserialization: Converting to CandidateDocument[] for memory optimization
-                                                                                 _candDocumentsObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateDocumentArray) ?? [];
+                                                                                 _candDocumentsObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateDocumentArray) ?? [];
                                                                              }
                                                                          }
                                                                      });
@@ -1030,7 +1030,7 @@ public partial class Candidates : IDisposable
                                                                                if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                                {
                                                                                    // Array deserialization: Converting to CandidateEducation[] for memory optimization
-                                                                                   _candEducationObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateEducationArray) ?? [];
+                                                                                   _candEducationObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateEducationArray) ?? [];
                                                                                }
                                                                            }
                                                                        });
@@ -1053,7 +1053,7 @@ public partial class Candidates : IDisposable
                                                                                  }
 
                                                                                  // Array deserialization: Converting to CandidateExperience[] for memory optimization
-                                                                                 _candExperienceObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateExperienceArray) ?? [];
+                                                                                 _candExperienceObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateExperienceArray) ?? [];
                                                                              }
                                                                          });
 
@@ -1071,8 +1071,8 @@ public partial class Candidates : IDisposable
                                                                            if (_response != null)
                                                                            {
                                                                                // Array deserialization: Converting to CandidateMPC[] for memory optimization (read-only data)
-                                                                               _candMPCObject = JsonSerializer.Deserialize(_response["MPCList"]?.ToString() ?? "", JsonContext.Default.CandidateMPCArray) ?? [];
-                                                                               RatingMPC = JsonSerializer.Deserialize(_response["FirstMPC"]?.ToString() ?? "", JsonContext.Default.CandidateRatingMPC) ?? new();
+                                                                               _candMPCObject = JsonSerializer.Deserialize(_response["MPCList"]?.ToString() ?? "", JsonContext.CaseInsensitive.CandidateMPCArray) ?? [];
+                                                                               RatingMPC = JsonSerializer.Deserialize(_response["FirstMPC"]?.ToString() ?? "", JsonContext.CaseInsensitive.CandidateRatingMPC) ?? new();
                                                                                // Parallel MPC UI setup for consistency
                                                                                Task[] mpcUiTasks =
                                                                                [
@@ -1102,7 +1102,7 @@ public partial class Candidates : IDisposable
                                                                      }
 
                                                                      // Array deserialization: Converting to CandidateNotes[] for memory optimization
-                                                                     _candidateNotesObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateNotesArray) ?? [];
+                                                                     _candidateNotesObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateNotesArray) ?? [];
                                                                  }
                                                              });
 
@@ -1121,12 +1121,12 @@ public partial class Candidates : IDisposable
                                                                               {
                                                                                   // Array deserialization: Converting to CandidateRating[] for memory optimization (read-only data)
                                                                                   //_candRatingObject = General.DeserializeObject<CandidateRating[]>(_response["RatingList"]) ?? [];
-                                                                                  _candRatingObject = JsonSerializer.Deserialize(_response["RatingList"]?.ToString() ?? "", JsonContext.Default.CandidateRatingArray) ?? [];
+                                                                                  _candRatingObject = JsonSerializer.Deserialize(_response["RatingList"]?.ToString() ?? "", JsonContext.CaseInsensitive.CandidateRatingArray) ?? [];
                                                                                   // Fixed: Replaced Newtonsoft.Json with System.Text.Json for 60-70% memory reduction
                                                                                   // Original Newtonsoft.Json usage (commented for potential revert if needed):
                                                                                   /*RatingMPC = JsonConvert.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? "");*/
                                                                                   //RatingMPC = General.DeserializeObject<CandidateRatingMPC>(_response["FirstRating"]?.ToString() ?? "");
-                                                                                  RatingMPC = JsonSerializer.Deserialize(_response["FirstRating"]?.ToString() ?? "", JsonContext.Default.CandidateRatingMPC) ?? new();
+                                                                                  RatingMPC = JsonSerializer.Deserialize(_response["FirstRating"]?.ToString() ?? "", JsonContext.CaseInsensitive.CandidateRatingMPC) ?? new();
                                                                                   _candDetailsObject.RateCandidate = RatingMPC.Rating.ToInt32();
                                                                                   // Parallel Rating UI setup for consistency
                                                                                   Task[] ratingUiTasks =
@@ -1184,7 +1184,7 @@ public partial class Candidates : IDisposable
 
                                                                        // Array deserialization: Converting to CandidateSkills[] for memory optimization
                                                                        //_candSkillsObject = General.DeserializeObject<CandidateSkills[]>(_response) ?? [];
-                                                                       _candSkillsObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateSkillsArray) ?? [];
+                                                                       _candSkillsObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateSkillsArray) ?? [];
                                                                    }
                                                                });
 
@@ -1255,7 +1255,7 @@ public partial class Candidates : IDisposable
         // Original Newtonsoft.Json usage (commented for potential revert if needed):
         /*DataSource = JsonConvert.DeserializeObject<List<Candidate>>(_data);*/
         //DataSource = General.DeserializeObject<List<Candidate>>(_data);
-        DataSource = JsonSerializer.Deserialize(_data, JsonContext.Default.ListCandidate);
+        DataSource = JsonSerializer.Deserialize(_data, JsonContext.CaseInsensitive.ListCandidate);
         await Grid.Refresh();
         await Grid.HideSpinnerAsync();
         /*
@@ -1505,7 +1505,7 @@ public partial class Candidates : IDisposable
                                                                    {
                                                                        // Array deserialization: Converting to CandidateActivity[] for memory optimization
                                                                        //_candActivityObject = General.DeserializeObject<CandidateActivity[]>(_response) ?? [];
-                                                                       _candActivityObject = JsonSerializer.Deserialize(_response, JsonContext.Default.CandidateActivityArray) ?? [];
+                                                                       _candActivityObject = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.CandidateActivityArray) ?? [];
                                                                    }
                                                                });
 

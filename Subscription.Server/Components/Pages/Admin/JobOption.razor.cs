@@ -13,6 +13,8 @@
 
 #endregion
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class JobOption : ComponentBase
@@ -256,7 +258,8 @@ public partial class JobOption : ComponentBase
                                     AdminScreens = _enumerable.Any(claim => claim.Type == "Permission" && claim.Value == "AdminScreens");
                                     // Using injected RedisService singleton instead of creating new instances to avoid connection leaks
                                     RedisValue _cacheValues = await RedisService.GetAsync(nameof(CacheObjects.TaxTerms));
-                                    TaxTerms = _cacheValues.IsNull ? [] : JsonConvert.DeserializeObject<List<KeyValues>>(_cacheValues.ToString());
+                                    //TaxTerms = _cacheValues.IsNull ? [] : JsonConvert.DeserializeObject<List<KeyValues>>(_cacheValues.ToString());
+                                    TaxTerms = _cacheValues.IsNull ? [] : JsonSerializer.Deserialize(_cacheValues.ToString(), JsonContext.CaseInsensitive.ListKeyValues) ?? [];
                                 }
                             });
 
@@ -302,7 +305,8 @@ public partial class JobOption : ComponentBase
                                                                          if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                          {
                                                                              await FilterSet("");
-                                                                             DataSource = General.DeserializeObject<List<JobOptions>>(_response);
+                                                                             // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                             DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListJobOptions) ?? [];
                                                                              await Grid.Refresh();
                                                                          }
                                                                      });
@@ -315,7 +319,8 @@ public partial class JobOption : ComponentBase
                                                      {"filter", JobOptionAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<JobOptions>>(_returnValue);
+        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance  
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListJobOptions) ?? [];
         
         await Grid.Refresh();
     }

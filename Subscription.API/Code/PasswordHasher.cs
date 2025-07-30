@@ -11,8 +11,6 @@
 // *****************************************/
 #endregion
 
-using System.Security.Cryptography;
-
 namespace Subscription.API.Code;
 
 public static class PasswordHasher

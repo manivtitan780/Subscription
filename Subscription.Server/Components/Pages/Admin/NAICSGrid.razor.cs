@@ -13,6 +13,8 @@
 
 #endregion
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class NAICSGrid : ComponentBase
@@ -282,7 +284,8 @@ public partial class NAICSGrid : ComponentBase
                                                                      if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                      {
                                                                          await FilterSet("");
-                                                                         DataSource = General.DeserializeObject<List<NAICS>>(_response);
+                                                                         // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                         DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListNAICS) ?? [];
                                                                      }
 
                                                                      /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
@@ -297,7 +300,8 @@ public partial class NAICSGrid : ComponentBase
                                                      {"filter", NAICSAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<NAICS>>(_returnValue);
+        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListNAICS) ?? [];
         
         await Grid.Refresh();
     }

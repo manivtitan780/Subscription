@@ -1,5 +1,4 @@
 @page "/dash"
-@using System.Text.Json
 @using Subscription.Server.Components.Pages.Controls.Dashboard
 @using AnimationEffect = Syncfusion.Blazor.AnimationEffect
 @layout SubscriptionLayout
@@ -142,7 +141,7 @@
                                 </ChildContent>
                                 <ContentTemplate>
                                     <SfGrid AllowGrouping="true" DataSource="@GetUserRecentActivity()" Height="350">
-                                        <GridGroupSettings Columns="@(new string[] {"Company"})" ShowDropArea="false"/>
+                                        <GridGroupSettings Columns="@(new[] {"Company"})" ShowDropArea="false"/>
                                         <GridColumns>
                                             <GridColumn Field="Company" HeaderText="Company" TextAlign="TextAlign.Left" Width="250"/>
                                             <GridColumn Field="CandidateName" HeaderText="Candidate" TextAlign="TextAlign.Left" Width="130"/>

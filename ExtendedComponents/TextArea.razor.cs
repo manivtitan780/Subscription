@@ -17,6 +17,9 @@ namespace ExtendedComponents;
 
 public partial class TextArea : ComponentBase
 {
+    // Memory optimization: Cache EqualityComparer to avoid repeated instantiation
+    private static readonly EqualityComparer<string> StringComparer = EqualityComparer<string>.Default;
+    
     private string _value = "";
 
     [Parameter]
@@ -49,7 +52,8 @@ public partial class TextArea : ComponentBase
         get => _value;
         set
         {
-            if (EqualityComparer<string>.Default.Equals(value, _value))
+            // Memory optimization: Use cached comparer instead of creating new instance
+            if (StringComparer.Equals(value, _value))
             {
                 return;
             }

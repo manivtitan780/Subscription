@@ -13,6 +13,12 @@
 
 #endregion
 
+#region Using
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
+#endregion
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class Eligibility : ComponentBase
@@ -309,7 +315,8 @@ public partial class Eligibility : ComponentBase
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
                                                                                await FilterSet("");
-                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                               // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                               DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListAdminList) ?? [];
                                                                            }
 
                                                                            /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
@@ -324,7 +331,8 @@ public partial class Eligibility : ComponentBase
                                                      {"filter", EligibilityAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListAdminList) ?? [];
         
         await Grid.Refresh();
     }
@@ -362,7 +370,8 @@ public partial class Eligibility : ComponentBase
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  await FilterSet("");
-                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                                 // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                                 DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListAdminList) ?? [];
                                                                              }
                                                                              /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(id);
                                                                              await Grid.SelectRowAsync(_index);*/

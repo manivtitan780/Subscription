@@ -7,17 +7,18 @@
 // Project:             Subscription.Server
 // File Name:           MasterDataCacheService.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-10-2025 20:07
-// Last Updated On:     07-10-2025 20:46
+// Created On:          07-29-2025 15:07
+// Last Updated On:     07-29-2025 15:58
 // *****************************************/
 
 #endregion
 
-/*
-    Code Added by Gemini.
-    Reason: This service acts as a singleton to cache application-wide master data.
-    It prevents components from repeatedly fetching the same data from Redis, improving performance and reducing memory usage.
-*/
+#region Using
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
+#endregion
+
 namespace Subscription.Server.Code;
 
 public class MasterDataCacheService(RedisService redisService)
@@ -68,18 +69,18 @@ public class MasterDataCacheService(RedisService redisService)
 
         Dictionary<string, string> _cacheValues = await redisService.BatchGet(_keys);
 
-        // Deserialize all the data
-        States = General.DeserializeObject<List<StateCache>>(_cacheValues[nameof(CacheObjects.States)]);
-        Eligibility = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Eligibility)]);
-        Education = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Education)]);
-        Experience = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Experience)]);
-        JobOptions = General.DeserializeObject<List<JobOptions>>(_cacheValues[nameof(CacheObjects.JobOptions)]);
-        Skills = General.DeserializeObject<List<IntValues>>(_cacheValues[nameof(CacheObjects.Skills)]);
-        StatusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
-        Preferences = General.DeserializeObject<Preferences>(_cacheValues[nameof(CacheObjects.Preferences)]);
-        Companies = General.DeserializeObject<List<CompaniesList>>(_cacheValues[nameof(CacheObjects.Companies)]);
-        CompanyContacts = General.DeserializeObject<List<CompanyContacts>>(_cacheValues[nameof(CacheObjects.CompanyContacts)]);
-        Workflows = General.DeserializeObject<List<Workflow>>(_cacheValues[nameof(CacheObjects.Workflow)]);
+        // Deserialize all the data using JsonContext source generation for optimal performance
+        States = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.States)], JsonContext.CaseInsensitive.ListStateCache) ?? [];
+        Eligibility = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Eligibility)], JsonContext.CaseInsensitive.ListIntValues) ?? [];
+        Education = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Education)], JsonContext.CaseInsensitive.ListIntValues) ?? [];
+        Experience = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Experience)], JsonContext.CaseInsensitive.ListIntValues) ?? [];
+        JobOptions = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.JobOptions)], JsonContext.CaseInsensitive.ListJobOptions) ?? [];
+        Skills = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Skills)], JsonContext.CaseInsensitive.ListIntValues) ?? [];
+        StatusCodes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.StatusCodes)], JsonContext.CaseInsensitive.ListStatusCode) ?? [];
+        Preferences = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Preferences)], JsonContext.CaseInsensitive.Preferences) ?? new();
+        Companies = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Companies)], JsonContext.CaseInsensitive.ListCompaniesList) ?? [];
+        CompanyContacts = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.CompanyContacts)], JsonContext.CaseInsensitive.ListCompanyContacts) ?? [];
+        Workflows = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Workflow)], JsonContext.CaseInsensitive.ListWorkflow) ?? [];
 
         // Pre-compute derived data
         if (Skills != null)
@@ -87,7 +88,7 @@ public class MasterDataCacheService(RedisService redisService)
             SkillDictionary = Skills.ToDictionary(s => s.KeyValue, s => s.Text);
         }
 
-        List<UserList> _users = General.DeserializeObject<List<UserList>>(_cacheValues[nameof(CacheObjects.Users)]);
+        List<UserList> _users = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Users)], JsonContext.CaseInsensitive.ListUserList) ?? [];
         if (_users != null)
         {
             Recruiters = _users.Where(user => user.Role is 2 or 4 or 5 or 6)

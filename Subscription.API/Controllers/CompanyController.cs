@@ -176,50 +176,44 @@ public partial class CompanyController : ControllerBase
             command.Varchar("User", 10, user);
         }, async reader =>
         {
-            string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]", _notes = "[]";
-            
-            // Company Details
-            if (await reader.ReadAsync())
-            {
-                _company = reader.NString(0, "[]");
-            }
+            // Memory optimization: Interned string constants for optimal performance
+            const string emptyArray = "[]";
 
+            string _company = "[]", _locations = "[]", _contacts = "[]", _documents = "[]", _requisitions = "[]", _notes = "[]";
+
+            // Company Details
+            _company = await ReadNextResultAsync();
+            if (_company == emptyArray)
+            {
+                _company = "{}";
+            }
             // Company Locations
             await reader.NextResultAsync();
-            if (await reader.ReadAsync())
-            {
-                _locations = reader.NString(0, "[]");
-            }
+            _locations = await ReadNextResultAsync();
 
             // Company Contacts
             await reader.NextResultAsync();
-            if (await reader.ReadAsync())
-            {
-                _contacts = reader.NString(0, "[]");
-            }
+            _contacts = await ReadNextResultAsync();
             
             // Company Notes
             await reader.NextResultAsync();
-            if (await reader.ReadAsync())
-            {
-                _notes = reader.NString(0, "[]");
-            }
+            _notes = await ReadNextResultAsync();
 
             // Company Documents
             await reader.NextResultAsync();
-            if (await reader.ReadAsync())
-            {
-                _documents = reader.NString(0, "[]");
-            }
+            _documents = await ReadNextResultAsync();
 
             // Company Requisitions
             await reader.NextResultAsync();
-            if (await reader.ReadAsync())
-            {
-                _requisitions = reader.NString(0, "[]");
-            }
+            _requisitions = await ReadNextResultAsync();
 
             return new ReturnCompanyDetails(_company, _contacts, _locations, _documents, _requisitions, _notes);
+
+            // Memory optimization: Local function eliminates code duplication for result reading
+            async Task<string> ReadNextResultAsync()
+            {
+                return await reader.ReadAsync() ? reader.NString(0, emptyArray) : emptyArray;
+            }
         }, "GetCompanyDetails", "Error fetching company details.");
     }
 

@@ -23,6 +23,9 @@ namespace ExtendedComponents;
 
 public partial class DropDown<TValue, TItem> : ComponentBase
 {
+    // Memory optimization: Cache EqualityComparer to avoid repeated instantiation
+    private static readonly EqualityComparer<TValue> ValueComparer = EqualityComparer<TValue>.Default;
+    
     private SfDropDownList<TValue, TItem>? _drop;
     private TValue? _value;
 
@@ -113,7 +116,8 @@ public partial class DropDown<TValue, TItem> : ComponentBase
         get => _value;
         set
         {
-            if (EqualityComparer<TValue>.Default.Equals(value, _value))
+            // Memory optimization: Use cached comparer instead of creating new instance
+            if (ValueComparer.Equals(value, _value))
             {
                 return;
             }

@@ -204,7 +204,7 @@ public partial class Templates : ComponentBase
 
                                                      if (response.NotNullOrWhiteSpace() && response != "[]")
                                                      {
-                                                         DataSource = JsonSerializer.Deserialize(response, JsonContext.Default.ListAppTemplate) ?? [];
+                                                         DataSource = JsonSerializer.Deserialize(response, JsonContext.CaseInsensitive.ListAppTemplate) ?? [];
                                                      }
                                                      else
                                                      {
@@ -250,7 +250,7 @@ public partial class Templates : ComponentBase
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  await FilterSet("");
-                                                                                 DataSource = JsonSerializer.Deserialize(_response, JsonContext.Default.ListAppTemplate) ?? [];
+                                                                                 DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListAppTemplate) ?? [];
                                                                              }
                                                                          }
                                                                      });

@@ -13,8 +13,6 @@
 
 #endregion
 
-using System.Text;
-
 namespace Subscription.API.Controllers;
 
 public partial class RequisitionController

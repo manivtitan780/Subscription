@@ -13,6 +13,8 @@
 
 #endregion
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 /// <summary>
@@ -337,7 +339,8 @@ public partial class Designation
                                                                            if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                            {
                                                                                await FilterSet("");
-                                                                               DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                               //DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                               DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListAdminList) ?? [];
                                                                                await Grid.Refresh();
                                                                            }
 
@@ -353,7 +356,8 @@ public partial class Designation
                                                      {"filter", DesignationAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<AdminList>>(_returnValue);
+        // Convert from Newtonsoft.Json to System.Text.Json source generation for optimal performance
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListAdminList) ?? [];
 
         await Grid.Refresh();
     }
@@ -393,7 +397,8 @@ public partial class Designation
                                                                              if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                              {
                                                                                  await FilterSet("");
-                                                                                 DataSource = General.DeserializeObject<List<AdminList>>(_response);
+                                                                                 // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                                 DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListAdminList) ?? [];
                                                                                  await Grid.Refresh();
                                                                              }
 

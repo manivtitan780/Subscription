@@ -13,6 +13,12 @@
 
 #endregion
 
+#region Using
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
+#endregion
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMethodReturnValue.Global
 
@@ -73,20 +79,28 @@ public class RedisService : IDisposable
     /// </remarks>
     public async Task<Dictionary<string, string>> BatchGet(IEnumerable<string> keyArray)
     {
-        IEnumerable<string> _keyArray = keyArray.ToList();
-        RedisKey[] _keys = _keyArray.Select(k => (RedisKey)k).ToArray();
-
-        RedisValue[] _values = await _db.StringGetAsync(_keys);
-        // Standardized collection initialization to modern C# 12 syntax for consistency
-        Dictionary<string, string> _return = [];
-        int i = 0;
-        foreach (string _key in _keyArray)
+        // Memory optimization: Single enumeration and pre-sized collections
+        string[] keys = keyArray.ToArray();
+        RedisKey[] redisKeys = new RedisKey[keys.Length];
+        
+        // Memory optimization: Use for loop instead of LINQ for RedisKey conversion
+        for (int i = 0; i < keys.Length; i++)
         {
-            _return.Add(_key, _values[i].ToString());
-            i++;
+            redisKeys[i] = keys[i];
         }
 
-        return _return;
+        RedisValue[] values = await _db.StringGetAsync(redisKeys);
+        
+        // Memory optimization: Pre-sized dictionary with known capacity
+        Dictionary<string, string> result = new(keys.Length);
+        
+        // Memory optimization: Use for loop instead of foreach with counter
+        for (int i = 0; i < keys.Length; i++)
+        {
+            result.Add(keys[i], values[i].ToString());
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -118,19 +132,17 @@ public class RedisService : IDisposable
     /// </remarks>
     public async Task CreateBatchSet(string[] keyArray, string[] items)
     {
-        List<KeyValuePair<RedisKey, RedisValue>> _values = [];
-        int i = 0;
-        foreach (string _item in items)
+        // Memory optimization: Pre-sized List with known capacity to avoid resize operations
+        List<KeyValuePair<RedisKey, RedisValue>> values = new(keyArray.Length);
+        
+        // Memory optimization: Use for loop instead of foreach with counter
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        for (int i = 0; i < items.Length; i++)
         {
-            _values.Add(new(keyArray[i], _item));
-            i++;
+            values.Add(new(keyArray[i], items[i]));
         }
-        // for (int i = 0; i < items.Count; i++)
-        // {
-        //     _values.Add(new(keyArray[i], JsonConvert.SerializeObject(items[i])));
-        // }
 
-        await _db.StringSetAsync(_values.ToArray());
+        await _db.StringSetAsync(values.ToArray());
     }
 
     /// <summary>
@@ -167,10 +179,13 @@ public class RedisService : IDisposable
 
         if (_value.HasValue)
         {
-            return JsonConvert.DeserializeObject<T>(_value.ToString());
+            // Convert from Newtonsoft.Json to System.Text.Json for better performance
+            // Note: Using generic JsonSerializer since JsonContext cannot handle generic <T> types
+            return JsonSerializer.Deserialize<T>(_value.ToString());
         }
 
-        await _db.StringSetAsync(key, JsonConvert.SerializeObject(createItems), when: When.Always);
+        // Convert from Newtonsoft.Json to System.Text.Json for better performance
+        await _db.StringSetAsync(key, JsonSerializer.Serialize(createItems), when: When.Always);
         return createItems;
     }
 
@@ -186,5 +201,6 @@ public class RedisService : IDisposable
     ///     The new value will replace the existing value associated with the key.
     ///     The value will have an expiration time of 365 days.
     /// </remarks>
-    public async Task RefreshAsync<T>(string key, T createItems) => await _db.StringSetAsync(key, JsonConvert.SerializeObject(createItems), when: When.Always);
+    // Convert from Newtonsoft.Json to System.Text.Json for better performance
+    public async Task RefreshAsync<T>(string key, T createItems) => await _db.StringSetAsync(key, JsonSerializer.Serialize(createItems), when: When.Always);
 }

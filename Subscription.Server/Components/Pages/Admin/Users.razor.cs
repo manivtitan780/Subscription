@@ -15,6 +15,7 @@
 
 #region Using
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Role = Subscription.Model.Role;
 
 #endregion
@@ -275,7 +276,8 @@ public partial class Users : ComponentBase
                                     {
                                         if (_roleString.NotNullOrWhiteSpace() && _roleString != "[]")
                                         {
-                                            List<Role> _roles = General.DeserializeObject<List<Role>>(_roleString);
+                                            // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                            List<Role> _roles = JsonSerializer.Deserialize(_roleString, JsonContext.CaseInsensitive.ListRole) ?? [];
                                             foreach (Role _role in _roles)
                                             {
                                                 Roles.Add(new() {KeyValue = _role.ID, Text = $"[{_role.RoleName}] - {_role.Description}"});
@@ -331,7 +333,8 @@ public partial class Users : ComponentBase
                                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                     {
                                                                         await FilterSet("");
-                                                                        DataSource = General.DeserializeObject<List<User>>(_response);
+                                                                        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                        DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListUser) ?? [];
                                                                     }
                                                                 });
 
@@ -343,7 +346,8 @@ public partial class Users : ComponentBase
                                                      {"filter", UserAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<User>>(_returnValue);
+        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListUser) ?? [];
 
         await Grid.Refresh();
     }
@@ -383,7 +387,8 @@ public partial class Users : ComponentBase
                                                                                 if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                                 {
                                                                                     await FilterSet("");
-                                                                                    DataSource = General.DeserializeObject<List<User>>(_response);
+                                                                                    // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                                    DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListUser) ?? [];
                                                                                 }
                                                                             }
                                                                         });

@@ -47,7 +47,6 @@ public class CompanyDetails
 
     public string NAICS { get; set; }
 
-    //[System.Text.Json.Serialization.JsonConverter(typeof(StringToIntConverter))]
     public int NAICSCode { get; set; }
 
     public string Name { get; set; }

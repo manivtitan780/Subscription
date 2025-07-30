@@ -7,27 +7,9 @@
 // Project:             Subscription.API
 // File Name:           General.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-15-2025 16:07
-// Last Updated On:     07-15-2025 16:30
+// Created On:          07-23-2025 19:07
+// Last Updated On:     07-29-2025 20:52
 // *****************************************/
-
-#endregion
-
-#region Using
-
-using System.Buffers;
-using System.Security.Cryptography;
-using System.Text;
-
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-
-using FluentStorage.Blobs;
-
-using Newtonsoft.Json;
-
-using Syncfusion.Pdf;
-using Syncfusion.Pdf.Parsing;
 
 #endregion
 
@@ -36,8 +18,6 @@ namespace Subscription.API.Code;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class General
 {
-    
-
     internal static async Task CopyBlobs(string sourceCandidateID, string destinationCandidateID)
     {
         string _connectionString = Start.AzureBlob;
@@ -69,10 +49,6 @@ public static class General
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="array">The JSON string representing the object to be deserialized.</param>
     /// <returns>The deserialized object of type T.</returns>
-    
-
-    
-
     internal static string ExtractTextFromPdf(IFormFile file)
     {
         using PdfLoadedDocument _document = new(file.OpenReadStream());
@@ -90,7 +66,7 @@ public static class General
     internal static string ExtractTextFromPdf(byte[] file)
     {
         // Memory optimization: Use RecyclableMemoryStream for PDF processing
-        using var stream = Extensions.Memory.ReusableMemoryStream.Get("pdf-text-extraction", file);
+        using RecyclableMemoryStream stream = ReusableMemoryStream.Get("pdf-text-extraction", file);
         using PdfLoadedDocument _document = new(stream);
         StringBuilder _resumeText = new();
         foreach (object page in _document.Pages)
@@ -115,15 +91,13 @@ public static class General
     internal static string ExtractTextFromWord(byte[] file)
     {
         // Memory optimization: Use RecyclableMemoryStream for Word processing
-        using var stream = Extensions.Memory.ReusableMemoryStream.Get("word-text-extraction", file);
+        using RecyclableMemoryStream stream = ReusableMemoryStream.Get("word-text-extraction", file);
         using WordDocument _document = new(stream, FormatType.Automatic);
         string _resumeText = _document.GetText();
         _document.Close();
 
         return _resumeText;
     }
-
-    
 
     internal static async Task<byte[]> ReadFromBlob(string blobPath)
     {
@@ -135,8 +109,6 @@ public static class General
 
         return _memBytes;
     }
-
-    
 
     // ReSharper disable once UnusedMember.Local
     private static async Task<List<IntValues>> SetIntValues(SqlDataReader reader, byte keyType = 0) //0-Int32, 1=Int16, 2=Byte
@@ -198,7 +170,7 @@ public static class General
         IAzureBlobStorage _storage = StorageFactory.Blobs.AzureBlobStorageWithSharedKey(Start.AccountName, Start.AzureKey);
 
         // Memory optimization: Use RecyclableMemoryStream for blob uploads
-        await using var stream = Extensions.Memory.ReusableMemoryStream.Get("blob-upload", file);
+        await using RecyclableMemoryStream stream = ReusableMemoryStream.Get("blob-upload", file);
         await _storage.WriteAsync(blobPath, stream);
     }
 }

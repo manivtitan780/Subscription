@@ -7,8 +7,8 @@
 // Project:             Subscription.API
 // File Name:           CandidateController.Gets.cs
 // Created By:          Narendra Kumaran Kadhirvelu, Jolly Joseph Paily, DonBosco Paily, Mariappan Raja, Gowtham Selvaraj, Pankaj Sahu, Brijesh Dubey
-// Created On:          07-16-2025 19:07
-// Last Updated On:     07-28-2025 19:15
+// Created On:          07-29-2025 21:07
+// Last Updated On:     07-29-2025 21:20
 // *****************************************/
 
 #endregion
@@ -56,13 +56,22 @@ public partial class CandidateController
                                                                   command.Char("@RoleID", 2, roleID);
                                                               }, async reader =>
                                                                  {
-                                                                     // Result Set 1: Candidate Details
-                                                                     string _candRating = "", _candMPC = "";
-                                                                     string candidateDetails = "{}";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         candidateDetails = reader.NString(0, "{}");
+                                                                     // Memory optimization: Interned string constants for optimal performance
+                                                                     const string emptyArray = "[]";
+                                                                     const string emptyObject = "{}";
 
+                                                                     // Result Set 1: Candidate Details (special handling for JSON extraction)
+                                                                     string _candRating = "", _candMPC = "";
+                                                                     string candidateDetails = await ReadNextResultAsync();
+
+                                                                     // Special case: Use empty object for candidate details if no data
+                                                                     if (candidateDetails == emptyArray)
+                                                                     {
+                                                                         candidateDetails = emptyObject;
+                                                                     }
+
+                                                                     if (candidateDetails != emptyObject)
+                                                                     {
                                                                          // Memory optimization: Use System.Text.Json instead of Newtonsoft.Json
                                                                          using JsonDocument _candidateDoc = JsonDocument.Parse(candidateDetails);
                                                                          JsonElement root = _candidateDoc.RootElement;
@@ -73,62 +82,34 @@ public partial class CandidateController
 
                                                                      // Result Set 2: Notes
                                                                      await reader.NextResultAsync();
-                                                                     string notes = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         notes = reader.NString(0, "[]");
-                                                                     }
+                                                                     string notes = await ReadNextResultAsync();
 
                                                                      // Result Set 3: Skills
                                                                      await reader.NextResultAsync();
-                                                                     string skills = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         skills = reader.NString(0, "[]");
-                                                                     }
+                                                                     string skills = await ReadNextResultAsync();
 
                                                                      // Result Set 4: Education
                                                                      await reader.NextResultAsync();
-                                                                     string education = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         education = reader.NString(0, "[]");
-                                                                     }
+                                                                     string education = await ReadNextResultAsync();
 
                                                                      // Result Set 5: Experience
                                                                      await reader.NextResultAsync();
-                                                                     string experience = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         experience = reader.NString(0, "[]");
-                                                                     }
+                                                                     string experience = await ReadNextResultAsync();
 
                                                                      // Result Set 6: Activity
                                                                      await reader.NextResultAsync();
-                                                                     string activity = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         activity = reader.NString(0, "[]");
-                                                                     }
+                                                                     string activity = await ReadNextResultAsync();
 
-                                                                     // Result Set 7: Managers
+                                                                     // Result Set 7: Managers (skip - no data reading)
                                                                      await reader.NextResultAsync();
 
                                                                      //Result Set 8: Submissions Timelines
                                                                      await reader.NextResultAsync();
-                                                                     string _timeline = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         _timeline = reader.NString(0, "[]");
-                                                                     }
+                                                                     string _timeline = await ReadNextResultAsync();
 
                                                                      //Result Set 9: Documents
                                                                      await reader.NextResultAsync();
-                                                                     string _documents = "[]";
-                                                                     if (await reader.ReadAsync())
-                                                                     {
-                                                                         _documents = reader.NString(0, "[]");
-                                                                     }
+                                                                     string _documents = await ReadNextResultAsync();
 
                                                                      // Process Rating and MPC data using System.Text.Json consistently
                                                                      List<CandidateRating> _ratingList = [];
@@ -137,8 +118,7 @@ public partial class CandidateController
 
                                                                      if (!_candRating.NotNullOrWhiteSpace() && !_candMPC.NotNullOrWhiteSpace())
                                                                      {
-                                                                         return new(candidateDetails, notes, skills, education, experience,
-                                                                                    activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
+                                                                         return new(candidateDetails, notes, skills, education, experience, activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
                                                                      }
 
                                                                      try
@@ -146,13 +126,13 @@ public partial class CandidateController
                                                                          // Memory optimization: Deserialize MPC data using System.Text.Json if available
                                                                          if (_candMPC.NotNullOrWhiteSpace())
                                                                          {
-                                                                             _mpcList = (JsonSerializer.Deserialize(_candMPC, JsonContext.Default.ListCandidateMPC) ?? []).OrderByDescending(x => x.DateTime).ToList();
+                                                                             _mpcList = (JsonSerializer.Deserialize(_candMPC, JsonContext.CaseInsensitive.ListCandidateMPC) ?? []).OrderByDescending(x => x.DateTime).ToList();
                                                                          }
 
                                                                          // Memory optimization: Deserialize Rating data using System.Text.Json if available
                                                                          if (_candRating.NotNullOrWhiteSpace())
                                                                          {
-                                                                             _ratingList = (JsonSerializer.Deserialize(_candRating, JsonContext.Default.ListCandidateRating) ?? []).OrderByDescending(x => x.DateTime).ToList();
+                                                                             _ratingList = (JsonSerializer.Deserialize(_candRating, JsonContext.CaseInsensitive.ListCandidateRating) ?? []).OrderByDescending(x => x.DateTime).ToList();
                                                                          }
 
                                                                          // Set the latest Rating/MPC for the combined object with null safety
@@ -174,6 +154,9 @@ public partial class CandidateController
                                                                      }
 
                                                                      return new ReturnCandidateDetails(candidateDetails, notes, skills, education, experience, activity, _ratingList, _mpcList, _ratingMPC, _documents, _timeline);
+
+                                                                     // Memory optimization: Local function eliminates code duplication for result reading
+                                                                     async Task<string> ReadNextResultAsync() => await reader.ReadAsync() ? reader.NString(0, emptyArray) : emptyArray;
                                                                  }, "GetCandidateDetails", "Error getting candidate details.");
     }
 

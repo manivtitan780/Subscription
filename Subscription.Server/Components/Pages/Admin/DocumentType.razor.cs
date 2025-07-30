@@ -13,6 +13,8 @@
 
 #endregion
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
 namespace Subscription.Server.Components.Pages.Admin;
 
 public partial class DocumentType : ComponentBase
@@ -311,7 +313,8 @@ public partial class DocumentType : ComponentBase
                                                                             if (_response.NotNullOrWhiteSpace() && _response != "null")
                                                                             {
                                                                                 await FilterSet("");
-                                                                                DataSource = General.DeserializeObject<List<DocumentTypes>>(_response);
+                                                                                // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                                DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListDocumentTypes) ?? [];
                                                                             }
 
                                                                             //await Grid.Refresh(false);
@@ -328,7 +331,8 @@ public partial class DocumentType : ComponentBase
                                                      {"filter", DocumentTypeAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<DocumentTypes>>(_returnValue);
+        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListDocumentTypes) ?? [];
 
         await Grid.Refresh();
     }

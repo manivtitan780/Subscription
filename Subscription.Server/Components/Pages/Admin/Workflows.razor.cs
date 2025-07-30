@@ -13,6 +13,7 @@
 
 #endregion
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Role = Subscription.Model.Role;
 
 namespace Subscription.Server.Components.Pages.Admin;
@@ -277,8 +278,10 @@ public partial class Workflows : ComponentBase
                                     List<string> _keys = [nameof(CacheObjects.StatusCodes), nameof(CacheObjects.Roles)];
 
                                     Dictionary<string, string> _cacheValues = await RedisService.BatchGet(_keys);
-                                    List<StatusCode> _statusCodes = General.DeserializeObject<List<StatusCode>>(_cacheValues[nameof(CacheObjects.StatusCodes)]);
-                                    List<Role> _roles = General.DeserializeObject<List<Role>>(_cacheValues[nameof(CacheObjects.Roles)]);
+                                    // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                    List<StatusCode> _statusCodes = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.StatusCodes)], JsonContext.CaseInsensitive.ListStatusCode) ?? [];
+                                    // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                    List<Role> _roles = JsonSerializer.Deserialize(_cacheValues[nameof(CacheObjects.Roles)], JsonContext.CaseInsensitive.ListRole) ?? [];
                                     if (_statusCodes != null)
                                     {
                                         Next = _statusCodes.Where(statusCode => statusCode.AppliesToCode == "SCN")
@@ -337,7 +340,8 @@ public partial class Workflows : ComponentBase
                                                                         if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                         {
                                                                             await FilterSet("");
-                                                                            DataSource = General.DeserializeObject<List<Workflow>>(_response);
+                                                                            // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                            DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListWorkflow) ?? [];
                                                                         }
 
                                                                         /*int _index = await Grid.GetRowIndexByPrimaryKeyAsync(_response.ToInt32());
@@ -352,6 +356,9 @@ public partial class Workflows : ComponentBase
                                                      {"filter", WorkflowAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<Workflow>>(_returnValue);
+        //DataSource = JsonConvert.DeserializeObject<List<Workflow>>(_returnValue);
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListWorkflow) ?? [];
+        
+        await Grid.Refresh(true);
     }
 }

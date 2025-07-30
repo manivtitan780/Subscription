@@ -25,6 +25,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
+using Extensions.Memory;
+
+using Microsoft.IO;
+
 #endregion
 
 namespace Extensions;
@@ -57,7 +61,8 @@ public static partial class Extensions
 
         byte[] _byteArray = Encoding.UTF8.GetBytes(s);
 
-        using MemoryStream _memStream = new();
+        // Memory optimization: Use ReusableMemoryStream to eliminate LOH pressure
+        using RecyclableMemoryStream _memStream = ReusableMemoryStream.Get("gzip-compression");
         using GZipStream _gZipStream = new(_memStream, CompressionMode.Compress);
 
         _gZipStream.Write(_byteArray, 0, _byteArray.Length);
@@ -189,11 +194,13 @@ public static partial class Extensions
     /// </returns>
     public static string DecompressGZip(this byte[] byteString)
     {
+        // Memory optimization: Use MemoryStream for input (optimal for byte[] wrapping)
+        // and RecyclableMemoryStream for output decompression buffer
         using MemoryStream _memStreamReader = new(byteString);
         using GZipStream _gZipStream = new(_memStreamReader, CompressionMode.Decompress);
-        using MemoryStream _memStream = new();
+        using RecyclableMemoryStream _memStream = ReusableMemoryStream.Get("gzip-decompression");
 
-        // Copy the decompressed data to the MemoryStream
+        // Copy the decompressed data to the RecyclableMemoryStream
         try
         {
             _gZipStream.CopyTo(_memStream);
@@ -428,14 +435,15 @@ public static partial class Extensions
     ///     A byte array that represents the content of the Stream object.
     /// </returns>
     /// <remarks>
-    ///     The method creates a new MemoryStream, copies the content of the input Stream into it,
-    ///     and then converts the MemoryStream to a byte array.
+    ///     Memory optimization: Uses ReusableMemoryStream to eliminate LOH pressure
+    ///     and reduce allocation overhead for document processing operations.
     /// </remarks>
     public static byte[] ToStreamByteArray(this Stream s)
     {
-        using MemoryStream _memoryStream = new();
-        s.CopyTo(_memoryStream);
-        return _memoryStream.ToArray();
+        // Memory optimization: Use ReusableMemoryStream to eliminate LOH pressure
+        using RecyclableMemoryStream recyclableStream = ReusableMemoryStream.Get("stream-conversion");
+        s.CopyTo(recyclableStream);
+        return recyclableStream.ToArray();
     }
 
     /// <summary>

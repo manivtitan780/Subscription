@@ -15,6 +15,7 @@
 
 #region Using
 
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Role = Subscription.Model.Role;
 
 #endregion
@@ -313,7 +314,8 @@ public partial class Roles : ComponentBase
                                                                     if (_response.NotNullOrWhiteSpace() && _response != "[]")
                                                                     {
                                                                         await FilterSet("");
-                                                                        DataSource = General.DeserializeObject<List<Role>>(_response);
+                                                                        // Convert from General.DeserializeObject to JsonContext source generation for optimal performance
+                                                                        DataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListRole) ?? [];
                                                                     }
                                                                 });
 
@@ -325,7 +327,8 @@ public partial class Roles : ComponentBase
                                                      {"filter", RoleAuto ?? ""}
                                                  };
         string _returnValue = await General.ExecuteRest<string>("Admin/GetAdminList", _parameters, null, false);
-        DataSource = JsonConvert.DeserializeObject<List<Role>>(_returnValue);
+        //DataSource = JsonConvert.DeserializeObject<List<Role>>(_returnValue);
+        DataSource = JsonSerializer.Deserialize(_returnValue, JsonContext.CaseInsensitive.ListRole) ?? [];
         
         await Grid.Refresh();
     }

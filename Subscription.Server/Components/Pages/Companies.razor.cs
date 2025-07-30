@@ -179,7 +179,7 @@ public partial class Companies
                                                           //Dictionary<string, string> _parameters = CreateParameters(id);
                                                           string _response = await General.ExecuteRest<string>("Company/DeleteNotes", CreateParameters(id));
 
-                                                          _companyNotesObject = JsonSerializer.Deserialize<CandidateNotes[]>(_response, JsonContext.Default.CandidateNotesArray);
+                                                          _companyNotesObject = JsonSerializer.Deserialize<CandidateNotes[]>(_response, JsonContext.CaseInsensitive.CandidateNotesArray);
                                                       });
 
     private Task DetailDataBind(DetailDataBoundEventArgs<Company> company) => ExecuteMethod(async () =>
@@ -218,12 +218,12 @@ public partial class Companies
                                                                                                     // Parallel deserialization for faster detail panel loading with thread safety consistency
                                                                                                     Task[] companyDetailsTasks =
                                                                                                         [
-                                                                                                           Task.Run(() => _companyDetails = JsonSerializer.Deserialize(_company, JsonContext.Default.CompanyDetails)),
-                                                                                                           Task.Run(() => _companyLocations = JsonSerializer.Deserialize(_locations, JsonContext.Default.ListCompanyLocations) ?? []),
-                                                                                                           Task.Run(() => _companyContacts = JsonSerializer.Deserialize(_contacts, JsonContext.Default.ListCompanyContacts) ?? []),
-                                                                                                           Task.Run(() => _companyNotesObject = JsonSerializer.Deserialize(_notes, JsonContext.Default.CandidateNotesArray) ?? []),
-                                                                                                           Task.Run(() => _companyDocuments = JsonSerializer.Deserialize(_documents, JsonContext.Default.ListCompanyDocuments) ?? []),
-                                                                                                           Task.Run(() => _companyRequisitions = JsonSerializer.Deserialize(_requisitions, JsonContext.Default.ListRequisition) ?? [])
+                                                                                                           Task.Run(() => _companyDetails = JsonSerializer.Deserialize(_company, JsonContext.CaseInsensitive.CompanyDetails)),
+                                                                                                           Task.Run(() => _companyLocations = JsonSerializer.Deserialize(_locations, JsonContext.CaseInsensitive.ListCompanyLocations) ?? []),
+                                                                                                           Task.Run(() => _companyContacts = JsonSerializer.Deserialize(_contacts, JsonContext.CaseInsensitive.ListCompanyContacts) ?? []),
+                                                                                                           Task.Run(() => _companyNotesObject = JsonSerializer.Deserialize(_notes, JsonContext.CaseInsensitive.CandidateNotesArray) ?? []),
+                                                                                                           Task.Run(() => _companyDocuments = JsonSerializer.Deserialize(_documents, JsonContext.CaseInsensitive.ListCompanyDocuments) ?? []),
+                                                                                                           Task.Run(() => _companyRequisitions = JsonSerializer.Deserialize(_requisitions, JsonContext.CaseInsensitive.ListRequisition) ?? [])
                                                                                                      ];
                                                                                                     /*Task[] companyDetailsTasks =
                                                                                                     [
@@ -393,7 +393,7 @@ public partial class Companies
         {
             if (await SessionStorage.ContainKeyAsync(StorageName))
             {
-                SearchModel = JsonSerializer.Deserialize(await SessionStorage.GetItemAsStringAsync(StorageName), JsonContext.Default.CompanySearch) ?? new();
+                SearchModel = JsonSerializer.Deserialize(await SessionStorage.GetItemAsStringAsync(StorageName), JsonContext.CaseInsensitive.CompanySearch) ?? new();
             }
             else
             {
@@ -434,9 +434,9 @@ public partial class Companies
 
                                     Task[] cacheDeserializationTasks =
                                     [
-                                        Task.Run(() => NAICS = JsonSerializer.Deserialize(_values[nameof(CacheObjects.NAICS)], JsonContext.Default.ListIntValues) ?? []),
-                                        Task.Run(() => State = JsonSerializer.Deserialize(_values[nameof(CacheObjects.States)], JsonContext.Default.ListStateCache) ?? []),
-                                        Task.Run(() => Roles = JsonSerializer.Deserialize(_values[nameof(CacheObjects.Roles)], JsonContext.Default.ListIntValues) ?? [])
+                                        Task.Run(() => NAICS = JsonSerializer.Deserialize(_values[nameof(CacheObjects.NAICS)], JsonContext.CaseInsensitive.ListIntValues) ?? []),
+                                        Task.Run(() => State = JsonSerializer.Deserialize(_values[nameof(CacheObjects.States)], JsonContext.CaseInsensitive.ListStateCache) ?? []),
+                                        Task.Run(() => Roles = JsonSerializer.Deserialize(_values[nameof(CacheObjects.Roles)], JsonContext.CaseInsensitive.ListIntValues) ?? [])
                                     ];
                                     await Task.WhenAll(cacheDeserializationTasks);
                                 }
@@ -771,7 +771,7 @@ public partial class Companies
                 if (await SessionStorage.ContainKeyAsync("RequisitionGrid"))
                 {
                     string requisitionSearchJson = await SessionStorage.GetItemAsStringAsync(StorageName);
-                    _requisitionSearch = JsonSerializer.Deserialize(requisitionSearchJson, JsonContext.Default.RequisitionSearch) ?? new();
+                    _requisitionSearch = JsonSerializer.Deserialize(requisitionSearchJson, JsonContext.CaseInsensitive.RequisitionSearch) ?? new();
                 }
 
                 int _itemCount = _requisitionSearch.ItemCount;

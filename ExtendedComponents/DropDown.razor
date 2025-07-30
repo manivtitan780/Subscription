@@ -4,7 +4,7 @@
 @{
 	if (ShowLabel)
 	{
-		<label class="e-form-label" for="@ID">@($"{Placeholder}:")</label>
+		<label class="e-form-label" for="@ID">@(Placeholder + ":")</label>
 	}
 }
 <SfDropDownList AllowFiltering="@AllowFilter" DataSource="@Model" Enabled="@Enabled" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="@ID" Placeholder="@Placeholder" @ref="_drop" ShowClearButton="@ShowClearButton" 

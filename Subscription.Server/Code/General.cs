@@ -290,7 +290,7 @@ public class General //(Container container)
             // Updated to use System.Text.Json with standardized options
             if (_response.NotNullOrWhiteSpace() && _response != "[]")
             {
-                _dataSource = JsonSerializer.Deserialize(_response, JsonContext.Default.ListKeyValues);
+                _dataSource = JsonSerializer.Deserialize(_response, JsonContext.CaseInsensitive.ListKeyValues);
             }
 
             int _count = _dataSource.Count;

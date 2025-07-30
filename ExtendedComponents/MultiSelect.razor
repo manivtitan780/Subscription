@@ -1,6 +1,6 @@
 @typeparam TItem
            @typeparam TValue
-<label class="e-form-label" for="@ID">@($"{Placeholder}:")</label>
+<label class="e-form-label" for="@ID">@(Placeholder + ":")</label>
 <SfMultiSelect AllowFiltering="@AllowFilter" DataSource="@Model" Enabled="@Enabled" FilterBarPlaceholder="Search..." FilterType="FilterType.Contains" ID="@ID" Mode="VisualMode.Box" Placeholder="@Placeholder"
                ShowDropDownIcon="false" TItem="TItem" TValue="TValue" Value="@Value" ValueChanged="ValueChanged" ValueExpression="@ValueExpression" Width="@Width">
     <MultiSelectFieldSettings Text="@Text" Value="@Key"/>

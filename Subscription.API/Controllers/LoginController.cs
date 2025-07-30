@@ -17,7 +17,6 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
 
@@ -93,7 +92,7 @@ public class LoginController(IConfiguration configuration, RedisService redisSer
             string _roleString = _roles.ToString();
 
             // Optimized: Using System.Text.Json instead of Newtonsoft.Json for better performance
-            _cachedRoles = JsonSerializer.Deserialize<List<Role>>(_roleString, JsonContext.Default.ListRole) ?? [];
+            _cachedRoles = JsonSerializer.Deserialize<List<Role>>(_roleString, JsonContext.CaseInsensitive.ListRole) ?? [];
             return _cachedRoles;
         }
         finally
